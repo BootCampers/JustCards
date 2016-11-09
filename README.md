@@ -40,6 +40,10 @@ The following **bonus** features are implemented:
 * [ ] Every activity will be logged in list which anyone can review anytime.
 * [ ] When a card is moved from 1 place to another it should show nice animation of actual card moving out from one’s hand to other place.
 
+## Wireframes
+
+* **Wireframes are in assets directory**
+
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
