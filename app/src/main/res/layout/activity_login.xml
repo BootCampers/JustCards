@@ -72,6 +72,13 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
+            <!--ToDO  remove this-->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GameActivity"
+                android:onClick="takeToGame"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
