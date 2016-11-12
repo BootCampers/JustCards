@@ -2,6 +2,7 @@ package org.bootcamp.fiftytwo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         Card card = cards.get(position);
         //TODO set image as per card
         holder.ivCard.setImageDrawable(mContext.getDrawable(R.drawable.back));
+
     }
 
     @Override

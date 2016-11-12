@@ -56,7 +56,6 @@ public class CardsListFragment extends Fragment {
         staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         rvCardsList.setLayoutManager(staggeredLayoutManager);
         rvCardsList.setAdapter(cardsAdapter);
-
         return view;
     }
 }

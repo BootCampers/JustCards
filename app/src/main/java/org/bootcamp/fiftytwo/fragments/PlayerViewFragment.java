@@ -81,13 +81,12 @@ public class PlayerViewFragment extends Fragment {
         //Add player cards
         Fragment playerCardsFragment = new CardsListFragment();
         FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
-        transaction1.replace(R.id.flPlayerContainer, playerCardsFragment).commit();
+        transaction1.replace(R.id.flPlayerContainer, playerCardsFragment, "playerContainer").commit();
 
-        //TODO: causing crash
         //Add table cards
-        /*Fragment tableCardsFragment = new CardsListFragment();
+        Fragment tableCardsFragment = new CardsListFragment();
         FragmentTransaction transaction2 = getChildFragmentManager().beginTransaction();
-        transaction2.replace(R.id.flTableContainer, tableCardsFragment).commit();*/
+        transaction2.replace(R.id.flTableContainer, tableCardsFragment, "tableContainer").commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
