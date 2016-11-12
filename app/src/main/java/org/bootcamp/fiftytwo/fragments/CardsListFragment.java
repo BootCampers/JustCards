@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
  * Created by baphna on 11/11/2016.
  */
 
-public class CardsListFragment extends Fragment {
+public class CardsListFragment extends Fragment implements CardsAdapter.Listener {
 
     @BindDrawable(R.drawable.back)
     Drawable cardBack;
@@ -52,7 +52,7 @@ public class CardsListFragment extends Fragment {
         cards.add(new Card("jack1"));
         cards.add(new Card("jack2"));
         cards.add(new Card("jack3"));
-        cardsAdapter = new CardsAdapter(getActivity(), cards);
+        cardsAdapter = new CardsAdapter(getActivity(), cards, this);
         staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         rvCardsList.setLayoutManager(staggeredLayoutManager);
         rvCardsList.setAdapter(cardsAdapter);

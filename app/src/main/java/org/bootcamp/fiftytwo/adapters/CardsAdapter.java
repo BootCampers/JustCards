@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.adapters;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.DragEvent;
@@ -24,13 +25,19 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     private Context mContext;
     private List<Card> cards;
+    Listener listener;
+
+    public List<Card> getCards() {
+        return cards;
+    }
 
     public CardsAdapter() {
     }
 
-    public CardsAdapter(Context mContext, List<Card> cards) {
+    public CardsAdapter(Context mContext, List<Card> cards, Listener listener) {
         this.mContext = mContext;
         this.cards = cards;
+        this.listener = listener;
     }
 
     @Override
@@ -44,7 +51,32 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         Card card = cards.get(position);
         //TODO set image as per card
         holder.ivCard.setImageDrawable(mContext.getDrawable(R.drawable.back));
+        holder.ivCard.setTag(position); //Needed for drag and drop
 
+        holder.ivCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipData data = ClipData.newPlainText("", "");
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                view.startDrag(data, shadowBuilder, view, 0);
+                view.setVisibility(View.INVISIBLE);
+                return true;
+            }
+        });
+        holder.ivCard.setOnDragListener(new DragListener(listener));
+
+    }
+
+    public interface Listener {
+
+    }
+
+    public DragListener getDragInstance() {
+        if (listener != null) {
+            return new DragListener(listener);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -61,5 +93,93 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public class DragListener implements View.OnDragListener {
+
+        boolean isDropped = false;
+        Listener listener;
+
+        public DragListener(Listener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    //v.setBackgroundColor(Color.LTGRAY);
+                    break;
+
+                case DragEvent.ACTION_DRAG_EXITED:
+                    //v.setBackgroundColor(Color.YELLOW);
+                    break;
+
+                case DragEvent.ACTION_DROP:
+
+                    isDropped = true;
+                    int positionSource = -1;
+                    int positionTarget = -1;
+
+                    View viewSource = (View) event.getLocalState();
+
+                    //Handling only drag drop between lists for now
+                    //TODO: handle drag and drop to a player
+                    //TODO: handle move if lists are empty
+                    if (v.getId() == R.id.ivCard ) {
+
+                        //Card's parent is Linearlayout and it's parent is recyclerview
+                        RecyclerView target = (RecyclerView) v.getParent().getParent();
+                        positionTarget = (int) v.getTag();
+
+                        RecyclerView source = (RecyclerView) viewSource.getParent().getParent();
+                        CardsAdapter adapterSource = (CardsAdapter) source.getAdapter();
+                        positionSource = (int) viewSource.getTag();
+
+                        Card sourceList = (Card) adapterSource.getCards().get(positionSource);
+                        List<Card> cardListSource = adapterSource.getCards();
+
+                        cardListSource.remove(positionSource);
+                        adapterSource.updateCardsList(cardListSource, adapterSource);
+
+                        CardsAdapter adapterTarget = (CardsAdapter) target.getAdapter();
+                        List<Card> cardListTarget = adapterTarget.getCards();
+                        if (positionTarget >= 0) {
+                            cardListTarget.add(positionTarget, sourceList);
+                        } else {
+                            cardListTarget.add(sourceList);
+                        }
+                        adapterTarget.updateCardsList(cardListTarget, adapterTarget);
+                        v.setVisibility(View.VISIBLE);
+
+                    }
+
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    //v.setBackgroundColor(0);
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (!isDropped) {
+                View vw = (View) event.getLocalState();
+                vw.setVisibility(View.VISIBLE);
+            }
+
+            return true;
+        }
+
+    }
+
+    public void updateCardsList(List<Card> cardList, CardsAdapter adapter) {
+        this.cards = cardList;
+        adapter.notifyDataSetChanged();
     }
 }
