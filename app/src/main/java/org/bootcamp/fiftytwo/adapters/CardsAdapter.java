@@ -68,7 +68,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     }
 
     public interface Listener {
-
+        void setEmptyList(boolean visibility);
     }
 
     public DragListener getDragInstance() {
@@ -130,11 +130,17 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                     //Handling only drag drop between lists for now
                     //TODO: handle drag and drop to a player
                     //TODO: handle move if lists are empty
-                    if (v.getId() == R.id.ivCard ) {
+                    if (v.getId() == R.id.ivCard || v.getId() == R.id.tvNoCards) {
 
                         //Card's parent is Linearlayout and it's parent is recyclerview
-                        RecyclerView target = (RecyclerView) v.getParent().getParent();
-                        positionTarget = (int) v.getTag();
+                        RecyclerView target;
+                        if (v.getId() == R.id.tvNoCards) {
+                            target = (RecyclerView)
+                                    v.getRootView().findViewById(R.id.rvCardsList);
+                        } else {
+                            target = (RecyclerView) v.getParent().getParent();
+                            positionTarget = (int) v.getTag();
+                        }
 
                         RecyclerView source = (RecyclerView) viewSource.getParent().getParent();
                         CardsAdapter adapterSource = (CardsAdapter) source.getAdapter();
@@ -156,8 +162,10 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         adapterTarget.updateCardsList(cardListTarget, adapterTarget);
                         v.setVisibility(View.VISIBLE);
 
+                        if (v.getId() == R.id.tvNoCards) {
+                            listener.setEmptyList(false);
+                        }
                     }
-
                     break;
 
                 case DragEvent.ACTION_DRAG_ENDED:
@@ -181,5 +189,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public void updateCardsList(List<Card> cardList, CardsAdapter adapter) {
         this.cards = cardList;
         adapter.notifyDataSetChanged();
+        if(cardList.size() == 0){
+            listener.setEmptyList(true);
+        }
     }
 }

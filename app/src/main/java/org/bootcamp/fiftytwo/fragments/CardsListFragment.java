@@ -9,6 +9,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
@@ -34,6 +35,8 @@ public class CardsListFragment extends Fragment implements CardsAdapter.Listener
     private CardsAdapter cardsAdapter;
     private ArrayList<Card> cards = new ArrayList<>();
     private StaggeredGridLayoutManager staggeredLayoutManager;
+    @BindView(R.id.tvNoCards)
+    TextView tvNoCards;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +58,19 @@ public class CardsListFragment extends Fragment implements CardsAdapter.Listener
         cardsAdapter = new CardsAdapter(getActivity(), cards, this);
         staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         rvCardsList.setLayoutManager(staggeredLayoutManager);
+        setEmptyList(false);
         rvCardsList.setAdapter(cardsAdapter);
         return view;
+    }
+
+    @Override
+    public void setEmptyList(boolean visibility) {
+        if(visibility == true){
+            tvNoCards.setVisibility(View.VISIBLE);
+            rvCardsList.setVisibility(View.GONE);
+        } else {
+            tvNoCards.setVisibility(View.GONE);
+            rvCardsList.setVisibility(View.VISIBLE);
+        }
     }
 }
