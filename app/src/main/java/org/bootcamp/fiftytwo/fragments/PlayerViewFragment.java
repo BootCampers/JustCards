@@ -3,7 +3,9 @@ package org.bootcamp.fiftytwo.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +68,26 @@ public class PlayerViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_player_view, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        insertNestedFragments();
+    }
+
+    /*http://guides.codepath.com/android/Creating-and-Using-Fragments#nesting-fragments-within-fragments*/
+    private void insertNestedFragments() {
+
+        //Add player cards
+        Fragment playerCardsFragment = new CardsListFragment();
+        FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
+        transaction1.replace(R.id.flPlayerContainer, playerCardsFragment).commit();
+
+        //TODO: causing crash
+        //Add table cards
+        /*Fragment tableCardsFragment = new CardsListFragment();
+        FragmentTransaction transaction2 = getChildFragmentManager().beginTransaction();
+        transaction2.replace(R.id.flTableContainer, tableCardsFragment).commit();*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event

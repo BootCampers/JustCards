@@ -28,6 +28,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.flGameContainer, new PlayerViewFragment());
         fragmentTransaction.commit();
