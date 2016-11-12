@@ -7,8 +7,6 @@ package org.bootcamp.fiftytwo.models;
 public class Card {
 
     private String name;
-    private CardRank rank;
-    private CardSuit suit;
 
     public Card() {
     }
@@ -17,25 +15,11 @@ public class Card {
         this.name = name;
     }
 
-    public Card(CardSuit suit, CardRank rank){
-        this.suit = suit;
-        this.rank = rank;
-        name = rank.name() + suit.name();
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public CardRank getRank(){
-        return rank;
-    }
-
-    public CardSuit getSuit(){
-        return suit;
     }
 }
