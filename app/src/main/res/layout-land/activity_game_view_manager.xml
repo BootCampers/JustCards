@@ -32,10 +32,12 @@
 -->
     <FrameLayout
         android:id="@+id/flLogContainer"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/common_margin"
+        android:layout_gravity="right" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -43,8 +45,19 @@
         app:srcCompat="@drawable/ic_settings"
         android:layout_gravity="end|top"
         android:background="@android:color/transparent"
-        android:layout_margin="@dimen/setting_margin"
-        android:id="@+id/imageButton" />
+        android:layout_marginRight="@dimen/setting_right_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:id="@+id/ibSettings" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_comment"
+        android:layout_gravity="end|top"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="@dimen/common_margin"
+        android:layout_marginRight="@dimen/common_margin"
+        android:id="@+id/ibComment" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

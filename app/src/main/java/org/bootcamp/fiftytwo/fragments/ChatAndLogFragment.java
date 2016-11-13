@@ -11,9 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.adapters.ChatAndLogRecyclerViewAdapter;
-import org.bootcamp.fiftytwo.fragments.dummy.DummyContent;
-import org.bootcamp.fiftytwo.fragments.dummy.DummyContent.DummyItem;
+import org.bootcamp.fiftytwo.adapters.ChatAndLogAdapter;
+import org.bootcamp.fiftytwo.models.ChatLog;
+import org.bootcamp.fiftytwo.utils.DividerItemDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +33,10 @@ public class ChatAndLogFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private ChatAndLogAdapter chatAndLogAdapter;
+    private List<ChatLog> chatLogs = new ArrayList<>();
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,18 +67,23 @@ public class ChatAndLogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chatandlog_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_chatandlog, container, false);
+        ButterKnife.bind(this, view);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ChatAndLogRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+            recyclerView.addItemDecoration(itemDecoration);
+            chatAndLogAdapter = new ChatAndLogAdapter(chatLogs, mListener);
+            recyclerView.setAdapter(chatAndLogAdapter);
         }
         return view;
     }
@@ -92,6 +106,13 @@ public class ChatAndLogFragment extends Fragment {
         mListener = null;
     }
 
+    public void addNewLogEvent(String whoPosted, String details) {
+        ChatLog chatLog = new ChatLog(whoPosted, details);
+        chatLogs.add(chatLog);
+        chatAndLogAdapter.notifyItemInserted(chatLogs.size()+1);
+        recyclerView.smoothScrollToPosition(chatLogs.size());
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -104,6 +125,6 @@ public class ChatAndLogFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(ChatLog item);
     }
 }

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,7 +21,7 @@ import org.bootcamp.fiftytwo.R;
  * Use the {@link PlayerViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlayerViewFragment extends Fragment {
+public class PlayerViewFragment extends CardsListFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -77,16 +78,23 @@ public class PlayerViewFragment extends Fragment {
 
     /*http://guides.codepath.com/android/Creating-and-Using-Fragments#nesting-fragments-within-fragments*/
     private void insertNestedFragments() {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         //Add player cards
         Fragment playerCardsFragment = new CardsListFragment();
-        FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
-        transaction1.replace(R.id.flPlayerContainer, playerCardsFragment, "playerContainer").commit();
+        Bundle playerBundle = new Bundle();
+        playerBundle.putString(Constants.TAG, Constants.PLAYER_TAG);
+        playerCardsFragment.setArguments(playerBundle);
+        transaction.replace(R.id.flPlayerContainer, playerCardsFragment, Constants.PLAYER_TAG);
 
         //Add table cards
         Fragment tableCardsFragment = new CardsListFragment();
-        FragmentTransaction transaction2 = getChildFragmentManager().beginTransaction();
-        transaction2.replace(R.id.flTableContainer, tableCardsFragment, "tableContainer").commit();
+        Bundle tableBundle = new Bundle();
+        tableBundle.putString(Constants.TAG, Constants.TABLE_TAG);
+        tableCardsFragment.setArguments(tableBundle);
+        transaction.replace(R.id.flTableContainer, tableCardsFragment, Constants.TABLE_TAG);
+
+        transaction.commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

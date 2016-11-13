@@ -3,6 +3,7 @@ package org.bootcamp.fiftytwo.adapters;
 import android.content.ClipData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     private Context mContext;
     private List<Card> cards;
     Listener listener;
+    private String tag; //used for chat and log
 
     public List<Card> getCards() {
         return cards;
@@ -34,10 +37,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public CardsAdapter() {
     }
 
-    public CardsAdapter(Context mContext, List<Card> cards, Listener listener) {
+    public CardsAdapter(Context mContext, List<Card> cards, Listener listener, String tag) {
         this.mContext = mContext;
         this.cards = cards;
         this.listener = listener;
+        this.tag = tag;
     }
 
     @Override
@@ -69,6 +73,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     public interface Listener {
         void setEmptyList(boolean visibility);
+        void logActivity(String whoPosted, String details);
+    }
+
+    public String getTag(){
+        return tag;
     }
 
     public DragListener getDragInstance() {
@@ -146,7 +155,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         CardsAdapter adapterSource = (CardsAdapter) source.getAdapter();
                         positionSource = (int) viewSource.getTag();
 
-                        Card sourceList = (Card) adapterSource.getCards().get(positionSource);
+                        Card movingCard = (Card) adapterSource.getCards().get(positionSource);
                         List<Card> cardListSource = adapterSource.getCards();
 
                         cardListSource.remove(positionSource);
@@ -155,9 +164,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         CardsAdapter adapterTarget = (CardsAdapter) target.getAdapter();
                         List<Card> cardListTarget = adapterTarget.getCards();
                         if (positionTarget >= 0) {
-                            cardListTarget.add(positionTarget, sourceList);
+                            cardListTarget.add(positionTarget, movingCard);
                         } else {
-                            cardListTarget.add(sourceList);
+                            cardListTarget.add(movingCard);
                         }
                         adapterTarget.updateCardsList(cardListTarget, adapterTarget);
                         v.setVisibility(View.VISIBLE);
@@ -165,6 +174,15 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         if (v.getId() == R.id.tvNoCards) {
                             listener.setEmptyList(false);
                         }
+
+                        //If source and target adapters are different then log
+                        //otherwise this is shuffling within
+                        if(!adapterSource.getTag().endsWith(adapterTarget.getTag())) {
+                            Log.d(Constants.TAG, adapterSource.getTag() + "--" + adapterTarget.getTag());
+                            listener.logActivity("player" ,adapterSource.getTag() + "--" + adapterTarget.getTag()
+                                    + "--" + movingCard.getName());
+                        }
+
                     }
                     break;
 
