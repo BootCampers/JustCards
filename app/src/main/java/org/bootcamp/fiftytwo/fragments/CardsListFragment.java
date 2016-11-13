@@ -60,6 +60,8 @@ public class CardsListFragment extends Fragment implements CardsAdapter.Listener
         rvCardsList.setLayoutManager(staggeredLayoutManager);
         setEmptyList(false);
         rvCardsList.setAdapter(cardsAdapter);
+
+        tvNoCards.setOnDragListener(cardsAdapter.getDragInstance());
         return view;
     }
 

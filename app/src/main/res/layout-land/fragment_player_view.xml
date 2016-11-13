@@ -30,27 +30,6 @@
             app:layout_constraintVertical_bias="0.9"
             android:tag="playerContainer"/>
 
-        <TextView
-            android:layout_width="360dp"
-            android:id="@+id/tvPlayerEmpty"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_height="75dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9"
-            android:text="No cards in hand"
-            android:visibility="gone"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:tag="tvPlayerEmpty"/>
-
         <FrameLayout
             android:tag="tableContainer"
             android:layout_width="220dp"
@@ -65,27 +44,6 @@
             app:layout_constraintBottom_toTopOf="@+id/flPlayerContainer"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"/>
-
-        <TextView
-            android:tag="tvTableEmpty"
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:id="@+id/tvTableEmpty"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/flPlayerContainer"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="16dp"
-            android:text="No cards on table"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75"/>
 
