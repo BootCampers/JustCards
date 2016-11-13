@@ -6,9 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.ChatAndLogAdapter;
@@ -18,6 +22,7 @@ import org.bootcamp.fiftytwo.utils.DividerItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -36,7 +41,10 @@ public class ChatAndLogFragment extends Fragment {
 
     private ChatAndLogAdapter chatAndLogAdapter;
     private List<ChatLog> chatLogs = new ArrayList<>();
-    private RecyclerView recyclerView;
+    @BindView(R.id.rvChatLog)
+    RecyclerView recyclerView;
+    @BindView(R.id.etChatMsg)
+    EditText etNewMessage;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,20 +79,34 @@ public class ChatAndLogFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            RecyclerView.ItemDecoration itemDecoration = new
-                    DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-            recyclerView.addItemDecoration(itemDecoration);
-            chatAndLogAdapter = new ChatAndLogAdapter(chatLogs, mListener);
-            recyclerView.setAdapter(chatAndLogAdapter);
+        Context context = view.getContext();
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        recyclerView.addItemDecoration(itemDecoration);
+        chatAndLogAdapter = new ChatAndLogAdapter(chatLogs, mListener);
+        recyclerView.setAdapter(chatAndLogAdapter);
+        recyclerView.smoothScrollToPosition(chatLogs.size());
+
+
+        etNewMessage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    addNewLogEvent("self", v.getText().toString());
+                    etNewMessage.setText("");
+                    etNewMessage.clearFocus();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
         return view;
     }
 
@@ -109,8 +131,10 @@ public class ChatAndLogFragment extends Fragment {
     public void addNewLogEvent(String whoPosted, String details) {
         ChatLog chatLog = new ChatLog(whoPosted, details);
         chatLogs.add(chatLog);
-        chatAndLogAdapter.notifyItemInserted(chatLogs.size()+1);
-        recyclerView.smoothScrollToPosition(chatLogs.size());
+        if(chatAndLogAdapter != null && recyclerView != null) {
+            chatAndLogAdapter.notifyItemInserted(chatLogs.size() + 1);
+            recyclerView.smoothScrollToPosition(chatLogs.size());
+        }
     }
 
     /**
