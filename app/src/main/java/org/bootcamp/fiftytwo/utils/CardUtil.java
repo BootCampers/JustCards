@@ -7,6 +7,7 @@ import org.bootcamp.fiftytwo.models.CardSuit;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by shakiem on 11/12/16.
@@ -36,10 +37,23 @@ public class CardUtil {
     public static List<Card> shuffleDeck(List<Card> deck){
         List<Card> shuffledDeck = new ArrayList<>(deck);
         BitSet usedPositions = new BitSet(deck.size());
+        Random rand = new Random();
+        int newPosition;
 
-        //todo: Shak, write shuffling alorithm
-        // basically randomize the location of each card in the deck
-        //using the usedPositions to mark places already set
+        for (Card card : deck) {
+            newPosition = rand.nextInt(deck.size());
+            if(!usedPositions.get(newPosition)){ //if card is not already at position, add it
+                shuffledDeck.set(newPosition, card);
+                usedPositions.set(newPosition);
+            }
+            else { // else find next available position and add it.
+                while(usedPositions.get(newPosition)){
+                    newPosition = ++newPosition % deck.size();
+                }
+                shuffledDeck.set(newPosition, card);
+                usedPositions.set(newPosition);
+            }
+        }
 
         return shuffledDeck;
     }

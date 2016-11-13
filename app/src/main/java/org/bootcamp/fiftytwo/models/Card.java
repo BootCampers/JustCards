@@ -38,4 +38,9 @@ public class Card {
     public CardSuit getSuit(){
         return suit;
     }
+
+    @Override
+    public String toString(){
+        return name;
+    }
 }
