@@ -13,7 +13,7 @@ import org.bootcamp.fiftytwo.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link DealerViewFragment.OnFragmentInteractionListener} interface
+ * {@link OnDealerFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link DealerViewFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -28,7 +28,7 @@ public class DealerViewFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnDealerFragmentInteractionListener mListener;
 
     public DealerViewFragment() {
         // Required empty public constructor
@@ -71,18 +71,18 @@ public class DealerViewFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onDealerFragmentInteraction(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnDealerFragmentInteractionListener) {
+            mListener = (OnDealerFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnPlayerFragmentInteractionListener");
         }
     }
 
@@ -102,8 +102,8 @@ public class DealerViewFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnDealerFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onDealerFragmentInteraction(Uri uri);
     }
 }

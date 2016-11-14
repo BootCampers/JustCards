@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +16,7 @@ import android.widget.ImageButton;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.CardsListFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
+import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -27,8 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
-        PlayerViewFragment.OnFragmentInteractionListener,
+        PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
+        DealerViewFragment.OnDealerFragmentInteractionListener,
         CardsListFragment.OnLogEventListener{
 
 
@@ -48,6 +49,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     ChatAndLogFragment chatAndLogFragment;
 
     private boolean showingChat = false;
+    private boolean showingPlayerFragment = true; //false is showing dealer fragment
+    private DealerViewFragment dealerViewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +63,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         setSupportActionBar(toolbar);
 
+        //TODO: check if he is a dealer or not and hide fab accordingly
         playerViewFragment = new PlayerViewFragment();
         chatAndLogFragment = new ChatAndLogFragment();
+        dealerViewFragment = new DealerViewFragment();
 
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -72,14 +77,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(showingPlayerFragment == true) {
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
+                    fragmentTransaction.commit();
+                    showingPlayerFragment = false;
+                } else{
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
+                    fragmentTransaction.commit();
+                    showingPlayerFragment = true;
+                }
             }
         });
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onPlayerFragmentInteraction(Uri uri) {
 
     }
 
@@ -106,6 +120,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(ChatLog item) {
+
+    }
+
+    @Override
+    public void onDealerFragmentInteraction(Uri uri) {
 
     }
 }

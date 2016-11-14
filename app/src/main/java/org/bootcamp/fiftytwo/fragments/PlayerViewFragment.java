@@ -16,7 +16,7 @@ import org.bootcamp.fiftytwo.utils.Constants;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PlayerViewFragment.OnFragmentInteractionListener} interface
+ * {@link OnPlayerFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link PlayerViewFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -31,7 +31,7 @@ public class PlayerViewFragment extends CardsListFragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnPlayerFragmentInteractionListener mListener;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -100,18 +100,18 @@ public class PlayerViewFragment extends CardsListFragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onPlayerFragmentInteraction(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnPlayerFragmentInteractionListener) {
+            mListener = (OnPlayerFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnPlayerFragmentInteractionListener");
         }
     }
 
@@ -131,8 +131,8 @@ public class PlayerViewFragment extends CardsListFragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnPlayerFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onPlayerFragmentInteraction(Uri uri);
     }
 }
