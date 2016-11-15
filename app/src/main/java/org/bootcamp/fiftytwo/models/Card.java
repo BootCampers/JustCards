@@ -3,15 +3,12 @@ package org.bootcamp.fiftytwo.models;
 /**
  * Created by baphna on 11/11/2016.
  */
-
 public class Card {
 
-    private String name;
-    private CardRank rank;
     private CardSuit suit;
-
-    public Card() {
-    }
+    private CardRank rank;
+    private String name;
+    private boolean isJoker;
 
     public Card(String name) {
         this.name = name;
@@ -20,15 +17,11 @@ public class Card {
     public Card(CardSuit suit, CardRank rank){
         this.suit = suit;
         this.rank = rank;
-        name = rank.name() + suit.name();
+        name = suit.name() + "_" + CardRank.get(rank);
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public CardRank getRank(){
@@ -37,6 +30,10 @@ public class Card {
 
     public CardSuit getSuit(){
         return suit;
+    }
+
+    public void setJoker(boolean joker) {
+        isJoker = joker;
     }
 
     @Override
