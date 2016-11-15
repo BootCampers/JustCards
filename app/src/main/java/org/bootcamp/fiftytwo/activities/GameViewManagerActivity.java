@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -95,7 +96,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.ibAddCards)
     public void addCards() {
-
+        Intent intent = new Intent(this, SelectCardsActivity.class);
+        startActivity(intent);
     }
 
     //TODO: change for new player addition rather than for Settings

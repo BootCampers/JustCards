@@ -3,6 +3,7 @@ package org.bootcamp.fiftytwo.utils;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.CardRank;
 import org.bootcamp.fiftytwo.models.CardSuit;
+import org.bootcamp.fiftytwo.models.JokerSuit;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -14,15 +15,15 @@ import java.util.Random;
  */
 public class CardUtil {
 
-    public static List<Card> generateDeck(int numberOfDecks) {
+    public static List<Card> generateDeck(int numberOfDecks, boolean includeJokers) {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < numberOfDecks; i++) {
-            deck.addAll(generateDeck());
+            deck.addAll(generateDeck(includeJokers));
         }
         return deck;
     }
 
-    private static List<Card> generateDeck() {
+    private static List<Card> generateDeck(boolean includeJokers) {
         List<Card> deck = new ArrayList<>();
 
         for (CardSuit cardSuit : CardSuit.values()) {
@@ -31,9 +32,24 @@ public class CardUtil {
             }
         }
 
+        if (includeJokers) {
+            deck.addAll(generateJokers());
+        }
+
         return deck;
     }
 
+    private static List<Card> generateJokers() {
+        List<Card> jokers = new ArrayList<>();
+
+        for (JokerSuit jokerSuit : JokerSuit.values()) {
+            jokers.add(Card.getJoker(jokerSuit));
+        }
+
+        return jokers;
+    }
+
+    @SuppressWarnings("unused")
     public static List<Card> shuffleDeck(List<Card> deck) {
         List<Card> shuffledDeck = new ArrayList<>(deck);
         BitSet usedPositions = new BitSet(deck.size());

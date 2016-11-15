@@ -1,5 +1,7 @@
 package org.bootcamp.fiftytwo.models;
 
+import android.content.Context;
+
 /**
  * Created by baphna on 11/11/2016.
  */
@@ -9,6 +11,8 @@ public class Card {
     private CardRank rank;
     private String name;
     private boolean isJoker;
+
+    private Card() {}
 
     public Card(CardSuit suit, CardRank rank){
         this.suit = suit;
@@ -28,8 +32,15 @@ public class Card {
         return suit;
     }
 
-    public void setJoker(boolean joker) {
-        isJoker = joker;
+    public int getDrawable(Context context) {
+        return context.getResources().getIdentifier(name.toLowerCase(), "drawable", context.getPackageName());
+    }
+
+    public static Card getJoker(JokerSuit suit) {
+        Card card = new Card();
+        card.name = suit.name() + "_" + "joker";
+        card.isJoker = true;
+        return card;
     }
 
     @Override

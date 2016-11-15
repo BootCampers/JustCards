@@ -18,10 +18,9 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_game_view_manager">GameViewManagerActivity</string>
     <string name="action_settings">Settings</string>
     <string name="msg_no_cards">No cards</string>
+    <string name="title_activity_select_cards">Select Cards</string>
 </resources>
