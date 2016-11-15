@@ -16,6 +16,8 @@ import android.widget.TextView;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.CardRank;
+import org.bootcamp.fiftytwo.models.CardSuit;
 import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.ArrayList;
@@ -74,9 +76,9 @@ public class CardsListFragment extends Fragment implements CardsAdapter.Listener
         if(bundle != null) {
             tag = bundle.getString(Constants.TAG);
         }
-        cards.add(new Card("jack1"));
-        cards.add(new Card("jack2"));
-        cards.add(new Card("jack3"));
+        cards.add(new Card(CardSuit.SPADES, CardRank.JACK));
+        cards.add(new Card(CardSuit.SPADES, CardRank.QUEEN));
+        cards.add(new Card(CardSuit.SPADES, CardRank.KING));
         cardsAdapter = new CardsAdapter(getActivity(), cards, this, tag);
         staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         rvCardsList.setLayoutManager(staggeredLayoutManager);

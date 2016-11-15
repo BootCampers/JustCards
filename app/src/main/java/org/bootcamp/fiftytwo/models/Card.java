@@ -10,10 +10,6 @@ public class Card {
     private String name;
     private boolean isJoker;
 
-    public Card(String name) {
-        this.name = name;
-    }
-
     public Card(CardSuit suit, CardRank rank){
         this.suit = suit;
         this.rank = rank;
