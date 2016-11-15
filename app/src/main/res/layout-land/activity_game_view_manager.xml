@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,46 +19,55 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/flGameContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
-<!--
-    ToDo make logview a drawer instead?
--->
+    <!-- ToDo make log view a drawer instead? -->
     <FrameLayout
         android:id="@+id/flLogContainer"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/common_margin"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:layout_marginTop="@dimen/common_margin"/>
 
     <ImageButton
+        android:id="@+id/ibAddCards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_settings"
         android:layout_gravity="end|top"
+        android:layout_marginEnd="@dimen/add_card_right_margin"
+        android:layout_marginRight="@dimen/add_card_right_margin"
+        android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_add_box"/>
+
+    <ImageButton
+        android:id="@+id/ibSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
         android:layout_marginRight="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
-        android:id="@+id/ibSettings" />
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_settings"/>
 
     <ImageButton
+        android:id="@+id/ibComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_comment"
         android:layout_gravity="end|top"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="@dimen/common_margin"
         android:layout_marginRight="@dimen/common_margin"
-        android:id="@+id/ibComment" />
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_comment"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -65,6 +75,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_swap" />
+        app:srcCompat="@drawable/ic_swap"/>
 
 </android.support.design.widget.CoordinatorLayout>

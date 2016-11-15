@@ -31,20 +31,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
         DealerViewFragment.OnDealerFragmentInteractionListener,
-        CardsListFragment.OnLogEventListener{
+        CardsListFragment.OnLogEventListener {
 
+    @BindView(R.id.ibAddCards) ImageButton ibAddCards;
+    @BindView(R.id.ibComment) ImageButton ibComment;
+    @BindView(R.id.ibSettings) ImageButton ibSettings;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
-    @BindView(R.id.ibComment)
-    ImageButton ibComment;
-    @BindView(R.id.ibSettings)
-    ImageButton ibSettings;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindDrawable(R.drawable.ic_cancel)
-    Drawable ic_cancel;
-    @BindDrawable(R.drawable.ic_comment)
-    Drawable ic_comment;
+    @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
+    @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
 
     PlayerViewFragment playerViewFragment;
     ChatAndLogFragment chatAndLogFragment;
@@ -56,7 +51,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view_manager);
@@ -78,12 +73,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(showingPlayerFragment == true) {
+                if (showingPlayerFragment) {
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
                     fragmentTransaction.commit();
                     showingPlayerFragment = false;
-                } else{
+                } else {
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
                     fragmentTransaction.commit();
@@ -98,16 +93,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     }
 
+    @OnClick(R.id.ibAddCards)
+    public void addCards() {
+
+    }
+
     //TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
-    public void addNewPlayer(){
+    public void addNewPlayer() {
         playerViewFragment.addNewPlayer(new User(true, "", "Ankit", 0));
     }
 
     @OnClick(R.id.ibComment)
-    public void toggleChatAndLogView(View v){
+    public void toggleChatAndLogView(View v) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(showingChat == false) {
+        if (!showingChat) {
             fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, Constants.FRAGMENT_CHAT_TAG);
             ibComment.setImageDrawable(ic_cancel);
             showingChat = true;
