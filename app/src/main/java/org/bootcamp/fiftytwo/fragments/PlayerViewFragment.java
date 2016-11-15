@@ -1,17 +1,25 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +40,10 @@ public class PlayerViewFragment extends CardsListFragment {
     private String mParam2;
 
     private OnPlayerFragmentInteractionListener mListener;
+    private View view;
+    private int REQUEST_CODE = 999;
+
+    FrameLayout flPlayerViewContainer;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -68,7 +80,9 @@ public class PlayerViewFragment extends CardsListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_player_view, container, false);
+        view = inflater.inflate(R.layout.fragment_player_view, container, false);
+        flPlayerViewContainer = (FrameLayout) view.findViewById(R.id.flPlayerViewContainer);
+        return view;
     }
 
     @Override
@@ -119,6 +133,21 @@ public class PlayerViewFragment extends CardsListFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void addNewPlayer(User user) {
+        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+        LinearLayout userLayout = (LinearLayout) layoutInflater.inflate(R.layout.item_user, null);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = 0;
+        params.y = 0;
+        flPlayerViewContainer.addView(userLayout, params);
     }
 
     /**

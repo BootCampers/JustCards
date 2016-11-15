@@ -51,5 +51,7 @@ dependencies {
 
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
     compile 'com.mikhaellopez:circularimageview:3.0.2'
+    compile 'org.parceler:parceler-api:1.1.1'
+    apt 'org.parceler:parceler:1.1.1'
 
 }

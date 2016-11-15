@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_game_background"
-    tools:context="org.bootcamp.fiftytwo.fragments.PlayerViewFragment">
+    tools:context="org.bootcamp.fiftytwo.fragments.PlayerViewFragment"
+    android:id="@+id/flPlayerViewContainer">
 
 
     <android.support.constraint.ConstraintLayout

@@ -19,6 +19,7 @@ import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.models.ChatLog;
+import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 
 import butterknife.BindDrawable;
@@ -95,6 +96,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onPlayerFragmentInteraction(Uri uri) {
 
+    }
+
+    //TODO: change for new player addition rather than for Settings
+    @OnClick(R.id.ibSettings)
+    public void addNewPlayer(){
+        playerViewFragment.addNewPlayer(new User(true, "", "Ankit", 0));
     }
 
     @OnClick(R.id.ibComment)
