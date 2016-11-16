@@ -4,9 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.READ_PROFILE"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -18,14 +20,20 @@
             android:name="io.fabric.ApiKey"
             android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572"/>
         <activity
-            android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:name=".activities.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RegisterActivity"/>
+
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:label="@string/title_activity_register" />
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
@@ -37,6 +45,9 @@
             android:screenOrientation="landscape"
             android:parentActivityName=".activities.GameViewManagerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name=".activities.CreateJoinGameActivity" />
+        <activity android:name=".activities.CreateGameActivity"/>
     </application>
 
 </manifest>

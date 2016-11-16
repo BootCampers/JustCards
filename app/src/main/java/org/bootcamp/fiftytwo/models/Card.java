@@ -18,6 +18,7 @@ public class Card {
         this.suit = suit;
         this.rank = rank;
         name = suit.name() + "_" + CardRank.get(rank);
+
     }
 
     public String getName() {

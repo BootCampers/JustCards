@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by baphna on 11/13/2016.
+ * 
  */
 
 public class User implements Parcelable {
@@ -19,6 +19,11 @@ public class User implements Parcelable {
         this.avatarUri = avatarUri;
         this.name = name;
         this.score = score;
+    }
+
+    public User(String avatarUri, String name){
+        this.name = name;
+        this.avatarUri = avatarUri;
     }
 
     public boolean isDealer() {

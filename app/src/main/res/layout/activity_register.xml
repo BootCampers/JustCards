@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_register"
     android:layout_width="match_parent"
@@ -9,5 +10,55 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.bootcamp.fiftytwo.activities.RegisterActivity">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/unameInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_username"
+            android:inputType="textPersonName"
+            android:maxLines="1" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_default_avatar"
+        android:layout_below="@+id/unameInputLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="42dp"/>
+
+    <Button
+        android:id="@+id/browseAvatarBttn"
+        android:text="@string/browse_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ivAvatar"
+        android:layout_toRightOf="@+id/ivAvatar"
+        android:layout_toEndOf="@+id/ivAvatar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"/>
+
+    <Button
+        android:text="@string/register"
+        android:textColor="@color/white"
+        android:background="@color/green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/browseAvatarBttn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:id="@+id/registerBttn" />
 
 </RelativeLayout>
