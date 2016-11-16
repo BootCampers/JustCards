@@ -30,4 +30,7 @@
     <string name="create_game">Create Game</string>
     <string name="enter_game_id">Enter Game ID:</string>
     <string name="join_game">Join Game</string>
+    <string name="game_id">Game ID:  </string>
+    <string name="start_game">Start Game</string>
+    <string name="choose_cards">Choose Cards</string>
 </resources>
