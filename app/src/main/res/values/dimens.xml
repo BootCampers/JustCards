@@ -7,4 +7,6 @@
     <dimen name="common_margin">16dp</dimen>
     <dimen name="setting_right_margin">56dp</dimen>
     <dimen name="add_card_right_margin">95dp</dimen>
+    <dimen name="select_cards_width">100dp</dimen>
+    <dimen name="select_cards_height">150dp</dimen>
 </resources>

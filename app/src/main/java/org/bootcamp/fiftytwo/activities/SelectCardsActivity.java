@@ -1,21 +1,26 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.fragments.SelectCardsFragment;
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SelectCardsActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.fabSaveSelection) FloatingActionButton fabSaveSelection;
+
+    private SelectCardsFragment selectCardsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +32,20 @@ public class SelectCardsActivity extends AppCompatActivity {
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        SelectCardsFragment selectCardsFragment = new SelectCardsFragment();
+        selectCardsFragment = new SelectCardsFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.flCardsContainer, selectCardsFragment)
                 .commit();
+    }
+
+    @OnClick(R.id.fabSaveSelection)
+    public void save(View view) {
+        Intent data = new Intent();
+        /** This is just a hack for now, will fix it later */
+        data.putExtra("cards", Parcels.wrap(selectCardsFragment.mAdapter.get()));
+        setResult(RESULT_OK, data);
+        finish();
     }
 }

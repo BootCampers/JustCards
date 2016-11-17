@@ -5,8 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -40,24 +40,45 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_card, parent, false);
         return new SelectCardsAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Card card = mCards.get(position);
-        holder.ivCard.setImageResource(android.R.color.transparent);
+
         holder.ivCard.setImageDrawable(null);
         Glide.with(holder.ivCard.getContext())
                 .load(card.getDrawable(getContext()))
-                .fitCenter()
                 .bitmapTransform(new RoundedCornersTransformation(holder.ivCard.getContext(), 20, 0))
+                .fitCenter()
                 .into(holder.ivCard);
-        holder.ivCard.setOnClickListener(new View.OnClickListener() {
+
+        if(card.isSelected()) {
+            holder.ivSelected.setVisibility(View.VISIBLE);
+            holder.flSelected.setSelected(true);
+        } else {
+            holder.ivSelected.setVisibility(View.INVISIBLE);
+            holder.flSelected.setSelected(false);
+        }
+        holder.flSelected.setTag(card);
+
+        holder.flSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Clicked on Card", Toast.LENGTH_SHORT).show();
+                Card card = (Card) v.getTag();
+                if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    if (holder.ivSelected.getVisibility() == View.VISIBLE) {
+                        holder.ivSelected.setVisibility(View.INVISIBLE);
+                        v.setSelected(false);
+                        card.setSelected(false);
+                    } else {
+                        holder.ivSelected.setVisibility(View.VISIBLE);
+                        v.setSelected(true);
+                        card.setSelected(true);
+                    }
+                }
             }
         });
     }
@@ -70,9 +91,21 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivCard) ImageView ivCard;
-        ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        @BindView(R.id.ivSelected) ImageView ivSelected;
+        @BindView(R.id.flSelectCard) FrameLayout flSelected;
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
         }
+    }
+
+    public void addAll(List<Card> cards) {
+        int currentSize = getItemCount();
+        mCards.addAll(cards);
+        notifyItemRangeInserted(currentSize, mCards.size() - currentSize);
+    }
+
+    public List<Card> get() {
+        return mCards;
     }
 }

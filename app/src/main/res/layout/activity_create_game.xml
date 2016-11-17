@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_create_game"
     android:layout_width="match_parent"
@@ -11,57 +12,60 @@
     tools:context="org.bootcamp.fiftytwo.activities.CreateGameActivity">
 
     <TextView
-        android:text="@string/game_id"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        android:textSize="20sp"
+        android:id="@+id/gameIdLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="28dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="51dp"
-        android:id="@+id/gameIdLabel" />
+        android:text="@string/game_id"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <TextView
-        android:text=""
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        android:textSize="20sp"
+        android:id="@+id/gameIDNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/gameIdLabel"
-        android:layout_toRightOf="@+id/gameIdLabel"
         android:layout_marginLeft="5dp"
-        android:id="@+id/gameIDNumber" />
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/gameIdLabel"
+        android:layout_toRightOf="@+id/gameIdLabel"
+        android:text=""
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <Button
-        android:text="@string/choose_cards"
-        android:textColor="@color/white"
-        android:background="@color/colorAccent"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
+        android:id="@+id/btnSelectCards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/gameIdLabel"
+        android:layout_alignStart="@+id/gameIdLabel"
         android:layout_below="@+id/gameIdLabel"
-        android:layout_alignLeft="@+id/gameIdLabel"
-        android:layout_alignStart="@+id/gameIdLabel"
         android:layout_marginTop="30dp"
-        android:id="@+id/chooseCardsButton" />
-
-    <Button
-        android:text="@string/start_game"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/white"
+        android:background="@color/colorAccent"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:text="@string/select_cards"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btnStartGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chooseCardsButton"
         android:layout_alignLeft="@+id/gameIdLabel"
         android:layout_alignStart="@+id/gameIdLabel"
+        android:layout_below="@+id/btnSelectCards"
         android:layout_marginTop="30dp"
-        android:id="@+id/startGameButton" />
+        android:background="@color/colorPrimary"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/start_game"
+        android:textColor="@color/white"/>
+
 </RelativeLayout>

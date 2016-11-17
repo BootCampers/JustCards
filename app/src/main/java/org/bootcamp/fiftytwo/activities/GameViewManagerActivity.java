@@ -1,6 +1,5 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         DealerViewFragment.OnDealerFragmentInteractionListener,
         CardsListFragment.OnLogEventListener {
 
-    @BindView(R.id.ibAddCards) ImageButton ibAddCards;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -92,12 +90,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onPlayerFragmentInteraction(Uri uri) {
 
-    }
-
-    @OnClick(R.id.ibAddCards)
-    public void addCards() {
-        Intent intent = new Intent(this, SelectCardsActivity.class);
-        startActivity(intent);
     }
 
     //TODO: change for new player addition rather than for Settings
