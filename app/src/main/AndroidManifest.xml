@@ -47,7 +47,6 @@
         <activity
             android:name=".activities.SelectCardsActivity"
             android:label="@string/title_activity_select_cards"
-            android:screenOrientation="landscape"
             android:parentActivityName=".activities.GameViewManagerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 

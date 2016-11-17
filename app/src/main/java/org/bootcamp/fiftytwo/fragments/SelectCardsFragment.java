@@ -1,9 +1,9 @@
-package org.bootcamp.fiftytwo.activities;
+package org.bootcamp.fiftytwo.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,34 +14,49 @@ import org.bootcamp.fiftytwo.adapters.SelectCardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class SelectCardsFragment extends Fragment {
 
+    public SelectCardsAdapter mAdapter;
+    private Unbinder unbinder;
+
     @BindView(R.id.rvCards) RecyclerView rvCards;
-    private SelectCardsAdapter mAdapter;
-    private List<Card> mCards;
-    private GridLayoutManager layoutManager;
 
     public SelectCardsFragment() {}
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAdapter = new SelectCardsAdapter(getContext(), new ArrayList<Card>());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select_cards, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
-        mCards = CardUtil.generateDeck(1, true);
-        mAdapter = new SelectCardsAdapter(getContext(), mCards);
-        layoutManager = new GridLayoutManager(getContext(), 6, LinearLayoutManager.VERTICAL, false);
-        rvCards.setLayoutManager(layoutManager);
+        List<Card> cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
+
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 8);
         rvCards.setAdapter(mAdapter);
+        rvCards.setLayoutManager(layoutManager);
+        mAdapter.addAll(cards);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

@@ -35,19 +35,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:layout_marginTop="@dimen/common_margin"/>
-
-    <ImageButton
-        android:id="@+id/ibAddCards"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|top"
-        android:layout_marginEnd="@dimen/add_card_right_margin"
-        android:layout_marginRight="@dimen/add_card_right_margin"
-        android:layout_marginTop="@dimen/common_margin"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_add_box"/>
 
     <ImageButton
         android:id="@+id/ibSettings"
@@ -55,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginRight="@dimen/setting_right_margin"
+        android:layout_marginEnd="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_settings"/>
@@ -65,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginRight="@dimen/common_margin"
+        android:layout_marginEnd="@dimen/common_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_comment"/>

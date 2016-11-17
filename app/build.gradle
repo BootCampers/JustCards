@@ -29,6 +29,7 @@ android {
 ext {
     supportLibVersion = '24.2.1'  // variable that can be referenced to keep support libs consistent
 }
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportLibVersion}"

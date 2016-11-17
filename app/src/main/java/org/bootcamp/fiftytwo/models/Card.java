@@ -2,15 +2,19 @@ package org.bootcamp.fiftytwo.models;
 
 import android.content.Context;
 
+import org.parceler.Parcel;
+
 /**
  * Created by baphna on 11/11/2016.
  */
+@Parcel(analyze = Card.class)
 public class Card {
 
     private CardSuit suit;
     private CardRank rank;
     private String name;
     private boolean isJoker;
+    private boolean isSelected;
 
     private Card() {}
 
@@ -21,16 +25,28 @@ public class Card {
 
     }
 
-    public String getName() {
-        return name;
+    public CardSuit getSuit(){
+        return suit;
     }
 
     public CardRank getRank(){
         return rank;
     }
 
-    public CardSuit getSuit(){
-        return suit;
+    public String getName() {
+        return name;
+    }
+
+    public boolean isJoker() {
+        return isJoker;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public int getDrawable(Context context) {

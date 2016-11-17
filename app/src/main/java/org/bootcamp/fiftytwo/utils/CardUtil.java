@@ -23,6 +23,15 @@ public class CardUtil {
         return deck;
     }
 
+    public static List<Card> selectDefaults(final List<Card> deck) {
+        for (Card card : deck) {
+            if (!card.isJoker()) {
+                card.setSelected(true);
+            }
+        }
+        return deck;
+    }
+
     private static List<Card> generateDeck(boolean includeJokers) {
         List<Card> deck = new ArrayList<>();
 
