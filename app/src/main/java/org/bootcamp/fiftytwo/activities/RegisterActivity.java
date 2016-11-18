@@ -46,12 +46,13 @@ public class RegisterActivity extends AppCompatActivity {
         browseButton = (Button) findViewById(R.id.browseAvatarBttn);
         registerButton = (Button) findViewById(R.id.registerBttn);
 
-
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String username = usernameTxtbox.getText().toString();
                 user = new User(userAvatarURI, username);
+                user.saveInBackground();
+
                 SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = userPrefs.edit();
                 editor.putString(USERNAME, username);
@@ -75,7 +76,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -7,15 +7,15 @@
     android:id="@+id/llPlayerContainer">
 
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:id="@+id/ivPlayerAvatar"
         android:src="@drawable/ic_face"
         app:civ_border_color="#EEEEEE"
         android:layout_gravity="center"
-        app:civ_border_width="2dp"
+        app:civ_border_width="0dp"
         app:civ_shadow="true"
-        app:civ_shadow_radius="1"
+        app:civ_shadow_radius="0"
         app:civ_shadow_color="#8BC34A"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@android:color/white"
-        android:text="Player Name"
+        android:text="Name"
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>

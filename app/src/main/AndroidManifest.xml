@@ -50,7 +50,6 @@
 
         <activity android:name=".activities.CreateJoinGameActivity" />
         <activity android:name=".activities.CreateGameActivity"/>
-
     </application>
 
 </manifest>

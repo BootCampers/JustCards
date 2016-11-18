@@ -2,13 +2,11 @@ package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,11 +41,11 @@ public class PlayerViewFragment extends CardsListFragment {
     private String mParam2;
 
     private OnPlayerFragmentInteractionListener mListener;
-    private View view;
     private int REQUEST_CODE = 999;
 
     FrameLayout flPlayerViewContainer;
     private WindowManager.LayoutParams params;
+    private View rootView;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -84,9 +82,9 @@ public class PlayerViewFragment extends CardsListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_player_view, container, false);
-        flPlayerViewContainer = (FrameLayout) view.findViewById(R.id.flPlayerViewContainer);
-        return view;
+        rootView = inflater.inflate(R.layout.fragment_player_view, container, false);
+        flPlayerViewContainer = (FrameLayout) rootView.findViewById(R.id.flPlayerViewContainer);
+        return rootView;
     }
 
     @Override
@@ -154,19 +152,8 @@ public class PlayerViewFragment extends CardsListFragment {
         flPlayerViewContainer.addView(userLayout, params);
 
         userLayout.setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float touchDownX;
-            private float touchDownY;
-
             float dX, dY;
-
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            int windowWidth = metrics.widthPixels;
-            int windowHeight = metrics.heightPixels;
-            Rect rect = new Rect(0, 0, windowWidth, windowHeight);
-
-
+            float newX, newY;
             @Override
             public boolean onTouch(View view, MotionEvent event) {
 
@@ -180,15 +167,26 @@ public class PlayerViewFragment extends CardsListFragment {
 
                     case MotionEvent.ACTION_MOVE:
 
-                        if(!rect.contains(view.getLeft() + (int) event.getX(), view.getTop() + (int) event.getY())){
-                            // User moved outside bounds
-                        } else {
-                            view.animate()
-                                    .x(event.getRawX() + dX)
-                                    .y(event.getRawY() + dY)
+                        newX = event.getRawX() + dX;
+                        newY = event.getRawY() + dY;
+
+                        if(newX<0)
+                            newX = 0;
+                        if(newY<0)
+                            newY = 0;
+
+                        if (newX+view.getWidth() > flPlayerViewContainer.getWidth())
+                            newX = flPlayerViewContainer.getWidth() - view.getWidth();
+                        if (newY+view.getHeight() > flPlayerViewContainer.getHeight())
+                            newY = flPlayerViewContainer.getHeight() - view.getHeight();
+
+
+                        view.animate()
+                                    .x(newX)
+                                    .y(newY)
                                     .setDuration(0)
                                     .start();
-                        }
+
                         break;
                     default:
                         return false;
