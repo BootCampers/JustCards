@@ -32,6 +32,16 @@ public class CardUtil {
         return deck;
     }
 
+    public static List<Card> getSelected(final List<Card> deck) {
+        List<Card> cards = new ArrayList<>();
+        for (Card card : deck) {
+            if (card.isSelected()) {
+                cards.add(card);
+            }
+        }
+        return cards;
+    }
+
     private static List<Card> generateDeck(boolean includeJokers) {
         List<Card> deck = new ArrayList<>();
 

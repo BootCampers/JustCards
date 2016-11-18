@@ -21,13 +21,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
+
 public class CreateGameActivity extends AppCompatActivity {
 
     @BindView(R.id.etGameName) EditText etGameName;
     @BindView(R.id.btnStartGame) Button btnStartGame;
     @BindView(R.id.btnSelectCards) Button btnSelectCards;
 
-    private static final int REQ_CODE_SELECT_CARDS = 1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,7 @@ public class CreateGameActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_CODE_SELECT_CARDS && resultCode == RESULT_OK) {
-            List<Card> cards = Parcels.unwrap(data.getExtras().getParcelable("cards"));
+            List<Card> cards = Parcels.unwrap(data.getExtras().getParcelable(PARAM_CARDS));
             Toast.makeText(this, "got: " + cards.size(), Toast.LENGTH_SHORT).show();
         }
     }

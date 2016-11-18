@@ -105,7 +105,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         notifyItemRangeInserted(currentSize, mCards.size() - currentSize);
     }
 
-    public List<Card> get() {
+    public List<Card> getCards() {
         return mCards;
     }
 }
