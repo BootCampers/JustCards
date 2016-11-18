@@ -15,11 +15,12 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.application.ChatApplication;
 import org.bootcamp.fiftytwo.fragments.CardsListFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
+import org.bootcamp.fiftytwo.interfaces.Observable;
+import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -33,7 +34,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
         DealerViewFragment.OnDealerFragmentInteractionListener,
-        CardsListFragment.OnLogEventListener {
+        CardsListFragment.OnLogEventListener,
+        Observer{
 
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
@@ -71,8 +73,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if(bundle != null) {
             isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
             String gameName = bundle.getString(Constants.GAME_NAME);
-            ((ChatApplication)getApplication()).useSetChannelName(gameName);
-            ((ChatApplication)getApplication()).useJoinChannel();
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
         }
         //Set PlayerView as parent fragment
@@ -143,5 +143,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onDealerFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String qualifier = (String)arg;
+        Log.d(Constants.TAG, "GameViewManager " + qualifier);
     }
 }

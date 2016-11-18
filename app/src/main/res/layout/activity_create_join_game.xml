@@ -10,71 +10,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.bootcamp.fiftytwo.activities.CreateJoinGameActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <Button
+        android:text="@string/create_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="80dp"
+        android:id="@+id/createGameButton"
+        android:textColor="@color/white"
+        android:background="@color/colorAccent"/>
 
-        <RelativeLayout
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dotted_border"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/createGameButton"
+        android:layout_marginTop="50dp"
+        android:padding="20dp">
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/gameIdInputLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
 
-            <Button
-                android:id="@+id/createGameButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="32dp"
-                android:background="@color/colorAccent"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@string/create_game"
-                android:textColor="@color/white" />
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textView"
-                android:layout_toRightOf="@+id/textView"
-                android:layout_toEndOf="@+id/textView"
-                android:id="@+id/progressBar2" />
-
-            <android.support.v7.widget.RecyclerView
+            <EditText
+                android:id="@+id/etGameName"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_below="@+id/textView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="25dp"
-                android:id="@+id/rvGamesAroundList"/>
-
-
-            <Button
-                android:id="@+id/joinGameButton"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="@string/join_game"
-                android:textColor="@color/white"
-                android:layout_below="@id/rvGamesAroundList"
-                android:layout_alignRight="@+id/createGameButton"
-                android:layout_alignEnd="@+id/createGameButton"
-                android:layout_marginBottom="14dp"
-                android:visibility="gone"/>
+                android:hint="@string/enter_game_id"
+                android:inputType="number"
+                android:maxLines="1" />
 
-            <TextView
-                android:text="Searching games around you.. "
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView"
-                android:layout_marginTop="49dp"
-                android:layout_below="@+id/createGameButton"
-                android:layout_centerHorizontal="true" />
+        </android.support.design.widget.TextInputLayout>
 
-        </RelativeLayout>
-    </ScrollView>
+
+        <Button
+            android:text="@string/join_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/gameIdInputLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textColor="@color/white"
+            android:background="@color/colorPrimary"
+            android:id="@+id/joinGameButton" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -2,13 +2,16 @@ package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -44,6 +47,7 @@ public class PlayerViewFragment extends CardsListFragment {
     private int REQUEST_CODE = 999;
 
     FrameLayout flPlayerViewContainer;
+    private WindowManager.LayoutParams params;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -137,8 +141,8 @@ public class PlayerViewFragment extends CardsListFragment {
 
     public void addNewPlayer(User user) {
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
-        LinearLayout userLayout = (LinearLayout) layoutInflater.inflate(R.layout.item_user, null);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        final LinearLayout userLayout = (LinearLayout) layoutInflater.inflate(R.layout.item_user, null);
+        params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
@@ -148,6 +152,51 @@ public class PlayerViewFragment extends CardsListFragment {
         params.x = 0;
         params.y = 0;
         flPlayerViewContainer.addView(userLayout, params);
+
+        userLayout.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float touchDownX;
+            private float touchDownY;
+
+            float dX, dY;
+
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            int windowWidth = metrics.widthPixels;
+            int windowHeight = metrics.heightPixels;
+            Rect rect = new Rect(0, 0, windowWidth, windowHeight);
+
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+
+                        dX = view.getX() - event.getRawX();
+                        dY = view.getY() - event.getRawY();
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+
+                        if(!rect.contains(view.getLeft() + (int) event.getX(), view.getTop() + (int) event.getY())){
+                            // User moved outside bounds
+                        } else {
+                            view.animate()
+                                    .x(event.getRawX() + dX)
+                                    .y(event.getRawY() + dY)
+                                    .setDuration(0)
+                                    .start();
+                        }
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+
+        });
     }
 
     /**

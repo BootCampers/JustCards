@@ -11,17 +11,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.bootcamp.fiftytwo.activities.CreateGameActivity">
 
-    <EditText
-        android:id="@+id/etGameName"
+    <TextView
+        android:id="@+id/gameIDNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="51dp"
-        android:hint="@string/msg_enter_game_name"
+        android:layout_alignTop="@+id/gameIdLabel"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/gameIdLabel"
+        android:layout_toRightOf="@+id/gameIdLabel"
+        android:text=""
         android:textColor="@color/colorAccent"
         android:textSize="20sp"
         android:textStyle="bold"/>
@@ -30,9 +29,9 @@
         android:id="@+id/btnSelectCards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/etGameName"
-        android:layout_alignStart="@+id/etGameName"
-        android:layout_below="@+id/etGameName"
+        android:layout_alignLeft="@+id/gameIdLabel"
+        android:layout_alignStart="@+id/gameIdLabel"
+        android:layout_below="@+id/gameIdLabel"
         android:layout_marginTop="30dp"
         android:background="@color/colorAccent"
         android:paddingLeft="5dp"
@@ -44,8 +43,8 @@
         android:id="@+id/btnStartGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/etGameName"
-        android:layout_alignStart="@+id/etGameName"
+        android:layout_alignLeft="@+id/gameIdLabel"
+        android:layout_alignStart="@+id/gameIdLabel"
         android:layout_below="@+id/btnSelectCards"
         android:layout_marginTop="30dp"
         android:background="@color/colorPrimary"
@@ -53,5 +52,20 @@
         android:paddingRight="5dp"
         android:text="@string/start_game"
         android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/gameIdLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/game_id"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
