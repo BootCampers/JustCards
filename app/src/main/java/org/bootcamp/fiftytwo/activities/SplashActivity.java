@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
             String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
             User user = new User(userAvatarURI, userName);
             Intent createGameIntent = new Intent(SplashActivity.this, CreateJoinGameActivity.class);
-            createGameIntent.putExtra(USER_TAG, user);
+            createGameIntent.putExtra(USER_TAG, user.getObjectId());
             startActivity(createGameIntent);
         }
     }

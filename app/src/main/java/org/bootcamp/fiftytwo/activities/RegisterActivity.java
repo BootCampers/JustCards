@@ -59,11 +59,10 @@ public class RegisterActivity extends AppCompatActivity {
                 editor.commit();
 
                 Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
-                createGameIntent.putExtra(USER_TAG, user);
+                createGameIntent.putExtra(USER_TAG, user.getObjectId());
                 startActivity(createGameIntent);
             }
         });
-
 
         browseButton.setOnClickListener(new View.OnClickListener() {
             @Override

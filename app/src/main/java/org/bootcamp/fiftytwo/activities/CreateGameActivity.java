@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseObject;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -22,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static org.bootcamp.fiftytwo.R.id.etGameName;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 
@@ -53,6 +54,10 @@ public class CreateGameActivity extends AppCompatActivity {
     @OnClick(R.id.btnStartGame)
     public void startGame(View view) {
         if(gameIdNumber.getText() != null) {
+
+            ParseObject testObject = new ParseObject("TestObject");
+            testObject.put("foo", "bar");
+            testObject.saveInBackground();
 
             Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.GAME_NAME, gameIdNumber.getText().toString());
