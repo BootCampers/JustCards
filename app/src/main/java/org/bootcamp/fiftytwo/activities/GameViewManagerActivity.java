@@ -29,8 +29,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.R.attr.name;
-
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
@@ -46,6 +44,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     PlayerViewFragment playerViewFragment;
     ChatAndLogFragment chatAndLogFragment;
+
 
     private boolean showingChat = false;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
@@ -74,7 +73,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             String gameName = bundle.getString(Constants.GAME_NAME);
             ((ChatApplication)getApplication()).useSetChannelName(gameName);
             ((ChatApplication)getApplication()).useJoinChannel();
-            Toast.makeText(getApplicationContext(), "Joining " + name, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
         }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

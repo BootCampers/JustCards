@@ -21,6 +21,7 @@ import org.bootcamp.fiftytwo.utils.DividerItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -34,6 +35,12 @@ public class CreateJoinGameActivity extends AppCompatActivity
     @BindView(R.id.rvGamesAroundList)
     RecyclerView rvGamesAroundList;
 
+    @BindColor(R.color.colorPrimary)
+    int colorPrimary;
+    @BindColor(android.R.color.white)
+    int white;
+
+    String selectedGameName = null;
     List<String> gamesList = new ArrayList<>();
     private StaggeredGridLayoutManager staggeredLayoutManager;
     private GamesListAdapter gamesListAdapter;
@@ -43,6 +50,7 @@ public class CreateJoinGameActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_game);
         ButterKnife.bind(this);
+        ((ChatApplication)getApplication()).addObserver(this);
 
         fetchChannelList();
 
@@ -54,17 +62,28 @@ public class CreateJoinGameActivity extends AppCompatActivity
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         rvGamesAroundList.addItemDecoration(itemDecoration);
 
+        gamesListAdapter.setOnItemClickListener(new GamesListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                selectedGameName = gamesList.get(position);
+                joinGameButton.setVisibility(View.VISIBLE);
+                for(int i=0; i< gamesList.size() ; i++) {
+                    rvGamesAroundList.getChildAt(i).setBackgroundColor(white);
+                }
+                rvGamesAroundList.getChildAt(position).setBackgroundColor(colorPrimary);
+            }
+        });
+
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //startActivity(new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class));
-                if(gamesListAdapter.getSelectedChannelName() == null){
+                if(selectedGameName == null){
                     Snackbar.make(view, "Please select a game from list first", Snackbar.LENGTH_LONG).show();
                 } else {
-                    String gameName = gamesListAdapter.getSelectedChannelName();
 
                     Intent gameViewManagerIntent = new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class);
-                    gameViewManagerIntent.putExtra(Constants.GAME_NAME, gameName);
+                    gameViewManagerIntent.putExtra(Constants.GAME_NAME, selectedGameName);
                     gameViewManagerIntent.putExtra(Constants.CURRENT_VIEW_PLAYER, true); //if false then it's dealer
                     startActivity(gameViewManagerIntent);
                 }
@@ -85,11 +104,17 @@ public class CreateJoinGameActivity extends AppCompatActivity
 
         if(qualifier.equals(Constants.CHANNEL_LIST_CHANGED)){
             fetchChannelList();
-            gamesListAdapter.notifyDataSetChanged();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    gamesListAdapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 
     private void fetchChannelList(){
+        gamesList.clear();
         List<String> channels = ((ChatApplication)getApplication()).getFoundChannels();
         for (String channel : channels) {
             if (channel.length() > AllJoynService.NAME_PREFIX.length() + 1) {
@@ -97,4 +122,6 @@ public class CreateJoinGameActivity extends AppCompatActivity
             }
         }
     }
+
+
 }

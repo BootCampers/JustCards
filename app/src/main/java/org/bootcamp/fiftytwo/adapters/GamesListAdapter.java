@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 
@@ -23,8 +22,16 @@ public class GamesListAdapter extends RecyclerView.Adapter<GamesListAdapter.View
 
     private Context mContext;
     private List<String> games;
-
     private String selectedChannelName = null;
+
+    private OnItemClickListener listener;
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public String getSelectedChannelName() {
         return selectedChannelName;
@@ -33,6 +40,7 @@ public class GamesListAdapter extends RecyclerView.Adapter<GamesListAdapter.View
     public GamesListAdapter(Context mContext, List<String> games) {
         this.mContext = mContext;
         this.games = games;
+
     }
 
     @Override
@@ -62,7 +70,12 @@ public class GamesListAdapter extends RecyclerView.Adapter<GamesListAdapter.View
 
         @OnClick(R.id.tvGameName)
         public void gameSelected(View view){
-            Toast.makeText(mContext, tvGameName.getText().toString() , Toast.LENGTH_SHORT).show();
+            if (listener != null) {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(itemView, position);
+                }
+            }
             selectedChannelName = tvGameName.getText().toString();
         }
     }
