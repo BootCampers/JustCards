@@ -59,4 +59,8 @@ public class SelectCardsFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    public List<Card> getCards() {
+        return mAdapter.getCards();
+    }
 }
