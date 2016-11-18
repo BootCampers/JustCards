@@ -24,6 +24,7 @@ import android.util.Log;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.services.AllJoynService;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -204,6 +205,7 @@ public class ChatApplication extends Application implements Observable {
         removeFoundChannel(channel);
         mChannels.add(channel);
         Log.i(TAG, "addFoundChannel(): added " + channel);
+        notifyObservers(Constants.CHANNEL_LIST_CHANGED);
     }
 
     /**
@@ -221,6 +223,7 @@ public class ChatApplication extends Application implements Observable {
                 i.remove();
             }
         }
+        notifyObservers(Constants.CHANNEL_LIST_CHANGED);
     }
 
     /**

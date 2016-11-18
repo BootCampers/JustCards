@@ -1,71 +1,73 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.adapters.GamesListAdapter;
 import org.bootcamp.fiftytwo.application.ChatApplication;
+import org.bootcamp.fiftytwo.interfaces.Observable;
+import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.services.AllJoynService;
+import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.DividerItemDecoration;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CreateJoinGameActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+public class CreateJoinGameActivity extends AppCompatActivity
+    implements Observer{
+
+    @BindView(R.id.joinGameButton)
     Button joinGameButton;
+    @BindView(R.id.createGameButton)
     Button createGameButton;
+    @BindView(R.id.rvGamesAroundList)
+    RecyclerView rvGamesAroundList;
+
+    List<String> gamesList = new ArrayList<>();
+    private StaggeredGridLayoutManager staggeredLayoutManager;
+    private GamesListAdapter gamesListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_game);
+        ButterKnife.bind(this);
 
-        joinGameButton = (Button) findViewById(R.id.joinGameButton);
-        createGameButton = (Button) findViewById(R.id.createGameButton);
+        fetchChannelList();
+
+        gamesListAdapter = new GamesListAdapter(this, gamesList);
+        staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        rvGamesAroundList.setLayoutManager(staggeredLayoutManager);
+        rvGamesAroundList.setAdapter(gamesListAdapter);
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+        rvGamesAroundList.addItemDecoration(itemDecoration);
 
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog = new Dialog(CreateJoinGameActivity.this);
-                dialog.requestWindowFeature(dialog.getWindow().FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.usejoindialog);
-
-                ArrayAdapter<String> channelListAdapter = new ArrayAdapter<String>(((ChatApplication)getApplication()),
-                        android.R.layout.test_list_item);
-                final ListView channelList = (ListView)dialog.findViewById(R.id.useJoinChannelList);
-                channelList.setAdapter(channelListAdapter);
-
-                List<String> channels = ((ChatApplication)getApplication()).getFoundChannels();
-                for (String channel : channels) {
-                    if (channel.length() > AllJoynService.NAME_PREFIX.length() + 1) {
-                        channelListAdapter.add(channel.substring(AllJoynService.NAME_PREFIX.length() + 1));
-                    }
-                }
-                channelListAdapter.notifyDataSetChanged();
-
-                channelList.setOnItemClickListener(new ListView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String name = channelList.getItemAtPosition(position).toString();
-                        ((ChatApplication)getApplication()).useSetChannelName(name);
-                        ((ChatApplication)getApplication()).useJoinChannel();
-
-                    }
-                });
-
-                Button cancel = (Button)dialog.findViewById(R.id.useJoinCancel);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-
-                    }
-                });
-                dialog.show();
                 //startActivity(new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class));
+                if(gamesListAdapter.getSelectedChannelName() == null){
+                    Snackbar.make(view, "Please select a game from list first", Snackbar.LENGTH_LONG).show();
+                } else {
+                    String gameName = gamesListAdapter.getSelectedChannelName();
+
+                    Intent gameViewManagerIntent = new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class);
+                    gameViewManagerIntent.putExtra(Constants.GAME_NAME, gameName);
+                    gameViewManagerIntent.putExtra(Constants.CURRENT_VIEW_PLAYER, true); //if false then it's dealer
+                    startActivity(gameViewManagerIntent);
+                }
             }
         });
 
@@ -77,40 +79,22 @@ public class CreateJoinGameActivity extends AppCompatActivity {
         });
     }
 
-    public Dialog createUseJoinDialog(final AppCompatActivity activity, final ChatApplication application) {
-        //Log.i(TAG, "createUseJoinDialog()");
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(dialog.getWindow().FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.usejoindialog);
+    @Override
+    public void update(Observable o, Object arg) {
+        String qualifier = (String)arg;
 
-        ArrayAdapter<String> channelListAdapter = new ArrayAdapter<String>(activity, android.R.layout.test_list_item);
-        final ListView channelList = (ListView)dialog.findViewById(R.id.useJoinChannelList);
-        channelList.setAdapter(channelListAdapter);
+        if(qualifier.equals(Constants.CHANNEL_LIST_CHANGED)){
+            fetchChannelList();
+            gamesListAdapter.notifyDataSetChanged();
+        }
+    }
 
-        List<String> channels = application.getFoundChannels();
+    private void fetchChannelList(){
+        List<String> channels = ((ChatApplication)getApplication()).getFoundChannels();
         for (String channel : channels) {
             if (channel.length() > AllJoynService.NAME_PREFIX.length() + 1) {
-                channelListAdapter.add(channel.substring(AllJoynService.NAME_PREFIX.length() + 1));
+                gamesList.add(channel.substring(AllJoynService.NAME_PREFIX.length() + 1));
             }
         }
-        channelListAdapter.notifyDataSetChanged();
-
-        channelList.setOnItemClickListener(new ListView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = channelList.getItemAtPosition(position).toString();
-                application.useSetChannelName(name);
-                application.useJoinChannel();
-
-            }
-        });
-
-        Button cancel = (Button)dialog.findViewById(R.id.useJoinCancel);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-            }
-        });
-
-        return dialog;
     }
 }

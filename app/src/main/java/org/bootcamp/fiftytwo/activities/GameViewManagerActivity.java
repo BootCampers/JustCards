@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.application.ChatApplication;
 import org.bootcamp.fiftytwo.fragments.CardsListFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
@@ -26,6 +28,8 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.R.attr.name;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
@@ -63,9 +67,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         chatAndLogFragment = new ChatAndLogFragment();
         dealerViewFragment = new DealerViewFragment();
 
+        boolean isCurrentViewPlayer = true;
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
+            String gameName = bundle.getString(Constants.GAME_NAME);
+            ((ChatApplication)getApplication()).useSetChannelName(gameName);
+            ((ChatApplication)getApplication()).useJoinChannel();
+            Toast.makeText(getApplicationContext(), "Joining " + name, Toast.LENGTH_SHORT).show();
+        }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
+        if(isCurrentViewPlayer == true) {
+            fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
+        } else {
+            fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
+        }
         fragmentTransaction.commit();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

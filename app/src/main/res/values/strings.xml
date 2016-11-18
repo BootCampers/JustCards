@@ -33,4 +33,5 @@
     <string name="game_id">Game ID:  </string>
     <string name="start_game">Start Game</string>
     <string name="select_cards">Select Cards</string>
+    <string name="msg_enter_game_name">Enter game name</string>
 </resources>
