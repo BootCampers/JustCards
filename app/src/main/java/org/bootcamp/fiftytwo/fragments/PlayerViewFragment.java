@@ -107,7 +107,7 @@ public class PlayerViewFragment extends CardsListFragment {
     }
 
     public void addNewPlayer(User user) {
-        Player.addPlayer(getActivity(), flPlayerViewContainer, user);
+        Player.addPlayer(getActivity(), flPlayerViewContainer, user, R.layout.item_player, 0, 0);
     }
 
     @Override

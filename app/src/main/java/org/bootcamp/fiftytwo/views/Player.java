@@ -1,9 +1,9 @@
 package org.bootcamp.fiftytwo.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +16,8 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
+
+import java.util.List;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -30,22 +32,22 @@ public class Player {
         //no instance
     }
 
-    public static void addPlayer(Context context, final ViewGroup container, final User player) {
+    public static ViewGroup addPlayer(Context context, final ViewGroup container, final User player, int resId, int x, int y) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        final ViewGroup playerLayout = (ViewGroup) inflater.inflate(R.layout.item_user, null);
+        final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
+        setPlayerAttributes(playerLayout, player);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
+                x,
+                y,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
 
-        params.gravity = Gravity.TOP | Gravity.START;
-        params.x = 0;
-        params.y = 0;
-
-        setPlayerAttributes(playerLayout, player);
+        playerLayout.setX(x);
+        playerLayout.setY(y);
 
         container.addView(playerLayout, params);
 
@@ -86,6 +88,30 @@ public class Player {
                 return true;
             }
         });
+
+        return playerLayout;
+    }
+
+    public static ViewGroup addPlayers(Context context, final ViewGroup container, final List<User> players, int resId) {
+        View decorView = ((Activity) context).getWindow().getDecorView();
+        int screenWidth = decorView.getWidth();
+        int screenHeight = decorView.getHeight();
+
+        double startX = screenWidth * .04;
+        double endX = screenWidth * .8;
+        double y = screenHeight * .15;
+        double x = startX;
+        double rangeX = endX - startX;
+        double incX = rangeX/(players.size() + 1);
+
+        ViewGroup layout = null;
+
+        for (User player : players) {
+            x += incX;
+            layout = addPlayer(context, container, player, resId, (int) x, (int) y);
+        }
+
+        return layout;
     }
 
     private static void setPlayerAttributes(ViewGroup playerLayout, User player) {

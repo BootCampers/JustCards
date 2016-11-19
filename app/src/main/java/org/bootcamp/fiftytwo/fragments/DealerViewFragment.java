@@ -48,19 +48,21 @@ public class DealerViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
+        // TODO: We may need this if we plan to put players in a draggable/re-ordering recyclerview
+        // TODO: Let's hold off for that now
         //Add player cards
-        Fragment playersCardFragment = new CardsListFragment();
+        /*Fragment playersCardFragment = new CardsListFragment();
         Bundle playerBundle = new Bundle();
         playerBundle.putString(Constants.TAG, Constants.PLAYER_TAG);
         playersCardFragment.setArguments(playerBundle);
-        transaction.replace(R.id.flPlayersContainer, playersCardFragment, Constants.PLAYER_TAG);
+        transaction.replace(R.id.flPlayersContainer, playersCardFragment, Constants.PLAYER_TAG);*/
 
         //Add table cards
-        Fragment tableCardsFragment = new CardsListFragment();
+        Fragment dealerCardsFragment = new CardsListFragment();
         Bundle tableBundle = new Bundle();
         tableBundle.putString(Constants.TAG, Constants.TABLE_TAG);
-        tableCardsFragment.setArguments(tableBundle);
-        transaction.replace(R.id.flDealerContainer, tableCardsFragment, Constants.TABLE_TAG);
+        dealerCardsFragment.setArguments(tableBundle);
+        transaction.replace(R.id.flDealerContainer, dealerCardsFragment, Constants.TABLE_TAG);
 
         transaction.commit();
 
@@ -68,9 +70,11 @@ public class DealerViewFragment extends Fragment {
     }
 
     private void initPlayers(List<User> players) {
-        for (User player : players) {
+        Player.addPlayers(getActivity(), flDealerViewContainer, players, R.layout.item_player_with_cards);
+
+        /*for (User player : players) {
             Player.addPlayer(getActivity(), flDealerViewContainer, player);
-        }
+        }*/
     }
 
     @Override
