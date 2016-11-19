@@ -45,11 +45,7 @@ public class Player {
         params.x = 0;
         params.y = 0;
 
-<<<<<<< HEAD
         setPlayerAttributes(playerLayout, player);
-=======
-        setPlayerAttributes(context, playerLayout, player);
->>>>>>> ecb0e01ff8c9bc653fc63983e415320d100c1f19
 
         container.addView(playerLayout, params);
 
@@ -92,11 +88,7 @@ public class Player {
         });
     }
 
-<<<<<<< HEAD
     private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
-=======
-    private static void setPlayerAttributes(Context context, ViewGroup playerLayout, User player) {
->>>>>>> ecb0e01ff8c9bc653fc63983e415320d100c1f19
         TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
         CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
 
