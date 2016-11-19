@@ -56,4 +56,7 @@ dependencies {
     compile 'com.parse:parse-android:1.13.1'
     compile 'com.parse:parseinterceptors:0.0.2' // for logging API calls to LogCat
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
+
+    apply plugin: 'com.google.gms.google-services'
+
 }

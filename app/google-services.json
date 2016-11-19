@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "103795002508",
+    "firebase_url": "https://fifttwo.firebaseio.com",
+    "project_id": "fifttwo",
+    "storage_bucket": "fifttwo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103795002508:android:6409cfd3a31c5985",
+        "android_client_info": {
+          "package_name": "org.bootcamp.fiftytwo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103795002508-hq82jiiq9fetmf5bet9aqts534721tai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy-veG0PaOcHkgvYf77IgkqaLNOVItO_0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
