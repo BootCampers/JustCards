@@ -1,88 +1,65 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.utils.Constants;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnDealerFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DealerViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DealerViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private OnDealerListener mListener;
 
-    private OnDealerFragmentInteractionListener mListener;
-
-    public DealerViewFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DealerViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DealerViewFragment newInstance(String param1, String param2) {
-        DealerViewFragment fragment = new DealerViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public interface OnDealerListener {
+        void onDeal();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_dealer_view, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onDealerFragmentInteraction(uri);
-        }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+
+        //Add player cards
+        Fragment playersCardFragment = new CardsListFragment();
+        Bundle playerBundle = new Bundle();
+        playerBundle.putString(Constants.TAG, Constants.PLAYER_TAG);
+        playersCardFragment.setArguments(playerBundle);
+        transaction.replace(R.id.flPlayerContainer, playersCardFragment, Constants.PLAYER_TAG);
+
+        //Add table cards
+        Fragment tableCardsFragment = new CardsListFragment();
+        Bundle tableBundle = new Bundle();
+        tableBundle.putString(Constants.TAG, Constants.TABLE_TAG);
+        tableCardsFragment.setArguments(tableBundle);
+        transaction.replace(R.id.flTableContainer, tableCardsFragment, Constants.TABLE_TAG);
+
+        transaction.commit();
+    }
+
+    private void initPlayers() {
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnDealerFragmentInteractionListener) {
-            mListener = (OnDealerFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnPlayerFragmentInteractionListener");
+        if (context instanceof OnDealerListener) {
+            mListener = (OnDealerListener) context;
         }
     }
 
@@ -92,18 +69,4 @@ public class DealerViewFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnDealerFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onDealerFragmentInteraction(Uri uri);
-    }
 }

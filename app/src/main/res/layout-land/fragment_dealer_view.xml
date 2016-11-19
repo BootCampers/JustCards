@@ -1,22 +1,22 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/flPlayerViewContainer"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@drawable/ic_game_background"
-             tools:context="org.bootcamp.fiftytwo.fragments.PlayerViewFragment">
-
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flDealerViewContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_game_background"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.bootcamp.fiftytwo.fragments.DealerViewFragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_table_background">
 
-        <!--http://guides.codepath.com/android/Creating-and-Using-Fragments#nesting-fragments-within-fragments-->
         <FrameLayout
-            android:id="@+id/flPlayerContainer"
-            android:layout_width="360dp"
+            android:id="@+id/flDealerContainers"
+            android:layout_width="150dp"
             android:layout_height="75dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
@@ -24,7 +24,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:tag="playerContainer"
+            android:tag="playersContainer"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -32,21 +32,22 @@
             app:layout_constraintVertical_bias="0.9"/>
 
         <FrameLayout
-            android:id="@+id/flTableContainer"
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="8dp"
+            android:id="@+id/flPlayersContainer"
+            android:layout_width="500dp"
+            android:layout_height="125dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:tag="tableContainer"
-            app:layout_constraintBottom_toTopOf="@+id/flPlayerContainer"
+            android:tag="dealerContainer"
+            app:layout_constraintBottom_toTopOf="@+id/flDealerContainers"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"/>
+            app:layout_constraintVertical_bias="0.9"/>
 
     </android.support.constraint.ConstraintLayout>
+
 </FrameLayout>

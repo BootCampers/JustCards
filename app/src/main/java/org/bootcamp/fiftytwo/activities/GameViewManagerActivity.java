@@ -33,9 +33,9 @@ import butterknife.OnClick;
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
-        DealerViewFragment.OnDealerFragmentInteractionListener,
+        DealerViewFragment.OnDealerListener,
         CardsListFragment.OnLogEventListener,
-        Observer{
+        Observer {
 
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
@@ -44,13 +44,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
     @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
 
-    PlayerViewFragment playerViewFragment;
-    ChatAndLogFragment chatAndLogFragment;
-
+    private PlayerViewFragment playerViewFragment;
+    private DealerViewFragment dealerViewFragment;
+    private ChatAndLogFragment chatAndLogFragment;
 
     private boolean showingChat = false;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
-    private DealerViewFragment dealerViewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +69,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         boolean isCurrentViewPlayer = true;
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
+        if (bundle != null) {
             isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
             String gameName = bundle.getString(Constants.GAME_NAME);
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
         }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(isCurrentViewPlayer == true) {
+        if (isCurrentViewPlayer) {
             fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
         } else {
             fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
@@ -111,7 +110,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     //TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
-        playerViewFragment.addNewPlayer(new User("", "Ankit"));
+        playerViewFragment.addNewPlayer(User.getUser());
     }
 
     @OnClick(R.id.ibComment)
@@ -141,13 +140,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDealerFragmentInteraction(Uri uri) {
-
+    public void onDeal() {
+        // Do Nothing for now
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        String qualifier = (String)arg;
+        String qualifier = (String) arg;
         Log.d(Constants.TAG, "GameViewManager " + qualifier);
     }
 }

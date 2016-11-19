@@ -3,7 +3,10 @@ package org.bootcamp.fiftytwo.models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
+import org.parceler.Parcel;
+
 @ParseClassName("User")
+@Parcel(analyze = User.class)
 public class User  extends ParseObject {
 
     public User() {
@@ -30,5 +33,9 @@ public class User  extends ParseObject {
 
     public void setName(String name) {
         put("name", name);
+    }
+
+    public static User getUser() {
+        return new User("", "Ankit");
     }
 }
