@@ -12,8 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -68,10 +74,31 @@ public class RegisterActivity extends AppCompatActivity {
         browseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
+                /*Intent intent = new Intent();
+                intent.setType("image*//*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
+
+                JSONObject obj;
+                try {
+                    obj =new JSONObject();
+                    obj.put("alert","erwerwe");
+                    obj.put("action","org.bootcamp.fiftytwo.UPDATE");
+                    obj.put("customdata","My string");
+
+                    ParsePush push = new ParsePush();
+                    ParseQuery query = ParseInstallation.getQuery();
+
+
+                    // Notification for Android users
+                    query.whereEqualTo("deviceType", "android");
+                    push.setQuery(query);
+                    push.setData(obj);
+                    push.sendInBackground();
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
             }
         });

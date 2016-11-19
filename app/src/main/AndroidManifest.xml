@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.bootcamp.fiftytwo">
+    package="org.bootcamp.fiftytwo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,26 +11,26 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
+        android:name=".application.FiftTwoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".application.FiftTwoApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572"/>
+            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572" />
+
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
@@ -41,15 +41,54 @@
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.SelectCardsActivity"
             android:label="@string/title_activity_select_cards"
             android:parentActivityName=".activities.GameViewManagerActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.CreateJoinGameActivity" />
-        <activity android:name=".activities.CreateGameActivity"/>
+        <activity android:name=".activities.CreateGameActivity" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.parse.PushService" />
+        <receiver android:name=".recievers.CardExchangeReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="org.bootcamp.fiftytwo.UPDATE" />
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <!--
+                  IMPORTANT: Change "com.parse.starter" to match your app's package name.
+                -->
+                <category android:name="org.bootcamp.fiftytwo" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activities.ShowPopUp"></activity>
+
+        <meta-data
+            android:name="com.parse.APPLICATION_ID"
+            android:value="fiftyTwoAppId" />
+
+        <meta-data
+            android:name="com.parse.CLIENT_KEY"
+            android:value="bootCampers" />
+
     </application>
 
 </manifest>

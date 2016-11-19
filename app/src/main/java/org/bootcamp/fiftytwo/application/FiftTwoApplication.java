@@ -20,14 +20,10 @@ public class FiftTwoApplication extends Application {
         ParseObject.registerSubclass(User.class);
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("fiftyTwoAppId") // should correspond to APP_ID env variable
-                .clientKey(null)  // set explicitly unless clientKey is explicitly configured on Parse server
+                .clientKey("bootCampers")
                 .addNetworkInterceptor(new ParseLogInterceptor())
                 .server("https://fiftytwo.herokuapp.com/parse/").build());
-
-        //TODO: remove..experimental
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+        
 
     }
 }
