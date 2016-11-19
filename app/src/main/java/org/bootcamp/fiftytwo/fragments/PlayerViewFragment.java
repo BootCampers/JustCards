@@ -1,26 +1,21 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
-
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import org.bootcamp.fiftytwo.views.Player;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +40,6 @@ public class PlayerViewFragment extends CardsListFragment {
 
     FrameLayout flPlayerViewContainer;
     private WindowManager.LayoutParams params;
-    private View rootView;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -79,10 +73,9 @@ public class PlayerViewFragment extends CardsListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_player_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_player_view, container, false);
         flPlayerViewContainer = (FrameLayout) rootView.findViewById(R.id.flPlayerViewContainer);
         return rootView;
     }
@@ -113,11 +106,8 @@ public class PlayerViewFragment extends CardsListFragment {
         transaction.commit();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onPlayerFragmentInteraction(uri);
-        }
+    public void addNewPlayer(User user) {
+        Player.addPlayer(getActivity(), flPlayerViewContainer, user);
     }
 
     @Override
@@ -137,76 +127,6 @@ public class PlayerViewFragment extends CardsListFragment {
         mListener = null;
     }
 
-    public void addNewPlayer(User user) {
-        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
-        final LinearLayout userLayout = (LinearLayout) layoutInflater.inflate(R.layout.item_user, null);
-        params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT);
-        params.gravity = Gravity.TOP | Gravity.LEFT;
-        params.x = 0;
-        params.y = 0;
-        flPlayerViewContainer.addView(userLayout, params);
-
-        userLayout.setOnTouchListener(new View.OnTouchListener() {
-            float dX, dY;
-            float newX, newY;
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-
-                switch (event.getAction()) {
-
-                    case MotionEvent.ACTION_DOWN:
-
-                        dX = view.getX() - event.getRawX();
-                        dY = view.getY() - event.getRawY();
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-
-                        newX = event.getRawX() + dX;
-                        newY = event.getRawY() + dY;
-
-                        if(newX<0)
-                            newX = 0;
-                        if(newY<0)
-                            newY = 0;
-
-                        if (newX+view.getWidth() > flPlayerViewContainer.getWidth())
-                            newX = flPlayerViewContainer.getWidth() - view.getWidth();
-                        if (newY+view.getHeight() > flPlayerViewContainer.getHeight())
-                            newY = flPlayerViewContainer.getHeight() - view.getHeight();
-
-
-                        view.animate()
-                                    .x(newX)
-                                    .y(newY)
-                                    .setDuration(0)
-                                    .start();
-
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
-            }
-
-        });
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnPlayerFragmentInteractionListener {
         // TODO: Update argument type and name
         void onPlayerFragmentInteraction(Uri uri);

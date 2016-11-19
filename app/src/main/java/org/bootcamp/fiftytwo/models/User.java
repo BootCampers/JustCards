@@ -38,4 +38,8 @@ public class User  extends ParseObject {
     public static User getUser() {
         return new User("", "Ankit");
     }
+
+    public static User getUsers() {
+        return new User("", "Ankit");
+    }
 }
