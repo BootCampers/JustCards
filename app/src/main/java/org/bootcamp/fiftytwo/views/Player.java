@@ -3,21 +3,31 @@ package org.bootcamp.fiftytwo.views;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -92,7 +102,7 @@ public class Player {
         return playerLayout;
     }
 
-    public static ViewGroup addPlayers(Context context, final ViewGroup container, final List<User> players, int resId) {
+    public static void addPlayers(Context context, final ViewGroup container, final List<User> players, int resId) {
         View decorView = ((Activity) context).getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
@@ -102,16 +112,12 @@ public class Player {
         double y = screenHeight * .15;
         double x = startX;
         double rangeX = endX - startX;
-        double incX = rangeX/(players.size() + 1);
-
-        ViewGroup layout = null;
+        double incX = rangeX / (players.size() + 1);
 
         for (User player : players) {
             x += incX;
-            layout = addPlayer(context, container, player, resId, (int) x, (int) y);
+            addPlayer(context, container, player, resId, (int) x, (int) y);
         }
-
-        return layout;
     }
 
     private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
@@ -126,5 +132,68 @@ public class Player {
                 .load(player.getAvatarUri())
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
+
+        View view = playerLayout.findViewById(R.id.rvCards);
+        if (view != null) {
+            RecyclerView rvCards = (RecyclerView) view;
+            GridLayoutManager layoutManager = new GridLayoutManager(rvCards.getContext(), 8);
+            PlayerCardsAdapter adapter = new PlayerCardsAdapter(rvCards.getContext(), new ArrayList<Card>());
+            rvCards.setAdapter(adapter);
+            rvCards.setLayoutManager(layoutManager);
+            adapter.addAll(CardUtil.generateDeck(1, false).subList(0, 4));
+        }
+    }
+
+    static class PlayerCardsAdapter extends RecyclerView.Adapter<PlayerCardsAdapter.ViewHolder> {
+        private final Context mContext;
+        private final List<Card> mCards;
+
+        PlayerCardsAdapter(Context context, List<Card> cards) {
+            this.mContext = context;
+            this.mCards = cards;
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCards.size();
+        }
+
+        @Override
+        public PlayerCardsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_card, parent, false);
+            return new PlayerCardsAdapter.ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(PlayerCardsAdapter.ViewHolder holder, int position) {
+            Card card = mCards.get(position);
+
+            holder.ivCard.setImageDrawable(null);
+            Glide.with(holder.ivCard.getContext())
+                    .load(card.getDrawable(mContext))
+                    .bitmapTransform(new RoundedCornersTransformation(holder.ivCard.getContext(), 20, 0))
+                    .fitCenter()
+                    .into(holder.ivCard);
+        }
+
+        @Override
+        public void onViewRecycled(PlayerCardsAdapter.ViewHolder holder) {
+            super.onViewRecycled(holder);
+            Glide.clear(holder.ivCard);
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @BindView(R.id.ivCard) ImageView ivCard;
+            ViewHolder(View view) {
+                super(view);
+                ButterKnife.bind(this, view);
+            }
+        }
+
+        void addAll(List<Card> cards) {
+            int currentSize = getItemCount();
+            mCards.addAll(cards);
+            notifyItemRangeInserted(currentSize, mCards.size() - currentSize);
+        }
     }
 }
