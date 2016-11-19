@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
  * Created by baphna on 11/11/2016.
  */
 
-public class CardsListFragment extends Fragment implements CardsAdapter.Listener {
+public class CardsListFragment extends Fragment implements CardsAdapter.CardsListener {
 
     @BindDrawable(R.drawable.back)
     Drawable cardBack;
@@ -91,7 +91,7 @@ public class CardsListFragment extends Fragment implements CardsAdapter.Listener
 
     @Override
     public void setEmptyList(boolean visibility) {
-        if(visibility == true){
+        if(visibility){
             tvNoCards.setVisibility(View.VISIBLE);
             rvCardsList.setVisibility(View.GONE);
         } else {

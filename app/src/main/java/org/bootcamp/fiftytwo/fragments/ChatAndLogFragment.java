@@ -17,7 +17,7 @@ import android.widget.TextView;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.ChatAndLogAdapter;
 import org.bootcamp.fiftytwo.models.ChatLog;
-import org.bootcamp.fiftytwo.utils.DividerItemDecoration;
+import org.bootcamp.fiftytwo.views.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;

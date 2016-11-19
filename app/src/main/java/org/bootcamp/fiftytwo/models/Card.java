@@ -1,7 +1,10 @@
 package org.bootcamp.fiftytwo.models;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
+import org.bootcamp.fiftytwo.R;
 import org.parceler.Parcel;
 
 /**
@@ -25,10 +28,12 @@ public class Card {
 
     }
 
+    @SuppressWarnings("unused")
     public CardSuit getSuit(){
         return suit;
     }
 
+    @SuppressWarnings("unused")
     public CardRank getRank(){
         return rank;
     }
@@ -51,6 +56,10 @@ public class Card {
 
     public int getDrawable(Context context) {
         return context.getResources().getIdentifier(name.toLowerCase(), "drawable", context.getPackageName());
+    }
+
+    public Drawable getDrawableBack(Context context) {
+        return ContextCompat.getDrawable(context, R.drawable.back);
     }
 
     public static Card getJoker(JokerSuit suit) {

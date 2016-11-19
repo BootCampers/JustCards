@@ -9,7 +9,6 @@ public class Constants {
     public static final String TAG = "FiftyTwo";
     public static final String FRAGMENT_CHAT_TAG = "chat";
 
-
     public static final String CURRENT_VIEW_PLAYER = "currentView";
     public static final String DEALER_TAG = "dealer";
     public static final String PLAYER_TAG = "player";
