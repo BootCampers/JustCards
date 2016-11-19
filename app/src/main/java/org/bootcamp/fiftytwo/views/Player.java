@@ -92,13 +92,12 @@ public class Player {
         TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
         CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
 
-        if(!TextUtils.isEmpty(player.getName())) {
+        if (!TextUtils.isEmpty(player.getName())) {
             tvUserName.setText(player.getName());
         }
 
         Glide.with(tvUserName.getContext())
                 .load(player.getAvatarUri())
-                .placeholder(R.drawable.ic_face)
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
     }

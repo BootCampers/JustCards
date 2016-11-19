@@ -110,7 +110,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     //TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
-        playerViewFragment.addNewPlayer(User.getUser());
+        playerViewFragment.addNewPlayer(User.getDummyPlayer());
     }
 
     @OnClick(R.id.ibComment)
