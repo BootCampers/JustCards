@@ -59,7 +59,11 @@ public class Card {
     }
 
     public Drawable getDrawableBack(Context context) {
-        return ContextCompat.getDrawable(context, R.drawable.back);
+        return ContextCompat.getDrawable(context, getDrawableBack());
+    }
+
+    public int getDrawableBack() {
+        return R.drawable.back;
     }
 
     public static Card getJoker(JokerSuit suit) {

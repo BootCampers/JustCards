@@ -3,8 +3,8 @@ package org.bootcamp.fiftytwo.views;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,7 +41,7 @@ public class Player {
     public static ViewGroup addPlayer(Context context, final ViewGroup container, final User player, int resId, int x, int y) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
-        setPlayerAttributes(playerLayout, player);
+        setPlayerAttributes(context, playerLayout, player);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -116,7 +116,7 @@ public class Player {
         }
     }
 
-    private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
+    private static void setPlayerAttributes(Context context, ViewGroup playerLayout, User player) {
         TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
         CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
 
@@ -132,10 +132,12 @@ public class Player {
         View view = playerLayout.findViewById(R.id.rvCards);
         if (view != null) {
             RecyclerView rvCards = (RecyclerView) view;
-            GridLayoutManager layoutManager = new GridLayoutManager(rvCards.getContext(), 8);
             PlayerCardsAdapter adapter = new PlayerCardsAdapter(rvCards.getContext(), new ArrayList<Card>());
-            rvCards.setAdapter(adapter);
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+            RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(context, -50, 0);
+            rvCards.addItemDecoration(overlapDecoration);
             rvCards.setLayoutManager(layoutManager);
+            rvCards.setAdapter(adapter);
             adapter.addAll(CardUtil.generateDeck(1, false).subList(0, 4));
         }
     }

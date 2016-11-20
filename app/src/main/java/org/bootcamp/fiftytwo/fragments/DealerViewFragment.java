@@ -69,10 +69,6 @@ public class DealerViewFragment extends Fragment {
 
     private void initPlayers(List<User> players) {
         Player.addPlayers(getActivity(), flDealerViewContainer, players, R.layout.item_player_with_cards);
-
-        /*for (User player : players) {
-            Player.addPlayer(getActivity(), flDealerViewContainer, player);
-        }*/
     }
 
     @Override

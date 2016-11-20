@@ -69,7 +69,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Card card = cards.get(position);
-        //holder.ivCard.setImageDrawable(ContextCompat.getDrawable(mContext, card.getDrawable(mContext)));
         holder.ivCard.setImageDrawable(card.getDrawableBack(mContext));
         holder.ivCard.setTag(position); //Needed for drag and drop
 
@@ -219,5 +218,4 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             }
         }
     }
-
 }

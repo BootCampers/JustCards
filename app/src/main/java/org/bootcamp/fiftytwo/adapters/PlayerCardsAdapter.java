@@ -39,7 +39,7 @@ public class PlayerCardsAdapter extends RecyclerView.Adapter<PlayerCardsAdapter.
 
     @Override
     public PlayerCardsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_card, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_card, parent, false);
         return new PlayerCardsAdapter.ViewHolder(view);
     }
 
@@ -49,7 +49,7 @@ public class PlayerCardsAdapter extends RecyclerView.Adapter<PlayerCardsAdapter.
 
         holder.ivCard.setImageDrawable(null);
         Glide.with(holder.ivCard.getContext())
-                .load(card.getDrawable(mContext))
+                .load(card.getDrawableBack())
                 .bitmapTransform(new RoundedCornersTransformation(holder.ivCard.getContext(), 20, 0))
                 .fitCenter()
                 .into(holder.ivCard);
