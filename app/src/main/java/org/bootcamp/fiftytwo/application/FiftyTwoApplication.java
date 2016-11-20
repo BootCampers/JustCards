@@ -22,7 +22,7 @@ public class FiftyTwoApplication extends Application {
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(APPLICATION_ID)
-                .clientKey(null)
+                .clientKey("")
                 .addNetworkInterceptor(new ParseLogInterceptor())
                 .server(APPLICATION_SERVER)
                 .build());
