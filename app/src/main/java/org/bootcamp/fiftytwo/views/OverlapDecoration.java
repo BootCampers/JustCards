@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.views;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,18 +14,23 @@ public class OverlapDecoration extends RecyclerView.ItemDecoration {
 
     private final int x;
     private final int y;
+    private final float scale;
 
-    public OverlapDecoration(int x, int y) {
+    public OverlapDecoration(Context context, int x, int y) {
         this.x = x;
         this.y = y;
+        scale = context.getResources().getDisplayMetrics().density;
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         final int itemPosition = parent.getChildAdapterPosition(view);
         if (itemPosition == 0)
             return;
-        outRect.set(x, y, 0, 0);
+        outRect.set(px(x), px(y), 0, 0);
     }
 
+    private int px(int dp) {
+        return (int) (dp * scale * 0.5f);
+    }
 }

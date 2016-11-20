@@ -84,7 +84,7 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
 
         CardsAdapter adapter = new CardsAdapter(getActivity(), cards, this, tag);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-        RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(-85, 0);
+        RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
         rvCardsList.addItemDecoration(overlapDecoration);
         rvCardsList.setLayoutManager(layoutManager);
         setEmptyList(cards.size() == 0);
