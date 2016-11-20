@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.Player;
@@ -60,7 +61,8 @@ public class DealerViewFragment extends Fragment {
         transaction.replace(R.id.flPlayersContainer, playersCardFragment, Constants.PLAYER_TAG);*/
 
         //Add table cards
-        Fragment dealerCardsFragment = CardsListFragment.newInstance(CardUtil.generateDeck(1, false).subList(0, 1), DEALER_TAG);
+        List<Card> cards = CardUtil.generateDeck(1, false);
+        Fragment dealerCardsFragment = CardsListFragment.newInstance(cards.subList(0, 6), DEALER_TAG);
         transaction.replace(R.id.flDealerContainer, dealerCardsFragment, DEALER_TAG);
         transaction.commit();
 
@@ -68,7 +70,7 @@ public class DealerViewFragment extends Fragment {
     }
 
     private void initPlayers(List<User> players) {
-        Player.addPlayers(getActivity(), flDealerViewContainer, players, R.layout.item_player_with_cards);
+        Player.addPlayers(this, flDealerViewContainer, players, R.layout.item_player_with_cards);
     }
 
     @Override

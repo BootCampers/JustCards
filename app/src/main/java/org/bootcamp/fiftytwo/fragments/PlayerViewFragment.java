@@ -31,7 +31,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
  * Use the {@link PlayerViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlayerViewFragment extends CardsListFragment {
+public class PlayerViewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -108,7 +108,7 @@ public class PlayerViewFragment extends CardsListFragment {
     }
 
     public void addNewPlayer(User user) {
-        Player.addPlayer(getActivity(), flPlayerViewContainer, user, R.layout.item_player, 0, 0);
+        Player.addPlayer(this, flPlayerViewContainer, user, R.layout.item_player, 0, 0);
     }
 
     @Override

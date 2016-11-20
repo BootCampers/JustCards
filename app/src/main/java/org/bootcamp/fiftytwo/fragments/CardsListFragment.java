@@ -23,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.CardUtil.getParcelable;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
@@ -33,7 +34,10 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
  */
 public class CardsListFragment extends Fragment implements CardsAdapter.CardsListener {
 
-    private OnLogEventListener listener;
+    private OnLogEventListener mListener;
+    private Unbinder unbinder;
+    private CardsAdapter mAdapter;
+    private List<Card> mCards = new ArrayList<>();
 
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
@@ -46,7 +50,7 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnLogEventListener) {
-            listener = (OnLogEventListener) context;
+            mListener = (OnLogEventListener) context;
         } else {
             throw new ClassCastException(context.toString() + " must implement CardsListFragment.OnLogEventListener");
         }
@@ -64,32 +68,29 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String tag = TAG;
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            tag = bundle.getString(TAG);
+        }
+        mAdapter = new CardsAdapter(getContext(), mCards, this, tag);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cards_list, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
-        Bundle bundle = getArguments();
-
-        String tag = TAG;
-        List<Card> cards = new ArrayList<>();
-
-        if (bundle != null) {
-            cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            tag = bundle.getString(TAG);
-        }
-
-        CardsAdapter adapter = new CardsAdapter(getActivity(), cards, this, tag);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
         rvCardsList.addItemDecoration(overlapDecoration);
         rvCardsList.setLayoutManager(layoutManager);
-        setEmptyList(cards.size() == 0);
-        rvCardsList.setAdapter(adapter);
-        tvNoCards.setOnDragListener(adapter.getDragInstance());
+        rvCardsList.setAdapter(mAdapter);
+        tvNoCards.setOnDragListener(mAdapter.getDragInstance());
+        setEmptyList(mCards.size() == 0);
+
         return view;
     }
 
@@ -107,9 +108,21 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
     @Override
     public void logActivity(String whoPosted, String details) {
         Log.d(TAG, CardsListFragment.class.getSimpleName() + "--" + details + "--" + whoPosted);
-        if (listener != null) {
-            listener.onNewLogEvent(whoPosted, details);
+        if (mListener != null) {
+            mListener.onNewLogEvent(whoPosted, details);
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(unbinder != null)
+            unbinder.unbind();
+    }
 }

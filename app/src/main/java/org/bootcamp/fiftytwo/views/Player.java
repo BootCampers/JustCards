@@ -1,10 +1,7 @@
 package org.bootcamp.fiftytwo.views;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.PixelFormat;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,15 +14,15 @@ import com.bumptech.glide.Glide;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.adapters.PlayerCardsAdapter;
+import org.bootcamp.fiftytwo.fragments.CardsListFragment;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 
 /**
  * Author: agoenka
@@ -38,10 +35,10 @@ public class Player {
         //no instance
     }
 
-    public static ViewGroup addPlayer(Context context, final ViewGroup container, final User player, int resId, int x, int y) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+    public static ViewGroup addPlayer(Fragment fragment, final ViewGroup container, final User player, int resId, int x, int y) {
+        LayoutInflater inflater = (LayoutInflater) fragment.getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
-        setPlayerAttributes(context, playerLayout, player);
+        setPlayerAttributes(fragment, playerLayout, player);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -98,8 +95,8 @@ public class Player {
         return playerLayout;
     }
 
-    public static void addPlayers(Context context, final ViewGroup container, final List<User> players, int resId) {
-        View decorView = ((Activity) context).getWindow().getDecorView();
+    public static void addPlayers(Fragment fragment, final ViewGroup container, final List<User> players, int resId) {
+        View decorView = fragment.getActivity().getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
 
@@ -112,13 +109,14 @@ public class Player {
 
         for (User player : players) {
             x += incX;
-            addPlayer(context, container, player, resId, (int) x, (int) y);
+            addPlayer(fragment, container, player, resId, (int) x, (int) y);
         }
     }
 
-    private static void setPlayerAttributes(Context context, ViewGroup playerLayout, User player) {
+    private static void setPlayerAttributes(Fragment fragment, ViewGroup playerLayout, User player) {
         TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
         CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
+        playerLayout.setTag(player.getName());
 
         if (!TextUtils.isEmpty(player.getName())) {
             tvUserName.setText(player.getName());
@@ -129,16 +127,14 @@ public class Player {
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
 
-        View view = playerLayout.findViewById(R.id.rvCards);
-        if (view != null) {
-            RecyclerView rvCards = (RecyclerView) view;
-            PlayerCardsAdapter adapter = new PlayerCardsAdapter(rvCards.getContext(), new ArrayList<Card>());
-            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-            RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(context, -50, 0);
-            rvCards.addItemDecoration(overlapDecoration);
-            rvCards.setLayoutManager(layoutManager);
-            rvCards.setAdapter(adapter);
-            adapter.addAll(CardUtil.generateDeck(1, false).subList(0, 4));
+        View view = playerLayout.findViewById(R.id.flPlayerCardsContainer);
+        if (view != null && fragment != null && fragment.getChildFragmentManager() != null) {
+            List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 1);
+            Fragment playerCardsFragment = CardsListFragment.newInstance(cards, PLAYER_TAG + player.getName());
+            fragment.getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flPlayerCardsContainer, playerCardsFragment, PLAYER_TAG + player.getName())
+                    .commit();
         }
     }
 }
