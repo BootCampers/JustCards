@@ -13,9 +13,15 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.Player;
+
+import java.util.List;
+
+import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,18 +96,13 @@ public class PlayerViewFragment extends CardsListFragment {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         //Add player cards
-        Fragment playerCardsFragment = new CardsListFragment();
-        Bundle playerBundle = new Bundle();
-        playerBundle.putString(Constants.TAG, Constants.PLAYER_TAG);
-        playerCardsFragment.setArguments(playerBundle);
-        transaction.replace(R.id.flPlayerContainer, playerCardsFragment, Constants.PLAYER_TAG);
+        List<Card> cards = CardUtil.generateDeck(1, false);
+        Fragment playerCardsFragment = CardsListFragment.newInstance(cards.subList(0, 2), PLAYER_TAG);
+        transaction.replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG);
 
         //Add table cards
-        Fragment tableCardsFragment = new CardsListFragment();
-        Bundle tableBundle = new Bundle();
-        tableBundle.putString(Constants.TAG, Constants.TABLE_TAG);
-        tableCardsFragment.setArguments(tableBundle);
-        transaction.replace(R.id.flTableContainer, tableCardsFragment, Constants.TABLE_TAG);
+        Fragment tableCardsFragment = CardsListFragment.newInstance(cards.subList(0, 1), TABLE_TAG);
+        transaction.replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG);
 
         transaction.commit();
     }

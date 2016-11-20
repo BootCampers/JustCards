@@ -20,8 +20,6 @@ public class Constants {
     public static final String USERNAME = "username";
     public static final String USER_AVATAR_URI = "avatarURI";
 
-    public static String CHANNEL_LIST_CHANGED = "channelListChanged";
-
     public static final String GAME_NAME = "gameName";
 
     /** Request Codes Here */

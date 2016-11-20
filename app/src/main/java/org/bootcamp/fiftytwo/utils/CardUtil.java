@@ -1,9 +1,12 @@
 package org.bootcamp.fiftytwo.utils;
 
+import android.os.Parcelable;
+
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.CardRank;
 import org.bootcamp.fiftytwo.models.CardSuit;
 import org.bootcamp.fiftytwo.models.JokerSuit;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -21,25 +24,6 @@ public class CardUtil {
             deck.addAll(generateDeck(includeJokers));
         }
         return deck;
-    }
-
-    public static List<Card> selectDefaults(final List<Card> deck) {
-        for (Card card : deck) {
-            if (!card.isJoker()) {
-                card.setSelected(true);
-            }
-        }
-        return deck;
-    }
-
-    public static List<Card> getSelected(final List<Card> deck) {
-        List<Card> cards = new ArrayList<>();
-        for (Card card : deck) {
-            if (card.isSelected()) {
-                cards.add(card);
-            }
-        }
-        return cards;
     }
 
     private static List<Card> generateDeck(boolean includeJokers) {
@@ -66,6 +50,31 @@ public class CardUtil {
         }
 
         return jokers;
+    }
+
+    public static List<Card> selectDefaults(final List<Card> deck) {
+        for (Card card : deck) {
+            if (!card.isJoker()) {
+                card.setSelected(true);
+            }
+        }
+        return deck;
+    }
+
+    public static List<Card> getSelected(final List<Card> deck) {
+        List<Card> cards = new ArrayList<>();
+        for (Card card : deck) {
+            if (card.isSelected()) {
+                cards.add(card);
+            }
+        }
+        return cards;
+    }
+
+    public static Parcelable getParcelable(final List<Card> cards) {
+        ArrayList<Card> list = new ArrayList<>();
+        list.addAll(cards);
+        return Parcels.wrap(list);
     }
 
     @SuppressWarnings("unused")

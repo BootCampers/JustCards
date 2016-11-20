@@ -1,7 +1,6 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,38 +15,31 @@ import android.widget.TextView;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.models.CardRank;
-import org.bootcamp.fiftytwo.models.CardSuit;
-import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.views.OverlapDecoration;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static org.bootcamp.fiftytwo.utils.CardUtil.getParcelable;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
  * Created by baphna on 11/11/2016.
  */
-
 public class CardsListFragment extends Fragment implements CardsAdapter.CardsListener {
 
-    @BindDrawable(R.drawable.back)
-    Drawable cardBack;
-
-    @BindView(R.id.rvCardsList)
-    RecyclerView rvCardsList;
-    private CardsAdapter cardsAdapter;
-    private ArrayList<Card> cards = new ArrayList<>();
-    private StaggeredGridLayoutManager staggeredLayoutManager;
-    @BindView(R.id.tvNoCards)
-    TextView tvNoCards;
     private OnLogEventListener listener;
 
+    @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
+    @BindView(R.id.tvNoCards) TextView tvNoCards;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public interface OnLogEventListener {
+        void onNewLogEvent(String whoPosted, String detail);
     }
 
     @Override
@@ -56,12 +48,22 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
         if (context instanceof OnLogEventListener) {
             listener = (OnLogEventListener) context;
         } else {
-            throw new ClassCastException(context.toString()
-                    + " must implement CardsListFragment.OnLogEventListener");
+            throw new ClassCastException(context.toString() + " must implement CardsListFragment.OnLogEventListener");
         }
     }
 
-    public CardsListFragment() {
+    public static CardsListFragment newInstance(final List<Card> cards, final String tag) {
+        CardsListFragment fragment = new CardsListFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(PARAM_CARDS, getParcelable(cards));
+        args.putString(TAG, tag);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -70,28 +72,30 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
         View view = inflater.inflate(R.layout.fragment_cards_list, container, false);
         ButterKnife.bind(this, view);
 
-        String tag = Constants.TAG;
-
         Bundle bundle = getArguments();
-        if(bundle != null) {
-            tag = bundle.getString(Constants.TAG);
-        }
-        cards.add(new Card(CardSuit.SPADES, CardRank.JACK));
-        cards.add(new Card(CardSuit.SPADES, CardRank.QUEEN));
-        cards.add(new Card(CardSuit.SPADES, CardRank.KING));
-        cardsAdapter = new CardsAdapter(getActivity(), cards, this, tag);
-        staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-        rvCardsList.setLayoutManager(staggeredLayoutManager);
-        setEmptyList(false);
-        rvCardsList.setAdapter(cardsAdapter);
 
-        tvNoCards.setOnDragListener(cardsAdapter.getDragInstance());
+        String tag = TAG;
+        List<Card> cards = new ArrayList<>();
+
+        if (bundle != null) {
+            cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            tag = bundle.getString(TAG);
+        }
+
+        CardsAdapter adapter = new CardsAdapter(getActivity(), cards, this, tag);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration();
+        rvCardsList.addItemDecoration(overlapDecoration);
+        rvCardsList.setLayoutManager(layoutManager);
+        setEmptyList(cards.size() == 0);
+        rvCardsList.setAdapter(adapter);
+        tvNoCards.setOnDragListener(adapter.getDragInstance());
         return view;
     }
 
     @Override
     public void setEmptyList(boolean visibility) {
-        if(visibility){
+        if (visibility) {
             tvNoCards.setVisibility(View.VISIBLE);
             rvCardsList.setVisibility(View.GONE);
         } else {
@@ -102,14 +106,10 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
 
     @Override
     public void logActivity(String whoPosted, String details) {
-        Log.d(Constants.TAG, CardsListFragment.class.getSimpleName()
-                + "--" + details + "--" + whoPosted);
-        if(listener != null){
+        Log.d(TAG, CardsListFragment.class.getSimpleName() + "--" + details + "--" + whoPosted);
+        if (listener != null) {
             listener.onNewLogEvent(whoPosted, details);
         }
     }
 
-    public interface OnLogEventListener {
-        public void onNewLogEvent(String whoPosted, String detail);
-    }
 }

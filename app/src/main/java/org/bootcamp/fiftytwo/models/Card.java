@@ -19,7 +19,7 @@ public class Card {
     private boolean isJoker;
     private boolean isSelected;
 
-    private Card() {}
+    public Card() {}
 
     public Card(CardSuit suit, CardRank rank){
         this.suit = suit;

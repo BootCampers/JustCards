@@ -14,6 +14,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,13 +40,17 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         return cards;
     }
 
-    public String getTag() {
+    private String getTag() {
         return tag;
     }
 
     public CardsAdapter(Context mContext, List<Card> cards, CardsListener cardsListener, String tag) {
         this.mContext = mContext;
-        this.cards = cards;
+        if (cards == null) {
+            this.cards = new ArrayList<>();
+        } else {
+            this.cards = cards;
+        }
         this.cardsListener = cardsListener;
         this.tag = tag;
     }
@@ -64,6 +69,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Card card = cards.get(position);
+        //holder.ivCard.setImageDrawable(ContextCompat.getDrawable(mContext, card.getDrawable(mContext)));
         holder.ivCard.setImageDrawable(card.getDrawableBack(mContext));
         holder.ivCard.setTag(position); //Needed for drag and drop
 
@@ -134,8 +140,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         int targetPosition = getTargetPosition(v);
                         Card movingCard = sourceAdapter.getCards().get(sourcePosition);
 
-                        sourceAdapter.updateSource(sourceAdapter, sourcePosition);
-                        targetAdapter.updateTarget(targetAdapter, targetPosition, movingCard);
+                        updateSource(sourceAdapter, sourcePosition);
+                        updateTarget(targetAdapter, targetPosition, movingCard);
 
                         v.setVisibility(View.VISIBLE);
                         if (v.getId() == R.id.tvNoCards) {
@@ -164,53 +170,54 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
             return true;
         }
-    }
 
-    private CardsAdapter getSourceAdapter(DragEvent e) {
-        View view = (View) e.getLocalState();
-        RecyclerView source = (RecyclerView) view.getParent().getParent();
-        return (CardsAdapter) source.getAdapter();
-    }
-
-    private CardsAdapter getTargetAdapter(View v) {
-        // Card's parent is a LinearLayout and it's parent is a RecyclerView
-        RecyclerView target =
-                (v.getId() == R.id.tvNoCards)
-                        ? (RecyclerView) v.getRootView().findViewById(R.id.rvCardsList)
-                        : (RecyclerView) v.getParent().getParent();
-        return (CardsAdapter) target.getAdapter();
-    }
-
-    private int getSourcePosition(DragEvent event) {
-        View view = (View) event.getLocalState();
-        return (int) view.getTag();
-    }
-
-    private int getTargetPosition(View v) {
-        return v.getId() != R.id.tvNoCards ? (int) v.getTag() : -1;
-    }
-
-    private void updateSource(CardsAdapter adapter, int position) {
-        List<Card> cards = adapter.getCards();
-        cards.remove(position);
-        updateCards(adapter, cards);
-    }
-
-    private void updateTarget(CardsAdapter adapter, int position, Card card) {
-        List<Card> cards = adapter.getCards();
-        if (position >= 0) {
-            cards.add(position, card);
-        } else {
-            cards.add(card);
+        private CardsAdapter getSourceAdapter(DragEvent e) {
+            View view = (View) e.getLocalState();
+            RecyclerView source = (RecyclerView) view.getParent().getParent();
+            return (CardsAdapter) source.getAdapter();
         }
-        updateCards(adapter, cards);
-    }
 
-    private void updateCards(CardsAdapter adapter, List<Card> cards) {
-        this.cards = cards;
-        adapter.notifyDataSetChanged();
-        if (cards.size() == 0) {
-            cardsListener.setEmptyList(true);
+        private CardsAdapter getTargetAdapter(View v) {
+            // Card's parent is a LinearLayout and it's parent is a RecyclerView
+            RecyclerView target =
+                    v.getId() == R.id.tvNoCards
+                    ? (RecyclerView) ((ViewGroup) v.getParent()).findViewById(R.id.rvCardsList)
+                    : (RecyclerView) v.getParent().getParent();
+            return (CardsAdapter) target.getAdapter();
+        }
+
+        private int getSourcePosition(DragEvent event) {
+            View view = (View) event.getLocalState();
+            return (int) view.getTag();
+        }
+
+        private int getTargetPosition(View v) {
+            return v.getId() != R.id.tvNoCards ? (int) v.getTag() : -1;
+        }
+
+        private void updateSource(CardsAdapter adapter, int position) {
+            List<Card> cards = adapter.getCards();
+            cards.remove(position);
+            updateCards(adapter, cards);
+        }
+
+        private void updateTarget(CardsAdapter adapter, int position, Card card) {
+            List<Card> cards = adapter.getCards();
+            if (position >= 0) {
+                cards.add(position, card);
+            } else {
+                cards.add(card);
+            }
+            updateCards(adapter, cards);
+        }
+
+        private void updateCards(CardsAdapter adapter, List<Card> cards) {
+            adapter.cards = cards;
+            adapter.notifyDataSetChanged();
+            if (cards.size() == 0) {
+                adapter.cardsListener.setEmptyList(true);
+            }
         }
     }
+
 }

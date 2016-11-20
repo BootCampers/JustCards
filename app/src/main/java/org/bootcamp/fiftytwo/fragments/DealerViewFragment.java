@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.Player;
 
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 
 public class DealerViewFragment extends Fragment {
 
@@ -58,12 +60,8 @@ public class DealerViewFragment extends Fragment {
         transaction.replace(R.id.flPlayersContainer, playersCardFragment, Constants.PLAYER_TAG);*/
 
         //Add table cards
-        Fragment dealerCardsFragment = new CardsListFragment();
-        Bundle tableBundle = new Bundle();
-        tableBundle.putString(Constants.TAG, Constants.TABLE_TAG);
-        dealerCardsFragment.setArguments(tableBundle);
-        transaction.replace(R.id.flDealerContainer, dealerCardsFragment, Constants.TABLE_TAG);
-
+        Fragment dealerCardsFragment = CardsListFragment.newInstance(CardUtil.generateDeck(1, false).subList(0, 1), DEALER_TAG);
+        transaction.replace(R.id.flDealerContainer, dealerCardsFragment, DEALER_TAG);
         transaction.commit();
 
         initPlayers(User.getDummyPlayers(4));

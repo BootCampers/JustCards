@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivCard"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         app:srcCompat="@drawable/back"/>
 
 </LinearLayout>
