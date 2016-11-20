@@ -1,42 +1,34 @@
 package org.bootcamp.fiftytwo.models;
 
-import com.parse.ParseClassName;
-import com.parse.ParseObject;
-
-import org.parceler.Parcel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@ParseClassName("User")
-@Parcel(analyze = User.class)
-public class User  extends ParseObject {
 
-    public User() {
-        super();
-    }
+public class User  {
+
+    private String avatarUri;
+    private String name;
 
     public User(String avatarUri, String name) {
-        super();
-        setAvatarUri(avatarUri);
-        setName(name);
+        this.avatarUri = avatarUri;
+        this.name = name;
     }
 
     public String getAvatarUri() {
-        return getString("avatarUri");
+        return avatarUri;
     }
 
     public void setAvatarUri(String avatarUri) {
-        put("avatarUri", avatarUri);
+        this.avatarUri = avatarUri;
     }
 
     public String getName() {
-        return getString("name");
+        return name;
     }
 
     public void setName(String name) {
-        put("name", name);
+        this.name = name;
     }
 
     // TODO: This method needs to be removed once the Player is passed via intents / arguments

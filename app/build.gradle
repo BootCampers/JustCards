@@ -50,13 +50,11 @@ dependencies {
     compile 'com.mikhaellopez:circularimageview:3.0.2'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     apt 'org.parceler:parceler:1.1.1'
-    compile files('libs/alljoyn.jar')
 
     compile 'com.parse.bolts:bolts-android:1.4.0'
     compile 'com.parse:parse-android:1.13.1'
     compile 'com.parse:parseinterceptors:0.0.2' // for logging API calls to LogCat
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
 
-    apply plugin: 'com.google.gms.google-services'
 
 }

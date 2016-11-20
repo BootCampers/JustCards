@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String username = usernameTxtbox.getText().toString();
                 user = new User(userAvatarURI, username);
-                user.saveInBackground();
+                //user.saveInBackground();
 
                 SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = userPrefs.edit();
@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                 editor.commit();
 
                 Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
-                createGameIntent.putExtra(USER_TAG, user.getObjectId());
+                createGameIntent.putExtra(USER_TAG, user.getAvatarUri());
                 startActivity(createGameIntent);
             }
         });
