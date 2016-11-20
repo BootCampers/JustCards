@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         tools:listitem="@layout/item_card"
-        tools:orientation="horizontal"/>
+        tools:orientation="horizontal"
+        android:clipToPadding="false"/>
 
 </FrameLayout>

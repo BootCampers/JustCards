@@ -11,11 +11,20 @@ import android.view.View;
  */
 public class OverlapDecoration extends RecyclerView.ItemDecoration {
 
-    private final static int verticalOverlap = 0;
-    private final static int horizontalOverlap = -5;
+    private final int x;
+    private final int y;
+
+    public OverlapDecoration(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        outRect.set(horizontalOverlap, verticalOverlap, 0, 0);
+        final int itemPosition = parent.getChildAdapterPosition(view);
+        if (itemPosition == 0)
+            return;
+        outRect.set(x, y, 0, 0);
     }
+
 }
