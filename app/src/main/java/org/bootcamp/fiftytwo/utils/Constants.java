@@ -31,5 +31,13 @@ public class Constants {
     public static final String X = "X";
     public static final String Y = "Y";
 
-    public static final String NEW_PLAYER_ADDED = "newPlayerAdded";
+    /**
+     * Process broadcast based on identifier .. like new player added, chat message, card exchanged
+     * User PARSE_<> naming convention for all identifiers
+     */
+
+    public static final String COMMON_IDENTIFIER = "commonIdentifier";
+
+    public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
+    public static final String USER_ID = "userId";
 }

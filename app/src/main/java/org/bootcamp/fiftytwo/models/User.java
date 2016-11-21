@@ -1,5 +1,8 @@
 package org.bootcamp.fiftytwo.models;
 
+import org.bootcamp.fiftytwo.utils.Constants;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ public class User {
 
     private String avatarUri;
     private String name;
+    private String userId; //match this with userid of Parse to keep them unique
 
     public User() {}
 
@@ -33,6 +37,29 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public User(JSONObject data) throws JSONException {
+        name = data.getString(Constants.USERNAME);
+        avatarUri = data.getString(Constants.USER_AVATAR_URI);
+        userId = data.getString(Constants.USER_ID);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "avatarUri='" + avatarUri + '\'' +
+                ", name='" + name + '\'' +
+                ", userId='" + userId + '\'' +
+                '}';
     }
 
     // TODO: This method needs to be removed once the Player is passed via intents / arguments

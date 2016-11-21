@@ -14,10 +14,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.parse.ParseCloud;
-import com.parse.ParsePush;
-import com.parse.ParseUser;
-
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
@@ -27,11 +23,8 @@ import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -60,6 +53,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
     private String gameName;
 
+    private ParseUtils parseUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -70,8 +65,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
-
 
         //TODO: check if he is a dealer or not and hide fab accordingly
         playerViewFragment = new PlayerViewFragment();
@@ -84,8 +77,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
             gameName = bundle.getString(Constants.GAME_NAME);
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
-            ParsePush.subscribeInBackground(gameName);
-
+            parseUtils = new ParseUtils(this, gameName);
+            parseUtils.joinChannel();
         }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -123,21 +116,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     //TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
-        playerViewFragment.addNewPlayer(User.getDummyPlayer());
-
-        try {
-            JSONObject payload = new JSONObject();
-            payload.put("location", "location");
-            payload.put("userId", ParseUser.getCurrentUser().getObjectId());
-
-            HashMap<String, String> data = new HashMap<>();
-            data.put("customData", payload.toString());
-            data.put("channel", gameName);
-            // The code that processes this function is listed at:
-            // https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js
-            ParseCloud.callFunctionInBackground("pushToChannel", data);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        //playerViewFragment.addNewPlayer(User.getDummyPlayer());
+        if(parseUtils != null){
+            parseUtils.addNewPlayer(User.getDummyPlayers(1).get(0));
         }
     }
 
@@ -173,8 +154,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdate(Observable o, Object arg) {
-        String qualifier = (String) arg;
-        Log.d(Constants.TAG, "GameViewManager " + qualifier);
+    public void onUpdate(Observable o, Object identifier, Object arg) {
+        String qualifier = (String) arg.toString();
+        Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier);
     }
 }

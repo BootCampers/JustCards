@@ -28,7 +28,7 @@ public class FiftyTwoApplication extends Application
     public void onCreate() {
         super.onCreate();
 
-//        ParseObject.registerSubclass(User.class);
+        //ParseObject.registerSubclass(User.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(APPLICATION_ID)
@@ -52,9 +52,9 @@ public class FiftyTwoApplication extends Application
         mObservers.remove(obs);
     }
 
-    public void notifyObservers(Object arg) {
+    public void notifyObservers(String identifier, Object arg) {
         for (Observer obs : mObservers) {
-            obs.onUpdate(this, arg);
+            obs.onUpdate(this, identifier, arg);
         }
     }
 }

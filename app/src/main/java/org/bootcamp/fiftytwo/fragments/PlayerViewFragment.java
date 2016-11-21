@@ -142,14 +142,14 @@ public class PlayerViewFragment extends Fragment
     }
 
     @Override
-    public void onUpdate(Observable o, Object arg) {
-        String whatUpdated = (String) arg;
-        Log.d(Constants.TAG, "onUpdate " + whatUpdated);
-        if(whatUpdated.equals(Constants.NEW_PLAYER_ADDED)) {
+    public void onUpdate(Observable o, final Object identifier, final Object arg) {
+        String whatUpdated = (String) identifier.toString();
+        Log.d(Constants.TAG, PlayerViewFragment.class.getSimpleName() + "-onUpdate-" + whatUpdated);
+        if(whatUpdated.equals(Constants.PARSE_NEW_PLAYER_ADDED)) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer, new User("http://i.imgur.com/GkyKh.jpg", "Broadcast"), R.layout.item_player_with_cards, 0, 0);
+                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer, (User)arg, R.layout.item_player_with_cards, 0, 0);
                 }
             });
         }

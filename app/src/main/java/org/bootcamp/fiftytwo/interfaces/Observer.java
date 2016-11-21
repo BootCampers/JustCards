@@ -16,5 +16,5 @@
 package org.bootcamp.fiftytwo.interfaces;
 
 public interface Observer {
-    public void onUpdate(Observable o, Object arg);
+    public void onUpdate(Observable o, Object identifier, Object arg);
 }
