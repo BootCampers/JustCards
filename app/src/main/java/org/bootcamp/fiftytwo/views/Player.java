@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.fragments.CardsListFragment;
+import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.CardUtil;
@@ -37,7 +37,7 @@ public class Player {
     public static ViewGroup addPlayer(Fragment fragment, final ViewGroup container, final User player, int resId, int x, int y) {
         LayoutInflater inflater = LayoutInflater.from(fragment.getContext());
         final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
-        setPlayerAttributes(fragment, playerLayout, player);
+        setPlayerAttributes(playerLayout, player);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -94,7 +94,22 @@ public class Player {
         return playerLayout;
     }
 
-    public static void addPlayers(Fragment fragment, final ViewGroup container, final List<User> players, int resId) {
+    private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
+        TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
+        CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
+        playerLayout.setTag(player.getName());
+
+        if (!TextUtils.isEmpty(player.getName())) {
+            tvUserName.setText(player.getName());
+        }
+
+        Glide.with(tvUserName.getContext())
+                .load(player.getAvatarUri())
+                .error(R.drawable.ic_face)
+                .into(ivPlayerAvatar);
+    }
+
+    public static void addPlayers(Fragment fragment, final List<User> players) {
         View decorView = fragment.getActivity().getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
@@ -108,32 +123,18 @@ public class Player {
 
         for (User player : players) {
             x += incX;
-            addPlayer(fragment, container, player, resId, (int) x, (int) y);
+            addPlayerFragment(fragment, player, (int) x, (int) y);
         }
     }
 
-    private static void setPlayerAttributes(Fragment fragment, ViewGroup playerLayout, User player) {
-        TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
-        CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
-        playerLayout.setTag(player.getName());
+    private static void addPlayerFragment(Fragment fragment, User player, int x, int y) {
+        List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 2);
+        Fragment playerCardsFragment = PlayerFragment.newInstance(cards, player, PLAYER_TAG + player.getName(), x, y);
 
-        if (!TextUtils.isEmpty(player.getName())) {
-            tvUserName.setText(player.getName());
-        }
-
-        Glide.with(tvUserName.getContext())
-                .load(player.getAvatarUri())
-                .error(R.drawable.ic_face)
-                .into(ivPlayerAvatar);
-
-        View view = playerLayout.findViewById(R.id.flPlayerCardsContainer);
-        if (view != null && fragment != null && fragment.getChildFragmentManager() != null) {
-            List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 1);
-            Fragment playerCardsFragment = CardsListFragment.newInstance(cards, PLAYER_TAG + player.getName());
-            fragment.getChildFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.flPlayerCardsContainer, playerCardsFragment, PLAYER_TAG + player.getName())
-                    .commit();
-        }
+        fragment.getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.flDealerViewContainer, playerCardsFragment, PLAYER_TAG + player.getName())
+                .commitNow();
+        fragment.getChildFragmentManager().executePendingTransactions();
     }
 }

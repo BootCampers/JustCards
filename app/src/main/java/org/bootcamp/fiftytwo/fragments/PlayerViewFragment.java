@@ -110,11 +110,11 @@ public class PlayerViewFragment extends Fragment
 
         //Add player cards
         List<Card> cards = CardUtil.generateDeck(1, false);
-        Fragment playerCardsFragment = CardsListFragment.newInstance(cards.subList(0, 6), PLAYER_TAG);
+        Fragment playerCardsFragment = CardsFragment.newInstance(cards.subList(0, 6), PLAYER_TAG);
         transaction.replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG);
 
         //Add table cards
-        Fragment tableCardsFragment = CardsListFragment.newInstance(cards.subList(0, 6), TABLE_TAG);
+        Fragment tableCardsFragment = CardsFragment.newInstance(cards.subList(0, 6), TABLE_TAG);
         transaction.replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG);
 
         transaction.commit();

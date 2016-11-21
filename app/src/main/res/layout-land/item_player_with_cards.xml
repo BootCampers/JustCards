@@ -30,9 +30,6 @@
         android:textColor="@android:color/white"
         tools:text="Name"/>
 
-    <FrameLayout
-        android:id="@+id/flPlayerCardsContainer"
-        android:layout_width="100dp"
-        android:layout_height="75dp"/>
+    <include layout="@layout/fragment_cards_list"/>
 
 </LinearLayout>
