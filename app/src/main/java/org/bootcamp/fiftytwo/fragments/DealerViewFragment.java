@@ -50,7 +50,7 @@ public class DealerViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Add table cards
         List<Card> cards = CardUtil.generateDeck(1, false);
-        Fragment dealerCardsFragment = CardsListFragment.newInstance(cards.subList(0, 6), DEALER_TAG);
+        Fragment dealerCardsFragment = CardsFragment.newInstance(cards.subList(0, 6), DEALER_TAG);
 
         getChildFragmentManager()
                 .beginTransaction()

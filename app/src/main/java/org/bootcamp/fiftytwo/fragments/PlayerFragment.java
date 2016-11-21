@@ -34,7 +34,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.Y;
 /**
  * Created by baphna on 11/11/2016.
  */
-public class PlayerFragment extends CardsListFragment {
+public class PlayerFragment extends CardsFragment {
 
     private int x;
     private int y;

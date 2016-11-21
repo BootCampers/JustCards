@@ -19,7 +19,7 @@ import com.parse.ParsePush;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.fragments.CardsListFragment;
+import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
@@ -42,7 +42,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
         DealerViewFragment.OnDealerListener,
-        CardsListFragment.OnLogEventListener,
+        CardsFragment.OnLogEventListener,
         Observer {
 
     @BindView(R.id.ibComment) ImageButton ibComment;
