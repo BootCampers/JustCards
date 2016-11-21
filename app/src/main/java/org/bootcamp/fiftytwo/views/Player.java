@@ -21,7 +21,6 @@ import org.bootcamp.fiftytwo.utils.CardUtil;
 
 import java.util.List;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 
 /**
@@ -36,7 +35,7 @@ public class Player {
     }
 
     public static ViewGroup addPlayer(Fragment fragment, final ViewGroup container, final User player, int resId, int x, int y) {
-        LayoutInflater inflater = (LayoutInflater) fragment.getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = LayoutInflater.from(fragment.getContext());
         final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
         setPlayerAttributes(fragment, playerLayout, player);
 

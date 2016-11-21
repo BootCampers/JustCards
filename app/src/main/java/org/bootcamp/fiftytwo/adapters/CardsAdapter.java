@@ -44,8 +44,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         return tag;
     }
 
-    public CardsAdapter(Context mContext, List<Card> cards, CardsListener cardsListener, String tag) {
-        this.mContext = mContext;
+    public CardsAdapter(Context context, List<Card> cards, CardsListener cardsListener, String tag) {
+        this.mContext = context;
         if (cards == null) {
             this.cards = new ArrayList<>();
         } else {

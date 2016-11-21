@@ -33,7 +33,6 @@
     <FrameLayout
         android:id="@+id/flPlayerCardsContainer"
         android:layout_width="100dp"
-        android:layout_height="75dp"
-        android:tag="playerCardsContainer"/>
+        android:layout_height="75dp"/>
 
 </LinearLayout>
