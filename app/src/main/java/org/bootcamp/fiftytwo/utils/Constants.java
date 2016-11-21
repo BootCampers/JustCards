@@ -28,4 +28,5 @@ public class Constants {
     /** Intent and Fragment Parameter here */
     public static final String PARAM_CARDS = "cards";
 
+    public static final String NEW_PLAYER_ADDED = "newPlayerAdded";
 }

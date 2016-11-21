@@ -133,7 +133,7 @@ public class Player {
             Fragment playerCardsFragment = CardsListFragment.newInstance(cards, PLAYER_TAG + player.getName());
             fragment.getChildFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.flPlayerCardsContainer, playerCardsFragment, PLAYER_TAG + player.getName())
+                    .add(R.id.flPlayerCardsContainer, playerCardsFragment, PLAYER_TAG + player.getName())
                     .commit();
         }
     }

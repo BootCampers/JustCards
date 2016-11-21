@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,14 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
+import org.bootcamp.fiftytwo.interfaces.Observable;
+import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.receivers.CardExchangeReceiver;
 import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.Player;
 
 import java.util.List;
@@ -31,7 +37,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
  * Use the {@link PlayerViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlayerViewFragment extends Fragment {
+public class PlayerViewFragment extends Fragment
+    implements Observer{
+
+    CardExchangeReceiver cardExchangeReceiver;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,6 +56,7 @@ public class PlayerViewFragment extends Fragment {
 
     FrameLayout flPlayerViewContainer;
     private WindowManager.LayoutParams params;
+    private FiftyTwoApplication fiftyTwoApp;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -76,6 +87,8 @@ public class PlayerViewFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        fiftyTwoApp = (FiftyTwoApplication)getActivity().getApplication();
+        fiftyTwoApp.addObserver(this);
     }
 
     @Override
@@ -126,6 +139,20 @@ public class PlayerViewFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onUpdate(Observable o, Object arg) {
+        String whatUpdated = (String) arg;
+        Log.d(Constants.TAG, "onUpdate " + whatUpdated);
+        if(whatUpdated.equals(Constants.NEW_PLAYER_ADDED)) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer, new User("http://i.imgur.com/GkyKh.jpg", "Broadcast"), R.layout.item_player_with_cards, 0, 0);
+                }
+            });
+        }
     }
 
     public interface OnPlayerFragmentInteractionListener {

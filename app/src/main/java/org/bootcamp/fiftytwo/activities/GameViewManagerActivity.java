@@ -14,10 +14,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.parse.LogInCallback;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseCloud;
-import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 
@@ -61,6 +58,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private boolean showingChat = false;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
+    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +82,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
-            String gameName = bundle.getString(Constants.GAME_NAME);
+            gameName = bundle.getString(Constants.GAME_NAME);
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
             ParsePush.subscribeInBackground(gameName);
 
@@ -134,7 +132,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
-            data.put("channel", "android-2016");
+            data.put("channel", gameName);
             // The code that processes this function is listed at:
             // https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js
             ParseCloud.callFunctionInBackground("pushToChannel", data);
@@ -175,7 +173,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void onUpdate(Observable o, Object arg) {
         String qualifier = (String) arg;
         Log.d(Constants.TAG, "GameViewManager " + qualifier);
     }

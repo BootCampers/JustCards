@@ -55,7 +55,7 @@ public class CreateJoinGameActivity extends AppCompatActivity
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void onUpdate(Observable o, Object arg) {
         String qualifier = (String)arg;
     }
 
