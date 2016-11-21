@@ -34,10 +34,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
  */
 public class CardsListFragment extends Fragment implements CardsAdapter.CardsListener {
 
+    protected CardsAdapter mAdapter;
+    protected List<Card> mCards = new ArrayList<>();
     private OnLogEventListener mListener;
-    private Unbinder unbinder;
-    private CardsAdapter mAdapter;
-    private List<Card> mCards = new ArrayList<>();
+    protected Unbinder unbinder;
+    protected String tag = TAG;
 
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
@@ -68,7 +69,6 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String tag = TAG;
         Bundle bundle = getArguments();
         if (bundle != null) {
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
@@ -82,7 +82,15 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cards_list, container, false);
         unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        initCards();
+    }
+
+    protected void initCards() {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
         rvCardsList.addItemDecoration(overlapDecoration);
@@ -90,8 +98,6 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
         rvCardsList.setAdapter(mAdapter);
         tvNoCards.setOnDragListener(mAdapter.getDragInstance());
         setEmptyList(mCards.size() == 0);
-
-        return view;
     }
 
     @Override
@@ -107,7 +113,7 @@ public class CardsListFragment extends Fragment implements CardsAdapter.CardsLis
 
     @Override
     public void logActivity(String whoPosted, String details) {
-        Log.d(TAG, CardsListFragment.class.getSimpleName() + "--" + details + "--" + whoPosted);
+        Log.d(TAG, this.getClass().getSimpleName() + "--" + details + "--" + whoPosted);
         if (mListener != null) {
             mListener.onNewLogEvent(whoPosted, details);
         }

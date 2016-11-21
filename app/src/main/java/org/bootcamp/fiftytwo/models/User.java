@@ -1,14 +1,18 @@
 package org.bootcamp.fiftytwo.models;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-public class User  {
+@Parcel(analyze = User.class)
+public class User {
 
     private String avatarUri;
     private String name;
+
+    public User() {}
 
     public User(String avatarUri, String name) {
         this.avatarUri = avatarUri;
