@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static org.bootcamp.fiftytwo.utils.Constants.USERNAME;
+import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG;
@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = userPrefs.edit();
-                editor.putString(USERNAME, username);
+                editor.putString(DISPLAY_NAME, username);
                 editor.putString(USER_AVATAR_URI, userAvatarURI);
                 editor.commit();
 

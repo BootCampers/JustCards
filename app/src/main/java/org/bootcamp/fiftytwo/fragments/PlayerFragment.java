@@ -100,7 +100,7 @@ public class PlayerFragment extends CardsFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        tvUserName.setText(mPlayer.getName());
+        tvUserName.setText(mPlayer.getDisplayName());
 
         Glide.with(getContext())
                 .load(mPlayer.getAvatarUri())

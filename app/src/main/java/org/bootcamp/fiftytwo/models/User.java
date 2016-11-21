@@ -1,5 +1,9 @@
 package org.bootcamp.fiftytwo.models;
 
+import android.util.Log;
+
+import com.parse.ParseUser;
+
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,14 +17,14 @@ import java.util.Random;
 public class User {
 
     private String avatarUri;
-    private String name;
+    private String displayName;
     private String userId; //match this with userid of Parse to keep them unique
 
     public User() {}
 
-    public User(String avatarUri, String name) {
+    public User(String avatarUri, String displayName) {
         this.avatarUri = avatarUri;
-        this.name = name;
+        this.displayName = displayName;
     }
 
     public String getAvatarUri() {
@@ -31,24 +35,26 @@ public class User {
         this.avatarUri = avatarUri;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+        if(ParseUser.getCurrentUser() != null){
+            return  ParseUser.getCurrentUser().getObjectId();
+        } else {
+            Log.e(Constants.TAG , "No parse login. Current user null");
+            return "unknown";
+        }
     }
 
     public User(JSONObject data) throws JSONException {
-        name = data.getString(Constants.USERNAME);
+        displayName = data.getString(Constants.DISPLAY_NAME);
         avatarUri = data.getString(Constants.USER_AVATAR_URI);
         userId = data.getString(Constants.USER_ID);
     }
@@ -57,7 +63,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "avatarUri='" + avatarUri + '\'' +
-                ", name='" + name + '\'' +
+                ", displayName='" + displayName + '\'' +
                 ", userId='" + userId + '\'' +
                 '}';
     }

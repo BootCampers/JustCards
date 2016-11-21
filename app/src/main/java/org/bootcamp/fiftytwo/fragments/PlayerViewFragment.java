@@ -57,6 +57,7 @@ public class PlayerViewFragment extends Fragment
     FrameLayout flPlayerViewContainer;
     private WindowManager.LayoutParams params;
     private FiftyTwoApplication fiftyTwoApp;
+    private View rootView;
 
     public PlayerViewFragment() {
         // Required empty public constructor
@@ -94,7 +95,7 @@ public class PlayerViewFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_player_view, container, false);
+        rootView = inflater.inflate(R.layout.fragment_player_view, container, false);
         flPlayerViewContainer = (FrameLayout) rootView.findViewById(R.id.flPlayerViewContainer);
         return rootView;
     }
@@ -150,6 +151,22 @@ public class PlayerViewFragment extends Fragment
                 @Override
                 public void run() {
                     Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer, (User)arg, R.layout.item_player_with_cards, 0, 0);
+                    //TODO: Add to the log
+                }
+            });
+        } else if (whatUpdated.equals(Constants.PARSE_PLAYER_LEFT)) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String userViewTag = ((User) arg).getDisplayName() + "_"
+                            + ((User) arg).getUserId();
+                    View userView = rootView.findViewWithTag(userViewTag);
+                    if(userView != null){
+                        flPlayerViewContainer.removeView(userView);
+                    } else {
+                        Log.e(Constants.TAG, "Failed to remove view for " + userViewTag);
+                    }
+                    //TODO: Add to the log
                 }
             });
         }

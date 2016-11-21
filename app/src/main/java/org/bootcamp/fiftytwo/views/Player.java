@@ -97,10 +97,10 @@ public class Player {
     private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
         TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
         CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
-        playerLayout.setTag(player.getName());
+        playerLayout.setTag(player.getDisplayName()+"_"+player.getUserId());
 
-        if (!TextUtils.isEmpty(player.getName())) {
-            tvUserName.setText(player.getName());
+        if (!TextUtils.isEmpty(player.getDisplayName())) {
+            tvUserName.setText(player.getDisplayName());
         }
 
         Glide.with(tvUserName.getContext())
@@ -129,11 +129,11 @@ public class Player {
 
     private static void addPlayerFragment(Fragment fragment, User player, int x, int y) {
         List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 2);
-        Fragment playerCardsFragment = PlayerFragment.newInstance(cards, player, PLAYER_TAG + player.getName(), x, y);
+        Fragment playerCardsFragment = PlayerFragment.newInstance(cards, player, PLAYER_TAG + player.getDisplayName(), x, y);
 
         fragment.getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.flDealerViewContainer, playerCardsFragment, PLAYER_TAG + player.getName())
+                .add(R.id.flDealerViewContainer, playerCardsFragment, PLAYER_TAG + player.getDisplayName())
                 .commitNow();
         fragment.getChildFragmentManager().executePendingTransactions();
     }

@@ -1,10 +1,12 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -79,6 +81,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
+            //TODO get self details
+            parseUtils.addNewPlayer(new User());
         }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -117,9 +121,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
         //playerViewFragment.addNewPlayer(User.getDummyPlayer());
-        if(parseUtils != null){
-            parseUtils.addNewPlayer(User.getDummyPlayers(1).get(0));
-        }
+        //if(parseUtils != null){
+          //  parseUtils.addNewPlayer(User.getDummyPlayers(1).get(0));
+        //}
     }
 
     @OnClick(R.id.ibComment)
@@ -151,6 +155,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onDeal() {
         // Do Nothing for now
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        //TODO: may be use Dailog fragment and resue that with other fragment when user leave??
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting from game")
+                .setMessage("Are you sure you want to exit from game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        parseUtils.exitFromGame(new User());
+                        parseUtils.removeChannel();
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override

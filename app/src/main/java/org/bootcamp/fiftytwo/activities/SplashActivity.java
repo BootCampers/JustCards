@@ -13,7 +13,7 @@ import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.models.User;
 
-import static org.bootcamp.fiftytwo.utils.Constants.USERNAME;
+import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG;
@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String userName = sharedPreferences.getString(USERNAME, "");
+        String userName = sharedPreferences.getString(DISPLAY_NAME, "");
 
         if (ParseUser.getCurrentUser() != null) {
             startWithCurrentUser();
@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
             //TODO: get from Parese server??
             User user = new User(userAvatarURI, userName);
             Intent createGameIntent = new Intent(SplashActivity.this, CreateJoinGameActivity.class);
-            createGameIntent.putExtra(USER_TAG, user.getName());
+            createGameIntent.putExtra(USER_TAG, user.getDisplayName());
             startActivity(createGameIntent);
         }
     }

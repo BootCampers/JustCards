@@ -17,7 +17,7 @@ public class Constants {
 
     /** Preference Keys here */
     public static final String USER_PREFS = "userPrefs";
-    public static final String USERNAME = "username";
+    public static final String DISPLAY_NAME = "username";
     public static final String USER_AVATAR_URI = "avatarURI";
 
     public static final String GAME_NAME = "gameName";
@@ -37,7 +37,10 @@ public class Constants {
      */
 
     public static final String COMMON_IDENTIFIER = "commonIdentifier";
+    public static final String SERVER_FUNCTION_NAME = "pushToChannel";
+
 
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
     public static final String USER_ID = "userId";
+    public static final String PARSE_PLAYER_LEFT = "playerLeft";
 }
