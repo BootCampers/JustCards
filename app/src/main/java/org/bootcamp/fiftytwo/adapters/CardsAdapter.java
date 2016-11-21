@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.utils.DragListener;
 import org.bootcamp.fiftytwo.utils.GestureListener;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
         this.cardsListener = cardsListener;
         this.tag = tag;
-        gestureDetector = new GestureDetector(mContext,new GestureListener());
+        gestureDetector = new GestureDetector(mContext,new GestureListener(cardsListener));
     }
 
     @Override
@@ -93,7 +92,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                 return true;
             }
         });
-        holder.ivCard.setOnDragListener(new DragListener(cardsListener));
+        holder.ivCard.setOnDragListener(new GestureListener(cardsListener));
 
         holder.ivCard.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -112,9 +111,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
     }
 
-    public DragListener getDragInstance() {
+    public GestureListener getDragInstance() {
         if (cardsListener != null) {
-            return new DragListener(cardsListener);
+            return new GestureListener(cardsListener);
         } else {
             return null;
         }
