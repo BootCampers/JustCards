@@ -23,6 +23,12 @@ public class User {
         this.displayName = displayName;
     }
 
+    public User(String avatarUri, String displayName, String userId) {
+        this.avatarUri = avatarUri;
+        this.displayName = displayName;
+        this.userId = userId;
+    }
+
     public String getAvatarUri() {
         return avatarUri;
     }

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
@@ -25,6 +26,7 @@ import java.io.IOException;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
+import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG;
 
@@ -62,7 +64,9 @@ public class RegisterActivity extends AppCompatActivity {
                 SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = userPrefs.edit();
                 editor.putString(DISPLAY_NAME, username);
-                editor.putString(USER_AVATAR_URI, userAvatarURI);
+                //TODO: use actual avatar
+                editor.putString(USER_AVATAR_URI, "http://i.imgur.com/GkyKh.jpg");
+                editor.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 editor.commit();
 
                 Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);

@@ -108,6 +108,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                             .into(holder.ivCard);
                     card.setShowingFront(true);
                 }
+                //TODO: log event and send broadcast
             }
         });
     }

@@ -26,6 +26,7 @@ import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 
 import butterknife.BindDrawable;
@@ -82,7 +83,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
             //TODO get self details
-            parseUtils.addNewPlayer(new User());
+            parseUtils.changeGameParticipation(true);
         }
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -120,9 +121,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     //TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
-        //playerViewFragment.addNewPlayer(User.getDummyPlayer());
+        //playerViewFragment.changeGameParticipation(User.getDummyPlayer());
         //if(parseUtils != null){
-          //  parseUtils.addNewPlayer(User.getDummyPlayers(1).get(0));
+          //  parseUtils.changeGameParticipation(User.getDummyPlayers(1).get(0));
         //}
     }
 
@@ -159,7 +160,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-
+        parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
         //TODO: may be use Dailog fragment and resue that with other fragment when user leave??
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -169,7 +170,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        parseUtils.exitFromGame(new User());
+                        parseUtils.changeGameParticipation(false);
                         parseUtils.removeChannel();
                         finish();
                     }

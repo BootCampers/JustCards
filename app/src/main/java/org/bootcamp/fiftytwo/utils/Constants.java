@@ -16,9 +16,11 @@ public class Constants {
     public static final String USER_TAG = "user";
 
     /** Preference Keys here */
+    /*DO NOT CHANGE ==  MUST match with member variables of User class*/
     public static final String USER_PREFS = "userPrefs";
     public static final String DISPLAY_NAME = "username";
     public static final String USER_AVATAR_URI = "avatarURI";
+    public static final String USER_ID = "userId"; // this
 
     public static final String GAME_NAME = "gameName";
 
@@ -41,6 +43,6 @@ public class Constants {
 
 
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
-    public static final String USER_ID = "userId";
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
+    public static final String PARSE_PLAYERS_EXCHANGE_CARDS = "playersExchangeCards";
 }

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.google.gson.Gson;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.interfaces.Observable;
@@ -23,6 +25,8 @@ import org.bootcamp.fiftytwo.receivers.CardExchangeReceiver;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.Player;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -165,7 +169,35 @@ public class PlayerViewFragment extends Fragment
                     //TODO: Add to the log
                 }
             });
+        } else if (whatUpdated.equals(Constants.PARSE_PLAYERS_EXCHANGE_CARDS)){
+
+            try {
+                JSONObject details = (JSONObject) arg;
+                User fromUser = userFromJson(details);
+                JSONObject toUserDetails = details.getJSONObject(Constants.PLAYER_TAG);
+                User toUser = userFromJson(toUserDetails);
+                Gson gson = new Gson();
+                String cardString = null;
+                cardString = gson.toJson(details.getString(Constants.PARAM_CARDS));
+                Log.d(Constants.TAG, "cardExchanged is--"+ cardString);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private User userFromJson(JSONObject jsonObject){
+         try {
+            String displayName = jsonObject.getString(Constants.DISPLAY_NAME);
+            String profilePic = jsonObject.getString(Constants.USER_AVATAR_URI);
+            String userId = jsonObject.getString(Constants.USER_ID);
+            Log.d(Constants.TAG, "userFromJson--"+displayName+"--"+profilePic+"--"+userId);
+             return new User(profilePic, displayName, userId);
+         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public interface OnPlayerFragmentInteractionListener {
