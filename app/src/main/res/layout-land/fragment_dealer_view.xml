@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_game_background"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.bootcamp.fiftytwo.fragments.DealerViewFragment">
 
     <android.support.constraint.ConstraintLayout
@@ -47,6 +46,20 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.9"/>
+
+        <ImageButton
+            android:id="@+id/ibDeal"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_deal"/>
 
     </android.support.constraint.ConstraintLayout>
 
