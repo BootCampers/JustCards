@@ -18,7 +18,8 @@ public class OnGestureListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(final View v, final MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
+        return false;
     }
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
