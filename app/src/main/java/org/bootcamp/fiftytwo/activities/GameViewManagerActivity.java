@@ -23,16 +23,23 @@ import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
+import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
-import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
@@ -55,6 +62,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private boolean showingChat = false;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
     private String gameName;
+    private List<Card> mCards;
+    private List<User> mPlayers = new ArrayList<>();
 
     private ParseUtils parseUtils;
 
@@ -69,22 +78,25 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         setSupportActionBar(toolbar);
 
-        //TODO: check if he is a dealer or not and hide fab accordingly
-        playerViewFragment = new PlayerViewFragment();
-        chatAndLogFragment = new ChatAndLogFragment();
-        dealerViewFragment = new DealerViewFragment();
-
         boolean isCurrentViewPlayer = true;
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            isCurrentViewPlayer = bundle.getBoolean(Constants.CURRENT_VIEW_PLAYER);
-            gameName = bundle.getString(Constants.GAME_NAME);
+            isCurrentViewPlayer = bundle.getBoolean(Constants.PARAM_CURRENT_VIEW_PLAYER);
+            gameName = bundle.getString(PARAM_GAME_NAME);
+            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
             //TODO get self details
             parseUtils.changeGameParticipation(true);
         }
+
+        //TODO: check if he is a dealer or not and hide fab accordingly
+        playerViewFragment = new PlayerViewFragment();
+        chatAndLogFragment = new ChatAndLogFragment();
+        dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
+
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (isCurrentViewPlayer) {
@@ -160,7 +172,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
+        //parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
         //TODO: may be use Dailog fragment and resue that with other fragment when user leave??
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -182,7 +194,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onUpdate(Observable o, Object identifier, Object arg) {
-        String qualifier = (String) arg.toString();
+        String qualifier = arg.toString();
         Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier);
     }
 }

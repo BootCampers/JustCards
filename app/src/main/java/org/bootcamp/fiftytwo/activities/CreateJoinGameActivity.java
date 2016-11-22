@@ -16,15 +16,11 @@ import org.bootcamp.fiftytwo.utils.Constants;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CreateJoinGameActivity extends AppCompatActivity
-    implements Observer{
+public class CreateJoinGameActivity extends AppCompatActivity implements Observer {
 
-    @BindView(R.id.joinGameButton)
-    Button joinGameButton;
-    @BindView(R.id.createGameButton)
-    Button createGameButton;
-    @BindView(R.id.etGameName)
-    EditText etGameName;
+    @BindView(R.id.joinGameButton) Button joinGameButton;
+    @BindView(R.id.createGameButton) Button createGameButton;
+    @BindView(R.id.etGameName) EditText etGameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +31,12 @@ public class CreateJoinGameActivity extends AppCompatActivity
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(etGameName.getText() == null){
+                if (etGameName.getText() == null) {
                     Snackbar.make(view, "Please select a game from list first", Snackbar.LENGTH_LONG).show();
                 } else {
                     Intent gameViewManagerIntent = new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class);
-                    gameViewManagerIntent.putExtra(Constants.GAME_NAME, etGameName.getText().toString().trim());
-                    gameViewManagerIntent.putExtra(Constants.CURRENT_VIEW_PLAYER, true); //if false then it's dealer
+                    gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
+                    gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); //if false then it's dealer
                     startActivity(gameViewManagerIntent);
                 }
             }
@@ -56,7 +52,7 @@ public class CreateJoinGameActivity extends AppCompatActivity
 
     @Override
     public void onUpdate(Observable o, Object arg, Object arg1) {
-        String qualifier = (String)arg;
+        String qualifier = (String) arg;
     }
 
 }
