@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -27,9 +28,9 @@ import butterknife.ButterKnife;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
-import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_X;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_Y;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
  * Created by baphna on 11/11/2016.
@@ -105,6 +106,12 @@ public class PlayerFragment extends CardsFragment {
                 .load(mPlayer.getAvatarUri())
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getColor(mPlayer.getDisplayName());
+
+        // Set Border
+        ivPlayerAvatar.setBorderColor(color);
+        ivPlayerAvatar.setBorderWidth(6);
 
         initCards();
 
