@@ -18,6 +18,7 @@ public class Card {
     private String name;
     private boolean isJoker;
     private boolean isSelected;
+    private boolean isShowingFront;
 
     public Card() {}
 
@@ -36,6 +37,14 @@ public class Card {
     @SuppressWarnings("unused")
     public CardRank getRank(){
         return rank;
+    }
+
+    public boolean isShowingFront() {
+        return isShowingFront;
+    }
+
+    public void setShowingFront(boolean showingFront) {
+        isShowingFront = showingFront;
     }
 
     public String getName() {
