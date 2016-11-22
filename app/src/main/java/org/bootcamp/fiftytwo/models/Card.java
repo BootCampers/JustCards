@@ -17,8 +17,9 @@ public class Card {
     private CardRank rank;
     private String name;
     private boolean isJoker;
-    private boolean isSelected;
     private boolean isShowingFront;
+    private boolean isViewAllowed;
+    private boolean isSelected;
 
     public Card() {}
 
@@ -26,7 +27,6 @@ public class Card {
         this.suit = suit;
         this.rank = rank;
         name = suit.name() + "_" + CardRank.get(rank);
-
     }
 
     @SuppressWarnings("unused")
@@ -39,6 +39,14 @@ public class Card {
         return rank;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isJoker() {
+        return isJoker;
+    }
+
     public boolean isShowingFront() {
         return isShowingFront;
     }
@@ -47,12 +55,12 @@ public class Card {
         isShowingFront = showingFront;
     }
 
-    public String getName() {
-        return name;
+    public boolean isViewAllowed() {
+        return isViewAllowed;
     }
 
-    public boolean isJoker() {
-        return isJoker;
+    public void setViewAllowed(boolean viewAllowed) {
+        isViewAllowed = viewAllowed;
     }
 
     public boolean isSelected() {
