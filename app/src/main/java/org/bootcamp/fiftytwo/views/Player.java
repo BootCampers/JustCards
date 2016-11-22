@@ -55,7 +55,7 @@ public class Player {
 
         fragment.getChildFragmentManager()
                 .beginTransaction()
-                .add(containerResId, playerCardsFragment, PLAYER_TAG + player.getDisplayName())
+                .add(containerResId, playerCardsFragment, player.getDisplayName()+"_"+player.getUserId())
                 .commitNow();
         fragment.getChildFragmentManager().executePendingTransactions();
     }

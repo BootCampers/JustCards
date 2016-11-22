@@ -1,9 +1,5 @@
 package org.bootcamp.fiftytwo.models;
 
-import android.util.Log;
-
-import com.parse.ParseUser;
-
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,13 +40,11 @@ public class User {
     }
 
     public String getUserId() {
+        return userId;
+    }
 
-        if(ParseUser.getCurrentUser() != null){
-            return  ParseUser.getCurrentUser().getObjectId();
-        } else {
-            Log.e(Constants.TAG , "No parse login. Current user null");
-            return "unknown";
-        }
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public User(JSONObject data) throws JSONException {

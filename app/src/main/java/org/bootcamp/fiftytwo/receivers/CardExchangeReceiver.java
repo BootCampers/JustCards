@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.parse.ParseUser;
+
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -33,7 +35,6 @@ public class CardExchangeReceiver extends BroadcastReceiver{
 
     private void processBroadcast(Context context, Intent intent) {
         String action = intent.getAction();
-        Log.d(Constants.TAG, "got action: " + action);
 
         if (action.equals(intentAction)) {
             try {
@@ -41,16 +42,15 @@ public class CardExchangeReceiver extends BroadcastReceiver{
                 JSONObject customData = new JSONObject(json.getString("customData"));
 
                 String identifier = customData.getString(Constants.COMMON_IDENTIFIER);
+                User userFromJson = new User(customData);
+                Log.d(Constants.TAG , identifier + "--" + customData.toString());
 
-                if(identifier.equals(Constants.PARSE_NEW_PLAYER_ADDED)) {
-                    User userFromJson = new User(customData);
-                    //Process if it's not from self
-                    //if (!userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                if(identifier.equals(Constants.PARSE_NEW_PLAYER_ADDED)
+                        || identifier.equals(Constants.PARSE_PLAYER_LEFT)) {
+                    if (!userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
                         fiftyTwoApplication.notifyObservers(identifier.toString(), userFromJson);
-                    //}
+                    }
                 }
-
-                Log.d(Constants.TAG, "got action " + action + "with " + customData);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

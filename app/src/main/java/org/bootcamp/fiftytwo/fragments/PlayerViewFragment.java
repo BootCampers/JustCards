@@ -156,11 +156,11 @@ public class PlayerViewFragment extends Fragment
                 public void run() {
                     String userViewTag = ((User) arg).getDisplayName() + "_"
                             + ((User) arg).getUserId();
-                    View userView = rootView.findViewWithTag(userViewTag);
-                    if (userView != null) {
-                        flPlayerViewContainer.removeView(userView);
+                    Fragment userFragment = getChildFragmentManager().findFragmentByTag(userViewTag);
+                    if (userFragment != null) {
+                        getChildFragmentManager().beginTransaction().remove(userFragment).commit();
                     } else {
-                        Log.e(Constants.TAG, "Failed to remove view for " + userViewTag);
+                        Log.e(Constants.TAG, "NULL Failed to remove view for " + userViewTag);
                     }
                     //TODO: Add to the log
                 }
