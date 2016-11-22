@@ -38,7 +38,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
  * create an instance of this fragment.
  */
 public class PlayerViewFragment extends Fragment
-    implements Observer{
+        implements Observer {
 
     CardExchangeReceiver cardExchangeReceiver;
 
@@ -88,7 +88,7 @@ public class PlayerViewFragment extends Fragment
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        fiftyTwoApp = (FiftyTwoApplication)getActivity().getApplication();
+        fiftyTwoApp = (FiftyTwoApplication) getActivity().getApplication();
         fiftyTwoApp.addObserver(this);
     }
 
@@ -121,10 +121,6 @@ public class PlayerViewFragment extends Fragment
         transaction.commit();
     }
 
-    public void addNewPlayer(User user) {
-        Player.addPlayer(this, flPlayerViewContainer, user, R.layout.item_player, 0, 0);
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -144,13 +140,13 @@ public class PlayerViewFragment extends Fragment
 
     @Override
     public void onUpdate(Observable o, final Object identifier, final Object arg) {
-        String whatUpdated = (String) identifier.toString();
+        String whatUpdated = identifier.toString();
         Log.d(Constants.TAG, PlayerViewFragment.class.getSimpleName() + "-onUpdate-" + whatUpdated);
-        if(whatUpdated.equals(Constants.PARSE_NEW_PLAYER_ADDED)) {
+        if (whatUpdated.equals(Constants.PARSE_NEW_PLAYER_ADDED)) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer, (User)arg, R.layout.item_player_with_cards, 0, 0);
+                    Player.addPlayer(PlayerViewFragment.this, (User) arg);
                     //TODO: Add to the log
                 }
             });
@@ -161,7 +157,7 @@ public class PlayerViewFragment extends Fragment
                     String userViewTag = ((User) arg).getDisplayName() + "_"
                             + ((User) arg).getUserId();
                     View userView = rootView.findViewWithTag(userViewTag);
-                    if(userView != null){
+                    if (userView != null) {
                         flPlayerViewContainer.removeView(userView);
                     } else {
                         Log.e(Constants.TAG, "Failed to remove view for " + userViewTag);

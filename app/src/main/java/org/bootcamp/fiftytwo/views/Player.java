@@ -1,16 +1,8 @@
 package org.bootcamp.fiftytwo.views;
 
-import android.graphics.PixelFormat;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
@@ -18,6 +10,7 @@ import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
@@ -33,46 +26,13 @@ public class Player {
         //no instance
     }
 
-    public static ViewGroup addPlayer(Fragment fragment, final ViewGroup container, final User player, int resId, int x, int y) {
-        LayoutInflater inflater = LayoutInflater.from(fragment.getContext());
-        final ViewGroup playerLayout = (ViewGroup) inflater.inflate(resId, null);
-        setPlayerAttributes(playerLayout, player);
-
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                x,
-                y,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSPARENT);
-
-        playerLayout.setX(x);
-        playerLayout.setY(y);
-
-        container.addView(playerLayout, params);
-
-        playerLayout.setOnTouchListener(new OnTouchMoveListener(container));
-
-        return playerLayout;
+    public static void addPlayer(@NonNull final Fragment fragment, final User player) {
+        List<User> players = new ArrayList<>();
+        players.add(player);
+        addPlayers(fragment, players);
     }
 
-    private static void setPlayerAttributes(ViewGroup playerLayout, User player) {
-        TextView tvUserName = (TextView) playerLayout.findViewById(R.id.tvUserName);
-        CircularImageView ivPlayerAvatar = (CircularImageView) playerLayout.findViewById(R.id.ivPlayerAvatar);
-        playerLayout.setTag(player.getDisplayName()+"_"+player.getUserId());
-
-        if (!TextUtils.isEmpty(player.getDisplayName())) {
-            tvUserName.setText(player.getDisplayName());
-        }
-
-        Glide.with(tvUserName.getContext())
-                .load(player.getAvatarUri())
-                .error(R.drawable.ic_face)
-                .into(ivPlayerAvatar);
-    }
-
-    public static void addPlayers(Fragment fragment, final List<User> players) {
+    public static void addPlayers(@NonNull final Fragment fragment, final List<User> players) {
         View decorView = fragment.getActivity().getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
