@@ -3,8 +3,6 @@ package org.bootcamp.fiftytwo.views;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,27 +14,17 @@ import org.bootcamp.fiftytwo.utils.Constants;
 import java.util.List;
 
 /**
- * Created by baphna on 11/20/2016.
+ * Author: agoenka
+ * Created At: 11/21/2016
+ * Version: ${VERSION}
  */
-public class GestureListener extends GestureDetector.SimpleOnGestureListener implements View.OnDragListener {
+public class OnCardsDragListener implements View.OnDragListener {
 
     private boolean isDropped = false;
     private CardsAdapter.CardsListener cardsListener;
 
-    public GestureListener(CardsAdapter.CardsListener cardsListener) {
+    public OnCardsDragListener(CardsAdapter.CardsListener cardsListener) {
         this.cardsListener = cardsListener;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    // TODO: get which view is clicked
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        Log.d(Constants.TAG, "Double tap " + e.toString());
-        return true;
     }
 
     @Override

@@ -3,16 +3,18 @@ package org.bootcamp.fiftytwo.adapters;
 import android.content.ClipData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.views.GestureListener;
+import org.bootcamp.fiftytwo.views.OnCardsDragListener;
+import org.bootcamp.fiftytwo.views.OnGestureListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,6 @@ import butterknife.ButterKnife;
  */
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> {
 
-    private final GestureDetector gestureDetector;
     private Context mContext;
     private List<Card> cards;
     private CardsListener cardsListener;
@@ -62,7 +63,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
         this.cardsListener = cardsListener;
         this.tag = tag;
-        gestureDetector = new GestureDetector(mContext, new GestureListener(cardsListener));
     }
 
     @Override
@@ -77,8 +77,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Card card = cards.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final Card card = cards.get(position);
         holder.ivCard.setImageDrawable(card.getDrawableBack(mContext));
         holder.ivCard.setTag(position); //Needed for drag and drop
 
@@ -92,12 +92,14 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                 return true;
             }
         });
-        holder.ivCard.setOnDragListener(new GestureListener(cardsListener));
+        holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
-        holder.ivCard.setOnTouchListener(new View.OnTouchListener() {
+        holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+            public void onDoubleTap(MotionEvent event) {
+                Glide.with(mContext)
+                        .load(card.getDrawable(mContext))
+                        .into(holder.ivCard);
             }
         });
     }
@@ -111,9 +113,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
     }
 
-    public GestureListener getDragInstance() {
+    public OnCardsDragListener getDragInstance() {
         if (cardsListener != null) {
-            return new GestureListener(cardsListener);
+            return new OnCardsDragListener(cardsListener);
         } else {
             return null;
         }
