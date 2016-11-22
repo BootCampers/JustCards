@@ -48,13 +48,11 @@ public class DealerViewFragment extends Fragment {
     public static DealerViewFragment newInstance(List<Card> cards, List<User> players) {
         DealerViewFragment fragment = new DealerViewFragment();
         Bundle args = new Bundle();
-        if(args != null) {
-            if (isEmpty(cards))
-                args.putParcelable(PARAM_CARDS, getParcelable(cards));
-            if (isEmpty(players))
-                args.putParcelable(PARAM_PLAYERS, getParcelable(players));
-            fragment.setArguments(args);
-        }
+        if (!isEmpty(cards))
+            args.putParcelable(PARAM_CARDS, getParcelable(cards));
+        if (!isEmpty(players))
+            args.putParcelable(PARAM_PLAYERS, getParcelable(players));
+        fragment.setArguments(args);
         return fragment;
     }
 

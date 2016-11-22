@@ -26,10 +26,8 @@ public class AppUtils {
 
     public static <T> Parcelable getParcelable(final List<T> elements) {
         ArrayList<T> list = new ArrayList<>();
-        if(elements != null) {
-            if (isEmpty(elements)) {
-                list.addAll(elements);
-            }
+        if (!isEmpty(elements)) {
+            list.addAll(elements);
         }
         return Parcels.wrap(list);
     }
