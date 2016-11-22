@@ -19,9 +19,9 @@ import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
  * Created At: 11/18/2016
  * Version: ${VERSION}
  */
-public class Player {
+public class PlayerViewHelper {
 
-    private Player() {
+    private PlayerViewHelper() {
         //no instance
     }
 

@@ -97,7 +97,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
             @Override
             public void onDoubleTap(MotionEvent event) {
-                if(card.isShowingFront() == true){
+                if(card.isShowingFront()){
                     Glide.with(mContext)
                             .load(card.getDrawableBack())
                             .into(holder.ivCard);

@@ -28,8 +28,8 @@ import static org.bootcamp.fiftytwo.utils.CardUtil.getParcelable;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
-import static org.bootcamp.fiftytwo.utils.Constants.X;
-import static org.bootcamp.fiftytwo.utils.Constants.Y;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_X;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_Y;
 
 /**
  * Created by baphna on 11/11/2016.
@@ -49,8 +49,8 @@ public class PlayerFragment extends CardsFragment {
         args.putParcelable(PARAM_CARDS, getParcelable(cards));
         args.putParcelable(PARAM_PLAYER, Parcels.wrap(player));
         args.putString(TAG, tag);
-        args.putInt(X, x);
-        args.putInt(Y, y);
+        args.putInt(PARAM_X, x);
+        args.putInt(PARAM_Y, y);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +63,8 @@ public class PlayerFragment extends CardsFragment {
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             mPlayer = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER));
             tag = bundle.getString(TAG);
-            x = bundle.getInt(X);
-            y = bundle.getInt(Y);
+            x = bundle.getInt(PARAM_X);
+            y = bundle.getInt(PARAM_Y);
         }
         mAdapter = new CardsAdapter(getContext(), mCards, this, tag);
     }

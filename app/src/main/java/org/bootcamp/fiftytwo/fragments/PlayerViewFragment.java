@@ -22,7 +22,7 @@ import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.receivers.CardExchangeReceiver;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.bootcamp.fiftytwo.views.Player;
+import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 
 import java.util.List;
 
@@ -146,7 +146,7 @@ public class PlayerViewFragment extends Fragment
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer.getId(), (User) arg);
+                    PlayerViewHelper.addPlayer(PlayerViewFragment.this, flPlayerViewContainer.getId(), (User) arg);
                     //TODO: Add to the log
                 }
             });

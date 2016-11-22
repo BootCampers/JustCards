@@ -28,7 +28,7 @@ public class ParseUtils {
     public ParseUtils(Context mContext, String gameName) {
         this.mContext = mContext;
         this.gameName = gameName;
-        tempUser = User.getDummyPlayers(1).get(0);
+        tempUser = User.getPlayers(1).get(0);
     }
 
     public void addNewPlayer(User user){

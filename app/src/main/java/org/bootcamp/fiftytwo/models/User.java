@@ -14,7 +14,7 @@ public class User {
 
     private String avatarUri;
     private String displayName;
-    private String userId; //match this with userid of Parse to keep them unique
+    private String userId; //match this with userId of Parse to keep them unique
 
     public User() {}
 
@@ -62,24 +62,22 @@ public class User {
                 '}';
     }
 
-    // TODO: This method needs to be removed once the Player is passed via intents / arguments
-    public static User getDummyPlayer() {
-        return new User("", "Ankit");
-    }
-
-    // TODO: This method needs to be removed once the Player List is passed via intents / arguments
-    public static List<User> getDummyPlayers(int count) {
+    public static List<User> getPlayers(int count) {
         Random rand = new Random();
         List<User> players = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int index = rand.nextInt(dummyPlayers.length);
-            players.add(new User(dummyPlayerAvatars[index], dummyPlayers[index]));
+            int index = rand.nextInt(User.players.length);
+            while (indices.contains(index)) {
+                index = rand.nextInt(User.players.length);
+            }
+            indices.add(index);
+            players.add(new User(playerAvatars[index], User.players[index]));
         }
         return players;
     }
 
-    // TODO: This variable needs to be removed once real players are added
-    private static String[] dummyPlayers = {
+    private static String[] players = {
             "Sid",
             "Gretchen",
             "Tiffany",
@@ -91,16 +89,15 @@ public class User {
             "Leonardo",
             "Jared"};
 
-    // TODO: This variable needs to be removed once real players are added
-    private static String[] dummyPlayerAvatars = {
+    private static String[] playerAvatars = {
             "http://i.imgur.com/GkyKh.jpg",
             "http://i.imgur.com/4M8vzoD.png",
             "http://i.imgur.com/Fankh2h.jpg",
             "http://i.imgur.com/i7zmanJ.jpg",
             "http://i.imgur.com/jrmh8XL.jpg",
             "http://i.imgur.com/VCY27Er.jpg",
-            "",
-            "",
-            "",
-            ""};
+            "http://i.imgur.com/UMUY9Yn.jpg",
+            "http://i.imgur.com/9OHzici.jpg?1",
+            "http://i.imgur.com/RZ0jFNp.gif",
+            "http://i.imgur.com/ITwmNm3.jpg"};
 }
