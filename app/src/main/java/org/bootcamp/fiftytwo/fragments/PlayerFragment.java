@@ -4,7 +4,6 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,6 +16,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.views.OnTouchMoveListener;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -80,7 +80,6 @@ public class PlayerFragment extends CardsFragment {
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, Gravity.CENTER);
                 view.setLayoutParams(params);
             */
-
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -110,46 +109,6 @@ public class PlayerFragment extends CardsFragment {
         initCards();
 
         final ViewGroup container = (ViewGroup) view.getParent();
-        view.setOnTouchListener(getTouchListener(container));
-    }
-
-    private View.OnTouchListener getTouchListener(final ViewGroup container) {
-        return new View.OnTouchListener() {
-            float dX, dY;
-            float newX, newY;
-
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        dX = view.getX() - event.getRawX();
-                        dY = view.getY() - event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        newX = event.getRawX() + dX;
-                        newY = event.getRawY() + dY;
-
-                        if (newX < 0)
-                            newX = 0;
-                        if (newY < 0)
-                            newY = 0;
-
-                        if (newX + view.getWidth() > container.getWidth())
-                            newX = container.getWidth() - view.getWidth();
-                        if (newY + view.getHeight() > container.getHeight())
-                            newY = container.getHeight() - view.getHeight();
-
-                        view.animate()
-                                .x(newX)
-                                .y(newY)
-                                .setDuration(0)
-                                .start();
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
-            }
-        };
+        view.setOnTouchListener(new OnTouchMoveListener(container));
     }
 }

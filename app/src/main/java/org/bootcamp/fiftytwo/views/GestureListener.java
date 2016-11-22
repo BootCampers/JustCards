@@ -1,4 +1,4 @@
-package org.bootcamp.fiftytwo.utils;
+package org.bootcamp.fiftytwo.views;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,19 +11,17 @@ import android.view.ViewGroup;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.List;
 
 /**
  * Created by baphna on 11/20/2016.
  */
-//TODO: get which view is clicked
-public class GestureListener extends
-        GestureDetector.SimpleOnGestureListener
-        implements View.OnDragListener{
+public class GestureListener extends GestureDetector.SimpleOnGestureListener implements View.OnDragListener {
 
-    boolean isDropped = false;
-    CardsAdapter.CardsListener cardsListener;
+    private boolean isDropped = false;
+    private CardsAdapter.CardsListener cardsListener;
 
     public GestureListener(CardsAdapter.CardsListener cardsListener) {
         this.cardsListener = cardsListener;
@@ -34,6 +32,7 @@ public class GestureListener extends
         return false;
     }
 
+    // TODO: get which view is clicked
     @Override
     public boolean onDoubleTap(MotionEvent e) {
         Log.d(Constants.TAG, "Double tap " + e.toString());
@@ -57,10 +56,8 @@ public class GestureListener extends
             case DragEvent.ACTION_DROP:
 
                 // Handling only drag drop between lists for now
-                // TODO: handle drag and drop to a player
                 // TODO: handle move if lists are empty
                 if (v.getId() == R.id.ivCard || v.getId() == R.id.tvNoCards) {
-
                     isDropped = true;
                     CardsAdapter sourceAdapter = getSourceAdapter(event);
                     CardsAdapter targetAdapter = getTargetAdapter(v);

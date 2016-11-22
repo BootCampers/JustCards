@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.utils.GestureListener;
+import org.bootcamp.fiftytwo.views.GestureListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
         this.cardsListener = cardsListener;
         this.tag = tag;
-        gestureDetector = new GestureDetector(mContext,new GestureListener(cardsListener));
+        gestureDetector = new GestureDetector(mContext, new GestureListener(cardsListener));
     }
 
     @Override
@@ -118,6 +118,4 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             return null;
         }
     }
-
-
 }

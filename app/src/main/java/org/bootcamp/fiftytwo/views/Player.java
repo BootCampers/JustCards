@@ -4,7 +4,6 @@ import android.graphics.PixelFormat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -53,43 +52,7 @@ public class Player {
 
         container.addView(playerLayout, params);
 
-        playerLayout.setOnTouchListener(new View.OnTouchListener() {
-            float dX, dY;
-            float newX, newY;
-
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        dX = view.getX() - event.getRawX();
-                        dY = view.getY() - event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        newX = event.getRawX() + dX;
-                        newY = event.getRawY() + dY;
-
-                        if (newX < 0)
-                            newX = 0;
-                        if (newY < 0)
-                            newY = 0;
-
-                        if (newX + view.getWidth() > container.getWidth())
-                            newX = container.getWidth() - view.getWidth();
-                        if (newY + view.getHeight() > container.getHeight())
-                            newY = container.getHeight() - view.getHeight();
-
-                        view.animate()
-                                .x(newX)
-                                .y(newY)
-                                .setDuration(0)
-                                .start();
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
-            }
-        });
+        playerLayout.setOnTouchListener(new OnTouchMoveListener(container));
 
         return playerLayout;
     }
