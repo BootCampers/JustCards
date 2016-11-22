@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
@@ -26,13 +25,13 @@ public class Player {
         //no instance
     }
 
-    public static void addPlayer(@NonNull final Fragment fragment, final User player) {
+    public static void addPlayer(@NonNull final Fragment fragment, final int containerResId, final User player) {
         List<User> players = new ArrayList<>();
         players.add(player);
-        addPlayers(fragment, players);
+        addPlayers(fragment, containerResId, players);
     }
 
-    public static void addPlayers(@NonNull final Fragment fragment, final List<User> players) {
+    public static void addPlayers(@NonNull final Fragment fragment, final int containerResId, final List<User> players) {
         View decorView = fragment.getActivity().getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
@@ -46,17 +45,17 @@ public class Player {
 
         for (User player : players) {
             x += incX;
-            addPlayerFragment(fragment, player, (int) x, (int) y);
+            addPlayerFragment(fragment, containerResId, player, (int) x, (int) y);
         }
     }
 
-    private static void addPlayerFragment(Fragment fragment, User player, int x, int y) {
+    private static void addPlayerFragment(final Fragment fragment, final int containerResId, final User player, int x, int y) {
         List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 2);
         Fragment playerCardsFragment = PlayerFragment.newInstance(cards, player, PLAYER_TAG + player.getDisplayName(), x, y);
 
         fragment.getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.flDealerViewContainer, playerCardsFragment, PLAYER_TAG + player.getDisplayName())
+                .add(containerResId, playerCardsFragment, PLAYER_TAG + player.getDisplayName())
                 .commitNow();
         fragment.getChildFragmentManager().executePendingTransactions();
     }

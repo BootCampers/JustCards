@@ -146,7 +146,7 @@ public class PlayerViewFragment extends Fragment
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Player.addPlayer(PlayerViewFragment.this, (User) arg);
+                    Player.addPlayer(PlayerViewFragment.this, flPlayerViewContainer.getId(), (User) arg);
                     //TODO: Add to the log
                 }
             });

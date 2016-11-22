@@ -57,7 +57,7 @@ public class DealerViewFragment extends Fragment {
                 .replace(R.id.flDealerContainer, dealerCardsFragment, DEALER_TAG)
                 .commit();
 
-        Player.addPlayers(this, User.getDummyPlayers(4));
+        Player.addPlayers(this, R.id.flDealerViewContainer, User.getDummyPlayers(4));
     }
 
     @Override
