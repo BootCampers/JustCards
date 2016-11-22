@@ -3,6 +3,7 @@ package org.bootcamp.fiftytwo.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
@@ -21,17 +23,21 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static org.bootcamp.fiftytwo.utils.CardUtil.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 
 public class DealerViewFragment extends Fragment {
 
-    private Unbinder unbinder;
-    private OnDealerListener mListener;
     private List<Card> mCards = new ArrayList<>();
+    private List<User> mPlayers = new ArrayList<>();
+    private OnDealerListener mDealerListener;
+    private Unbinder unbinder;
 
     @BindView(R.id.flDealerViewContainer) FrameLayout flDealerViewContainer;
 
@@ -39,11 +45,13 @@ public class DealerViewFragment extends Fragment {
         void onDeal();
     }
 
-    public static DealerViewFragment newInstance(List<Card> cards) {
+    public static DealerViewFragment newInstance(List<Card> cards, List<User> players) {
         DealerViewFragment fragment = new DealerViewFragment();
         Bundle args = new Bundle();
-        if (cards != null)
+        if (isEmpty(cards))
             args.putParcelable(PARAM_CARDS, getParcelable(cards));
+        if (isEmpty(players))
+            args.putParcelable(PARAM_PLAYERS, getParcelable(players));
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,13 +61,10 @@ public class DealerViewFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            // Add table cards
             List<Card> cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            if (cards == null || cards.size() == 0) {
-                mCards = CardUtil.generateDeck(1, false);
-            } else {
-                mCards = cards;
-            }
+            List<User> players = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYERS));
+            mCards = isEmpty(cards) ? CardUtil.generateDeck(1, false) : cards;
+            mPlayers = isEmpty(players) ? PlayerUtils.getPlayers(4) : players;
         }
     }
 
@@ -79,21 +84,29 @@ public class DealerViewFragment extends Fragment {
                 .replace(R.id.flDealerContainer, dealerCardsFragment, DEALER_TAG)
                 .commit();
 
-        PlayerViewHelper.addPlayers(this, R.id.flDealerViewContainer, User.getPlayers(4));
+        PlayerViewHelper.addPlayers(this, R.id.flDealerViewContainer, mPlayers);
+    }
+
+    @OnClick(R.id.ibDeal)
+    public void deal(View view) {
+        Snackbar.make(view, "Clicked on Deal Button", Snackbar.LENGTH_SHORT).show();
+        if (mDealerListener != null) {
+            mDealerListener.onDeal();
+        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnDealerListener) {
-            mListener = (OnDealerListener) context;
+            mDealerListener = (OnDealerListener) context;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mDealerListener = null;
     }
 
     @Override

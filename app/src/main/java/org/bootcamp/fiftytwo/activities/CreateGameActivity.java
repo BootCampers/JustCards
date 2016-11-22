@@ -14,7 +14,7 @@ import com.parse.ParseObject;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.bootcamp.fiftytwo.utils.AppUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -68,7 +68,7 @@ public class CreateGameActivity extends AppCompatActivity {
 
             Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, gameIdNumber.getText().toString());
-            gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, Parcels.wrap(CardUtil.getParcelable(mCards)));
+            gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, Parcels.wrap(AppUtils.getParcelable(mCards)));
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); //do to dealer view by default
             startActivity(gameViewManagerIntent);
 

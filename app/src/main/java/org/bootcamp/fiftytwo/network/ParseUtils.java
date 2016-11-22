@@ -7,6 +7,7 @@ import com.parse.ParsePush;
 
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +29,7 @@ public class ParseUtils {
     public ParseUtils(Context mContext, String gameName) {
         this.mContext = mContext;
         this.gameName = gameName;
-        tempUser = User.getPlayers(1).get(0);
+        tempUser = PlayerUtils.getPlayers(1).get(0);
     }
 
     public void addNewPlayer(User user){

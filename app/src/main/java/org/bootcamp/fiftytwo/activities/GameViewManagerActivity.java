@@ -30,6 +30,7 @@ import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindDrawable;
@@ -62,6 +63,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
     private String gameName;
     private List<Card> mCards;
+    private List<User> mPlayers = new ArrayList<>();
 
     private ParseUtils parseUtils;
 
@@ -93,7 +95,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         //TODO: check if he is a dealer or not and hide fab accordingly
         playerViewFragment = new PlayerViewFragment();
         chatAndLogFragment = new ChatAndLogFragment();
-        dealerViewFragment = DealerViewFragment.newInstance(mCards);
+        dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
 
         //Set PlayerView as parent fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -192,7 +194,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onUpdate(Observable o, Object identifier, Object arg) {
-        String qualifier = (String) arg.toString();
+        String qualifier = arg.toString();
         Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier);
     }
 }

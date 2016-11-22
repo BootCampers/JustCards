@@ -1,12 +1,9 @@
 package org.bootcamp.fiftytwo.utils;
 
-import android.os.Parcelable;
-
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.CardRank;
 import org.bootcamp.fiftytwo.models.CardSuit;
 import org.bootcamp.fiftytwo.models.JokerSuit;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -69,12 +66,6 @@ public class CardUtil {
             }
         }
         return cards;
-    }
-
-    public static Parcelable getParcelable(final List<Card> cards) {
-        ArrayList<Card> list = new ArrayList<>();
-        list.addAll(cards);
-        return Parcels.wrap(list);
     }
 
     @SuppressWarnings("unused")

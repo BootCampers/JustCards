@@ -25,6 +25,7 @@ public class Constants {
     public static final String PARAM_GAME_NAME = "gameName";
     public static final String PARAM_CURRENT_VIEW_PLAYER = "currentView";
     public static final String PARAM_CARDS = "cards";
+    public static final String PARAM_PLAYERS = "players";
     public static final String PARAM_PLAYER = "player";
     public static final String PARAM_X = "PARAM_X";
     public static final String PARAM_Y = "PARAM_Y";
