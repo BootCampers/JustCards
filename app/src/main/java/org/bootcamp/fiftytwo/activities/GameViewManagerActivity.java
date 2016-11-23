@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
@@ -35,6 +37,8 @@ import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -45,9 +49,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.*;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYERS_EXCHANGE_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TABLE_CARD_EXCHANGE;
+import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -60,6 +71,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
     private ParseUtils parseUtils;
+    private FiftyTwoApplication application;
 
     private boolean isCurrentViewPlayer = true;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
@@ -76,6 +88,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
+    private static final String TAG = GameViewManagerActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,13 +103,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         initGameParams();
         initFragments();
+
+        application = (FiftyTwoApplication) getApplication();
+        application.addObserver(this);
     }
 
     private void initGameParams() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String gameName = bundle.getString(PARAM_GAME_NAME);
-            isCurrentViewPlayer = bundle.getBoolean(Constants.PARAM_CURRENT_VIEW_PLAYER);
+            isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
 
@@ -119,7 +136,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
 
         // TODO: This is only for temporary purposes.
-        if(isEmpty(mPlayers)) {
+        if (isEmpty(mPlayers)) {
             mPlayers = PlayerUtils.getPlayers(4);
         }
 
@@ -128,7 +145,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             @Override
             public void onGlobalLayout() {
                 PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
-                if(dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
             }
         });
     }
@@ -160,7 +177,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void toggleChatAndLogView(View v) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (!showingChat) {
-            fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, Constants.FRAGMENT_CHAT_TAG);
+            fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
             ibComment.setImageDrawable(ic_cancel);
             showingChat = true;
         } else {
@@ -193,11 +210,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdate(Observable o, Object identifier, Object arg) {
-        Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier + "\n" + arg.toString());
-    }
-
-    @Override
     public boolean onDeal(List<Card> cards, User player) {
         // TODO: Fire Off Parse Push Here
         Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
@@ -216,6 +228,70 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(ChatLog item) {
+    }
+
+    @Override
+    public void onUpdate(final Observable o, final Object identifier, final Object arg) {
+        String event = identifier.toString();
+        Log.d(TAG, "onUpdate: " + event);
+
+        switch (event) {
+            case PARSE_NEW_PLAYER_ADDED:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, (User) arg);
+                        if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+                        //TODO: Add to the log
+                    }
+                });
+                break;
+            case PARSE_PLAYER_LEFT:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String userViewTag = getPlayerFragmentTag((User) arg);
+                        Fragment userFragment = getSupportFragmentManager().findFragmentByTag(userViewTag);
+                        if (userFragment != null) {
+                            getSupportFragmentManager().beginTransaction().remove(userFragment).commitNow();
+                        } else {
+                            Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
+                        }
+                        //TODO: Add to the log
+                    }
+                });
+                break;
+            case PARSE_PLAYERS_EXCHANGE_CARDS:
+                try {
+                    JSONObject details = (JSONObject) arg;
+                    User fromUser = fromJson(details);
+                    JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
+                    User toUser = fromJson(toUserDetails);
+                    Gson gson = new Gson();
+                    String cardString;
+                    cardString = gson.toJson(details.getString(PARAM_CARDS));
+                    Log.d(TAG, "cardExchanged is--" + cardString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PARSE_TABLE_CARD_EXCHANGE:
+                try {
+                    JSONObject details = (JSONObject) arg;
+                    User fromUser = fromJson(details);
+                    JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
+                    User toUser = fromJson(toUserDetails);
+                    Gson gson = new Gson();
+                    String cardString;
+                    cardString = gson.toJson(details.getString(PARAM_CARDS));
+                    boolean pickedOrPlacedOnTable = details.getBoolean(TABLE_PICKED);
+                    Log.d(TAG, "cardExchanged is--" + cardString);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 
 }

@@ -112,6 +112,7 @@ public class PlayerFragment extends CardsFragment {
                 .load(mPlayer.getAvatarUri())
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
+
         ColorGenerator generator = ColorGenerator.MATERIAL;
         int color = generator.getColor(mPlayer.getDisplayName());
 
