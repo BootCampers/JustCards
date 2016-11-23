@@ -75,7 +75,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         List<Card> cards = new ArrayList<>();
         if (bundle != null) {
             cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            if(isEmpty(cards))
+            if (isEmpty(cards))
                 cards = new ArrayList<>();
             tag = bundle.getString(TAG);
         }
@@ -140,7 +140,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     public List<Card> drawCards(int count, boolean drawFromEnd) {
         List<Card> cards = draw(mAdapter.getCards(), count, drawFromEnd);
         if (!isEmpty(cards)) {
-            if(drawCards(cards)) {
+            if (drawCards(cards)) {
                 return cards;
             }
         }
@@ -165,7 +165,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(unbinder != null)
+        if (unbinder != null)
             unbinder.unbind();
     }
 }

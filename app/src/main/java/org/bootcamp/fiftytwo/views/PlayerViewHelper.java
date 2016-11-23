@@ -5,9 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
-import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.CardUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +48,7 @@ public class PlayerViewHelper {
     }
 
     private static void addPlayerFragment(final Fragment fragment, final int containerResId, final User player, int x, int y) {
-        List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 2);
-        Fragment playerCardsFragment = PlayerFragment.newInstance(cards, player, PLAYER_TAG + player.getDisplayName(), x, y);
+        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, PLAYER_TAG + player.getDisplayName(), x, y);
 
         fragment.getChildFragmentManager()
                 .beginTransaction()
