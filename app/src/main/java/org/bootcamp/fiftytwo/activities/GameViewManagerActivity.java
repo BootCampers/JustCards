@@ -27,7 +27,6 @@ import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
-import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -174,7 +173,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        parseUtils.exchangeCard(new User("", "Dummy", "dummyId"), CardUtil.generateDeck(1, false));
+        //parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
         //TODO: may be use Dailog fragment and resue that with other fragment when user leave??
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)

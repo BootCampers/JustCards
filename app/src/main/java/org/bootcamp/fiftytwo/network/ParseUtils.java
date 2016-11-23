@@ -11,6 +11,7 @@ import com.parse.ParsePush;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,7 +84,7 @@ public class ParseUtils {
      * @param toUser to whom this is sent
      * @param card which card
      */
-    public void exchangeCard(User toUser, List<Card> cards){
+    public void exchangeCard(User toUser, Card card){
         try {
             JSONObject payload = getPayloadFromUser(currentLoggedinUser);
 
@@ -92,7 +93,7 @@ public class ParseUtils {
             payload.put(Constants.PARAM_PLAYER, toUserJson);
 
             Gson gson = new Gson();
-            String cardJson = gson.toJson(cards);
+            String cardJson = gson.toJson(card);
             payload.put(Constants.PARAM_CARDS, cardJson);
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYERS_EXCHANGE_CARDS);
