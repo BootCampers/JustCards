@@ -59,4 +59,8 @@ public class FiftyTwoApplication extends Application implements Observable {
             obs.onUpdate(this, identifier, arg);
         }
     }
+
+    public synchronized void removeAllObservers(){
+        mObservers.clear();
+    }
 }

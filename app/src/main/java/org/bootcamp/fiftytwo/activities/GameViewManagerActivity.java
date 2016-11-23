@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
@@ -164,6 +165,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     public void onClick(DialogInterface dialog, int which) {
                         parseUtils.changeGameParticipation(false);
                         parseUtils.removeChannel();
+                        ((FiftyTwoApplication) getApplication()).removeAllObservers();
                         finish();
                     }
                 })

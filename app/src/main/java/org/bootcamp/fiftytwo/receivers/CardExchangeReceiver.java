@@ -46,7 +46,7 @@ public class CardExchangeReceiver extends BroadcastReceiver{
                 User userFromJson = new User(customData);
 
                 //process only if it's not from self\current user
-                if(userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                if(!userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
 
                     if (identifier.equals(Constants.PARSE_NEW_PLAYER_ADDED)
                             || identifier.equals(Constants.PARSE_PLAYER_LEFT)) {
