@@ -32,7 +32,6 @@ import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
-import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
@@ -117,13 +116,13 @@ public class DealerViewFragment extends Fragment {
     public void deal(View view) {
         int dealCount = 1;
         CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
-        if (mCards.size() >= mPlayers.size() * dealCount) {
+        List<Card> cards = dealerFragment.getCards();
+        if (cards.size() >= mPlayers.size() * dealCount) {
             for (User player : mPlayers) {
                 Fragment playerFragment = getChildFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
                 if (playerFragment != null) {
-                    List<Card> drawnCards = draw(mCards, dealCount, true);
+                    List<Card> drawnCards = dealerFragment.drawCards(dealCount, true);
                     if (!isEmpty(drawnCards)) {
-                        dealerFragment.drawCards(drawnCards);
                         ((PlayerFragment) playerFragment).stackCards(drawnCards);
                     }
                 }
