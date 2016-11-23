@@ -51,6 +51,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
 
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
     @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
@@ -101,12 +102,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (isCurrentViewPlayer) {
             fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
+            fab.setVisibility(View.GONE);
         } else {
             fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
         }
         fragmentTransaction.commit();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
