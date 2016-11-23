@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -35,7 +36,6 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 public class CardsFragment extends Fragment implements CardsAdapter.CardsListener {
 
     protected CardsAdapter mAdapter;
-    protected List<Card> mCards = new ArrayList<>();
     private OnLogEventListener mListener;
     protected Unbinder unbinder;
     protected String tag = TAG;
@@ -70,11 +70,15 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
+
+        List<Card> cards = new ArrayList<>();
         if (bundle != null) {
-            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            if(isEmpty(cards))
+                cards = new ArrayList<>();
             tag = bundle.getString(TAG);
         }
-        mAdapter = new CardsAdapter(getContext(), mCards, this, tag);
+        mAdapter = new CardsAdapter(getContext(), cards, this, tag);
     }
 
     @Nullable
@@ -97,7 +101,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         rvCardsList.setLayoutManager(layoutManager);
         rvCardsList.setAdapter(mAdapter);
         tvNoCards.setOnDragListener(mAdapter.getDragInstance());
-        setEmptyList(mCards.size() == 0);
+        setEmptyList(mAdapter.getItemCount() == 0);
     }
 
     @Override
@@ -117,6 +121,15 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         if (mListener != null) {
             mListener.onNewLogEvent(whoPosted, details);
         }
+    }
+
+    public boolean dealCards(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            mAdapter.addAll(cards);
+            setEmptyList(mAdapter.getItemCount() == 0);
+            return true;
+        }
+        return false;
     }
 
     @Override

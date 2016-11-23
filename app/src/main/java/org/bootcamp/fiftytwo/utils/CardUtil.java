@@ -10,6 +10,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+
 /**
  * Created by shakiem on 11/12/16.
  */
@@ -66,6 +68,18 @@ public class CardUtil {
             }
         }
         return cards;
+    }
+
+    public static synchronized List<Card> draw(final List<Card> cards, final int count, boolean drawFromEnd) {
+        List<Card> drawnCards = null;
+        if (!isEmpty(cards) && cards.size() >= count && count > 0) {
+            drawnCards = new ArrayList<>();
+            int index = drawFromEnd ? cards.size() - count : 0;
+            for (; index < cards.size(); index++) {
+                drawnCards.add(cards.get(index));
+            }
+        }
+        return drawnCards;
     }
 
     @SuppressWarnings("unused")

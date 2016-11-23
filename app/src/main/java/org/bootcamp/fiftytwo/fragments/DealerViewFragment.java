@@ -26,11 +26,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
+import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class DealerViewFragment extends Fragment {
 
@@ -89,7 +91,22 @@ public class DealerViewFragment extends Fragment {
 
     @OnClick(R.id.ibDeal)
     public void deal(View view) {
-        Snackbar.make(view, "Clicked on Deal Button", Snackbar.LENGTH_SHORT).show();
+        int dealCount = 1;
+        if (mCards.size() >= mPlayers.size() * dealCount) {
+            for (User player : mPlayers) {
+                String playerFragmentTag = getPlayerFragmentTag(player);
+                Fragment playerFragment = getChildFragmentManager().findFragmentByTag(playerFragmentTag);
+                if (playerFragment != null) {
+                    List<Card> drawnCards = draw(mCards, dealCount, true);
+                    if (!isEmpty(drawnCards)) {
+                        ((PlayerFragment) playerFragment).dealCards(drawnCards);
+                    }
+                }
+            }
+        } else {
+            Snackbar.make(view, "Not enough cards to deal", Snackbar.LENGTH_SHORT).show();
+        }
+
         if (mDealerListener != null) {
             mDealerListener.onDeal();
         }

@@ -22,13 +22,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+
 /**
  * Created by baphna on 11/11/2016.
  */
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<Card> cards;
+    private List<Card> mCards;
     private CardsListener cardsListener;
     private String tag; //used for chat and log
 
@@ -43,11 +45,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     }
 
     public List<Card> getCards() {
-        return cards;
+        return mCards;
     }
 
     public void setCards(List<Card> cards) {
-        this.cards = cards;
+        this.mCards = cards;
     }
 
     public String getTag() {
@@ -57,9 +59,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public CardsAdapter(Context context, List<Card> cards, CardsListener cardsListener, String tag) {
         this.mContext = context;
         if (cards == null) {
-            this.cards = new ArrayList<>();
+            this.mCards = new ArrayList<>();
         } else {
-            this.cards = cards;
+            this.mCards = cards;
         }
         this.cardsListener = cardsListener;
         this.tag = tag;
@@ -67,7 +69,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return cards.size();
+        return mCards.size();
     }
 
     @Override
@@ -78,7 +80,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Card card = cards.get(position);
+        final Card card = mCards.get(position);
         holder.ivCard.setImageDrawable(card.getDrawableBack(mContext));
         holder.ivCard.setTag(position); //Needed for drag and drop
 
@@ -97,7 +99,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
             @Override
             public void onDoubleTap(MotionEvent event) {
-                if(card.isShowingFront()){
+                if (card.isShowingFront()) {
                     Glide.with(mContext)
                             .load(card.getDrawableBack())
                             .into(holder.ivCard);
@@ -127,6 +129,13 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             return new OnCardsDragListener(cardsListener);
         } else {
             return null;
+        }
+    }
+
+    public void addAll(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            mCards.addAll(cards);
+            notifyDataSetChanged();
         }
     }
 }

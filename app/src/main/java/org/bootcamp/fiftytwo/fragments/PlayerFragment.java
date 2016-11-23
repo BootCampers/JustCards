@@ -19,12 +19,14 @@ import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.views.OnTouchMoveListener;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
@@ -59,14 +61,18 @@ public class PlayerFragment extends CardsFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
+
+        List<Card> cards = new ArrayList<>();
         if (bundle != null) {
-            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            if(isEmpty(cards))
+                cards = new ArrayList<>();
             mPlayer = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER));
             tag = bundle.getString(TAG);
             x = bundle.getInt(PARAM_X);
             y = bundle.getInt(PARAM_Y);
         }
-        mAdapter = new CardsAdapter(getContext(), mCards, this, tag);
+        mAdapter = new CardsAdapter(getContext(), cards, this, tag);
     }
 
     @Nullable

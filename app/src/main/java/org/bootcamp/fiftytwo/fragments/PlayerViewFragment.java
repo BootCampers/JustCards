@@ -32,6 +32,7 @@ import java.util.List;
 
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
+import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -158,8 +159,7 @@ public class PlayerViewFragment extends Fragment
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String userViewTag = ((User) arg).getDisplayName() + "_"
-                            + ((User) arg).getUserId();
+                    String userViewTag = getPlayerFragmentTag((User) arg);
                     Fragment userFragment = getChildFragmentManager().findFragmentByTag(userViewTag);
                     if (userFragment != null) {
                         getChildFragmentManager().beginTransaction().remove(userFragment).commit();

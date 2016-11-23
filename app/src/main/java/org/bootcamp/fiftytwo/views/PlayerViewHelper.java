@@ -55,8 +55,12 @@ public class PlayerViewHelper {
 
         fragment.getChildFragmentManager()
                 .beginTransaction()
-                .add(containerResId, playerCardsFragment, player.getDisplayName()+"_"+player.getUserId())
+                .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
                 .commitNow();
         fragment.getChildFragmentManager().executePendingTransactions();
+    }
+
+    public static String getPlayerFragmentTag(User player) {
+        return player.getDisplayName() + "_" + player.getUserId();
     }
 }
