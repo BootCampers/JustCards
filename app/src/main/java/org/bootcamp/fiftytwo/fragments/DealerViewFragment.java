@@ -36,8 +36,8 @@ import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
-import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
+import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class DealerViewFragment extends Fragment {
 
@@ -74,11 +74,10 @@ public class DealerViewFragment extends Fragment {
             mPlayers = isEmpty(players) ? PlayerUtils.getPlayers(4) : players;
         }
 
-        //TODO: Remove this and library from gradle and service from manifest if we don't need shake
-        // OR else immplement what to do when it's shaked
-        //Optimize it to save battery..use it to detect shake and then stop it
+        // TODO: Remove this and library from gradle and service from manifest if we don't need shake
+        // OR else implement what to do when it's shaken
+        // Optimize it to save battery..use it to detect shake and then stop it
         ShakeIt.initializeShakeService(getActivity(), new ShakeListener() {
-
             @Override
             public void onShake(float force) {
                 Log.d(TAG, "shaking phone");
