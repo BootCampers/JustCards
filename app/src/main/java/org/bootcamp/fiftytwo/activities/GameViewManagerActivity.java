@@ -144,8 +144,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
-                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+                /*PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
+                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);*/
             }
         });
     }

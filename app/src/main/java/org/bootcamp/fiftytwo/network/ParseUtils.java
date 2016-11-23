@@ -23,12 +23,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
 // The code that processes this function is listed at:
 // https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js
-
 public class ParseUtils {
 
     private Context mContext;
     private String gameName; //used for channel name
-    private User currentLoggedinUser;
+    private User currentLoggedInUser;
 
     public ParseUtils(Context mContext, String gameName) {
         this.mContext = mContext;
@@ -38,55 +37,56 @@ public class ParseUtils {
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
         String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, "http://i.imgur.com/FLmEyXZ.jpg");
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
-        currentLoggedinUser = new User(profilePic, displayName, userId);
-        Log.d(Constants.TAG, "Current user --"+displayName+"--"+profilePic+"--"+userId);
-    }
-
-    /**
-     * Broadcast whether current user is joining the game or leaving
-     * @param joining true if joining the game , false if leaving the game
-     */
-    public void changeGameParticipation(boolean joining){
-        try {
-            JSONObject payload = getPayloadFromUser(currentLoggedinUser);
-            if(joining == true) {
-                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_NEW_PLAYER_ADDED);
-            } else {
-                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYER_LEFT);
-            }
-            sendBroadcastWithPayload(payload);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        currentLoggedInUser = new User(profilePic, displayName, userId);
+        Log.d(Constants.TAG, "Current user --" + displayName + "--" + profilePic + "--" + userId);
     }
 
     public void joinChannel() {
         ParsePush.subscribeInBackground(gameName);
     }
+
     public void removeChannel() {
         ParsePush.unsubscribeInBackground(gameName);
     }
 
+    /**
+     * Broadcast whether current user is joining the game or leaving
+     *
+     * @param joining true if joining the game , false if leaving the game
+     */
+    public void changeGameParticipation(boolean joining) {
+        try {
+            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
+            if (joining) {
+                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_NEW_PLAYER_ADDED);
+            } else {
+                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYER_LEFT);
+            }
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     //TODO
-    public List<User> fetchPreviouslyJoinedUsers(){
+    public List<User> fetchPreviouslyJoinedUsers() {
         return new ArrayList<>();
     }
 
     //TODO
-    public List<User> fetchAllTableCards(){
+    public List<User> fetchAllTableCards() {
         return new ArrayList<>();
     }
 
     /**
      * Current user passing card to particular user
+     *
      * @param toUser to whom this is sent
-     * @param card which card
+     * @param card   which card
      */
-    public void exchangeCard(User toUser, Card card){
+    public void exchangeCard(User toUser, Card card) {
         try {
-            JSONObject payload = getPayloadFromUser(currentLoggedinUser);
-
+            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
             JSONObject toUserJson = getPayloadFromUser(toUser);
 
             payload.put(Constants.PARAM_PLAYER, toUserJson);
@@ -97,23 +97,21 @@ public class ParseUtils {
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYERS_EXCHANGE_CARDS);
             sendBroadcastWithPayload(payload);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-
     /**
      * Send card to user from table
+     *
      * @param toUser
      * @param card
      * @param pickedFromTable true if picked, false if placed on table
      */
-    public void tableCardExchange(User toUser, Card card, boolean pickedFromTable){
+    public void tableCardExchange(User toUser, Card card, boolean pickedFromTable) {
         try {
-            JSONObject payload = getPayloadFromUser(currentLoggedinUser);
-
+            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
             JSONObject toUserJson = getPayloadFromUser(toUser);
 
             payload.put(Constants.PARAM_PLAYER, toUserJson);
@@ -125,7 +123,6 @@ public class ParseUtils {
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_TABLE_CARD_EXCHANGE);
             sendBroadcastWithPayload(payload);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -133,21 +130,22 @@ public class ParseUtils {
 
     /**
      * Card picked by current user OR placed on table by current user
+     *
      * @param card
      * @param pickedFromTable
      */
-    public void selfTableCardExchange(Card card, boolean pickedFromTable){
-        tableCardExchange(currentLoggedinUser, card, pickedFromTable);
+    public void selfTableCardExchange(Card card, boolean pickedFromTable) {
+        tableCardExchange(currentLoggedInUser, card, pickedFromTable);
     }
 
     /**
      * Helper function to convert user to json
+     *
      * @param user
      * @return convert user to json object to be sent as broadcast
      * @throws JSONException
      */
     private JSONObject getPayloadFromUser(User user) throws JSONException {
-
         JSONObject payload = new JSONObject();
         payload.put(Constants.DISPLAY_NAME, user.getDisplayName());
         payload.put(Constants.USER_AVATAR_URI, user.getAvatarUri());
@@ -155,7 +153,7 @@ public class ParseUtils {
         return payload;
     }
 
-    private void sendBroadcastWithPayload(JSONObject payload){
+    private void sendBroadcastWithPayload(JSONObject payload) {
         HashMap<String, String> data = new HashMap<>();
         data.put("customData", payload.toString());
         data.put("channel", gameName);
