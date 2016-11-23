@@ -19,20 +19,20 @@ import org.json.JSONObject;
 public class CardExchangeReceiver extends BroadcastReceiver {
 
     private static final String intentAction = "com.parse.push.intent.RECEIVE";
-    private FiftyTwoApplication fiftyTwoApplication;
+    private FiftyTwoApplication application;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        fiftyTwoApplication = ((FiftyTwoApplication) context.getApplicationContext());
+        application = ((FiftyTwoApplication) context.getApplicationContext());
         Log.d(Constants.TAG, "onReceive");
         if (intent == null) {
             Log.d(Constants.TAG, "Receiver intent null");
         } else {
-            processBroadcast(context, intent);
+            processBroadcast(intent);
         }
     }
 
-    private void processBroadcast(Context context, Intent intent) {
+    private void processBroadcast(Intent intent) {
         String action = intent.getAction();
 
         if (action.equals(intentAction)) {
@@ -44,19 +44,18 @@ public class CardExchangeReceiver extends BroadcastReceiver {
                 Log.d(Constants.TAG, identifier + "--" + customData.toString());
                 User userFromJson = new User(customData);
 
-                //process only if it's not from self\current user
+                // Process only if it's not from self/current user
                 if (!userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
-
                     switch (identifier) {
                         case Constants.PARSE_NEW_PLAYER_ADDED:
                         case Constants.PARSE_PLAYER_LEFT:
-                            fiftyTwoApplication.notifyObservers(identifier, userFromJson);
+                            application.notifyObservers(identifier, userFromJson);
                             break;
                         case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
-                            fiftyTwoApplication.notifyObservers(identifier, customData);
+                            application.notifyObservers(identifier, customData);
                             break;
                         case Constants.PARSE_TABLE_CARD_EXCHANGE:
-                            fiftyTwoApplication.notifyObservers(identifier, customData);
+                            application.notifyObservers(identifier, customData);
                             break;
                     }
                 }

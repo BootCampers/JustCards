@@ -31,4 +31,10 @@ public class AppUtils {
         }
         return Parcels.wrap(list);
     }
+
+    public static <T> List<T> getList(T arg) {
+        List<T> list = new ArrayList<>();
+        list.add(arg);
+        return list;
+    }
 }

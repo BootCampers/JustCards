@@ -157,4 +157,8 @@ public class DealerViewFragment extends Fragment {
             mPlayers.addAll(players);
         }
     }
+
+    public boolean removePlayer(User player) {
+        return mPlayers.remove(player);
+    }
 }

@@ -19,26 +19,25 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
+import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
 // The code that processes this function is listed at:
 // https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js
 public class ParseUtils {
 
-    private Context mContext;
     private String gameName; //used for channel name
     private User currentLoggedInUser;
 
-    public ParseUtils(Context mContext, String gameName) {
-        this.mContext = mContext;
+    public ParseUtils(Context context, String gameName) {
         this.gameName = gameName;
 
-        SharedPreferences userPrefs = mContext.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
         String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, "http://i.imgur.com/FLmEyXZ.jpg");
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
         currentLoggedInUser = new User(profilePic, displayName, userId);
-        Log.d(Constants.TAG, "Current user --" + displayName + "--" + profilePic + "--" + userId);
+        Log.d(Constants.TAG, "Current user -- " + displayName + " -- " + profilePic + " -- " + userId);
     }
 
     public void joinChannel() {
@@ -56,7 +55,7 @@ public class ParseUtils {
      */
     public void changeGameParticipation(boolean joining) {
         try {
-            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
+            JSONObject payload = getJson(currentLoggedInUser);
             if (joining) {
                 payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_NEW_PLAYER_ADDED);
             } else {
@@ -68,16 +67,6 @@ public class ParseUtils {
         }
     }
 
-    //TODO
-    public List<User> fetchPreviouslyJoinedUsers() {
-        return new ArrayList<>();
-    }
-
-    //TODO
-    public List<User> fetchAllTableCards() {
-        return new ArrayList<>();
-    }
-
     /**
      * Current user passing card to particular user
      *
@@ -86,8 +75,8 @@ public class ParseUtils {
      */
     public void exchangeCard(User toUser, Card card) {
         try {
-            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
-            JSONObject toUserJson = getPayloadFromUser(toUser);
+            JSONObject payload = getJson(currentLoggedInUser);
+            JSONObject toUserJson = getJson(toUser);
 
             payload.put(Constants.PARAM_PLAYER, toUserJson);
 
@@ -97,6 +86,7 @@ public class ParseUtils {
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYERS_EXCHANGE_CARDS);
             sendBroadcastWithPayload(payload);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -105,14 +95,14 @@ public class ParseUtils {
     /**
      * Send card to user from table
      *
-     * @param toUser
-     * @param card
+     * @param toUser          to whom this is sent
+     * @param card            which card
      * @param pickedFromTable true if picked, false if placed on table
      */
     public void tableCardExchange(User toUser, Card card, boolean pickedFromTable) {
         try {
-            JSONObject payload = getPayloadFromUser(currentLoggedInUser);
-            JSONObject toUserJson = getPayloadFromUser(toUser);
+            JSONObject payload = getJson(currentLoggedInUser);
+            JSONObject toUserJson = getJson(toUser);
 
             payload.put(Constants.PARAM_PLAYER, toUserJson);
             payload.put(Constants.TABLE_PICKED, pickedFromTable);
@@ -123,6 +113,7 @@ public class ParseUtils {
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_TABLE_CARD_EXCHANGE);
             sendBroadcastWithPayload(payload);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,26 +122,21 @@ public class ParseUtils {
     /**
      * Card picked by current user OR placed on table by current user
      *
-     * @param card
-     * @param pickedFromTable
+     * @param card            which card
+     * @param pickedFromTable is the card picked from table
      */
     public void selfTableCardExchange(Card card, boolean pickedFromTable) {
         tableCardExchange(currentLoggedInUser, card, pickedFromTable);
     }
 
-    /**
-     * Helper function to convert user to json
-     *
-     * @param user
-     * @return convert user to json object to be sent as broadcast
-     * @throws JSONException
-     */
-    private JSONObject getPayloadFromUser(User user) throws JSONException {
-        JSONObject payload = new JSONObject();
-        payload.put(Constants.DISPLAY_NAME, user.getDisplayName());
-        payload.put(Constants.USER_AVATAR_URI, user.getAvatarUri());
-        payload.put(Constants.USER_ID, user.getUserId());
-        return payload;
+    //TODO
+    public List<User> fetchPreviouslyJoinedUsers() {
+        return new ArrayList<>();
+    }
+
+    //TODO
+    public List<User> fetchAllTableCards() {
+        return new ArrayList<>();
     }
 
     private void sendBroadcastWithPayload(JSONObject payload) {

@@ -43,17 +43,25 @@ public class User {
         userId = data.getString(Constants.USER_ID);
     }
 
-    public static User fromJson(JSONObject jsonObject) {
+    public static User fromJson(JSONObject json) {
         try {
-            String displayName = jsonObject.getString(DISPLAY_NAME);
-            String avatarUri = jsonObject.getString(USER_AVATAR_URI);
-            String userId = jsonObject.getString(USER_ID);
+            String displayName = json.getString(DISPLAY_NAME);
+            String avatarUri = json.getString(USER_AVATAR_URI);
+            String userId = json.getString(USER_ID);
             Log.d(TAG, "fromJson--" + displayName + "--" + avatarUri + "--" + userId);
             return new User(avatarUri, displayName, userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static JSONObject getJson(User user) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put(Constants.DISPLAY_NAME, user.getDisplayName());
+        json.put(Constants.USER_AVATAR_URI, user.getAvatarUri());
+        json.put(Constants.USER_ID, user.getUserId());
+        return json;
     }
 
     public String getUserId() {

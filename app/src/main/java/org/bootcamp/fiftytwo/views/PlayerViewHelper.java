@@ -9,9 +9,9 @@ import android.view.View;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 
 /**
@@ -26,9 +26,7 @@ public class PlayerViewHelper {
     }
 
     public static void addPlayer(@NonNull final FragmentActivity activity, final int containerResId, final User player) {
-        List<User> players = new ArrayList<>();
-        players.add(player);
-        addPlayers(activity, containerResId, players);
+        addPlayers(activity, containerResId, getList(player));
     }
 
     public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players) {

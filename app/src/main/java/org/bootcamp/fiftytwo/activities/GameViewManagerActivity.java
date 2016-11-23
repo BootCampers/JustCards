@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -20,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
@@ -51,6 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
@@ -149,8 +152,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-                else {
+                } else {
                     rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
             }
@@ -218,9 +220,33 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public boolean onDeal(List<Card> cards, User player) {
-        // TODO: Fire Off Parse Push Here
         Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
-        return playerFragment != null && !isEmpty(cards) && ((PlayerFragment) playerFragment).stackCards(cards);
+        if (playerFragment != null && !isEmpty(cards)) {
+            boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
+            if (result) {
+                for (Card card : cards) {
+                    parseUtils.exchangeCard(player, card);
+                }
+            }
+        }
+        return false;
+    }
+
+    public void handleDeal(Card card, User from, User to) {
+        if (card != null && !TextUtils.isEmpty(card.getName()) && from != null && to != null) {
+            if (isCurrentViewPlayer) {
+                Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
+                if (playerFragment != null) {
+                    ((PlayerFragment) playerFragment).stackCards(getList(card));
+                }
+            }
+            if (ParseUser.getCurrentUser().getObjectId().equals(to.getUserId()) && playerViewFragment != null) {
+                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).stackCards(getList(card));
+                }
+            }
+        }
     }
 
     @Override
@@ -247,9 +273,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, (User) arg);
-                        if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
-                        //TODO: Add to the log
+                        User player = (User) arg;
+                        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, player);
+                        if (dealerViewFragment != null) {
+                            dealerViewFragment.addPlayers(getList((User) arg));
+                        }
+                        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
                     }
                 });
                 break;
@@ -257,27 +286,30 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String userViewTag = getPlayerFragmentTag((User) arg);
+                        User player = (User) arg;
+                        String userViewTag = getPlayerFragmentTag(player);
                         Fragment userFragment = getSupportFragmentManager().findFragmentByTag(userViewTag);
                         if (userFragment != null) {
                             getSupportFragmentManager().beginTransaction().remove(userFragment).commitNow();
                         } else {
                             Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
                         }
-                        //TODO: Add to the log
+                        if (dealerViewFragment != null) dealerViewFragment.removePlayer((User) arg);
+                        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " left.");
                     }
                 });
                 break;
             case PARSE_PLAYERS_EXCHANGE_CARDS:
                 try {
                     JSONObject details = (JSONObject) arg;
-                    User fromUser = fromJson(details);
+                    User from = fromJson(details);
                     JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
-                    User toUser = fromJson(toUserDetails);
+                    User to = fromJson(toUserDetails);
                     Gson gson = new Gson();
-                    String cardString;
-                    cardString = gson.toJson(details.getString(PARAM_CARDS));
-                    Log.d(TAG, "cardExchanged is--" + cardString);
+                    String cardString = gson.toJson(details.getString(PARAM_CARDS));
+                    Card card = gson.fromJson(cardString, Card.class);
+                    Log.d(TAG, "cardExchanged is -- " + cardString);
+                    handleDeal(card, from, to);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
