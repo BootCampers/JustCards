@@ -74,9 +74,10 @@ public class CardUtil {
         List<Card> drawnCards = null;
         if (!isEmpty(cards) && cards.size() >= count && count > 0) {
             drawnCards = new ArrayList<>();
-            int index = drawFromEnd ? cards.size() - count : 0;
-            for (; index < cards.size(); index++) {
-                drawnCards.add(cards.get(index));
+            int start = drawFromEnd ? cards.size() - count : 0;
+            int end = drawFromEnd ? cards.size() : count;
+            for (; start < end; start++) {
+                drawnCards.add(cards.get(start));
             }
         }
         return drawnCards;
