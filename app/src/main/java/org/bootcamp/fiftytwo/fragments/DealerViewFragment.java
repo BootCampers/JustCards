@@ -17,9 +17,6 @@ import com.jcmore2.shakeit.ShakeListener;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.CardUtil;
-import org.bootcamp.fiftytwo.utils.PlayerUtils;
-import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -32,23 +29,23 @@ import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
-import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class DealerViewFragment extends Fragment {
 
     private List<Card> mCards = new ArrayList<>();
     private List<User> mPlayers = new ArrayList<>();
-    private OnDealerListener mDealerListener;
+    private OnDealListener mDealListener;
     private Unbinder unbinder;
 
     @BindView(R.id.flDealerViewContainer) FrameLayout flDealerViewContainer;
 
-    public interface OnDealerListener {
-        void onDeal();
+    public interface OnDealListener {
+        boolean onDeal(List<Card> cards, User player);
     }
 
     public static DealerViewFragment newInstance(List<Card> cards, List<User> players) {
@@ -69,8 +66,10 @@ public class DealerViewFragment extends Fragment {
         if (bundle != null) {
             List<Card> cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             List<User> players = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYERS));
-            mCards = isEmpty(cards) ? CardUtil.generateDeck(1, false) : cards;
-            mPlayers = isEmpty(players) ? PlayerUtils.getPlayers(4) : players;
+            if(!isEmpty(cards))
+                mCards = cards;
+            if(!isEmpty(players))
+                mPlayers = players;
         }
 
         // TODO: Remove this and library from gradle and service from manifest if we don't need shake
@@ -83,7 +82,8 @@ public class DealerViewFragment extends Fragment {
             }
 
             @Override
-            public void onAccelerationChanged(float x, float y, float z) {}
+            public void onAccelerationChanged(float x, float y, float z) {
+            }
         });
     }
 
@@ -108,8 +108,6 @@ public class DealerViewFragment extends Fragment {
                 .beginTransaction()
                 .replace(R.id.flDealerContainer, dealerCardsFragment, DEALER_TAG)
                 .commit();
-
-        PlayerViewHelper.addPlayers(this, R.id.flDealerViewContainer, mPlayers);
     }
 
     @OnClick(R.id.ibDeal)
@@ -119,35 +117,33 @@ public class DealerViewFragment extends Fragment {
         List<Card> cards = dealerFragment.getCards();
         if (cards.size() >= mPlayers.size() * dealCount) {
             for (User player : mPlayers) {
-                Fragment playerFragment = getChildFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
-                if (playerFragment != null) {
-                    List<Card> drawnCards = dealerFragment.drawCards(dealCount, false);
+                if (mDealListener != null) {
+                    List<Card> drawnCards = draw(cards, dealCount, false);
                     if (!isEmpty(drawnCards)) {
-                        ((PlayerFragment) playerFragment).stackCards(drawnCards);
+                        boolean dealt = mDealListener.onDeal(drawnCards, player);
+                        if (dealt) {
+                            dealerFragment.drawCards(drawnCards);
+                        }
                     }
                 }
             }
         } else {
             Snackbar.make(view, "Not enough cards to deal", Snackbar.LENGTH_SHORT).show();
         }
-
-        if (mDealerListener != null) {
-            mDealerListener.onDeal();
-        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnDealerListener) {
-            mDealerListener = (OnDealerListener) context;
+        if (context instanceof OnDealListener) {
+            mDealListener = (OnDealListener) context;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mDealerListener = null;
+        mDealListener = null;
     }
 
     @Override

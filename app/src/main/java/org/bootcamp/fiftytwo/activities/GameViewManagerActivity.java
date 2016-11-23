@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
+import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
@@ -30,6 +32,8 @@ import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
+import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -40,35 +44,36 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
+import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.OnPlayerFragmentInteractionListener,
         ChatAndLogFragment.OnListFragmentInteractionListener,
-        DealerViewFragment.OnDealerListener,
+        DealerViewFragment.OnDealListener,
         CardsFragment.OnLogEventListener,
         Observer {
 
-    @BindView(R.id.ibComment) ImageButton ibComment;
-    @BindView(R.id.ibSettings) ImageButton ibSettings;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    private List<User> mPlayers = new ArrayList<>();
+    private List<Card> mCards;
+    private ParseUtils parseUtils;
 
-    @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
-    @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
+    private boolean isCurrentViewPlayer = true;
+    private boolean showingPlayerFragment = true; //false is showing dealer fragment
+    private boolean showingChat = false;
 
     private PlayerViewFragment playerViewFragment;
     private DealerViewFragment dealerViewFragment;
     private ChatAndLogFragment chatAndLogFragment;
 
-    private boolean showingChat = false;
-    private boolean showingPlayerFragment = true; //false is showing dealer fragment
-    private String gameName;
-    private List<Card> mCards;
-    private List<User> mPlayers = new ArrayList<>();
-
-    private ParseUtils parseUtils;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.ibComment) ImageButton ibComment;
+    @BindView(R.id.ibSettings) ImageButton ibSettings;
+    @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
+    @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,60 +86,65 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         setSupportActionBar(toolbar);
 
-        boolean isCurrentViewPlayer = true;
+        initGameParams();
+        initFragments();
+    }
+
+    private void initGameParams() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
+            String gameName = bundle.getString(PARAM_GAME_NAME);
             isCurrentViewPlayer = bundle.getBoolean(Constants.PARAM_CURRENT_VIEW_PLAYER);
-            gameName = bundle.getString(PARAM_GAME_NAME);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
+
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
             // TODO get self details
             parseUtils.changeGameParticipation(true);
         }
-
-        // TODO: check if he is a dealer or not and hide fab accordingly
-        playerViewFragment = new PlayerViewFragment();
-        chatAndLogFragment = new ChatAndLogFragment();
-        dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
-
-        //Set PlayerView as parent fragment
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (isCurrentViewPlayer) {
-            fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
-            fab.setVisibility(View.GONE);
-        } else {
-            fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
-        }
-        fragmentTransaction.commit();
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (showingPlayerFragment) {
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.flGameContainer, dealerViewFragment);
-                    fragmentTransaction.commit();
-                    showingPlayerFragment = false;
-                } else {
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.flGameContainer, playerViewFragment);
-                    fragmentTransaction.commit();
-                    showingPlayerFragment = true;
-                }
-            }
-        });
     }
 
-    // TODO: change for new player addition rather than for Settings
+    private void initFragments() {
+        // TODO: Remove this code when users are hooked up.
+        if(isEmpty(mPlayers)) {
+            mPlayers = PlayerUtils.getPlayers(4);
+        }
+
+        playerViewFragment = new PlayerViewFragment();
+        dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
+        chatAndLogFragment = new ChatAndLogFragment();
+
+        if (isCurrentViewPlayer) {
+            fab.setVisibility(View.GONE);
+            replaceContainerFragment(playerViewFragment);
+        } else {
+            replaceContainerFragment(dealerViewFragment);
+        }
+        PlayerViewHelper.addPlayers(this, R.id.flGameContainer, mPlayers);
+    }
+
+    private void replaceContainerFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flGameContainer, fragment)
+                .commit();
+    }
+
+    @OnClick(R.id.fab)
+    public void switchView(View view) {
+        if (showingPlayerFragment) {
+            replaceContainerFragment(dealerViewFragment);
+            showingPlayerFragment = false;
+        } else {
+            replaceContainerFragment(playerViewFragment);
+            showingPlayerFragment = true;
+        }
+    }
+
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
-        //playerViewFragment.changeGameParticipation(User.getDummyPlayer());
-        //if(parseUtils != null){
-        //  parseUtils.changeGameParticipation(User.getDummyPlayers(1).get(0));
-        //}
+        // TODO: change for new player addition rather than for Settings
     }
 
     @OnClick(R.id.ibComment)
@@ -154,7 +164,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-         parseUtils.tableCardExchange(new User("", "dummyname", "dummyid"), CardUtil.generateDeck(1, false).get(0), false);
+        parseUtils.tableCardExchange(new User("", "dummyName", "dummyId"), CardUtil.generateDeck(1, false).get(0), false);
         // TODO: may be use Dialog fragment and reuse that with other fragment when user leave??
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -179,8 +189,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDeal() {
-        // Do Nothing for now
+    public boolean onDeal(List<Card> cards, User player) {
+        Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
+        return playerFragment != null && !isEmpty(cards) && ((PlayerFragment) playerFragment).stackCards(cards);
     }
 
     @Override
@@ -190,9 +201,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPlayerFragmentInteraction(Uri uri) {}
+    public void onPlayerFragmentInteraction(Uri uri) {
+    }
 
     @Override
-    public void onListFragmentInteraction(ChatLog item) {}
+    public void onListFragmentInteraction(ChatLog item) {
+    }
 
 }

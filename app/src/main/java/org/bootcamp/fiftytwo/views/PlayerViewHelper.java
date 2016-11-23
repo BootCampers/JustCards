@@ -2,6 +2,8 @@ package org.bootcamp.fiftytwo.views;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
@@ -23,14 +25,14 @@ public class PlayerViewHelper {
         //no instance
     }
 
-    public static void addPlayer(@NonNull final Fragment fragment, final int containerResId, final User player) {
+    public static void addPlayer(@NonNull final FragmentActivity activity, final int containerResId, final User player) {
         List<User> players = new ArrayList<>();
         players.add(player);
-        addPlayers(fragment, containerResId, players);
+        addPlayers(activity, containerResId, players);
     }
 
-    public static void addPlayers(@NonNull final Fragment fragment, final int containerResId, final List<User> players) {
-        View decorView = fragment.getActivity().getWindow().getDecorView();
+    public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players) {
+        View decorView = activity.getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
 
@@ -43,18 +45,18 @@ public class PlayerViewHelper {
 
         for (User player : players) {
             x += incX;
-            addPlayerFragment(fragment, containerResId, player, (int) x, (int) y);
+            addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
         }
     }
 
-    private static void addPlayerFragment(final Fragment fragment, final int containerResId, final User player, int x, int y) {
+    private static void addPlayerFragment(@NonNull final FragmentManager fm, final int containerResId, final User player, int x, int y) {
         Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, PLAYER_TAG + player.getDisplayName(), x, y);
 
-        fragment.getChildFragmentManager()
-                .beginTransaction()
+        fm.beginTransaction()
                 .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
                 .commitNow();
-        fragment.getChildFragmentManager().executePendingTransactions();
+
+        fm.executePendingTransactions();
     }
 
     public static String getPlayerFragmentTag(User player) {

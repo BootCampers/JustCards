@@ -27,7 +27,6 @@ import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
-import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -135,16 +134,6 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
             return true;
         }
         return false;
-    }
-
-    public List<Card> drawCards(int count, boolean drawFromEnd) {
-        List<Card> cards = draw(mAdapter.getCards(), count, drawFromEnd);
-        if (!isEmpty(cards)) {
-            if (drawCards(cards)) {
-                return cards;
-            }
-        }
-        return null;
     }
 
     public boolean drawCards(List<Card> cards) {
