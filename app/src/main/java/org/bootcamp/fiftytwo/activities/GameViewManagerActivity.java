@@ -89,11 +89,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
-            //TODO get self details
+            // TODO get self details
             parseUtils.changeGameParticipation(true);
         }
 
-        //TODO: check if he is a dealer or not and hide fab accordingly
+        // TODO: check if he is a dealer or not and hide fab accordingly
         playerViewFragment = new PlayerViewFragment();
         chatAndLogFragment = new ChatAndLogFragment();
         dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
@@ -126,17 +126,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
-    @Override
-    public void onPlayerFragmentInteraction(Uri uri) {
-
-    }
-
-    //TODO: change for new player addition rather than for Settings
+    // TODO: change for new player addition rather than for Settings
     @OnClick(R.id.ibSettings)
     public void addNewPlayer() {
         //playerViewFragment.changeGameParticipation(User.getDummyPlayer());
         //if(parseUtils != null){
-          //  parseUtils.changeGameParticipation(User.getDummyPlayers(1).get(0));
+        //  parseUtils.changeGameParticipation(User.getDummyPlayers(1).get(0));
         //}
     }
 
@@ -156,14 +151,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewLogEvent(String whoPosted, String details) {
-        Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
-        chatAndLogFragment.addNewLogEvent(whoPosted, details);
+    public void onBackPressed() {
+        // parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
+        // TODO: may be use Dialog fragment and reuse that with other fragment when user leave??
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting from game")
+                .setMessage("Are you sure you want to exit from game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        parseUtils.changeGameParticipation(false);
+                        parseUtils.removeChannel();
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
-    public void onListFragmentInteraction(ChatLog item) {
-
+    public void onUpdate(Observable o, Object identifier, Object arg) {
+        Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier + "\n" + arg.toString());
     }
 
     @Override
@@ -172,30 +181,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onBackPressed() {
-        //parseUtils.exchangeCard(User.getDummyPlayers(1).get(0), CardUtil.generateDeck(1, false).get(0));
-        //TODO: may be use Dailog fragment and resue that with other fragment when user leave??
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exiting from game")
-                .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        parseUtils.changeGameParticipation(false);
-                        parseUtils.removeChannel();
-                        finish();
-                    }
-
-                })
-                .setNegativeButton("No", null)
-                .show();
+    public void onNewLogEvent(String whoPosted, String details) {
+        Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
+        chatAndLogFragment.addNewLogEvent(whoPosted, details);
     }
 
     @Override
-    public void onUpdate(Observable o, Object identifier, Object arg) {
-        String qualifier = arg.toString();
-        Log.d(Constants.TAG, "GameViewManager-onUpdate-" + identifier);
-    }
+    public void onPlayerFragmentInteraction(Uri uri) {}
+
+    @Override
+    public void onListFragmentInteraction(ChatLog item) {}
+
 }
