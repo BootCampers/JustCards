@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.jcmore2.shakeit.ShakeIt;
+import com.jcmore2.shakeit.ShakeListener;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
@@ -33,6 +37,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 public class DealerViewFragment extends Fragment {
 
@@ -68,6 +73,20 @@ public class DealerViewFragment extends Fragment {
             mCards = isEmpty(cards) ? CardUtil.generateDeck(1, false) : cards;
             mPlayers = isEmpty(players) ? PlayerUtils.getPlayers(4) : players;
         }
+
+        //TODO: Remove this and library from gradle and service from manifest if we don't need shake
+        // OR else immplement what to do when it's shaked
+        //Optimize it to save battery..use it to detect shake and then stop it
+        ShakeIt.initializeShakeService(getActivity(), new ShakeListener() {
+
+            @Override
+            public void onShake(float force) {
+                Log.d(TAG, "shaking phone");
+            }
+
+            @Override
+            public void onAccelerationChanged(float x, float y, float z) {}
+        });
     }
 
     @Override
@@ -75,6 +94,12 @@ public class DealerViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dealer_view, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ShakeIt.stopShakeService(getActivity());
     }
 
     @Override
