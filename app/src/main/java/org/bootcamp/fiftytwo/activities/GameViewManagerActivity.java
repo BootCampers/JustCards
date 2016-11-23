@@ -3,6 +3,7 @@ package org.bootcamp.fiftytwo.activities;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -51,14 +52,16 @@ import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
-import static org.bootcamp.fiftytwo.utils.Constants.*;
+import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYERS_EXCHANGE_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TABLE_CARD_EXCHANGE;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -71,7 +74,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
     private ParseUtils parseUtils;
-    private FiftyTwoApplication application;
 
     private boolean isCurrentViewPlayer = true;
     private boolean showingPlayerFragment = true; //false is showing dealer fragment
@@ -104,8 +106,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         initGameParams();
         initFragments();
 
-        application = (FiftyTwoApplication) getApplication();
-        application.addObserver(this);
+        ((FiftyTwoApplication) getApplication()).addObserver(this);
     }
 
     private void initGameParams() {
@@ -144,8 +145,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                /*PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
-                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);*/
+                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
+                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                else {
+                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
             }
         });
     }
