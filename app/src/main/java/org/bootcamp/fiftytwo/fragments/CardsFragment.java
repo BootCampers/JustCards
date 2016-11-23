@@ -123,9 +123,18 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         }
     }
 
-    public boolean dealCards(List<Card> cards) {
+    public boolean stackCards(List<Card> cards) {
         if (!isEmpty(cards)) {
             mAdapter.addAll(cards);
+            setEmptyList(mAdapter.getItemCount() == 0);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean drawCards(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            mAdapter.removeAll(cards);
             setEmptyList(mAdapter.getItemCount() == 0);
             return true;
         }

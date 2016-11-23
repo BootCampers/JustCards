@@ -116,14 +116,15 @@ public class DealerViewFragment extends Fragment {
     @OnClick(R.id.ibDeal)
     public void deal(View view) {
         int dealCount = 1;
+        CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
         if (mCards.size() >= mPlayers.size() * dealCount) {
             for (User player : mPlayers) {
-                String playerFragmentTag = getPlayerFragmentTag(player);
-                Fragment playerFragment = getChildFragmentManager().findFragmentByTag(playerFragmentTag);
+                Fragment playerFragment = getChildFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
                 if (playerFragment != null) {
                     List<Card> drawnCards = draw(mCards, dealCount, true);
                     if (!isEmpty(drawnCards)) {
-                        ((PlayerFragment) playerFragment).dealCards(drawnCards);
+                        dealerFragment.drawCards(drawnCards);
+                        ((PlayerFragment) playerFragment).stackCards(drawnCards);
                     }
                 }
             }

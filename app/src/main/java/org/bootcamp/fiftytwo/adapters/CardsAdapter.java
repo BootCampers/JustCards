@@ -138,4 +138,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             notifyDataSetChanged();
         }
     }
+
+    public void removeAll(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            mCards.removeAll(cards);
+            notifyDataSetChanged();
+        }
+    }
 }
