@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -106,11 +107,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void initFragments() {
-        // TODO: Remove this code when users are hooked up.
-        if(isEmpty(mPlayers)) {
-            mPlayers = PlayerUtils.getPlayers(4);
-        }
-
         playerViewFragment = new PlayerViewFragment();
         dealerViewFragment = DealerViewFragment.newInstance(mCards, mPlayers);
         chatAndLogFragment = new ChatAndLogFragment();
@@ -121,7 +117,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         } else {
             replaceContainerFragment(dealerViewFragment);
         }
-        PlayerViewHelper.addPlayers(this, R.id.flGameContainer, mPlayers);
+
+        // TODO: This is only for temporary purposes.
+        if(isEmpty(mPlayers)) {
+            mPlayers = PlayerUtils.getPlayers(4);
+        }
+
+        final View rootView = getWindow().getDecorView().getRootView();
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
+                if(dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+            }
+        });
     }
 
     private void replaceContainerFragment(Fragment fragment) {
@@ -190,6 +199,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public boolean onDeal(List<Card> cards, User player) {
+        // TODO: Fire Off Parse Push Here
         Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
         return playerFragment != null && !isEmpty(cards) && ((PlayerFragment) playerFragment).stackCards(cards);
     }

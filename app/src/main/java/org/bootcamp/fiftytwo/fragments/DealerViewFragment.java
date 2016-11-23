@@ -151,4 +151,10 @@ public class DealerViewFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    public void addPlayers(List<User> players) {
+        if(!isEmpty(players)) {
+            mPlayers.addAll(players);
+        }
+    }
 }
