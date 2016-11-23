@@ -46,7 +46,7 @@ public class PlayerFragment extends CardsFragment {
     @BindView(R.id.ivPlayerAvatar) CircularImageView ivPlayerAvatar;
     @BindView(R.id.tvUserName) TextView tvUserName;
 
-    public static PlayerFragment newInstance(final List<Card> cards, final User player, final String tag, int x, int y) {
+    public static PlayerFragment newInstance(List<Card> cards, final User player, final String tag, int x, int y) {
         PlayerFragment fragment = new PlayerFragment();
         Bundle args = new Bundle();
         args.putParcelable(PARAM_CARDS, getParcelable(cards));

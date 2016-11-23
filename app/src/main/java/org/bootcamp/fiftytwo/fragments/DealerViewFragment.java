@@ -121,7 +121,7 @@ public class DealerViewFragment extends Fragment {
             for (User player : mPlayers) {
                 Fragment playerFragment = getChildFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
                 if (playerFragment != null) {
-                    List<Card> drawnCards = dealerFragment.drawCards(dealCount, true);
+                    List<Card> drawnCards = dealerFragment.drawCards(dealCount, false);
                     if (!isEmpty(drawnCards)) {
                         ((PlayerFragment) playerFragment).stackCards(drawnCards);
                     }
