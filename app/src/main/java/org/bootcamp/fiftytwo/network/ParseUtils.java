@@ -11,7 +11,6 @@ import com.parse.ParsePush;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,6 +101,43 @@ public class ParseUtils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * Send card to user from table
+     * @param toUser
+     * @param card
+     * @param pickedFromTable true if picked, false if placed on table
+     */
+    public void tableCardExchange(User toUser, Card card, boolean pickedFromTable){
+        try {
+            JSONObject payload = getPayloadFromUser(currentLoggedinUser);
+
+            JSONObject toUserJson = getPayloadFromUser(toUser);
+
+            payload.put(Constants.PARAM_PLAYER, toUserJson);
+            payload.put(Constants.TABLE_PICKED, pickedFromTable);
+
+            Gson gson = new Gson();
+            String cardJson = gson.toJson(card);
+            payload.put(Constants.PARAM_CARDS, cardJson);
+
+            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_TABLE_CARD_EXCHANGE);
+            sendBroadcastWithPayload(payload);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Card picked by current user OR placed on table by current user
+     * @param card
+     * @param pickedFromTable
+     */
+    public void selfTableCardExchange(Card card, boolean pickedFromTable){
+        tableCardExchange(currentLoggedinUser, card, pickedFromTable);
     }
 
     /**

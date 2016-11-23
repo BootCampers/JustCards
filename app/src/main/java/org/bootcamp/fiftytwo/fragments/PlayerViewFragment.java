@@ -147,6 +147,7 @@ public class PlayerViewFragment extends Fragment
     public void onUpdate(Observable o, final Object identifier, final Object arg) {
         String whatUpdated = identifier.toString();
         Log.d(Constants.TAG, PlayerViewFragment.class.getSimpleName() + "-onUpdate-" + whatUpdated);
+
         if (whatUpdated.equals(Constants.PARSE_NEW_PLAYER_ADDED)) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -179,6 +180,22 @@ public class PlayerViewFragment extends Fragment
                 Gson gson = new Gson();
                 String cardString = null;
                 cardString = gson.toJson(details.getString(Constants.PARAM_CARDS));
+                Log.d(Constants.TAG, "cardExchanged is--"+ cardString);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }  else if (whatUpdated.equals(Constants.PARSE_TABLE_CARD_EXCHANGE)){
+
+            try {
+                JSONObject details = (JSONObject) arg;
+                User fromUser = userFromJson(details);
+                JSONObject toUserDetails = details.getJSONObject(Constants.PLAYER_TAG);
+                User toUser = userFromJson(toUserDetails);
+                Gson gson = new Gson();
+                String cardString = null;
+                cardString = gson.toJson(details.getString(Constants.PARAM_CARDS));
+                boolean pickedOrPlacedOnTable = details.getBoolean(Constants.TABLE_PICKED);
                 Log.d(Constants.TAG, "cardExchanged is--"+ cardString);
 
             } catch (JSONException e) {

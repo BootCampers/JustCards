@@ -40,8 +40,11 @@ public class Constants {
     public static final String COMMON_IDENTIFIER = "commonIdentifier";
     public static final String SERVER_FUNCTION_NAME = "pushToChannel";
 
+    public static final String TABLE_PICKED = "pickedFromTable";
+
     /** Parse Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
     public static final String PARSE_PLAYERS_EXCHANGE_CARDS = "playersExchangeCards";
+    public static final String PARSE_TABLE_CARD_EXCHANGE = "tableCardExchange";
 }
