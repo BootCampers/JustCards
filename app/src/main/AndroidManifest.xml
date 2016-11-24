@@ -10,25 +10,25 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
-    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"/>
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE" />
 
     <application
         android:name=".application.FiftyTwoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        tools:replace="android:icon,android:theme"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon,android:theme">
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572" />
@@ -63,16 +63,16 @@
 
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
-            android:value="@string/gcm_sender_id"/>
+            android:value="@string/gcm_sender_id" />
 
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="org.bootcamp.fiftytwo"/>
+                <category android:name="org.bootcamp.fiftytwo" />
             </intent-filter>
         </receiver>
 
@@ -82,13 +82,13 @@
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE"/>
-                <action android:name="com.parse.push.intent.DELETE"/>
-                <action android:name="com.parse.push.intent.OPEN"/>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".receivers.CardExchangeReceiver"
+        <receiver
+            android:name=".receivers.CardExchangeReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -100,8 +100,17 @@
         <service
             android:name="com.jcmore2.shakeit.ShakeService"
             android:exported="false"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name" />
 
+        <activity
+            android:name=".activities.AvatarSelectionActivity"
+            android:label="@string/title_activity_avatar_selection"
+            android:parentActivityName=".activities.RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity" />
+        </activity>
     </application>
 
 </manifest>

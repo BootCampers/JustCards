@@ -41,5 +41,6 @@
     <string name="msg_discard">Discard</string>
     <string name="msg_facing_down">Facing down</string>
     <string name="msg_facing_up">Facing up</string>
+    <string name="title_activity_avatar_selection">Choose your Avatar</string>
 
 </resources>

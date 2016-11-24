@@ -55,4 +55,7 @@ public class Constants {
     public static final String DO_REMAINING_CARDS = "remainingCards";
     public static final String DO_CARD_FACE = "cardsFace";
     public static final String DO_SHUFFLE = "shuffle";
+
+    public static String SELECTED_AVATAR = "selectedAvatar";
+    public static int PICK_IMAGE_REQUEST = 2987;
 }
