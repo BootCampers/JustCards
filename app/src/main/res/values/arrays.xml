@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="remaining_cards_array">
+        <item>@string/msg_send_to_table</item>
+        <item>@string/msg_discard</item>
+    </string-array>
+
+    <string-array name="cards_face">
+        <item>@string/msg_facing_down</item>
+        <item>@string/msg_facing_up</item>
+    </string-array>
+</resources>

@@ -83,7 +83,6 @@ public class CardUtil {
         return drawnCards;
     }
 
-    @SuppressWarnings("unused")
     public static List<Card> shuffleDeck(List<Card> deck) {
         List<Card> shuffledDeck = new ArrayList<>(deck);
         BitSet usedPositions = new BitSet(deck.size());

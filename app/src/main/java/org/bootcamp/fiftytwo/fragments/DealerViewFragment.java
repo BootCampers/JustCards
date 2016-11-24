@@ -3,13 +3,13 @@ package org.bootcamp.fiftytwo.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.jcmore2.shakeit.ShakeIt;
 import com.jcmore2.shakeit.ShakeListener;
@@ -17,6 +17,8 @@ import com.jcmore2.shakeit.ShakeListener;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -35,7 +37,8 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
-public class DealerViewFragment extends Fragment {
+public class DealerViewFragment extends Fragment
+    implements DealingOptionsFragment.OnDealOptionListener {
 
     private List<Card> mCards = new ArrayList<>();
     private List<User> mPlayers = new ArrayList<>();
@@ -43,6 +46,24 @@ public class DealerViewFragment extends Fragment {
     private Unbinder unbinder;
 
     @BindView(R.id.flDealerViewContainer) FrameLayout flDealerViewContainer;
+    private DealingOptionsFragment dealingOptionsFragment;
+
+    @Override
+    public void onDealOptionSelected(Bundle bundle) {
+        if(bundle != null){
+            Log.d(Constants.TAG, bundle.toString());
+
+            String doRemainingCards = bundle.getString(Constants.DO_REMAINING_CARDS);
+            String doCardsFace = bundle.getString(Constants.DO_CARD_FACE);
+            boolean doShuffle = bundle.getBoolean(Constants.DO_SHUFFLE);
+            int doCardCount = bundle.getInt(Constants.DO_CARD_COUNT);
+
+            dealNow(doCardCount, doShuffle, doCardsFace, doRemainingCards);
+        }
+
+        getChildFragmentManager()
+                .beginTransaction().remove(dealingOptionsFragment).commit();
+    }
 
     public interface OnDealListener {
         boolean onDeal(List<Card> cards, User player);
@@ -112,9 +133,23 @@ public class DealerViewFragment extends Fragment {
 
     @OnClick(R.id.ibDeal)
     public void deal(View view) {
-        int dealCount = 1;
         CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
         List<Card> cards = dealerFragment.getCards();
+
+        dealingOptionsFragment = DealingOptionsFragment.newInstance(mPlayers.size(), cards.size());
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flDealerViewContainer, dealingOptionsFragment, Constants.DEALING_OPTIONS_TAG)
+                .commit();
+    }
+
+    //TODO: handle dealing with selected card face and select what to do with remaining cards
+    private void dealNow(int dealCount, boolean doShuffle, String doCardsFace, String doRemainingCards){
+        CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
+        List<Card> cards = dealerFragment.getCards();
+        if(doShuffle == true){
+            cards = CardUtil.shuffleDeck(cards);
+        }
         if (cards.size() >= mPlayers.size() * dealCount) {
             for (User player : mPlayers) {
                 if (mDealListener != null) {
@@ -128,7 +163,7 @@ public class DealerViewFragment extends Fragment {
                 }
             }
         } else {
-            Snackbar.make(view, "Not enough cards to deal", Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Not enough cards to deal", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -37,4 +37,9 @@
 
     <string name="gcm_sender_id">id:761078236734</string>
 
+    <string name="msg_send_to_table">Keep on table</string>
+    <string name="msg_discard">Discard</string>
+    <string name="msg_facing_down">Facing down</string>
+    <string name="msg_facing_up">Facing up</string>
+
 </resources>

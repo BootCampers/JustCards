@@ -28,6 +28,7 @@ import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
+import org.bootcamp.fiftytwo.fragments.DealingOptionsFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
@@ -72,6 +73,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ChatAndLogFragment.OnListFragmentInteractionListener,
         DealerViewFragment.OnDealListener,
         CardsFragment.OnLogEventListener,
+        DealingOptionsFragment.OnDealOptionListener,
         Observer {
 
     private List<User> mPlayers = new ArrayList<>();
@@ -264,7 +266,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdate(final Observable o, final Object identifier, final Object arg) {
+    public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
         Log.d(TAG, "onUpdate: " + event);
 
@@ -333,4 +335,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onDealOptionSelected(Bundle bundle) {
+
+    }
 }

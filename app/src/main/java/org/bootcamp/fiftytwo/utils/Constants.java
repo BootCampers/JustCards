@@ -12,6 +12,8 @@ public class Constants {
     public static final String PLAYER_TAG = "player";
     public static final String TABLE_TAG = "table";
     public static final String USER_TAG = "user";
+    public static final String DEALING_OPTIONS_TAG = "dealingOptions";
+
 
     /** Preference Keys here */
     /*DO NOT CHANGE ==  MUST match with member variables of User class*/
@@ -47,4 +49,10 @@ public class Constants {
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
     public static final String PARSE_PLAYERS_EXCHANGE_CARDS = "playersExchangeCards";
     public static final String PARSE_TABLE_CARD_EXCHANGE = "tableCardExchange";
+
+    /** Dealing Options */
+    public static final String DO_CARD_COUNT = "cardsCount";
+    public static final String DO_REMAINING_CARDS = "remainingCards";
+    public static final String DO_CARD_FACE = "cardsFace";
+    public static final String DO_SHUFFLE = "shuffle";
 }
