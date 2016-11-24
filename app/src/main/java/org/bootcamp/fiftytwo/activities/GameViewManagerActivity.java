@@ -234,6 +234,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         return false;
     }
 
+    @Override
+    public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
+        //Show and hide all players back when dealer option is showing to un-clutter the view
+        for(User user : mPlayers){
+            String playerTag = PlayerViewHelper.getPlayerFragmentTag(user);
+            Fragment playerFragmentByTag = getSupportFragmentManager().findFragmentByTag(playerTag);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            if(isDealerOptionShowing ==  true) {
+                transaction.hide(playerFragmentByTag);
+            } else {
+                transaction.show(playerFragmentByTag);
+            }
+            transaction.commit();
+        }
+    }
+
     public void handleDeal(Card card, User from, User to) {
         if (card != null && !TextUtils.isEmpty(card.getName()) && from != null && to != null) {
             if (isCurrentViewPlayer) {

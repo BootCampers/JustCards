@@ -63,10 +63,12 @@ public class DealerViewFragment extends Fragment
 
         getChildFragmentManager()
                 .beginTransaction().remove(dealingOptionsFragment).commit();
+        mDealListener.onDealerOptionsShowing(false);
     }
 
     public interface OnDealListener {
         boolean onDeal(List<Card> cards, User player);
+        void onDealerOptionsShowing(boolean isDealerOptionShowing);
     }
 
     public static DealerViewFragment newInstance(List<Card> cards, List<User> players) {
@@ -141,6 +143,7 @@ public class DealerViewFragment extends Fragment
                 .beginTransaction()
                 .replace(R.id.flDealerViewContainer, dealingOptionsFragment, Constants.DEALING_OPTIONS_TAG)
                 .commit();
+        mDealListener.onDealerOptionsShowing(true);
     }
 
     //TODO: handle dealing with selected card face and select what to do with remaining cards
