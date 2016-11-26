@@ -48,4 +48,5 @@
     <string name="remaining_cards_after_dealing">Remaining cards after dealing</string>
     <string name="deal_now">Deal Now</string>
     <string name="deal_to_self">Deal to Self</string>
+    <string name="network_failure_msg">FAILED TO CONNECT TO NETWORK</string>
 </resources>

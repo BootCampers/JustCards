@@ -13,16 +13,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.parse.LogInCallback;
+import com.parse.ParseAnonymousUtils;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.NetworkUtils;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
@@ -37,14 +42,71 @@ public class RegisterActivity extends AppCompatActivity {
     FloatingActionButton browseButton;
     Button registerButton;
     ScrollView scrollView;
+    RelativeLayout networkFailureBanner;
     User user = null;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        if (ParseUser.getCurrentUser() != null) {
+            startWithCurrentUser();
+        } else {
+            loginToParse();
+        }
+
         instantiateWidgets();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String userName = sharedPreferences.getString(DISPLAY_NAME, "");
+
+
+        if(NetworkUtils.isNetworkAvailable(RegisterActivity.this)) {
+            notifyNetworkFailure(false);
+
+            if (!userName.isEmpty()) {
+                String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
+                //TODO: get from Parese server??
+                User user = new User(userAvatarURI, userName);
+                Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
+                createGameIntent.putExtra(USER_TAG, user.getDisplayName());
+                startActivity(createGameIntent);
+            }
+        }
+        else{
+            notifyNetworkFailure(true);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+
+            userAvatarURI = data.getStringExtra(Constants.SELECTED_AVATAR);
+            Log.d(Constants.TAG, userAvatarURI);
+            Glide.with(this)
+                    .load(userAvatarURI)
+                    .asBitmap()
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(avatarImageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            avatarImageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        }
     }
 
     private void instantiateWidgets(){
@@ -53,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
         browseButton = (FloatingActionButton) findViewById(R.id.edit_fab);
         registerButton = (Button) findViewById(R.id.registerBttn);
         scrollView = (ScrollView) findViewById(R.id.register_form);
+        networkFailureBanner = (RelativeLayout) findViewById(R.id.networkFailureBanner);
 
         userAvatarURI = Constants.getDefaultAvatar();
 
@@ -87,13 +150,14 @@ public class RegisterActivity extends AppCompatActivity {
                 SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = userPrefs.edit();
                 editor.putString(DISPLAY_NAME, username);
-                //TODO: use actual avatar
                 editor.putString(USER_AVATAR_URI, user.getAvatarUri());
                 editor.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 editor.commit();
 
                 Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
-                createGameIntent.putExtra(USER_TAG, user.getAvatarUri());
+                createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
+                createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
+                createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 finish();
                 startActivity(createGameIntent);
             }
@@ -108,27 +172,30 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void loginToParse() {
+        ParseAnonymousUtils.logIn(new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (e != null) {
+                    Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
+                } else {
+                    startWithCurrentUser();
+                }
+            }
+        });
+    }
 
-        if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+    private void startWithCurrentUser() {
 
-            userAvatarURI = data.getStringExtra(Constants.SELECTED_AVATAR);
-            Log.d(Constants.TAG, userAvatarURI);
-            Glide.with(this)
-                    .load(userAvatarURI)
-                    .asBitmap()
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(avatarImageView) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            avatarImageView.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-        }
+    }
+
+    private void notifyNetworkFailure(boolean networkFailure) {
+        if(networkFailure )
+            networkFailureBanner.setVisibility(View.VISIBLE);
+        else
+            networkFailureBanner.setVisibility(View.GONE);
+
+        browseButton.setEnabled(!networkFailure);
+        registerButton.setEnabled(!networkFailure);
     }
 }
