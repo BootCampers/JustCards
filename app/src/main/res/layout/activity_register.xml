@@ -54,25 +54,26 @@
                 android:layout_alignRight="@id/ivAvatar"
                 app:srcCompat="@drawable/ic_action_edit"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/ivAvatar">
+                android:layout_below="@+id/ivAvatar"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_marginTop="20dp">
                 <Button
                     android:id="@+id/registerBttn"
                     android:text="@string/register"
                     android:textColor="@color/white"
                     android:background="@drawable/red_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
                     android:shadowColor="#696969"
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="5" />
-            </LinearLayout>
+            </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
 
