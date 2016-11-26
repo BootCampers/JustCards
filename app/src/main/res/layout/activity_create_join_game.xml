@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_create_join_game"
     android:layout_width="match_parent"
@@ -8,61 +8,107 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.bootcamp.fiftytwo.activities.CreateJoinGameActivity">
-
-    <Button
-        android:text="@string/create_game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:layout_marginTop="80dp"
-        android:id="@+id/createGameButton"
-        android:textColor="@color/white"
-        android:background="@color/colorAccent"/>
+    tools:context="org.bootcamp.fiftytwo.activities.CreateJoinGameActivity"
+    android:background="@drawable/screen_background">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/dotted_border"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/createGameButton"
-        android:layout_marginTop="50dp"
-        android:padding="20dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/gameIdInputLayout"
+        <RelativeLayout
+            android:id="@+id/welcomeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true">
+            android:background="@drawable/accent_translucent_backgroun">
+
+            <ImageView
+                android:id="@+id/userAvatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                tools:background="@color/colorAccentTranslucent"
+                android:contentDescription="@string/avatar_image_description" />
+
+            <TextView
+                android:id="@+id/welcomeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/userAvatar"
+                android:layout_toEndOf="@+id/userAvatar"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:textSize="20sp"
+                android:textStyle="bold|italic"
+                tools:text="Welcome Username!"
+                android:textColor="@color/colorAccent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/userAvatar"
+                android:layout_toEndOf="@+id/userAvatar"
+                android:layout_below="@+id/welcomeText"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:textSize="20sp"
+                android:textStyle="bold|italic"
+                android:textColor="@color/colorAccent"
+                android:text="@string/what_would_you_like_to_do"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/joinGameSection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/primary_translucent_background"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/welcomeLayout"
+            android:layout_marginTop="10dp"
+            android:padding="20dp">
 
             <EditText
                 android:id="@+id/etGameName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/foggy_textbox"
+                android:layout_centerHorizontal="true"
                 android:hint="@string/enter_game_id"
+                android:textColorHint="@color/colorAccent"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp"
+                android:padding="10dp"
                 android:inputType="number"
                 android:maxLines="1" />
 
-        </android.support.design.widget.TextInputLayout>
+            <Button
+                android:text="@string/join_game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etGameName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textColor="@color/white"
+                android:background="@drawable/black_button"
+                android:id="@+id/joinGameButton" />
 
+        </RelativeLayout>
 
         <Button
-            android:text="@string/join_game"
-            android:layout_width="wrap_content"
+            android:text="@string/create_game"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/gameIdInputLayout"
+            android:layout_below="@id/joinGameSection"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:layout_marginTop="50dp"
+            android:id="@+id/createGameButton"
             android:textColor="@color/white"
-            android:background="@color/colorPrimary"
-            android:id="@+id/joinGameButton" />
+            android:background="@drawable/red_button"/>
 
     </RelativeLayout>
 
-
-</RelativeLayout>
+</ScrollView>

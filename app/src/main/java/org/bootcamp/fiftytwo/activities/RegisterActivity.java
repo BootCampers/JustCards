@@ -33,7 +33,6 @@ import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG;
 
 public class RegisterActivity extends AppCompatActivity {
     String userAvatarURI = "";
@@ -76,7 +75,9 @@ public class RegisterActivity extends AppCompatActivity {
                 //TODO: get from Parese server??
                 User user = new User(userAvatarURI, userName);
                 Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
-                createGameIntent.putExtra(USER_TAG, user.getDisplayName());
+                createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
+                createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
+                createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 startActivity(createGameIntent);
             }
         }

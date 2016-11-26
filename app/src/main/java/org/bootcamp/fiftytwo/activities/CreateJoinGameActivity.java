@@ -1,12 +1,20 @@
 package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.interfaces.Observable;
@@ -16,17 +24,38 @@ import org.bootcamp.fiftytwo.utils.Constants;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
+
 public class CreateJoinGameActivity extends AppCompatActivity implements Observer {
 
     @BindView(R.id.joinGameButton) Button joinGameButton;
     @BindView(R.id.createGameButton) Button createGameButton;
     @BindView(R.id.etGameName) EditText etGameName;
+    @BindView(R.id.welcomeText) TextView welcomeText;
+    @BindView(R.id.userAvatar) ImageView avatarImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_game);
         ButterKnife.bind(this);
+
+        Bundle extras = getIntent().getExtras();
+
+        welcomeText.setText("Welcome " + extras.get(DISPLAY_NAME) + "!");
+        Glide.with(this).load(extras.get(USER_AVATAR_URI))
+                .asBitmap()
+                .centerCrop()
+                .into(new BitmapImageViewTarget(avatarImageView) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        avatarImageView.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
 
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override

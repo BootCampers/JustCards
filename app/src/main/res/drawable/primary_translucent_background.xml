@@ -4,10 +4,8 @@
         android:color="#22000000"/>
     <stroke
         android:width="3dp"
-        android:color="@color/colorAccent"
-        android:dashWidth="15dp"
-        android:dashGap="10dp"/>
+        android:color="@color/colorAccentTranslucent"/>
     <padding android:left="7dp" android:top="7dp"
         android:right="7dp" android:bottom="7dp" />
-    <corners android:radius="3dp" />
+    <corners android:radius="10dp" />
 </shape>
