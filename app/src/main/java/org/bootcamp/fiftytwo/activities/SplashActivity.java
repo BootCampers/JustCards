@@ -50,7 +50,7 @@ public class SplashActivity extends AppCompatActivity {
                 String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
                 //TODO: get from Parese server??
                 User user = new User(userAvatarURI, userName);
-                Intent createGameIntent = new Intent(SplashActivity.this, CreateJoinGameActivity.class);
+                Intent createGameIntent = new Intent(SplashActivity.this, SelectGameActivity.class);
                 createGameIntent.putExtra(USER_TAG, user.getDisplayName());
                 startActivity(createGameIntent);
             }

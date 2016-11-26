@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 
-public class CreateJoinGameActivity extends AppCompatActivity implements Observer {
+public class SelectGameActivity extends AppCompatActivity implements Observer {
 
     @BindView(R.id.joinGameButton) Button joinGameButton;
     @BindView(R.id.createGameButton) Button createGameButton;
@@ -38,7 +38,7 @@ public class CreateJoinGameActivity extends AppCompatActivity implements Observe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_join_game);
+        setContentView(R.layout.activity_select_game);
         ButterKnife.bind(this);
 
         Bundle extras = getIntent().getExtras();
@@ -60,10 +60,10 @@ public class CreateJoinGameActivity extends AppCompatActivity implements Observe
         joinGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (etGameName.getText() == null) {
-                    Snackbar.make(view, "Please select a game from list first", Snackbar.LENGTH_LONG).show();
+                if (etGameName.getText().toString().isEmpty()) {
+                    Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
                 } else {
-                    Intent gameViewManagerIntent = new Intent(CreateJoinGameActivity.this, GameViewManagerActivity.class);
+                    Intent gameViewManagerIntent = new Intent(SelectGameActivity.this, GameViewManagerActivity.class);
                     gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
                     gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); //if false then it's dealer
                     startActivity(gameViewManagerIntent);
@@ -74,7 +74,7 @@ public class CreateJoinGameActivity extends AppCompatActivity implements Observe
         createGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(CreateJoinGameActivity.this, CreateGameActivity.class));
+                startActivity(new Intent(SelectGameActivity.this, CreateGameActivity.class));
             }
         });
     }

@@ -55,7 +55,7 @@
             android:label="@string/title_activity_select_cards"
             android:parentActivityName=".activities.GameViewManagerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.CreateJoinGameActivity" />
+        <activity android:name=".activities.SelectGameActivity" />
         <activity android:name=".activities.CreateGameActivity" />
         <activity
             android:name=".activities.AvatarSelectionActivity"

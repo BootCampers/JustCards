@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
                 //TODO: get from Parese server??
                 User user = new User(userAvatarURI, userName);
-                Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
+                Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
                 createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
                 createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
@@ -155,7 +155,7 @@ public class RegisterActivity extends AppCompatActivity {
                 editor.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 editor.commit();
 
-                Intent createGameIntent = new Intent(RegisterActivity.this, CreateJoinGameActivity.class);
+                Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
                 createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
                 createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
