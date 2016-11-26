@@ -1,5 +1,9 @@
 package org.bootcamp.fiftytwo.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * Created by baphna on 11/13/2016.
  */
@@ -58,6 +62,28 @@ public class Constants {
     public static final String DO_DEAL_SELF = "dealSelf";
     public static final String DO_SHUFFLE = "shuffle";
 
+    /** Avatar Values here */
     public static String SELECTED_AVATAR = "selectedAvatar";
     public static int PICK_IMAGE_REQUEST = 2987;
+    public static List<String> getDefaultAvatarList(){
+        List<String> list = new ArrayList<>();
+        list.add("http://i.imgur.com/GkyKh.jpg");
+        list.add("http://i.imgur.com/4M8vzoD.png");
+        list.add("http://i.imgur.com/Fankh2h.jpg");
+        list.add("http://i.imgur.com/i7zmanJ.jpg");
+        list.add("http://i.imgur.com/jrmh8XL.jpg");
+        list.add("http://i.imgur.com/VCY27Er.jpg");
+        list.add("http://i.imgur.com/UMUY9Yn.jpg");
+        list.add("http://i.imgur.com/RZ0jFNp.gif");
+        list.add("http://i.imgur.com/9OHzici.jpg?1");
+        list.add("http://i.imgur.com/ITwmNm3.jpg");
+        return list;
+    }
+
+
+    public static String getDefaultAvatar() {
+        List<String> defaultAvatarList = getDefaultAvatarList();
+        Random random = new Random();
+        return defaultAvatarList.get(random.nextInt(defaultAvatarList.size()));
+    }
 }

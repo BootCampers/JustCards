@@ -32,18 +32,20 @@
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register" />
+            android:label="@string/title_activity_register">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"

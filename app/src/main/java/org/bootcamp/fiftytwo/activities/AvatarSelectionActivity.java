@@ -38,16 +38,20 @@ public class AvatarSelectionActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        avatars.put("http://i.imgur.com/GkyKh.jpg", false);
-        avatars.put("http://i.imgur.com/4M8vzoD.png", false);
-        avatars.put("http://i.imgur.com/Fankh2h.jpg", false);
-        avatars.put("http://i.imgur.com/i7zmanJ.jpg", false);
-        avatars.put("http://i.imgur.com/jrmh8XL.jpg", false);
-        avatars.put("http://i.imgur.com/VCY27Er.jpg", false);
-        avatars.put("http://i.imgur.com/UMUY9Yn.jpg", false);
-        avatars.put("http://i.imgur.com/RZ0jFNp.gif", false);
-        avatars.put("http://i.imgur.com/9OHzici.jpg?1", false);
-        avatars.put("http://i.imgur.com/ITwmNm3.jpg", false);
+        for (String avatarURI : Constants.getDefaultAvatarList()) {
+            avatars.put(avatarURI, false);
+        }
+
+//        avatars.put("http://i.imgur.com/GkyKh.jpg", false);
+//        avatars.put("http://i.imgur.com/4M8vzoD.png", false);
+//        avatars.put("http://i.imgur.com/Fankh2h.jpg", false);
+//        avatars.put("http://i.imgur.com/i7zmanJ.jpg", false);
+//        avatars.put("http://i.imgur.com/jrmh8XL.jpg", false);
+//        avatars.put("http://i.imgur.com/VCY27Er.jpg", false);
+//        avatars.put("http://i.imgur.com/UMUY9Yn.jpg", false);
+//        avatars.put("http://i.imgur.com/RZ0jFNp.gif", false);
+//        avatars.put("http://i.imgur.com/9OHzici.jpg?1", false);
+//        avatars.put("http://i.imgur.com/ITwmNm3.jpg", false);
 
         avatarArrayAdapter = new AvatarArrayAdapter(this, avatars, this);
         mStaggeredLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
