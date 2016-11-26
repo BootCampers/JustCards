@@ -59,4 +59,7 @@ dependencies {
     compile 'com.jcmore2.shakeit:shakeit:1.0.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     apt 'org.parceler:parceler:1.1.1'
+
+    compile 'cn.pedant.sweetalert:library:1.3'
+
 }

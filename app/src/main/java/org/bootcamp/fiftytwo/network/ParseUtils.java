@@ -12,6 +12,7 @@ import com.parse.ParsePush;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.NetworkUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,9 +33,11 @@ public class ParseUtils {
 
     private String gameName; //used for channel name
     private User currentLoggedInUser;
+    private Context context;
 
     public ParseUtils(Context context, String gameName) {
         this.gameName = gameName;
+        this.context = context;
 
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
@@ -50,7 +53,9 @@ public class ParseUtils {
     }
 
     public void joinChannel() {
-        ParsePush.subscribeInBackground(gameName);
+        if(NetworkUtils.isNetworkAvailable(context) == true) {
+            ParsePush.subscribeInBackground(gameName);
+        }
     }
 
     public void removeChannel() {
@@ -144,10 +149,13 @@ public class ParseUtils {
     }
 
     private void sendBroadcastWithPayload(JSONObject payload) {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("customData", payload.toString());
-        data.put("channel", gameName);
-        ParseCloud.callFunctionInBackground(Constants.SERVER_FUNCTION_NAME, data);
+        if(NetworkUtils.isNetworkAvailable(context) == true) {
+            HashMap<String, String> data = new HashMap<>();
+            data.put("customData", payload.toString());
+            data.put("channel", gameName);
+            ParseCloud.callFunctionInBackground(Constants.SERVER_FUNCTION_NAME, data);
+        }
+        //TODO: retry this operation if it's network failure..
     }
 
 }

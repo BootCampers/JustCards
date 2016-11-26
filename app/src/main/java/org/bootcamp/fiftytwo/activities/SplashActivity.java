@@ -12,6 +12,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.NetworkUtils;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
@@ -25,31 +26,36 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String userName = sharedPreferences.getString(DISPLAY_NAME, "");
-
         if (ParseUser.getCurrentUser() != null) {
             startWithCurrentUser();
         } else {
             login();
         }
-
-        if(userName.isEmpty()) {
-            startActivity(new Intent(this, RegisterActivity.class));
-            finish();
-        }
-        else{
-            String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
-            //TODO: get from Parese server??
-            User user = new User(userAvatarURI, userName);
-            Intent createGameIntent = new Intent(SplashActivity.this, CreateJoinGameActivity.class);
-            createGameIntent.putExtra(USER_TAG, user.getDisplayName());
-            startActivity(createGameIntent);
-        }
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String userName = sharedPreferences.getString(DISPLAY_NAME, "");
+
+
+        if(NetworkUtils.isNetworkAvailable(SplashActivity.this) == true) {
+            if (userName.isEmpty()) {
+                startActivity(new Intent(this, RegisterActivity.class));
+                finish();
+            } else {
+                String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
+                //TODO: get from Parese server??
+                User user = new User(userAvatarURI, userName);
+                Intent createGameIntent = new Intent(SplashActivity.this, CreateJoinGameActivity.class);
+                createGameIntent.putExtra(USER_TAG, user.getDisplayName());
+                startActivity(createGameIntent);
+            }
+        }
+    }
 
     private void login() {
         ParseAnonymousUtils.logIn(new LogInCallback() {
