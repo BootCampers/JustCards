@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.parse.ParseCloud;
 import com.parse.ParsePush;
 
@@ -22,8 +23,11 @@ import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
-// The code that processes this function is listed at:
-// https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js
+/**
+ * The code that processes this function is listed at:
+ *
+ * @link {https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js}
+ */
 public class ParseUtils {
 
     private String gameName; //used for channel name
@@ -37,7 +41,12 @@ public class ParseUtils {
         String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, "http://i.imgur.com/FLmEyXZ.jpg");
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
         currentLoggedInUser = new User(profilePic, displayName, userId);
+
         Log.d(Constants.TAG, "Current user -- " + displayName + " -- " + profilePic + " -- " + userId);
+    }
+
+    public User getCurrentUser() {
+        return currentLoggedInUser;
     }
 
     public void joinChannel() {
@@ -68,6 +77,7 @@ public class ParseUtils {
     }
 
     /**
+     * TODO: This API needs discussion
      * Current user passing card to particular user
      *
      * @param toUser to whom this is sent
@@ -76,44 +86,38 @@ public class ParseUtils {
     public void exchangeCard(User toUser, Card card) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
-            JSONObject toUserJson = getJson(toUser);
 
+            JSONObject toUserJson = getJson(toUser);
             payload.put(Constants.PARAM_PLAYER, toUserJson);
 
-            Gson gson = new Gson();
-            String cardJson = gson.toJson(card);
+            String cardJson = new Gson().toJson(card);
             payload.put(Constants.PARAM_CARDS, cardJson);
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYERS_EXCHANGE_CARDS);
             sendBroadcastWithPayload(payload);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Send card to user from table
+     * TODO: This API needs discussion
+     * Send card to or pick from table
      *
-     * @param toUser          to whom this is sent
-     * @param card            which card
-     * @param pickedFromTable true if picked, false if placed on table
+     * @param cards  which cards
+     * @param pickedFromTable true if picked from table, false if dropped on table
      */
-    public void tableCardExchange(User toUser, Card card, boolean pickedFromTable) {
+    public void tableCardExchange(List<Card> cards, boolean pickedFromTable) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
-            JSONObject toUserJson = getJson(toUser);
 
-            payload.put(Constants.PARAM_PLAYER, toUserJson);
-            payload.put(Constants.TABLE_PICKED, pickedFromTable);
-
-            Gson gson = new Gson();
-            String cardJson = gson.toJson(card);
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
             payload.put(Constants.PARAM_CARDS, cardJson);
+
+            payload.put(Constants.TABLE_PICKED, pickedFromTable);
 
             payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_TABLE_CARD_EXCHANGE);
             sendBroadcastWithPayload(payload);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -122,11 +126,11 @@ public class ParseUtils {
     /**
      * Card picked by current user OR placed on table by current user
      *
-     * @param card            which card
+     * @param cards            which cards
      * @param pickedFromTable is the card picked from table
      */
-    public void selfTableCardExchange(Card card, boolean pickedFromTable) {
-        tableCardExchange(currentLoggedInUser, card, pickedFromTable);
+    public void selfTableCardExchange(List<Card> cards, boolean pickedFromTable) {
+        tableCardExchange(cards, pickedFromTable);
     }
 
     //TODO

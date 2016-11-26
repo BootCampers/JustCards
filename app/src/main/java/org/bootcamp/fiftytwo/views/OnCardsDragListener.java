@@ -126,7 +126,6 @@ public class OnCardsDragListener implements View.OnDragListener {
 
     private void updateCards(CardsAdapter adapter, List<Card> cards) {
         adapter.setCards(cards);
-        adapter.notifyDataSetChanged();
         if (cards.size() == 0) {
             adapter.getCardsListener().setEmptyList(true);
         }

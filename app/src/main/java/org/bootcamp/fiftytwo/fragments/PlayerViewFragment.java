@@ -1,64 +1,92 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.interfaces.Observable;
-import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.receivers.CardExchangeReceiver;
-import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.parceler.Parcels;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_TABLE_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 
-public class PlayerViewFragment extends Fragment implements Observer {
+public class PlayerViewFragment extends Fragment {
 
-    private CardExchangeReceiver cardExchangeReceiver;
-    private OnPlayerFragmentInteractionListener mListener;
+    private onPlayListener mListener;
+    private Unbinder unbinder;
+    private List<Card> mPlayerCards;
+    private List<Card> mTableCards;
+
+    public interface onPlayListener {
+        void onPlay();
+    }
+
+    public static PlayerViewFragment newInstance(List<Card> playerCards, List<Card> tableCards) {
+        PlayerViewFragment fragment = new PlayerViewFragment();
+        Bundle args = new Bundle();
+        if (!isEmpty(playerCards))
+            args.putParcelable(PARAM_PLAYER_CARDS, getParcelable(playerCards));
+        if (!isEmpty(tableCards))
+            args.putParcelable(PARAM_TABLE_CARDS, getParcelable(tableCards));
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            List<Card> playerCards = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER_CARDS));
+            List<Card> tableCards = Parcels.unwrap(bundle.getParcelable(PARAM_TABLE_CARDS));
+            if (!isEmpty(playerCards))
+                mPlayerCards = playerCards;
+            if (!isEmpty(tableCards))
+                mTableCards = tableCards;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_player_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_player_view, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        insertNestedFragments();
-    }
+        Fragment playerCardsFragment = CardsFragment.newInstance(mPlayerCards, PLAYER_TAG);
+        Fragment tableCardsFragment = CardsFragment.newInstance(mTableCards, TABLE_TAG);
 
-    private void insertNestedFragments() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-
-        //Add player cards
-        List<Card> cards = CardUtil.generateDeck(1, false);
-        Fragment playerCardsFragment = CardsFragment.newInstance(cards.subList(0, 6), PLAYER_TAG);
-        transaction.replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG);
-
-        //Add table cards
-        Fragment tableCardsFragment = CardsFragment.newInstance(cards.subList(0, 6), TABLE_TAG);
-        transaction.replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG);
-
-        transaction.commit();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG)
+                .replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG)
+                .commit();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnPlayerFragmentInteractionListener) {
-            mListener = (OnPlayerFragmentInteractionListener) context;
+        if (context instanceof onPlayListener) {
+            mListener = (onPlayListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnPlayerFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement onPlayListener");
         }
     }
 
@@ -69,12 +97,9 @@ public class PlayerViewFragment extends Fragment implements Observer {
     }
 
     @Override
-    public void onUpdate(Observable o, final Object identifier, final Object arg) {
-        // Nothing to do as of now
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
-    public interface OnPlayerFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onPlayerFragmentInteraction(Uri uri);
-    }
 }

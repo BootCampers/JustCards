@@ -42,5 +42,10 @@
     <string name="msg_facing_down">Facing down</string>
     <string name="msg_facing_up">Facing up</string>
     <string name="title_activity_avatar_selection">Choose your Avatar</string>
-
+    <string name="dealing_options">Deal Options</string>
+    <string name="card_for_each_player">Card for each player</string>
+    <string name="shuffle_before_dealing">Shuffle before dealing</string>
+    <string name="remaining_cards_after_dealing">Remaining cards after dealing</string>
+    <string name="deal_now">Deal Now</string>
+    <string name="deal_to_self">Deal to Self</string>
 </resources>

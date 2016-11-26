@@ -16,25 +16,24 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link ChatLog} and makes a call to the
- * specified {@link ChatAndLogFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.ViewHolder> {
 
     private final List<ChatLog> mValues;
-    private final ChatAndLogFragment.OnListFragmentInteractionListener mListener;
+    private final ChatAndLogFragment.OnChatAndLogListener mListener;
 
-    public ChatAndLogAdapter(List<ChatLog> items, ChatAndLogFragment.OnListFragmentInteractionListener listener) {
+    public ChatAndLogAdapter(List<ChatLog> items, ChatAndLogFragment.OnChatAndLogListener listener) {
         mValues = items;
         mListener = listener;
     }
 
     @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chat_log, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_log, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,28 +46,20 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onChat(holder.mItem);
                 }
             }
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return mValues.size();
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public ChatLog mItem;
-        @BindView(R.id.ivAvatar)
-        ImageView ivAvatar;
-        @BindView(R.id.tvContent)
-        TextView tvContent;
+        final View mView;
+        ChatLog mItem;
+        @BindView(R.id.ivAvatar) ImageView ivAvatar;
+        @BindView(R.id.tvContent) TextView tvContent;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
             mView = view;

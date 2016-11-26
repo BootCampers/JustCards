@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.OverlapDecoration;
 import org.parceler.Parcels;
 
@@ -124,6 +125,17 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     public List<Card> getCards() {
+        return mAdapter.getCards();
+    }
+
+    /**
+     * This is a mutable operation and
+     *
+     * @return the shuffled cards
+     */
+    public List<Card> shuffleCards() {
+        List<Card> cards = CardUtil.shuffleDeck(mAdapter.getCards());
+        mAdapter.setCards(cards);
         return mAdapter.getCards();
     }
 

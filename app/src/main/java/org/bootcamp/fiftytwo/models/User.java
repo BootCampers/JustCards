@@ -22,6 +22,7 @@ public class User {
     private String displayName;
     private String avatarUri;
     private List<Card> cards = new ArrayList<>();
+    private boolean isDealer;
 
     public User() {
     }
@@ -68,28 +69,20 @@ public class User {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public String getAvatarUri() {
         return avatarUri;
     }
 
-    public void setAvatarUri(String avatarUri) {
-        this.avatarUri = avatarUri;
-    }
-
     public List<Card> getCards() {
         return cards;
+    }
+
+    public boolean isDealer() {
+        return isDealer;
     }
 
     @Override

@@ -14,12 +14,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE" />
 
     <permission
         android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
-    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE" />
 
     <application
         android:name=".application.FiftyTwoApplication"
@@ -29,9 +28,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme">
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572" />
 
         <activity
             android:name=".activities.SplashActivity"
@@ -60,10 +56,30 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.CreateJoinGameActivity" />
         <activity android:name=".activities.CreateGameActivity" />
+        <activity
+            android:name=".activities.AvatarSelectionActivity"
+            android:label="@string/title_activity_avatar_selection"
+            android:parentActivityName=".activities.RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity" />
+        </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572" />
 
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
             android:value="@string/gcm_sender_id" />
+
+        <service
+            android:name="com.jcmore2.shakeit.ShakeService"
+            android:exported="false"
+            android:label="@string/app_name" />
+
+        <service android:name="com.parse.PushService" />
 
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
@@ -76,8 +92,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.parse.PushService" />
-
         <receiver
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
@@ -87,6 +101,7 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".receivers.CardExchangeReceiver"
             android:exported="false">
@@ -97,20 +112,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="com.jcmore2.shakeit.ShakeService"
-            android:exported="false"
-            android:label="@string/app_name" />
-
-        <activity
-            android:name=".activities.AvatarSelectionActivity"
-            android:label="@string/title_activity_avatar_selection"
-            android:parentActivityName=".activities.RegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity" />
-        </activity>
     </application>
 
 </manifest>

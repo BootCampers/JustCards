@@ -50,6 +50,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     public void setCards(List<Card> cards) {
         this.mCards = cards;
+        notifyDataSetChanged();
     }
 
     public String getTag() {

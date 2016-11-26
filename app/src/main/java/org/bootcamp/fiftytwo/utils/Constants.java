@@ -14,7 +14,6 @@ public class Constants {
     public static final String USER_TAG = "user";
     public static final String DEALING_OPTIONS_TAG = "dealingOptions";
 
-
     /** Preference Keys here */
     /*DO NOT CHANGE ==  MUST match with member variables of User class*/
     public static final String USER_PREFS = "userPrefs";
@@ -33,15 +32,18 @@ public class Constants {
     public static final String PARAM_PLAYER = "player";
     public static final String PARAM_X = "PARAM_X";
     public static final String PARAM_Y = "PARAM_Y";
+    public static final String PARAM_PLAYER_CARDS = "playerCards";
+    public static final String PARAM_TABLE_CARDS = "tableCards";
+    public static final String ARG_PLAYER_COUNT = "playerCount";
+    public static final String ARG_CARD_COUNT = "cardCount";
+    public static final String ARG_COLUMN_COUNT = "columnCount";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
      * User PARSE_<> naming convention for all identifiers
      */
-
     public static final String COMMON_IDENTIFIER = "commonIdentifier";
     public static final String SERVER_FUNCTION_NAME = "pushToChannel";
-
     public static final String TABLE_PICKED = "pickedFromTable";
 
     /** Parse Events Here */
@@ -53,7 +55,7 @@ public class Constants {
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";
     public static final String DO_REMAINING_CARDS = "remainingCards";
-    public static final String DO_CARD_FACE = "cardsFace";
+    public static final String DO_DEAL_SELF = "dealSelf";
     public static final String DO_SHUFFLE = "shuffle";
 
     public static String SELECTED_AVATAR = "selectedAvatar";
