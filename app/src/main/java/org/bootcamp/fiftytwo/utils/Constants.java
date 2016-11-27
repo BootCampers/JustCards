@@ -21,7 +21,7 @@ public class Constants {
     /** Preference Keys here */
     /*DO NOT CHANGE ==  MUST match with member variables of User class*/
     public static final String USER_PREFS = "userPrefs";
-    public static final String DISPLAY_NAME = "username";
+    public static final String DISPLAY_NAME = "displayName";
     public static final String USER_AVATAR_URI = "avatarURI";
     public static final String USER_ID = "userId"; // this
 
@@ -61,6 +61,9 @@ public class Constants {
     public static final String DO_REMAINING_CARDS = "remainingCards";
     public static final String DO_DEAL_SELF = "dealSelf";
     public static final String DO_SHUFFLE = "shuffle";
+    public static final String DEFAULT_PROFILE_PIC = "http://i.imgur.com/FLmEyXZ.jpg";
+
+    public static final String PARAMS_PLAYER_GAME = "playerGame";
 
     /** Avatar Values here */
     public static String SELECTED_AVATAR = "selectedAvatar";

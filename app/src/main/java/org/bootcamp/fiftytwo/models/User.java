@@ -1,5 +1,7 @@
 package org.bootcamp.fiftytwo.models;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -10,10 +12,12 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
+import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
 @Parcel(analyze = User.class)
 public class User {
@@ -90,4 +94,28 @@ public class User {
         return "User{" + "avatarUri='" + avatarUri + '\'' + ", displayName='" + displayName + '\'' + ", userId='" + userId + '\'' + '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return userId != null ? userId.equals(user.userId) : user.userId == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return userId != null ? userId.hashCode() : 0;
+    }
+
+    public static User getCurrentUser(final Context context){
+        SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
+        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, Constants.DEFAULT_PROFILE_PIC);
+        String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
+        User currentLoggedInUser = new User(profilePic, displayName, userId);
+        return currentLoggedInUser;
+    }
 }

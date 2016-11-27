@@ -1,15 +1,19 @@
 package org.bootcamp.fiftytwo.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.FindCallback;
 import com.parse.ParseCloud;
+import com.parse.ParseException;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 
+import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.NetworkUtils;
@@ -18,11 +22,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.models.User.getJson;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
 /**
  * The code that processes this function is listed at:
@@ -39,13 +42,7 @@ public class ParseUtils {
         this.gameName = gameName;
         this.context = context;
 
-        SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
-        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, "http://i.imgur.com/FLmEyXZ.jpg");
-        String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
-        currentLoggedInUser = new User(profilePic, displayName, userId);
-
-        Log.d(Constants.TAG, "Current user -- " + displayName + " -- " + profilePic + " -- " + userId);
+        currentLoggedInUser = User.getCurrentUser(context);
     }
 
     public User getCurrentUser() {
@@ -138,9 +135,34 @@ public class ParseUtils {
         tableCardExchange(cards, pickedFromTable);
     }
 
-    //TODO
-    public List<User> fetchPreviouslyJoinedUsers() {
-        return new ArrayList<>();
+    public void fetchPreviouslyJoinedUsers(final String gameName, final GameViewManagerActivity gameViewManagerActivity) {
+        final HashSet<User> playersList = new HashSet<>();
+        final Gson gson = new Gson();
+
+        // Define the class we would like to query
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        // Define our query conditions
+        query.whereEqualTo(Constants.PARAM_GAME_NAME, gameName);
+        // Execute the find asynchronously
+        query.findInBackground(new FindCallback<Game>() {
+            public void done(List<Game> itemList, ParseException e) {
+                if (e == null) {
+                    Log.d("item", "Found list : " + itemList.size());
+
+                    for (Game game: itemList) {
+                        String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
+                        User element = gson.fromJson(playerString, User.class);
+                        playersList.add(element);
+                    }
+
+                    for (User player: playersList) {
+                        gameViewManagerActivity.addNewPlayerToUI(player);
+                    }
+                } else {
+                    Log.e("item", "Error: " + e.getMessage());
+                }
+            }
+        });
     }
 
     //TODO

@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
@@ -34,6 +36,7 @@ import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
+import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
@@ -118,14 +121,33 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String gameName = bundle.getString(PARAM_GAME_NAME);
+            gameName = "70152";
             isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
 
+            //Add myself to game
+            Game game = new Game();
+            game.setGameName(gameName);
+            game.addPlayer(User.getCurrentUser(GameViewManagerActivity.this));
+            game.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e == null){
+                        Log.d(Constants.TAG, "Passed");
+                    } else {
+                        Log.d(Constants.TAG, "Null " + e.getMessage());
+                    }
+                }
+            });
+
+            //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.joinChannel();
-            // TODO get self details
             parseUtils.changeGameParticipation(true);
+
+            //Get previously joined players
+            parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
         }
     }
 
@@ -310,11 +332,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     @Override
                     public void run() {
                         User player = (User) arg;
-                        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, player);
-                        if (dealerViewFragment != null) {
-                            dealerViewFragment.addPlayers(getList((User) arg));
-                        }
-                        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
+                        addNewPlayerToUI(player);
                     }
                 });
                 break;
@@ -365,6 +383,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }
                 break;
         }
+    }
+
+    public void addNewPlayerToUI(User player) {
+        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, player);
+        if (dealerViewFragment != null) {
+            dealerViewFragment.addPlayers(getList(player));
+        }
+        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
     }
 
     @Override
