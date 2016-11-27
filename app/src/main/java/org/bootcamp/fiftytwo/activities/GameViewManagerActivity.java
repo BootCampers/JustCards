@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -63,12 +62,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYERS_EXCHANGE_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TABLE_CARD_EXCHANGE;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
-import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
 
@@ -84,10 +82,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
     private ParseUtils parseUtils;
+    private String gameName;
 
     private boolean isCurrentViewPlayer = true;
-    private boolean showingPlayerFragment = true; //false is showing dealer fragment
-    private boolean showingChat = false;
+    private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
+    private boolean isShowingChat = false;
 
     private PlayerViewFragment playerViewFragment;
     private DealerViewFragment dealerViewFragment;
@@ -101,7 +100,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
-    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +133,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             game.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    if(e == null){
+                    if (e == null) {
                         Log.d(Constants.TAG, "Passed");
                     } else {
                         Log.d(Constants.TAG, "Null " + e.getMessage());
@@ -166,9 +164,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         if (isCurrentViewPlayer) {
             fab.setVisibility(View.GONE);
-            replaceContainerFragment(playerViewFragment);
+            replaceContainerFragment(playerViewFragment, true);
         } else {
-            replaceContainerFragment(dealerViewFragment);
+            replaceContainerFragment(dealerViewFragment, false);
         }
 
         final View rootView = getWindow().getDecorView().getRootView();
@@ -186,21 +184,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
-    private void replaceContainerFragment(Fragment fragment) {
+    private void replaceContainerFragment(Fragment fragment, boolean isPlayer) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.flGameContainer, fragment)
                 .commit();
+        this.isShowingPlayerFragment = isPlayer;
     }
 
     @OnClick(R.id.fab)
     public void switchView(View view) {
-        if (showingPlayerFragment) {
-            replaceContainerFragment(dealerViewFragment);
-            showingPlayerFragment = false;
+        if (isShowingPlayerFragment) {
+            replaceContainerFragment(dealerViewFragment, false);
         } else {
-            replaceContainerFragment(playerViewFragment);
-            showingPlayerFragment = true;
+            replaceContainerFragment(playerViewFragment, true);
         }
     }
 
@@ -212,14 +209,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.ibComment)
     public void toggleChatAndLogView(View v) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (!showingChat) {
+        if (!isShowingChat) {
             fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
             ibComment.setImageDrawable(ic_cancel);
-            showingChat = true;
+            isShowingChat = true;
         } else {
             fragmentTransaction.remove(chatAndLogFragment);
             ibComment.setImageDrawable(ic_comment);
-            showingChat = false;
+            isShowingChat = false;
         }
         fragmentTransaction.commit();
     }
@@ -267,9 +264,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (playerFragment != null && !isEmpty(cards)) {
             boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
             if (result) {
-                for (Card card : cards) {
-                    parseUtils.exchangeCard(player, card);
-                }
+                parseUtils.dealCards(player, cards);
             }
             return result;
         }
@@ -280,7 +275,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
-                parseUtils.tableCardExchange(cards, false);
+                parseUtils.dealCardsToTable(cards);
                 return true;
             } else {
                 // TODO: Handle Drop to Sink here
@@ -290,27 +285,27 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         return false;
     }
 
-    public void handleDeal(Card card, User from, User to) {
+    public void handleDeal(List<Card> cards, User from, User to) {
         // TODO: Need to add a condition to check whether the from player is a dealer
-        if (card != null && !TextUtils.isEmpty(card.getName()) && from != null && to != null) {
+        if (!isEmpty(cards) && from != null && to != null) {
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
                 if (playerFragment != null) {
-                    ((PlayerFragment) playerFragment).stackCards(getList(card));
+                    ((PlayerFragment) playerFragment).stackCards(cards);
                 }
             }
             if (parseUtils.getCurrentUser().getUserId().equals(to.getUserId()) && playerViewFragment != null) {
                 Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
-                    ((CardsFragment) fragment).stackCards(getList(card));
+                    ((CardsFragment) fragment).stackCards(cards);
                 }
             }
         }
     }
 
-    public void handleDealTable(User player, List<Card> cards, boolean pickedFromTable) {
+    public void handleDealTable(User from, List<Card> cards) {
         // TODO: Need to add a condition to check whether the player is a dealer
-        if (!isEmpty(cards) && !pickedFromTable && player != null) {
+        if (!isEmpty(cards) && from != null) {
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
                 ((CardsFragment) fragment).stackCards(cards);
@@ -356,7 +351,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     }
                 });
                 break;
-            case PARSE_PLAYERS_EXCHANGE_CARDS:
+            case PARSE_DEAL_CARDS:
                 try {
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);
@@ -364,23 +359,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User to = fromJson(toUserDetails);
                     Gson gson = new Gson();
                     String cardString = gson.toJson(details.getString(PARAM_CARDS));
-                    Card card = gson.fromJson(cardString, Card.class);
                     Log.d(TAG, "cardExchanged is -- " + cardString);
-                    handleDeal(card, from, to);
+                    List<Card> cards = gson.fromJson(cardString, new TypeToken<List<Card>>() {}.getType());
+                    handleDeal(cards, from, to);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
-            case PARSE_TABLE_CARD_EXCHANGE:
+            case PARSE_DEAL_CARDS_TO_TABLE:
                 try {
                     JSONObject details = (JSONObject) arg;
-                    User player = fromJson(details);
+                    User from = fromJson(details);
                     Gson gson = new Gson();
                     String cardsString = gson.toJson(details.getString(PARAM_CARDS));
                     Log.d(TAG, "cardExchanged is--" + cardsString);
                     List<Card> cards = gson.fromJson(cardsString, new TypeToken<List<Card>>() {}.getType());
-                    boolean pickedFromTable = details.getBoolean(TABLE_PICKED);
-                    handleDealTable(player, cards, pickedFromTable);
+                    handleDealTable(from, cards);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

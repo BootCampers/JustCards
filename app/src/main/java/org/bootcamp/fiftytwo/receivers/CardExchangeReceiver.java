@@ -49,11 +49,9 @@ public class CardExchangeReceiver extends BroadcastReceiver {
                     switch (identifier) {
                         case Constants.PARSE_NEW_PLAYER_ADDED:
                         case Constants.PARSE_PLAYER_LEFT:
-                            application.notifyObservers(identifier, userFromJson);
-                            break;
+                        case Constants.PARSE_DEAL_CARDS:
+                        case Constants.PARSE_DEAL_CARDS_TO_TABLE:
                         case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
-                            application.notifyObservers(identifier, customData);
-                            break;
                         case Constants.PARSE_TABLE_CARD_EXCHANGE:
                             application.notifyObservers(identifier, customData);
                             break;
