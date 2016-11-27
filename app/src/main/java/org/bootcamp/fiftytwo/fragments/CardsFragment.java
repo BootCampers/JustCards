@@ -179,10 +179,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         if (!TextUtils.isEmpty(layoutType) && layoutType.equalsIgnoreCase(LAYOUT_TYPE_CIRCULAR)) {
             rvCardsList.addOnScrollListener(new CenterScrollListener());
             rvCardsList.setLayoutManager(new CircleLayoutManager(getContext())
-                    .setFirstChildRotate(-60)
+                    .setFirstChildRotate(0)
                     .setIntervalAngle(15)
-                    .setRadius(700)
-                    .setRadialDistortionFactor(2)
+                    .setRadius(500)
+                    .setRadialDistortionFactor(3)
                     .setContentOffsetX(-1)
                     .setContentOffsetY(-1)
                     .setDegreeRangeWillShow(-60, 60));
