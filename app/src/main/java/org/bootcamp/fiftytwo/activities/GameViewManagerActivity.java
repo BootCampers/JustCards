@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
@@ -81,8 +79,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
-    private ParseUtils parseUtils;
     private String gameName;
+    private ParseUtils parseUtils;
 
     private boolean isCurrentViewPlayer = true;
     private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
@@ -126,37 +124,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
 
-            //Add myself to game
-            Game game = new Game();
-            game.setGameName(gameName);
-            game.addPlayer(User.getCurrentUser(GameViewManagerActivity.this));
-            game.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        Log.d(Constants.TAG, "Passed");
-                    } else {
-                        Log.d(Constants.TAG, "Null " + e.getMessage());
-                    }
-                }
-            });
-
             //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
+            //Get previously joined players
+            parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
             parseUtils.joinChannel();
             parseUtils.changeGameParticipation(true);
 
-            //Get previously joined players
-            parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
+            // Add myself to game
+            Game.save(gameName, User.getCurrentUser(GameViewManagerActivity.this));
         }
     }
 
     private void initFragments() {
         // TODO: This custom data generation is temporary and for testing purposes only
         List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 10);
-        if (isEmpty(mPlayers)) {
-            mPlayers = PlayerUtils.getPlayers(4);
-        }
 
         playerViewFragment = PlayerViewFragment.newInstance(cards, cards);
         dealerViewFragment = DealerViewFragment.newInstance(mCards, null);
@@ -169,12 +151,17 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             replaceContainerFragment(dealerViewFragment, false);
         }
 
+        // TODO: This custom data generation is temporary and for testing purposes only
+        if (isEmpty(mPlayers)) {
+            mPlayers = PlayerUtils.getPlayers(4);
+            if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
+        }
+
         final View rootView = getWindow().getDecorView().getRootView();
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
-                if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 } else {
@@ -199,11 +186,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         } else {
             replaceContainerFragment(playerViewFragment, true);
         }
-    }
-
-    @OnClick(R.id.ibSettings)
-    public void addNewPlayer() {
-        // TODO: change for new player addition rather than for Settings
     }
 
     @OnClick(R.id.ibComment)
@@ -285,34 +267,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         return false;
     }
 
-    public void handleDeal(List<Card> cards, User from, User to) {
-        // TODO: Need to add a condition to check whether the from player is a dealer
-        if (!isEmpty(cards) && from != null && to != null) {
-            if (isCurrentViewPlayer) {
-                Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
-                if (playerFragment != null) {
-                    ((PlayerFragment) playerFragment).stackCards(cards);
-                }
-            }
-            if (parseUtils.getCurrentUser().getUserId().equals(to.getUserId()) && playerViewFragment != null) {
-                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
-                if (fragment != null) {
-                    ((CardsFragment) fragment).stackCards(cards);
-                }
-            }
-        }
-    }
-
-    public void handleDealTable(User from, List<Card> cards) {
-        // TODO: Need to add a condition to check whether the player is a dealer
-        if (!isEmpty(cards) && from != null) {
-            Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
-            if (fragment != null) {
-                ((CardsFragment) fragment).stackCards(cards);
-            }
-        }
-    }
-
     @Override
     public void onNewLogEvent(String whoPosted, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
@@ -329,8 +283,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        User player = (User) arg;
-                        addNewPlayerToUI(player);
+                        addPlayersToView(getList((User) arg));
                     }
                 });
                 break;
@@ -338,16 +291,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        User player = (User) arg;
-                        String userViewTag = getPlayerFragmentTag(player);
-                        Fragment userFragment = getSupportFragmentManager().findFragmentByTag(userViewTag);
-                        if (userFragment != null) {
-                            getSupportFragmentManager().beginTransaction().remove(userFragment).commitNow();
-                        } else {
-                            Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
-                        }
-                        if (dealerViewFragment != null) dealerViewFragment.removePlayer((User) arg);
-                        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " left.");
+                        removePlayersFromView(getList((User) arg));
                     }
                 });
                 break;
@@ -382,12 +326,60 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void addNewPlayerToUI(User player) {
-        PlayerViewHelper.addPlayer(GameViewManagerActivity.this, R.id.flGameContainer, player);
+    public void addPlayersToView(List<User> players) {
+        mPlayers.addAll(players);
         if (dealerViewFragment != null) {
-            dealerViewFragment.addPlayers(getList(player));
+            dealerViewFragment.addPlayers(players);
         }
-        onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
+        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, players);
+        for (User player : players) {
+            onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
+        }
+    }
+
+    public void removePlayersFromView(List<User> players) {
+        for (User player : players) {
+            mPlayers.remove(player);
+            if (dealerViewFragment != null) {
+                dealerViewFragment.removePlayer(player);
+            }
+            String userViewTag = getPlayerFragmentTag(player);
+            Fragment userFragment = getSupportFragmentManager().findFragmentByTag(userViewTag);
+            if (userFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(userFragment).commitNow();
+            } else {
+                Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
+            }
+            onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " left.");
+        }
+    }
+
+    public void handleDeal(List<Card> cards, User from, User to) {
+        // TODO: Need to add a condition to check whether the from player is a dealer
+        if (!isEmpty(cards) && from != null && to != null) {
+            if (isCurrentViewPlayer) {
+                Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
+                if (playerFragment != null) {
+                    ((PlayerFragment) playerFragment).stackCards(cards);
+                }
+            }
+            if (parseUtils.getCurrentUser().getUserId().equals(to.getUserId()) && playerViewFragment != null) {
+                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).stackCards(cards);
+                }
+            }
+        }
+    }
+
+    public void handleDealTable(User from, List<Card> cards) {
+        // TODO: Need to add a condition to check whether the player is a dealer
+        if (!isEmpty(cards) && from != null) {
+            Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            if (fragment != null) {
+                ((CardsFragment) fragment).stackCards(cards);
+            }
+        }
     }
 
     @Override
@@ -404,7 +396,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onChat(ChatLog item) {
         // Do Nothing
     }
-
 
     @Override
     public void onScoreFragmentInteraction(boolean saveClicked) {
