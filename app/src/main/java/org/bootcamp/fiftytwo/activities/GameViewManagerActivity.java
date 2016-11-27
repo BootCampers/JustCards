@@ -80,10 +80,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
     private ParseUtils parseUtils;
+    private String gameName;
 
     private boolean isCurrentViewPlayer = true;
-    private boolean showingPlayerFragment = true; //false is showing dealer fragment
-    private boolean showingChat = false;
+    private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
+    private boolean isShowingChat = false;
 
     private PlayerViewFragment playerViewFragment;
     private DealerViewFragment dealerViewFragment;
@@ -97,7 +98,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
-    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,9 +162,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         if (isCurrentViewPlayer) {
             fab.setVisibility(View.GONE);
-            replaceContainerFragment(playerViewFragment);
+            replaceContainerFragment(playerViewFragment, true);
         } else {
-            replaceContainerFragment(dealerViewFragment);
+            replaceContainerFragment(dealerViewFragment, false);
         }
 
         final View rootView = getWindow().getDecorView().getRootView();
@@ -182,21 +182,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
-    private void replaceContainerFragment(Fragment fragment) {
+    private void replaceContainerFragment(Fragment fragment, boolean isPlayer) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.flGameContainer, fragment)
                 .commit();
+        this.isShowingPlayerFragment = isPlayer;
     }
 
     @OnClick(R.id.fab)
     public void switchView(View view) {
-        if (showingPlayerFragment) {
-            replaceContainerFragment(dealerViewFragment);
-            showingPlayerFragment = false;
+        if (isShowingPlayerFragment) {
+            replaceContainerFragment(dealerViewFragment, false);
         } else {
-            replaceContainerFragment(playerViewFragment);
-            showingPlayerFragment = true;
+            replaceContainerFragment(playerViewFragment, true);
         }
     }
 
@@ -208,14 +207,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.ibComment)
     public void toggleChatAndLogView(View v) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (!showingChat) {
+        if (!isShowingChat) {
             fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
             ibComment.setImageDrawable(ic_cancel);
-            showingChat = true;
+            isShowingChat = true;
         } else {
             fragmentTransaction.remove(chatAndLogFragment);
             ibComment.setImageDrawable(ic_comment);
-            showingChat = false;
+            isShowingChat = false;
         }
         fragmentTransaction.commit();
     }
