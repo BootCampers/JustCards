@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.CenterScrollListener;
 import org.bootcamp.fiftytwo.views.CircleLayoutManager;
 import org.bootcamp.fiftytwo.views.OverlapDecoration;
+import org.bootcamp.fiftytwo.views.ScrollZoomLayoutManager;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import butterknife.Unbinder;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_CIRCULAR;
+import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_SCROLL_ZOOM;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_LAYOUT_TYPE;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
@@ -176,16 +177,21 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     private void setLayoutManager() {
-        if (!TextUtils.isEmpty(layoutType) && layoutType.equalsIgnoreCase(LAYOUT_TYPE_CIRCULAR)) {
+        if (LAYOUT_TYPE_CIRCULAR.equalsIgnoreCase(layoutType)) {
             rvCardsList.addOnScrollListener(new CenterScrollListener());
             rvCardsList.setLayoutManager(new CircleLayoutManager(getContext())
                     .setFirstChildRotate(0)
-                    .setIntervalAngle(15)
+                    .setIntervalAngle(13)
                     .setRadius(500)
                     .setRadialDistortionFactor(3)
                     .setContentOffsetX(-1)
                     .setContentOffsetY(-1)
                     .setDegreeRangeWillShow(-60, 60));
+        } else if (LAYOUT_TYPE_SCROLL_ZOOM.equalsIgnoreCase(layoutType)) {
+            rvCardsList.addOnScrollListener(new CenterScrollListener());
+            rvCardsList.setLayoutManager(new ScrollZoomLayoutManager(getContext(), -30)
+                    .setContentOffsetY(-1)
+                    .setMaxScale(1.2f));
         } else {
             RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
             rvCardsList.addItemDecoration(overlapDecoration);

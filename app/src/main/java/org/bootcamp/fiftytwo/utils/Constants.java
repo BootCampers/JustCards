@@ -67,4 +67,5 @@ public class Constants {
     /** Layout Type Codes here */
     public static final String LAYOUT_TYPE_STAGGERED_HORIZONTAL = "staggeredHorizontal";
     public static final String LAYOUT_TYPE_CIRCULAR = "circular";
+    public static final String LAYOUT_TYPE_SCROLL_ZOOM = "scrollZoom";
 }

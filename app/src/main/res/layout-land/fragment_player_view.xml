@@ -32,8 +32,8 @@
 
         <FrameLayout
             android:id="@+id/flTableContainer"
-            android:layout_width="220dp"
-            android:layout_height="75dp"
+            android:layout_width="400dp"
+            android:layout_height="100dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
