@@ -37,7 +37,6 @@ import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
-import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
@@ -137,10 +136,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void initFragments() {
-        // TODO: This custom data generation is temporary and for testing purposes only
-        List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 10);
-
-        playerViewFragment = PlayerViewFragment.newInstance(cards, cards);
+        playerViewFragment = PlayerViewFragment.newInstance(null, null);
         dealerViewFragment = DealerViewFragment.newInstance(mCards, null);
         chatAndLogFragment = ChatAndLogFragment.newInstance(1);
 
@@ -181,11 +177,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.fab)
     public void switchView(View view) {
-        if (isShowingPlayerFragment) {
-            replaceContainerFragment(dealerViewFragment, false);
-        } else {
-            replaceContainerFragment(playerViewFragment, true);
-        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
+                .replace(R.id.flGameContainer, isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
+                .commit();
+        this.isShowingPlayerFragment ^= true;
     }
 
     @OnClick(R.id.ibComment)
