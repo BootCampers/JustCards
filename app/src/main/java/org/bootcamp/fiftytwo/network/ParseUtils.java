@@ -26,6 +26,19 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.bootcamp.fiftytwo.models.User.getJson;
+import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAMS_PLAYER_GAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYERS_EXCHANGE_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TABLE_CARD_EXCHANGE;
+import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -68,9 +81,9 @@ public class ParseUtils {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
             if (joining) {
-                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_NEW_PLAYER_ADDED);
+                payload.put(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
             } else {
-                payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYER_LEFT);
+                payload.put(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
             }
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {
@@ -89,12 +102,12 @@ public class ParseUtils {
             JSONObject payload = getJson(currentLoggedInUser);
 
             JSONObject toUserJson = getJson(toUser);
-            payload.put(Constants.PARAM_PLAYER, toUserJson);
+            payload.put(PARAM_PLAYER, toUserJson);
 
             String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
-            payload.put(Constants.PARAM_CARDS, cardJson);
+            payload.put(PARAM_CARDS, cardJson);
 
-            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_DEAL_CARDS);
+            payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -111,9 +124,9 @@ public class ParseUtils {
             JSONObject payload = getJson(currentLoggedInUser);
 
             String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
-            payload.put(Constants.PARAM_CARDS, cardJson);
+            payload.put(PARAM_CARDS, cardJson);
 
-            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_DEAL_CARDS_TO_TABLE);
+            payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -131,12 +144,12 @@ public class ParseUtils {
             JSONObject payload = getJson(currentLoggedInUser);
 
             JSONObject toUserJson = getJson(toUser);
-            payload.put(Constants.PARAM_PLAYER, toUserJson);
+            payload.put(PARAM_PLAYER, toUserJson);
 
             String cardJson = new Gson().toJson(card);
-            payload.put(Constants.PARAM_CARDS, cardJson);
+            payload.put(PARAM_CARDS, cardJson);
 
-            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_PLAYERS_EXCHANGE_CARDS);
+            payload.put(COMMON_IDENTIFIER, PARSE_PLAYERS_EXCHANGE_CARDS);
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -155,11 +168,11 @@ public class ParseUtils {
             JSONObject payload = getJson(currentLoggedInUser);
 
             String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
-            payload.put(Constants.PARAM_CARDS, cardJson);
+            payload.put(PARAM_CARDS, cardJson);
 
-            payload.put(Constants.TABLE_PICKED, pickedFromTable);
+            payload.put(TABLE_PICKED, pickedFromTable);
 
-            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_TABLE_CARD_EXCHANGE);
+            payload.put(COMMON_IDENTIFIER, PARSE_TABLE_CARD_EXCHANGE);
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -183,7 +196,7 @@ public class ParseUtils {
         // Define the class we would like to query
         ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
         // Define our query conditions
-        query.whereEqualTo(Constants.PARAM_GAME_NAME, gameName);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
         // Execute the find asynchronously
         query.findInBackground(new FindCallback<Game>() {
             public void done(List<Game> itemList, ParseException e) {
@@ -191,7 +204,7 @@ public class ParseUtils {
                     Log.d("item", "Found list : " + itemList.size());
 
                     for (Game game : itemList) {
-                        String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
+                        String playerString = (String) game.get(PARAMS_PLAYER_GAME);
                         User element = gson.fromJson(playerString, User.class);
                         playersList.add(element);
                     }
@@ -212,7 +225,7 @@ public class ParseUtils {
         // Define the class we would like to query
         ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
         // Define our query conditions
-        query.whereEqualTo(Constants.PARAM_GAME_NAME, gameName);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
         // Execute the find asynchronously
         query.findInBackground(new FindCallback<Game>() {
             public void done(List<Game> itemList, ParseException e) {
@@ -220,7 +233,7 @@ public class ParseUtils {
                     Log.d("item", "Found list : " + itemList.size());
 
                     for (Game game : itemList) {
-                        String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
+                        String playerString = (String) game.get(PARAMS_PLAYER_GAME);
                         //TODO: Fix exception com.parse.ParseException: java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
                         User element = gson.fromJson(playerString, User.class);
                         if (element.equals(user)) {
@@ -253,7 +266,7 @@ public class ParseUtils {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
-            ParseCloud.callFunctionInBackground(Constants.SERVER_FUNCTION_NAME, data);
+            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data);
         }
         //TODO: retry this operation if it's network failure..
     }
