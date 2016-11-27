@@ -17,17 +17,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.interfaces.Observable;
-import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 
-public class SelectGameActivity extends AppCompatActivity implements Observer {
+public class SelectGameActivity extends AppCompatActivity {
 
     @BindView(R.id.joinGameButton) Button joinGameButton;
     @BindView(R.id.createGameButton) Button createGameButton;
@@ -44,44 +43,39 @@ public class SelectGameActivity extends AppCompatActivity implements Observer {
         Bundle extras = getIntent().getExtras();
 
         welcomeText.setText("Welcome " + extras.get(DISPLAY_NAME) + "!");
-        Glide.with(this).load(extras.get(USER_AVATAR_URI))
+        loadAvatar(extras.get(USER_AVATAR_URI));
+    }
+
+    @OnClick(R.id.joinGameButton)
+    public void join(final View view) {
+        if (etGameName.getText().toString().isEmpty()) {
+            Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
+        } else {
+            Intent gameViewManagerIntent = new Intent(SelectGameActivity.this, GameViewManagerActivity.class);
+            gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
+            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); //if false then it's dealer
+            startActivity(gameViewManagerIntent);
+        }
+    }
+
+    @OnClick(R.id.createGameButton)
+    public void create() {
+        startActivity(new Intent(SelectGameActivity.this, CreateGameActivity.class));
+    }
+
+    private void loadAvatar(Object userAvatarURI) {
+        Glide.with(this)
+                .load(userAvatarURI)
                 .asBitmap()
                 .centerCrop()
                 .into(new BitmapImageViewTarget(avatarImageView) {
                     @Override
                     protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(getResources(), resource);
+                        RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
                         circularBitmapDrawable.setCircular(true);
                         avatarImageView.setImageDrawable(circularBitmapDrawable);
                     }
                 });
-
-        joinGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (etGameName.getText().toString().isEmpty()) {
-                    Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
-                } else {
-                    Intent gameViewManagerIntent = new Intent(SelectGameActivity.this, GameViewManagerActivity.class);
-                    gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
-                    gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); //if false then it's dealer
-                    startActivity(gameViewManagerIntent);
-                }
-            }
-        });
-
-        createGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SelectGameActivity.this, CreateGameActivity.class));
-            }
-        });
-    }
-
-    @Override
-    public void onUpdate(Observable o, Object arg, Object arg1) {
-        String qualifier = (String) arg;
     }
 
 }

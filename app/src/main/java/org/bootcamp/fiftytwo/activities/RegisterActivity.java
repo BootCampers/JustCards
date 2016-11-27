@@ -42,14 +42,15 @@ import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 public class RegisterActivity extends AppCompatActivity {
 
     String userAvatarURI = "";
+    User user = null;
+    SharedPreferences sharedPreferences;
+
     @BindView(R.id.userName) EditText usernameTextBox;
     @BindView(R.id.ivAvatar) ImageView avatarImageView;
     @BindView(R.id.edit_fab) FloatingActionButton browseButton;
     @BindView(R.id.registerBttn) Button registerButton;
     @BindView(R.id.register_form) ScrollView scrollView;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
-    User user = null;
-    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
             loginToParse();
         }
 
+        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         userAvatarURI = PlayerUtils.getDefaultAvatar();
         loadAvatar(userAvatarURI);
     }
@@ -70,7 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String userName = sharedPreferences.getString(DISPLAY_NAME, "");
 
         if (NetworkUtils.isNetworkAvailable(RegisterActivity.this)) {
@@ -136,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(createGameIntent);
     }
 
-    private void loadAvatar(String userAvatarURI) {
+    private void loadAvatar(Object userAvatarURI) {
         Glide.with(this)
                 .load(userAvatarURI)
                 .asBitmap()
