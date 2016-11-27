@@ -11,7 +11,6 @@ import org.bootcamp.fiftytwo.models.User;
 
 import java.util.List;
 
-import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_STAGGERED_HORIZONTAL;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 
@@ -24,10 +23,6 @@ public class PlayerViewHelper {
 
     private PlayerViewHelper() {
         //no instance
-    }
-
-    public static void addPlayer(@NonNull final FragmentActivity activity, final int containerResId, final User player) {
-        addPlayers(activity, containerResId, getList(player));
     }
 
     public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players) {

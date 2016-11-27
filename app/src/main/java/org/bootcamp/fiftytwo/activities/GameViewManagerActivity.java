@@ -161,7 +161,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, mPlayers);
+                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.clGameLayout, mPlayers);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 } else {
@@ -331,7 +331,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (dealerViewFragment != null) {
             dealerViewFragment.addPlayers(players);
         }
-        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.flGameContainer, players);
+        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.clGameLayout, players);
         for (User player : players) {
             onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
         }

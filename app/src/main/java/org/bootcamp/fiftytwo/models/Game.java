@@ -20,7 +20,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAMS_PLAYER_GAME;
 @ParseClassName("Game")
 public class Game extends ParseObject {
 
-    private Game() {
+    public Game() {
         super();
     }
 
