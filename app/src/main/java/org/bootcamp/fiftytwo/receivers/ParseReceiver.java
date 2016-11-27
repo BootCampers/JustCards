@@ -16,7 +16,7 @@ import org.json.JSONObject;
 /**
  * Created by baphna on 11/18/2016.
  */
-public class CardExchangeReceiver extends BroadcastReceiver {
+public class ParseReceiver extends BroadcastReceiver {
 
     private static final String intentAction = "com.parse.push.intent.RECEIVE";
     private FiftyTwoApplication application;
@@ -44,16 +44,20 @@ public class CardExchangeReceiver extends BroadcastReceiver {
                 Log.d(Constants.TAG, identifier + "--" + customData.toString());
                 User userFromJson = new User(customData);
 
-                // Process only if it's not from self/current user
-                if (!userFromJson.getUserId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                if (!isSelf(userFromJson)) {
                     switch (identifier) {
                         case Constants.PARSE_NEW_PLAYER_ADDED:
                         case Constants.PARSE_PLAYER_LEFT:
                         case Constants.PARSE_DEAL_CARDS:
                         case Constants.PARSE_DEAL_CARDS_TO_TABLE:
+                            application.notifyObservers(identifier, customData);
+                            break;
                         case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
                         case Constants.PARSE_TABLE_CARD_EXCHANGE:
-                            application.notifyObservers(identifier, customData);
+                            // Process only if it's not from self/current user
+                            if (!isSelf(userFromJson)) {
+                                application.notifyObservers(identifier, customData);
+                            }
                             break;
                     }
                 }
@@ -61,5 +65,9 @@ public class CardExchangeReceiver extends BroadcastReceiver {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean isSelf(final User user) {
+        return user.getUserId().equalsIgnoreCase(ParseUser.getCurrentUser().getObjectId());
     }
 }
