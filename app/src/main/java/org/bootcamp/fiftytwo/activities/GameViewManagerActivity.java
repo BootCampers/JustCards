@@ -280,7 +280,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        addPlayersToView(getList((User) arg));
+                        User user = User.fromJson((JSONObject) arg);
+                        addPlayersToView(getList(user));
                     }
                 });
                 break;
@@ -288,7 +289,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        removePlayersFromView(getList((User) arg));
+                        User user = User.fromJson((JSONObject) arg);
+                        removePlayersFromView(getList(user));
                     }
                 });
                 break;

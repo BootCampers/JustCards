@@ -29,8 +29,7 @@ public class User {
     private List<Card> cards = new ArrayList<>();
     private boolean isDealer;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String avatarUri, String displayName) {
         this.avatarUri = avatarUri;
@@ -41,12 +40,6 @@ public class User {
         this.avatarUri = avatarUri;
         this.displayName = displayName;
         this.userId = userId;
-    }
-
-    public User(JSONObject data) throws JSONException {
-        displayName = data.getString(Constants.DISPLAY_NAME);
-        avatarUri = data.getString(Constants.USER_AVATAR_URI);
-        userId = data.getString(Constants.USER_ID);
     }
 
     public static User fromJson(JSONObject json) {
@@ -68,6 +61,14 @@ public class User {
         json.put(Constants.USER_AVATAR_URI, user.getAvatarUri());
         json.put(Constants.USER_ID, user.getUserId());
         return json;
+    }
+
+    public static User getCurrentUser(final Context context){
+        SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
+        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
+        String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
+        return new User(profilePic, displayName, userId);
     }
 
     public String getUserId() {
@@ -107,13 +108,5 @@ public class User {
     @Override
     public int hashCode() {
         return userId != null ? userId.hashCode() : 0;
-    }
-
-    public static User getCurrentUser(final Context context){
-        SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
-        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
-        String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
-        return new User(profilePic, displayName, userId);
     }
 }

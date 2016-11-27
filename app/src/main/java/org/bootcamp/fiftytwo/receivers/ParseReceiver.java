@@ -42,24 +42,22 @@ public class ParseReceiver extends BroadcastReceiver {
 
                 String identifier = customData.getString(Constants.COMMON_IDENTIFIER);
                 Log.d(Constants.TAG, identifier + "--" + customData.toString());
-                User userFromJson = new User(customData);
+                User user = User.fromJson(customData);
 
-                if (!isSelf(userFromJson)) {
-                    switch (identifier) {
-                        case Constants.PARSE_NEW_PLAYER_ADDED:
-                        case Constants.PARSE_PLAYER_LEFT:
-                        case Constants.PARSE_DEAL_CARDS:
-                        case Constants.PARSE_DEAL_CARDS_TO_TABLE:
+                switch (identifier) {
+                    case Constants.PARSE_NEW_PLAYER_ADDED:
+                    case Constants.PARSE_PLAYER_LEFT:
+                    case Constants.PARSE_DEAL_CARDS:
+                    case Constants.PARSE_DEAL_CARDS_TO_TABLE:
+                        application.notifyObservers(identifier, customData);
+                        break;
+                    case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
+                    case Constants.PARSE_TABLE_CARD_EXCHANGE:
+                        // Process only if it's not from self/current user
+                        if (!isSelf(user)) {
                             application.notifyObservers(identifier, customData);
-                            break;
-                        case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
-                        case Constants.PARSE_TABLE_CARD_EXCHANGE:
-                            // Process only if it's not from self/current user
-                            if (!isSelf(userFromJson)) {
-                                application.notifyObservers(identifier, customData);
-                            }
-                            break;
-                    }
+                        }
+                        break;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

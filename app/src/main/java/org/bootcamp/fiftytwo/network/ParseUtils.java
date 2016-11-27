@@ -7,10 +7,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
@@ -64,7 +67,16 @@ public class ParseUtils {
 
     public void joinChannel() {
         if (isNetworkAvailable(context)) {
-            ParsePush.subscribeInBackground(gameName);
+            ParsePush.subscribeInBackground(gameName, new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "done: Join Channel Succeeded!");
+                    } else {
+                        Log.e(TAG, "done: Join Channel Failed: " + e.getMessage());
+                    }
+                }
+            });
         }
     }
 
@@ -77,7 +89,16 @@ public class ParseUtils {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
-            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data);
+            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, new FunctionCallback<Object>() {
+                @Override
+                public void done(Object object, ParseException e) {
+                    if (e == null) {
+                        Log.d(TAG, "sendBroadcastWithPayload: Succeeded!");
+                    } else {
+                        Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
+                    }
+                }
+            });
         }
         //TODO: retry this operation if it's network failure..
     }

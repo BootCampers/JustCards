@@ -22,9 +22,9 @@ import java.util.List;
  */
 public class FiftyTwoApplication extends Application implements Observable {
 
-    public static final String APPLICATION_ID = "fiftyTwoAppId";
-    public static final String APPLICATION_SERVER = "http://fiftytwo.herokuapp.com/parse/";
-    @SuppressWarnings("unused") public static final String CLIENT_KEY = "AIzaSyC2mQITmBqFHnUC3GmC0DlvFs4GoshJiCI";
+    public static final String APPLICATION_ID = "codepath-android";
+    public static final String APPLICATION_SERVER = "https://codepath-maps-push-lab.herokuapp.com/parse/";
+    @SuppressWarnings("unused") public static final String CLIENT_KEY = "8bXPznF5eSLWq0sY9gTUrEF5BJlia7ltmLQFRh";
 
     private List<Observer> mObservers = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class FiftyTwoApplication extends Application implements Observable {
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(APPLICATION_ID)
-                .clientKey("bootCampers")
+                .clientKey("")
                 .addNetworkInterceptor(new ParseLogInterceptor())
                 .server(APPLICATION_SERVER)
                 .build());
