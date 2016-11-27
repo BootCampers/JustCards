@@ -300,10 +300,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(details);
                     JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
                     User to = fromJson(toUserDetails);
-                    Gson gson = new Gson();
-                    String cardString = gson.toJson(details.getString(PARAM_CARDS));
-                    Log.d(TAG, "cardExchanged is -- " + cardString);
-                    List<Card> cards = gson.fromJson(cardString, new TypeToken<List<Card>>() {}.getType());
+                    List<Card> cards = new Gson().fromJson(details.getString(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
                     handleDeal(cards, from, to);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -313,10 +310,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 try {
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);
-                    Gson gson = new Gson();
-                    String cardsString = gson.toJson(details.getString(PARAM_CARDS));
-                    Log.d(TAG, "cardExchanged is--" + cardsString);
-                    List<Card> cards = gson.fromJson(cardsString, new TypeToken<List<Card>>() {}.getType());
+                    List<Card> cards = new Gson().fromJson(details.getString(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
                     handleDealTable(from, cards);
                 } catch (JSONException e) {
                     e.printStackTrace();
