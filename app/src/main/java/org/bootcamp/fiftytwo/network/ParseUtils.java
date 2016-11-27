@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -157,6 +158,43 @@ public class ParseUtils {
 
                     for (User player: playersList) {
                         gameViewManagerActivity.addNewPlayerToUI(player);
+                    }
+                } else {
+                    Log.e("item", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public void deleteUserFromDb(final String gameName, final User user){
+        final Gson gson = new Gson();
+
+        // Define the class we would like to query
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        // Define our query conditions
+        query.whereEqualTo(Constants.PARAM_GAME_NAME, gameName);
+        // Execute the find asynchronously
+        query.findInBackground(new FindCallback<Game>() {
+            public void done(List<Game> itemList, ParseException e) {
+                if (e == null) {
+                    Log.d("item", "Found list : " + itemList.size());
+
+                    for (Game game: itemList) {
+                        String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
+                        //TODO: Fix exception com.parse.ParseException: java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
+                        User element = gson.fromJson(playerString, User.class);
+                        if(element.equals(user)){
+                            game.deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e == null){
+                                        Log.e(Constants.TAG, "Success delete " + e.getMessage());
+                                    } else {
+                                        Log.e(Constants.TAG, "Delete error " + e.getMessage());
+                                    }
+                                }
+                            });
+                        }
                     }
                 } else {
                     Log.e("item", "Error: " + e.getMessage());

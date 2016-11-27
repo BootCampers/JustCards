@@ -99,6 +99,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
+    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +121,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void initGameParams() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String gameName = bundle.getString(PARAM_GAME_NAME);
-            gameName = "70152";
+            gameName = bundle.getString(PARAM_GAME_NAME);
             isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
@@ -234,6 +234,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     public void onClick(DialogInterface dialog, int which) {
                         parseUtils.changeGameParticipation(false);
                         parseUtils.removeChannel();
+                        parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(GameViewManagerActivity.this));
                         ((FiftyTwoApplication) getApplication()).removeAllObservers();
                         finish();
                     }
