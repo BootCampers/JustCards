@@ -17,7 +17,6 @@ import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.bootcamp.fiftytwo.utils.NetworkUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.bootcamp.fiftytwo.models.User.getJson;
+import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 /**
  * The code that processes this function is listed at:
@@ -35,14 +35,13 @@ import static org.bootcamp.fiftytwo.models.User.getJson;
  */
 public class ParseUtils {
 
+    private Context context;
     private String gameName; //used for channel name
     private User currentLoggedInUser;
-    private Context context;
 
     public ParseUtils(Context context, String gameName) {
         this.gameName = gameName;
         this.context = context;
-
         currentLoggedInUser = User.getCurrentUser(context);
     }
 
@@ -51,7 +50,7 @@ public class ParseUtils {
     }
 
     public void joinChannel() {
-        if(NetworkUtils.isNetworkAvailable(context) == true) {
+        if (isNetworkAvailable(context)) {
             ParsePush.subscribeInBackground(gameName);
         }
     }
@@ -80,7 +79,48 @@ public class ParseUtils {
     }
 
     /**
-     * TODO: This API needs discussion
+     * Dealer dealing cards to a particular user
+     *
+     * @param toUser to whom this is sent
+     * @param cards  which cards
+     */
+    public void dealCards(User toUser, List<Card> cards) {
+        try {
+            JSONObject payload = getJson(currentLoggedInUser);
+
+            JSONObject toUserJson = getJson(toUser);
+            payload.put(Constants.PARAM_PLAYER, toUserJson);
+
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
+            payload.put(Constants.PARAM_CARDS, cardJson);
+
+            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_DEAL_CARDS);
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Dealer moving cards to table
+     *
+     * @param cards which cards
+     */
+    public void dealCardsToTable(List<Card> cards) {
+        try {
+            JSONObject payload = getJson(currentLoggedInUser);
+
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
+            payload.put(Constants.PARAM_CARDS, cardJson);
+
+            payload.put(Constants.COMMON_IDENTIFIER, Constants.PARSE_DEAL_CARDS_TO_TABLE);
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Current user passing card to particular user
      *
      * @param toUser to whom this is sent
@@ -107,7 +147,7 @@ public class ParseUtils {
      * TODO: This API needs discussion
      * Send card to or pick from table
      *
-     * @param cards  which cards
+     * @param cards           which cards
      * @param pickedFromTable true if picked from table, false if dropped on table
      */
     public void tableCardExchange(List<Card> cards, boolean pickedFromTable) {
@@ -129,11 +169,11 @@ public class ParseUtils {
     /**
      * Card picked by current user OR placed on table by current user
      *
-     * @param cards            which cards
+     * @param cards           which cards
      * @param pickedFromTable is the card picked from table
      */
     public void selfTableCardExchange(List<Card> cards, boolean pickedFromTable) {
-        tableCardExchange(cards, pickedFromTable);
+        //tableCardExchange(cards, pickedFromTable);
     }
 
     public void fetchPreviouslyJoinedUsers(final String gameName, final GameViewManagerActivity gameViewManagerActivity) {
@@ -150,13 +190,13 @@ public class ParseUtils {
                 if (e == null) {
                     Log.d("item", "Found list : " + itemList.size());
 
-                    for (Game game: itemList) {
+                    for (Game game : itemList) {
                         String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
                         User element = gson.fromJson(playerString, User.class);
                         playersList.add(element);
                     }
 
-                    for (User player: playersList) {
+                    for (User player : playersList) {
                         gameViewManagerActivity.addNewPlayerToUI(player);
                     }
                 } else {
@@ -166,7 +206,7 @@ public class ParseUtils {
         });
     }
 
-    public void deleteUserFromDb(final String gameName, final User user){
+    public void deleteUserFromDb(final String gameName, final User user) {
         final Gson gson = new Gson();
 
         // Define the class we would like to query
@@ -179,15 +219,15 @@ public class ParseUtils {
                 if (e == null) {
                     Log.d("item", "Found list : " + itemList.size());
 
-                    for (Game game: itemList) {
+                    for (Game game : itemList) {
                         String playerString = (String) game.get(Constants.PARAMS_PLAYER_GAME);
                         //TODO: Fix exception com.parse.ParseException: java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
                         User element = gson.fromJson(playerString, User.class);
-                        if(element.equals(user)){
+                        if (element.equals(user)) {
                             game.deleteInBackground(new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if(e == null){
+                                    if (e == null) {
                                         Log.e(Constants.TAG, "Success delete " + e.getMessage());
                                     } else {
                                         Log.e(Constants.TAG, "Delete error " + e.getMessage());
@@ -209,7 +249,7 @@ public class ParseUtils {
     }
 
     private void sendBroadcastWithPayload(JSONObject payload) {
-        if(NetworkUtils.isNetworkAvailable(context) == true) {
+        if (isNetworkAvailable(context)) {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);

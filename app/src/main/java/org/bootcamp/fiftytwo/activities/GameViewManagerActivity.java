@@ -265,9 +265,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (playerFragment != null && !isEmpty(cards)) {
             boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
             if (result) {
-                for (Card card : cards) {
-                    parseUtils.exchangeCard(player, card);
-                }
+                parseUtils.dealCards(player, cards);
             }
             return result;
         }
@@ -278,7 +276,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
-                parseUtils.tableCardExchange(cards, false);
+                parseUtils.dealCardsToTable(cards);
                 return true;
             } else {
                 // TODO: Handle Drop to Sink here
