@@ -92,7 +92,7 @@ public class DealerViewFragment extends Fragment implements DealingOptionsFragme
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        dealerCardsFragment = CardsFragment.newInstance(mCards, DEALER_TAG);
+        dealerCardsFragment = CardsFragment.newInstance(mCards, DEALER_TAG, null);
 
         getChildFragmentManager()
                 .beginTransaction()

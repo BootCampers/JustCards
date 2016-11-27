@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.CardUtil;
+import org.bootcamp.fiftytwo.views.CenterScrollListener;
+import org.bootcamp.fiftytwo.views.CircleLayoutManager;
 import org.bootcamp.fiftytwo.views.OverlapDecoration;
 import org.parceler.Parcels;
 
@@ -29,6 +32,7 @@ import butterknife.Unbinder;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_LAYOUT_TYPE;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
@@ -40,6 +44,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     private OnLogEventListener mListener;
     protected Unbinder unbinder;
     protected String tag = TAG;
+    protected String layoutType;
 
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
@@ -58,11 +63,12 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         }
     }
 
-    public static CardsFragment newInstance(final List<Card> cards, final String tag) {
+    public static CardsFragment newInstance(final List<Card> cards, final String tag, final String layoutType) {
         CardsFragment fragment = new CardsFragment();
         Bundle args = new Bundle();
         args.putParcelable(PARAM_CARDS, getParcelable(cards));
         args.putString(TAG, tag);
+        args.putString(PARAM_LAYOUT_TYPE, layoutType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,6 +84,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
             if (isEmpty(cards))
                 cards = new ArrayList<>();
             tag = bundle.getString(TAG);
+            layoutType = bundle.getString(PARAM_LAYOUT_TYPE);
         }
         mAdapter = new CardsAdapter(getContext(), cards, this, tag);
     }
@@ -96,10 +103,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     protected void initCards() {
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-        RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
-        rvCardsList.addItemDecoration(overlapDecoration);
-        rvCardsList.setLayoutManager(layoutManager);
+        setLayoutManager();
         rvCardsList.setAdapter(mAdapter);
         tvNoCards.setOnDragListener(mAdapter.getDragInstance());
         setEmptyList(mAdapter.getItemCount() == 0);
@@ -168,5 +172,27 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         super.onDestroyView();
         if (unbinder != null)
             unbinder.unbind();
+    }
+
+    private void setLayoutManager() {
+        if (TextUtils.isEmpty(layoutType)) {
+            StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+            RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
+            rvCardsList.addItemDecoration(overlapDecoration);
+            rvCardsList.setLayoutManager(staggeredGridLayoutManager);
+        } else {
+            CircleLayoutManager circleLayoutManager = new CircleLayoutManager(getContext());
+            circleLayoutManager
+                    .setFirstChildRotate(-60)
+                    .setIntervalAngle(15)
+                    .setRadius(700)
+                    .setRadialDistortionFactor(2)
+                    .setContentOffsetX(-1)
+                    .setContentOffsetY(-1)
+                    .setDegreeRangeWillShow(-60, 60);
+
+            rvCardsList.addOnScrollListener(new CenterScrollListener());
+            rvCardsList.setLayoutManager(circleLayoutManager);
+        }
     }
 }
