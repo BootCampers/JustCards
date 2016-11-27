@@ -18,6 +18,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
+import static org.bootcamp.fiftytwo.utils.PlayerUtils.getDefaultAvatar;
 
 @Parcel(analyze = User.class)
 public class User {
@@ -100,9 +101,7 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
 
         User user = (User) o;
-
         return userId != null ? userId.equals(user.userId) : user.userId == null;
-
     }
 
     @Override
@@ -113,9 +112,8 @@ public class User {
     public static User getCurrentUser(final Context context){
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
-        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, Constants.DEFAULT_PROFILE_PIC);
+        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
-        User currentLoggedInUser = new User(profilePic, displayName, userId);
-        return currentLoggedInUser;
+        return new User(profilePic, displayName, userId);
     }
 }

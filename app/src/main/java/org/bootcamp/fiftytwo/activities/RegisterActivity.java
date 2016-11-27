@@ -28,6 +28,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.NetworkUtils;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
@@ -35,8 +36,9 @@ import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 
 public class RegisterActivity extends AppCompatActivity {
+
     String userAvatarURI = "";
-    EditText usernameTxtbox;
+    EditText usernameTextBox;
     ImageView avatarImageView;
     FloatingActionButton browseButton;
     Button registerButton;
@@ -63,16 +65,14 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         String userName = sharedPreferences.getString(DISPLAY_NAME, "");
 
-
-        if(NetworkUtils.isNetworkAvailable(RegisterActivity.this)) {
+        if (NetworkUtils.isNetworkAvailable(RegisterActivity.this)) {
             notifyNetworkFailure(false);
 
             if (!userName.isEmpty()) {
                 String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
-                //TODO: get from Parese server??
+                //TODO: get from Parse server??
                 User user = new User(userAvatarURI, userName);
                 Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
@@ -80,8 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
                 createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
                 startActivity(createGameIntent);
             }
-        }
-        else{
+        } else {
             notifyNetworkFailure(true);
         }
     }
@@ -91,7 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-
             userAvatarURI = data.getStringExtra(Constants.SELECTED_AVATAR);
             Log.d(Constants.TAG, userAvatarURI);
             Glide.with(this)
@@ -101,8 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .into(new BitmapImageViewTarget(avatarImageView) {
                         @Override
                         protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
                             circularBitmapDrawable.setCircular(true);
                             avatarImageView.setImageDrawable(circularBitmapDrawable);
                         }
@@ -110,39 +107,38 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void instantiateWidgets(){
-        usernameTxtbox = (EditText) findViewById(R.id.userName);
+    private void instantiateWidgets() {
+        usernameTextBox = (EditText) findViewById(R.id.userName);
         avatarImageView = (ImageView) findViewById(R.id.ivAvatar);
         browseButton = (FloatingActionButton) findViewById(R.id.edit_fab);
         registerButton = (Button) findViewById(R.id.registerBttn);
         scrollView = (ScrollView) findViewById(R.id.register_form);
         networkFailureBanner = (RelativeLayout) findViewById(R.id.networkFailureBanner);
 
-        userAvatarURI = Constants.getDefaultAvatar();
+        userAvatarURI = PlayerUtils.getDefaultAvatar();
 
         Glide.with(this)
-            .load(userAvatarURI)
-            .asBitmap()
-            .centerCrop()
-            .into(new BitmapImageViewTarget(avatarImageView) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    avatarImageView.setImageDrawable(circularBitmapDrawable);
-                }
-            });
+                .load(userAvatarURI)
+                .asBitmap()
+                .centerCrop()
+                .into(new BitmapImageViewTarget(avatarImageView) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        avatarImageView.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = usernameTxtbox.getText().toString();
+                String username = usernameTextBox.getText().toString();
                 String usernameSansWhiteSpace = username.replaceAll("\\s+", "");
-                if(usernameSansWhiteSpace.isEmpty()){
+                if (usernameSansWhiteSpace.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Username must have a value!", Toast.LENGTH_SHORT).show();
-                    usernameTxtbox.requestFocus();
-                    scrollView.scrollTo(usernameTxtbox.getScrollX(), usernameTxtbox.getScrollY());
+                    usernameTextBox.requestFocus();
+                    scrollView.scrollTo(usernameTextBox.getScrollX(), usernameTextBox.getScrollY());
                     return;
                 }
 
@@ -153,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
                 editor.putString(DISPLAY_NAME, username);
                 editor.putString(USER_AVATAR_URI, user.getAvatarUri());
                 editor.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
-                editor.commit();
+                editor.apply();
 
                 Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
@@ -187,11 +183,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void startWithCurrentUser() {
-
+        // Do Nothing
     }
 
     private void notifyNetworkFailure(boolean networkFailure) {
-        if(networkFailure )
+        if (networkFailure)
             networkFailureBanner.setVisibility(View.VISIBLE);
         else
             networkFailureBanner.setVisibility(View.GONE);

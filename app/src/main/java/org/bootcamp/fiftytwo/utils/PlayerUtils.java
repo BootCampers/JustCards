@@ -26,7 +26,7 @@ public class PlayerUtils {
             "Leonardo",
             "Jared"};
 
-    private static String[] playerAvatars = {
+    public static String[] playerAvatars = {
             "http://i.imgur.com/GkyKh.jpg",
             "http://i.imgur.com/4M8vzoD.png",
             "http://i.imgur.com/Fankh2h.jpg",
@@ -51,5 +51,9 @@ public class PlayerUtils {
             players.add(new User(playerAvatars[index], playerNames[index]));
         }
         return players;
+    }
+
+    public static String getDefaultAvatar() {
+        return playerAvatars[new Random().nextInt(playerAvatars.length)];
     }
 }
