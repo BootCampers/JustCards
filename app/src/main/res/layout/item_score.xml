@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryOpacity"
+    android:weightSum="4">
+
+    <ImageButton
+        android:id="@+id/ibAdd"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="27dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_add_circle"/>
+
+    <TextView
+        android:id="@+id/tvCardsToDeal"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="27dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        tools:text="Player Name"/>
+
+    <ImageButton
+        android:id="@+id/ibReduce"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="27dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_remove_circle"/>
+
+</LinearLayout>
