@@ -38,6 +38,7 @@ public class Constants {
     public static final String PARAM_Y = "PARAM_Y";
     public static final String PARAM_PLAYER_CARDS = "playerCards";
     public static final String PARAM_TABLE_CARDS = "tableCards";
+    public static final String PARAM_LAYOUT_TYPE = "layoutType";
     public static final String ARG_PLAYER_COUNT = "playerCount";
     public static final String ARG_CARD_COUNT = "cardCount";
     public static final String ARG_COLUMN_COUNT = "columnCount";

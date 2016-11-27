@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_LAYOUT_TYPE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_X;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_Y;
@@ -46,12 +47,13 @@ public class PlayerFragment extends CardsFragment {
     @BindView(R.id.ivPlayerAvatar) CircularImageView ivPlayerAvatar;
     @BindView(R.id.tvUserName) TextView tvUserName;
 
-    public static PlayerFragment newInstance(List<Card> cards, final User player, final String tag, int x, int y) {
+    public static PlayerFragment newInstance(List<Card> cards, final User player, final String tag, final String layoutType, int x, int y) {
         PlayerFragment fragment = new PlayerFragment();
         Bundle args = new Bundle();
         args.putParcelable(PARAM_CARDS, getParcelable(cards));
         args.putParcelable(PARAM_PLAYER, Parcels.wrap(player));
         args.putString(TAG, tag);
+        args.putString(PARAM_LAYOUT_TYPE, layoutType);
         args.putInt(PARAM_X, x);
         args.putInt(PARAM_Y, y);
         fragment.setArguments(args);
@@ -70,6 +72,7 @@ public class PlayerFragment extends CardsFragment {
                 cards = new ArrayList<>();
             mPlayer = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER));
             tag = bundle.getString(TAG);
+            layoutType = bundle.getString(PARAM_LAYOUT_TYPE);
             x = bundle.getInt(PARAM_X);
             y = bundle.getInt(PARAM_Y);
         }

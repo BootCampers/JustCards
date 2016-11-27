@@ -70,8 +70,8 @@ public class PlayerViewFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Fragment playerCardsFragment = CardsFragment.newInstance(mPlayerCards, PLAYER_TAG);
-        Fragment tableCardsFragment = CardsFragment.newInstance(mTableCards, TABLE_TAG);
+        Fragment playerCardsFragment = CardsFragment.newInstance(mPlayerCards, PLAYER_TAG, null);
+        Fragment tableCardsFragment = CardsFragment.newInstance(mTableCards, TABLE_TAG, null);
 
         getChildFragmentManager()
                 .beginTransaction()

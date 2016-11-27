@@ -48,7 +48,7 @@ public class PlayerViewHelper {
     }
 
     private static void addPlayerFragment(@NonNull final FragmentManager fm, final int containerResId, final User player, int x, int y) {
-        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, PLAYER_TAG + player.getDisplayName(), x, y);
+        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, PLAYER_TAG + player.getDisplayName(), null, x, y);
 
         fm.beginTransaction()
                 .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
