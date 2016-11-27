@@ -57,13 +57,6 @@ DealingOptionsFragment extends Fragment {
         void onDealOptionSelected(Bundle bundle);
     }
 
-    /**
-     * Use this factory method to create a new instance of this fragment using the provided parameters.
-     *
-     * @param playerCount Parameter 1.
-     * @param cardCount   Parameter 2.
-     * @return A new instance of fragment DealingOptionsFragment.
-     */
     public static DealingOptionsFragment newInstance(int playerCount, int cardCount) {
         DealingOptionsFragment fragment = new DealingOptionsFragment();
         Bundle args = new Bundle();

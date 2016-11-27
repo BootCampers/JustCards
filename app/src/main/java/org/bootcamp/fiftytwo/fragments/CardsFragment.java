@@ -83,8 +83,9 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         List<Card> cards = new ArrayList<>();
         if (bundle != null) {
             cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            if (isEmpty(cards))
+            if (isEmpty(cards)) {
                 cards = new ArrayList<>();
+            }
             tag = bundle.getString(TAG);
             layoutType = bundle.getString(PARAM_LAYOUT_TYPE);
         }

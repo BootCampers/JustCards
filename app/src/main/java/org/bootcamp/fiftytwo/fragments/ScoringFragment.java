@@ -1,53 +1,67 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.adapters.ScoreAdapter;
+import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.AppUtils;
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ScoringFragment.OnFragmentInteractionListener} interface
+ * {@link OnScoreFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link ScoringFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ScoringFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private OnScoreFragmentInteractionListener mListener;
+    private Unbinder unbinder;
 
-    private OnFragmentInteractionListener mListener;
+    @BindView(R.id.rvPlayersScores)
+    RecyclerView rvPlayersScores;
+    @BindView(R.id.btnSave)
+    Button btnSave;
+    @BindView(R.id.ibCancel)
+    ImageButton ibCancel;
+
+    private StaggeredGridLayoutManager staggeredLayoutManager;
+
+
+    List<User> users = new ArrayList<>();
+    private ScoreAdapter scoringAdapter;
 
     public ScoringFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ScoringFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ScoringFragment newInstance(String param1, String param2) {
+    public static ScoringFragment newInstance(List<User> users) {
         ScoringFragment fragment = new ScoringFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(PARAM_PLAYERS, AppUtils.getParcelable(users));
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,8 +70,10 @@ public class ScoringFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            users = Parcels.unwrap(getArguments().getParcelable(PARAM_PLAYERS));
+            if (isEmpty(users)) {
+                users = new ArrayList<>();
+            }
         }
     }
 
@@ -65,31 +81,51 @@ public class ScoringFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_scoring, container, false);
-    }
+        View view =  inflater.inflate(R.layout.fragment_scoring, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        scoringAdapter = new ScoreAdapter(users);
+        rvPlayersScores.setLayoutManager(staggeredLayoutManager);
+        rvPlayersScores.setAdapter(scoringAdapter);
+        return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnScoreFragmentInteractionListener) {
+            mListener = (OnScoreFragmentInteractionListener) getParentFragment();
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnScoreFragmentInteractionListener");
         }
     }
 
+    @OnClick(R.id.btnSave)
+    public void saveScore(View view){
+        //TODO : save score
+        if (mListener != null) {
+            mListener.onScoreFragmentInteraction(true);
+        }
+    }
+
+    @OnClick(R.id.ibCancel)
+    public void onCancelPressed() {
+        if (mListener != null) {
+            mListener.onScoreFragmentInteraction(false);
+        }
+    }
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     /**
@@ -102,8 +138,7 @@ public class ScoringFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnScoreFragmentInteractionListener {
+        void onScoreFragmentInteraction(boolean saveClicked);
     }
 }

@@ -17,7 +17,7 @@
         android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:padding="8dp"
-        android:text="@string/dealing_options"
+        android:text="@string/msg_score_sheet"
         android:textColor="@android:color/white"
         android:textSize="24sp"/>
 
@@ -29,7 +29,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:background="@color/colorPrimary"
-        android:text="Save"
+        android:text="@string/msg_save"
         android:textColor="@android:color/white"/>
 
     <ImageButton
@@ -52,6 +52,7 @@
         android:layout_below="@+id/tvTitle"
         android:layout_above="@id/btnSave"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp" />
+        android:layout_marginTop="17dp"
+        android:id="@+id/rvPlayersScores"/>
 
 </RelativeLayout>

@@ -38,17 +38,34 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
-public class DealerViewFragment extends Fragment implements DealingOptionsFragment.OnDealOptionsListener {
+public class DealerViewFragment extends Fragment
+        implements DealingOptionsFragment.OnDealOptionsListener,
+        ScoringFragment.OnScoreFragmentInteractionListener {
 
     private List<Card> mCards = new ArrayList<>();
     private List<User> mPlayers = new ArrayList<>();
     private OnDealListener mDealListener;
+    private ScoringFragment.OnScoreFragmentInteractionListener mScoreListener;
     private DealingOptionsFragment dealingOptionsFragment;
     private CardsFragment dealerCardsFragment;
     private Unbinder unbinder;
 
     @BindView(R.id.flDealerViewContainer) FrameLayout flDealerViewContainer;
     @BindString(R.string.msg_send_to_table) String msgSendToTable;
+    private ScoringFragment scoringFragment;
+
+    @Override
+    public void onScoreFragmentInteraction(boolean saveClicked) {
+        getChildFragmentManager()
+                .beginTransaction()
+                .show(dealerCardsFragment)
+                .remove(scoringFragment)
+                .commit();
+        mDealListener.onDealerOptionsShowing(false);
+
+        //ToDo: save
+    }
+
 
     public interface OnDealListener {
         boolean onDeal(List<Card> cards, User player);
@@ -101,7 +118,7 @@ public class DealerViewFragment extends Fragment implements DealingOptionsFragme
                 .commit();
     }
 
-    @OnClick(R.id.ibDeal)
+    @OnClick({R.id.ibDeal, R.id.btnDeal})
     public void deal() {
         List<Card> cards = dealerCardsFragment.getCards();
 
@@ -113,6 +130,18 @@ public class DealerViewFragment extends Fragment implements DealingOptionsFragme
                 .commit();
 
         mDealListener.onDealerOptionsShowing(true);
+    }
+
+    @OnClick({ R.id.btnScore})
+    public void score() {
+        scoringFragment = ScoringFragment.newInstance(mPlayers);
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
+                .hide(dealerCardsFragment)
+                .commit();
+        mDealListener.onDealerOptionsShowing(true);
+
     }
 
     @Override
@@ -217,12 +246,16 @@ public class DealerViewFragment extends Fragment implements DealingOptionsFragme
         if (context instanceof OnDealListener) {
             mDealListener = (OnDealListener) context;
         }
+        if (context instanceof ScoringFragment.OnScoreFragmentInteractionListener) {
+            mScoreListener = (ScoringFragment.OnScoreFragmentInteractionListener) context;
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mDealListener = null;
+        mScoreListener = null;
     }
 
     @Override

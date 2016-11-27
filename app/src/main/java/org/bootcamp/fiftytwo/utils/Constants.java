@@ -13,6 +13,8 @@ public class Constants {
     public static final String TABLE_TAG = "table";
     public static final String USER_TAG = "user";
     public static final String DEALING_OPTIONS_TAG = "dealingOptions";
+    public static final String SCORING_OPTIONS_TAG = "scoringOptions";
+
 
     /** Preference Keys here */
     /*DO NOT CHANGE ==  MUST match with member variables of User class*/

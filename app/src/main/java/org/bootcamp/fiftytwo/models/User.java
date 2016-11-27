@@ -109,6 +109,8 @@ public class User {
         return userId != null ? userId.hashCode() : 0;
     }
 
+
+
     public static User getCurrentUser(final Context context){
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");

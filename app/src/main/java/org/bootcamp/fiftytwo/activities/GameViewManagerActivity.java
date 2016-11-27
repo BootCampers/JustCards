@@ -32,6 +32,7 @@ import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.DealingOptionsFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
+import org.bootcamp.fiftytwo.fragments.ScoringFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
@@ -77,6 +78,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         DealingOptionsFragment.OnDealOptionsListener,
         ChatAndLogFragment.OnChatAndLogListener,
         CardsFragment.OnLogEventListener,
+        ScoringFragment.OnScoreFragmentInteractionListener,
         Observer {
 
     private List<User> mPlayers = new ArrayList<>();
@@ -407,5 +409,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onChat(ChatLog item) {
         // Do Nothing
+    }
+
+
+    @Override
+    public void onScoreFragmentInteraction(boolean saveClicked) {
+        //Do Nothing
     }
 }
