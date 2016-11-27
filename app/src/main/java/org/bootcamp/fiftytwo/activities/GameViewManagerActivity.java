@@ -131,7 +131,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private void initFragments() {
         // TODO: This custom data generation is temporary and for testing purposes only
-        List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 1);
+        List<Card> cards = CardUtil.generateDeck(1, false).subList(0, 15);
         if (isEmpty(mPlayers)) {
             mPlayers = PlayerUtils.getPlayers(4);
         }
