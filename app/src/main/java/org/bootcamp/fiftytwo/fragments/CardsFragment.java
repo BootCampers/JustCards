@@ -31,6 +31,7 @@ import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_CIRCULAR;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_LAYOUT_TYPE;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
@@ -175,24 +176,21 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     private void setLayoutManager() {
-        if (TextUtils.isEmpty(layoutType)) {
-            StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-            RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
-            rvCardsList.addItemDecoration(overlapDecoration);
-            rvCardsList.setLayoutManager(staggeredGridLayoutManager);
-        } else {
-            CircleLayoutManager circleLayoutManager = new CircleLayoutManager(getContext());
-            circleLayoutManager
+        if (!TextUtils.isEmpty(layoutType) && layoutType.equalsIgnoreCase(LAYOUT_TYPE_CIRCULAR)) {
+            rvCardsList.addOnScrollListener(new CenterScrollListener());
+            rvCardsList.setLayoutManager(new CircleLayoutManager(getContext())
                     .setFirstChildRotate(-60)
                     .setIntervalAngle(15)
                     .setRadius(700)
                     .setRadialDistortionFactor(2)
                     .setContentOffsetX(-1)
                     .setContentOffsetY(-1)
-                    .setDegreeRangeWillShow(-60, 60);
-
-            rvCardsList.addOnScrollListener(new CenterScrollListener());
-            rvCardsList.setLayoutManager(circleLayoutManager);
+                    .setDegreeRangeWillShow(-60, 60));
+        } else {
+            RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
+            rvCardsList.addItemDecoration(overlapDecoration);
+            StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+            rvCardsList.setLayoutManager(staggeredGridLayoutManager);
         }
     }
 }

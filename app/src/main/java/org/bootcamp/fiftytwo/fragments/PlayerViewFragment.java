@@ -19,6 +19,8 @@ import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_CIRCULAR;
+import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_STAGGERED_HORIZONTAL;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_TABLE_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
@@ -70,8 +72,8 @@ public class PlayerViewFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Fragment playerCardsFragment = CardsFragment.newInstance(mPlayerCards, PLAYER_TAG, null);
-        Fragment tableCardsFragment = CardsFragment.newInstance(mTableCards, TABLE_TAG, null);
+        Fragment playerCardsFragment = CardsFragment.newInstance(mPlayerCards, PLAYER_TAG, LAYOUT_TYPE_CIRCULAR);
+        Fragment tableCardsFragment = CardsFragment.newInstance(mTableCards, TABLE_TAG, LAYOUT_TYPE_STAGGERED_HORIZONTAL);
 
         getChildFragmentManager()
                 .beginTransaction()

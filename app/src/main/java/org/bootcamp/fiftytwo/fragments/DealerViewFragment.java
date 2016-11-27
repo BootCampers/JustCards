@@ -33,6 +33,7 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_STAGGERED_HORIZONTAL;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
@@ -92,7 +93,7 @@ public class DealerViewFragment extends Fragment implements DealingOptionsFragme
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        dealerCardsFragment = CardsFragment.newInstance(mCards, DEALER_TAG, null);
+        dealerCardsFragment = CardsFragment.newInstance(mCards, DEALER_TAG, LAYOUT_TYPE_STAGGERED_HORIZONTAL);
 
         getChildFragmentManager()
                 .beginTransaction()
