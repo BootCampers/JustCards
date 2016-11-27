@@ -37,8 +37,7 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register">
+            android:name=".activities.RegisterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
