@@ -65,7 +65,7 @@
             app:srcCompat="@drawable/ic_deal"/>
 
         <Button
-            android:text="Deal"
+            android:text="@string/deal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnDeal"
@@ -83,7 +83,7 @@
             app:layout_constraintVertical_bias="1.0" />
 
         <Button
-            android:text="Score"
+            android:text="@string/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnScore"

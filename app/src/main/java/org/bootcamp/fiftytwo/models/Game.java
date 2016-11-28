@@ -4,9 +4,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.SaveCallback;
 
 import org.bootcamp.fiftytwo.utils.Constants;
 

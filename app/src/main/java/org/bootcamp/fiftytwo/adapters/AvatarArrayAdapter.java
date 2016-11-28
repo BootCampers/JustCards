@@ -37,7 +37,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         this.mContext = context;
         this.mAvatars = avatars;
         mListener = listener;
-        mAvatarUrls = (String[]) mAvatars.keySet().toArray(new String[mAvatars.keySet().size()]);
+        mAvatarUrls = mAvatars.keySet().toArray(new String[mAvatars.keySet().size()]);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
                 .centerCrop()
                 .into(holder.ivCard);
 
-        if(mAvatars.get(url) == true) {
+        if(mAvatars.get(url)) {
             holder.ivSelected.setVisibility(View.VISIBLE);
             holder.flSelected.setSelected(true);
         } else {
@@ -88,11 +88,11 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         }
 
         @OnClick(R.id.flSelectCard)
-        public void avatarSelected(){
+        void avatarSelected(){
             String selectedUrl = mAvatarUrls[getAdapterPosition()];
             mListener.onSelectedAvatar(selectedUrl);
             boolean isAlreadySelected = mAvatars.get(selectedUrl);
-            if(isAlreadySelected == true){
+            if(isAlreadySelected){
                 //make this unselected
                 mAvatars.put(selectedUrl, false);
                 notifyItemChanged(getAdapterPosition());
@@ -103,7 +103,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
                 }
                 mAvatars.put(selectedUrl, true);
                 notifyDataSetChanged();
-                //alternate is to remmeber last selected and toggle that
+                //alternate is to remember last selected and toggle that
             }
         }
     }

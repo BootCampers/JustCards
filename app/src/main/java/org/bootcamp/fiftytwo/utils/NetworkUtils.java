@@ -13,16 +13,14 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 /**
  * Created by baphna on 11/26/2016.
  */
-
 public class NetworkUtils {
 
     public static boolean isNetworkAvailable(final Context mContext) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         boolean result =  activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
 
-        if(result == false){
+        if(!result){
             Log.e(Constants.TAG, "No network");
 
             SweetAlertDialog pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);

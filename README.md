@@ -1,6 +1,6 @@
 # *52*
 
-**52** is an android app that allows a user to play card games on their android phone without needing physical cards. The game can be played by one user or a group of users. Any card game can be played in the app. Users can collaborate with other players, manage player positions, schuffle cards, show and hide cards.
+**52** is an android app that allows a user to play card games on their android phone without needing physical cards. The game can be played by one user or a group of users. Any card game can be played in the app. Users can collaborate with other players, manage player positions, shuffle cards, show and hide cards.
 
 ## User Stories
 
@@ -10,7 +10,7 @@ The following **required** functionality is completed:
 * [ ] Operator starts the session and creates a game id for other players to join.
 * [ ] Everyone can create a profile with name and pic/avatar.
 * [ ] As players join everyone’s screen will get a circular image view of the new user which he can drag around to place on the screen as he want to.
-  * [] Long press on user image will allow to move it around and single click will allow to let see the user profile and curren’t game score.
+  * [] Long press on user image will allow to move it around and single click will allow to let see the user profile and current game score.
 * [ ] Operator can choose how many deck of cards and which particular cards he wants to use for the game.
 * [ ] Everyone will have access to score sheet as read only except operator will have write permission.
 * [ ] Operator can deal the cards either manually by dragging cards onto user’s image or can distribute randomly. He can choose how many cards he want to distribute.

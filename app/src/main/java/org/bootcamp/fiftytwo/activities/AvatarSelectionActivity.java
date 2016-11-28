@@ -36,6 +36,7 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         for (String avatarURI : PlayerUtils.playerAvatars) {

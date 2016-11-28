@@ -14,9 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.parse.LogInCallback;
 import com.parse.ParseAnonymousUtils;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
@@ -43,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.userName) EditText usernameTextBox;
     @BindView(R.id.ivAvatar) ImageView avatarImageView;
     @BindView(R.id.edit_fab) FloatingActionButton browseButton;
-    @BindView(R.id.registerBttn) Button registerButton;
+    @BindView(R.id.registerBtn) Button registerButton;
     @BindView(R.id.register_form) ScrollView scrollView;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
 
@@ -103,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST, null);
     }
 
-    @OnClick(R.id.registerBttn)
+    @OnClick(R.id.registerBtn)
     public void register() {
         String username = usernameTextBox.getText().toString();
         String usernameSansWhiteSpace = username.replaceAll("\\s+", "");

@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.parse.LogInCallback;
 import com.parse.ParseAnonymousUtils;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.models.User;

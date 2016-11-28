@@ -36,7 +36,7 @@ public class SelectCardsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new SelectCardsAdapter(getContext(), new ArrayList<Card>());
+        mAdapter = new SelectCardsAdapter(getContext(), new ArrayList<>());
     }
 
     @Override

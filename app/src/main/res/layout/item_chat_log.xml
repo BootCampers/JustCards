@@ -9,7 +9,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:id="@+id/ivAvatar"
-        android:src="@drawable/ic_face"
+        app:srcCompat="@drawable/ic_face"
         app:civ_border_color="#EEEEEE"
         app:civ_border_width="2dp"
         app:civ_shadow="true"

@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">FiftyTwo</string>
 
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">Sign in</string>
@@ -20,11 +16,8 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_game_view_manager">GameViewManagerActivity</string>
-    <string name="action_settings">Settings</string>
     <string name="msg_no_cards">No cards</string>
     <string name="title_activity_select_cards">Select Cards</string>
-    <string name="browse_avatar">Browse for Avatar</string>
-    <string name="title_activity_register">Register User</string>
     <string name="register">Register</string>
     <string name="prompt_username">Username</string>
     <string name="create_game">Create Game</string>
@@ -33,14 +26,11 @@
     <string name="game_id">Game ID:  </string>
     <string name="start_game">Start Game</string>
     <string name="select_cards">Select Cards</string>
-    <string name="msg_enter_game_name">Enter game name</string>
 
     <string name="gcm_sender_id">id:761078236734</string>
 
     <string name="msg_send_to_table">Keep on table</string>
     <string name="msg_discard">Discard</string>
-    <string name="msg_facing_down">Facing down</string>
-    <string name="msg_facing_up">Facing up</string>
     <string name="title_activity_avatar_selection">Choose your Avatar</string>
     <string name="dealing_options">Deal Options</string>
     <string name="card_for_each_player">Card for each player</string>
@@ -53,4 +43,7 @@
     <string name="avatar_image_description">User Avatar Image</string>
     <string name="msg_score_sheet">Score sheet</string>
     <string name="msg_save">Save</string>
+    <string name="deal">Deal</string>
+    <string name="score">Score</string>
+    <string name="comment">Comment</string>
 </resources>
