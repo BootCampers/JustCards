@@ -55,7 +55,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     FrameLayout flCardsContainer;
 
     public interface OnLogEventListener {
-        void onNewLogEvent(String whoPosted, String detail);
+        void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
     }
 
     @Override
@@ -140,10 +140,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     @Override
-    public void logActivity(String whoPosted, String details) {
+    public void logActivity(String whoPosted, String avatarUri, String details) {
         Log.d(TAG, this.getClass().getSimpleName() + "--" + details + "--" + whoPosted);
         if (mListener != null) {
-            mListener.onNewLogEvent(whoPosted, details);
+            mListener.onNewLogEvent(whoPosted, avatarUri, details);
         }
     }
 

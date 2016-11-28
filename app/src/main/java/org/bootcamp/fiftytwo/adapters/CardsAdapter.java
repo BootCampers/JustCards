@@ -37,7 +37,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public interface CardsListener {
         void setEmptyList(boolean visibility);
         void publish(String fromTag, String toTag, Card card);
-        void logActivity(String whoPosted, String details);
+        void logActivity(String whoPosted, String fromAvatar, String details);
     }
 
     public CardsListener getCardsListener() {

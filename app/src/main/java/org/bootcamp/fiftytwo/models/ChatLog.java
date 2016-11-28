@@ -8,12 +8,14 @@ public class ChatLog {
 
     private String from;
     private String details;
+    private String fromAvatar;
 
     public ChatLog() {
     }
 
-    public ChatLog(String from, String details) {
+    public ChatLog(String from, String fromAvatar, String details) {
         this.from = from;
+        this.fromAvatar = fromAvatar;
         this.details = details;
     }
 
@@ -23,5 +25,9 @@ public class ChatLog {
 
     public String getDetails() {
         return details;
+    }
+
+    public String getFromAvatar() {
+        return fromAvatar;
     }
 }

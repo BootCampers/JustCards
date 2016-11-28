@@ -15,6 +15,7 @@ import android.widget.EditText;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.ChatAndLogAdapter;
 import org.bootcamp.fiftytwo.models.ChatLog;
+import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.views.DividerItemDecoration;
 
 import java.util.ArrayList;
@@ -78,7 +79,8 @@ public class ChatAndLogFragment extends Fragment {
         etNewMessage.setOnEditorActionListener((v, actionId, event) -> {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_SEND) {
-                addNewLogEvent("self", v.getText().toString());
+                User self = User.getCurrentUser(getActivity());
+                addNewLogEvent(self.getDisplayName(), self.getAvatarUri(), v.getText().toString());
                 etNewMessage.setText("");
                 etNewMessage.clearFocus();
                 handled = true;
@@ -89,8 +91,8 @@ public class ChatAndLogFragment extends Fragment {
         return view;
     }
 
-    public void addNewLogEvent(String whoPosted, String details) {
-        ChatLog chatLog = new ChatLog(whoPosted, details);
+    public void addNewLogEvent(String whoPosted, String fromAvatar, String details) {
+        ChatLog chatLog = new ChatLog(whoPosted, fromAvatar, details);
         chatLogs.add(chatLog);
         if (chatAndLogAdapter != null && recyclerView != null) {
             chatAndLogAdapter.notifyItemInserted(chatLogs.size() + 1);

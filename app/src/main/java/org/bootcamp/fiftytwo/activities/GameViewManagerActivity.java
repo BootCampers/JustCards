@@ -268,9 +268,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewLogEvent(String whoPosted, String details) {
+    public void onNewLogEvent(String whoPosted, String fromAvatar, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
-        chatAndLogFragment.addNewLogEvent(whoPosted, details);
+        chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
     }
 
     /**
@@ -354,7 +354,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
         PlayerViewHelper.addPlayers(this, R.id.clGameLayout, players);
         for (User player : players) {
-            onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
         }
     }
 
@@ -371,7 +371,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             } else {
                 Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
             }
-            onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " left.");
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " left.");
         }
     }
 
