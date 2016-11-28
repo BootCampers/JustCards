@@ -39,7 +39,6 @@
     <string name="deal_now">Deal Now</string>
     <string name="deal_to_self">Deal to Self</string>
     <string name="network_failure_msg">FAILED TO CONNECT TO NETWORK</string>
-    <string name="what_would_you_like_to_do">What would you like to do?</string>
     <string name="avatar_image_description">User Avatar Image</string>
     <string name="msg_score_sheet">Score sheet</string>
     <string name="msg_save">Save</string>

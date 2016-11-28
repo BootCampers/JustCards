@@ -1,7 +1,6 @@
 package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -27,22 +26,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
-import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 import static org.bootcamp.fiftytwo.utils.Constants.PICK_IMAGE_REQUEST;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
+import static org.bootcamp.fiftytwo.utils.Constants.SELECTED_AVATAR;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private String userAvatarURI = "";
 
-    @BindView(R.id.userName) EditText etUserName;
-    @BindView(R.id.ivAvatar) ImageView avatarImageView;
-    @BindView(R.id.edit_fab) FloatingActionButton browseButton;
-    @BindView(R.id.registerBtn) Button registerButton;
-    @BindView(R.id.register_form) ScrollView scrollView;
+    @BindView(R.id.etUserName) EditText etUserName;
+    @BindView(R.id.ivAvatar) ImageView ivAvatar;
+    @BindView(R.id.fabBrowseAvatar) FloatingActionButton fabBrowseAvatar;
+    @BindView(R.id.btnRegister) Button btnRegister;
+    @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
 
     @Override
@@ -62,28 +59,24 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        String userName = sharedPreferences.getString(DISPLAY_NAME, "");
-
         if (isNetworkAvailable(this)) {
             notifyNetworkFailure(false);
-            if (!userName.isEmpty()) {
-                String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
-                User user = new User(userAvatarURI, userName, User.getCurrentUser().getObjectId());
 
+            User user = User.get(this);
+            if (null != user) {
                 Intent selectGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
                 startActivity(selectGameIntent);
             } else {
                 userAvatarURI = PlayerUtils.getDefaultAvatar();
-                loadRoundedImage(this, avatarImageView, userAvatarURI);
+                loadRoundedImage(this, ivAvatar, userAvatarURI);
             }
         } else {
             notifyNetworkFailure(true);
         }
     }
 
-    @OnClick(R.id.edit_fab)
+    @OnClick(R.id.fabBrowseAvatar)
     public void browse() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
         startActivityForResult(intent, PICK_IMAGE_REQUEST, null);
@@ -94,19 +87,19 @@ public class RegisterActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            userAvatarURI = data.getStringExtra(Constants.SELECTED_AVATAR);
+            userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
             Log.d(Constants.TAG, userAvatarURI);
-            loadRoundedImage(this, avatarImageView, userAvatarURI);
+            loadRoundedImage(this, ivAvatar, userAvatarURI);
         }
     }
 
-    @OnClick(R.id.registerBtn)
+    @OnClick(R.id.btnRegister)
     public void register() {
         String username = etUserName.getText().toString().replaceAll("\\s+", "");
         if (username.isEmpty()) {
             Toast.makeText(this, "Username must have a value!", Toast.LENGTH_SHORT).show();
             etUserName.requestFocus();
-            scrollView.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
+            scrollViewRegister.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
             return;
         }
 
@@ -135,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void notifyNetworkFailure(boolean networkFailure) {
         networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
-        browseButton.setEnabled(!networkFailure);
-        registerButton.setEnabled(!networkFailure);
+        fabBrowseAvatar.setEnabled(!networkFailure);
+        btnRegister.setEnabled(!networkFailure);
     }
 }

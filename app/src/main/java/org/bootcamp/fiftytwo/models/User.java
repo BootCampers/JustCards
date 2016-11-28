@@ -68,13 +68,27 @@ public class User {
     public static User getCurrentUser(final Context context){
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
-        String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
+        String avatarUri = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
-        return new User(profilePic, displayName, userId);
+        return new User(avatarUri, displayName, userId);
     }
 
     public static ParseUser getCurrentUser() {
         return ParseUser.getCurrentUser();
+    }
+
+    public static User get(final Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+
+        String displayName = sharedPreferences.getString(DISPLAY_NAME, "");
+        String avatarUri = sharedPreferences.getString(USER_AVATAR_URI, "");
+        String userId = sharedPreferences.getString(USER_ID, "");
+
+        if (!displayName.isEmpty() && !userId.isEmpty()) {
+            return new User(avatarUri, displayName, userId);
+        } else {
+            return null;
+        }
     }
 
     public void save(final Context context) {

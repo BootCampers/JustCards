@@ -12,7 +12,7 @@
     tools:context="org.bootcamp.fiftytwo.activities.RegisterActivity">
 
     <ScrollView
-        android:id="@+id/register_form"
+        android:id="@+id/scrollViewRegister"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/activity_vertical_margin">
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/userName"
+                android:id="@+id/etUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/foggy_textbox"
@@ -38,13 +38,13 @@
                 android:id="@+id/ivAvatar"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_below="@+id/userName"
+                android:layout_below="@+id/etUserName"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:src="@mipmap/ic_default_avatar"/>
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/edit_fab"
+                android:id="@+id/fabBrowseAvatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/ivAvatar"
@@ -61,7 +61,7 @@
                 android:paddingRight="20dp">
 
                 <Button
-                    android:id="@+id/registerBtn"
+                    android:id="@+id/btnRegister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

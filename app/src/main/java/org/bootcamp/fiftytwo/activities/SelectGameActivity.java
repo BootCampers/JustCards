@@ -24,11 +24,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
 public class SelectGameActivity extends AppCompatActivity {
 
-    @BindView(R.id.joinGameButton) Button joinGameButton;
-    @BindView(R.id.createGameButton) Button createGameButton;
+    @BindView(R.id.btnJoinGame) Button btnJoinGame;
+    @BindView(R.id.btnCreateGame) Button btnCreateGame;
     @BindView(R.id.etGameName) EditText etGameName;
-    @BindView(R.id.welcomeText) TextView welcomeText;
-    @BindView(R.id.userAvatar) ImageView avatarImageView;
+    @BindView(R.id.tvWelcome) TextView tvWelcome;
+    @BindView(R.id.ivAvatar) ImageView ivAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class SelectGameActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         User user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
-        welcomeText.setText("Welcome " + user.getDisplayName() + "!");
-        loadRoundedImage(this, avatarImageView, user.getAvatarUri());
+        tvWelcome.setText("Welcome " + user.getDisplayName() + "!");
+        loadRoundedImage(this, ivAvatar, user.getAvatarUri());
     }
 
-    @OnClick(R.id.joinGameButton)
+    @OnClick(R.id.btnJoinGame)
     public void join(final View view) {
         if (etGameName.getText().toString().isEmpty()) {
             Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
@@ -53,7 +53,7 @@ public class SelectGameActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.createGameButton)
+    @OnClick(R.id.btnCreateGame)
     public void create() {
         Intent intent = new Intent(this, CreateGameActivity.class);
         startActivity(intent);
