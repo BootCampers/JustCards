@@ -124,6 +124,11 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     @Override
+    public void publish(String fromTag, String toTag, Card card) {
+        // Do Nothing as of now
+    }
+
+    @Override
     public void logActivity(String whoPosted, String details) {
         Log.d(TAG, this.getClass().getSimpleName() + "--" + details + "--" + whoPosted);
         if (mListener != null) {
