@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.DeleteCallback;
 import com.parse.ParseCloud;
+import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
@@ -130,7 +132,7 @@ public class ParseUtils {
         // Execute the find asynchronously
         query.findInBackground((itemList, e) -> {
             if (e == null) {
-                Log.d("item", "Found list : " + itemList.size());
+                Log.d(Constants.TAG, "Found list : " + itemList.size());
 
                 final HashSet<User> playersList = new HashSet<>();
 
@@ -144,7 +146,7 @@ public class ParseUtils {
                     }
                 }
             } else {
-                Log.e("item", "Error: " + e.getMessage());
+                Log.e(Constants.TAG, "Error: " + e.getMessage());
             }
         });
     }
@@ -157,7 +159,7 @@ public class ParseUtils {
         // Execute the find asynchronously
         query.findInBackground((itemList, e) -> {
             if (e == null) {
-                Log.d("item", "Found list : " + itemList.size());
+                Log.d(Constants.TAG, "Found list : " + itemList.size());
                 for (Game game : itemList) {
                     User element = game.getPlayer();
                     if (element.equals(user)) {
@@ -171,7 +173,7 @@ public class ParseUtils {
                     }
                 }
             } else {
-                Log.e("item", "Error: " + e.getMessage());
+                Log.e(Constants.TAG, "Error: " + e.getMessage());
             }
         });
     }
@@ -283,7 +285,7 @@ public class ParseUtils {
         query.whereEqualTo(PARAM_GAME_NAME, gameName);
         query.findInBackground((itemList, e) -> {
             if (e == null) {
-                Log.d("item", "Found list : " + itemList.size());
+                Log.d(Constants.TAG, " checkGameExists Found list : " + itemList.size());
                 if(context instanceof SelectGameActivity) {
                     if (itemList.size() != 0) {
                         ((SelectGameActivity)context).gameExistResult(true);
@@ -292,10 +294,41 @@ public class ParseUtils {
                     }
                 }
             } else {
-                Log.e("item", "Error: " + e.getMessage());
+                Log.e(Constants.TAG, "checkGameExists Error: " + e.getMessage());
                 if(context instanceof SelectGameActivity) {
                     ((SelectGameActivity) context).gameExistResult(false);
                 }
+            }
+        });
+    }
+
+    /**
+     * //TODO: Needs discussion
+     * //TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
+     * Existing players can continue to play the game even after dealer leaves. No one else can join.
+     * @param gameName
+     */
+    public void deleteGameFromServer(String gameName){
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d(Constants.TAG, "deleteGameFromServer Found list : " + itemList.size());
+                for (Game game : itemList) {
+                    game.deleteInBackground(new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e == null){
+                                Log.d(Constants.TAG, gameName + " deleted");
+                            } else {
+                                Log.e(Constants.TAG, "Failed to delete game on server " + e.getMessage());
+                            }
+                        }
+                    });
+                }
+
+            } else {
+                Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
             }
         });
     }
