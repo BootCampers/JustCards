@@ -1,6 +1,5 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -141,10 +140,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         if (isCurrentViewPlayer) {
             fab.setVisibility(View.GONE);
-            replaceContainerFragment(playerViewFragment, true);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.flGameContainer, playerViewFragment)
+                    .commit();
         } else {
-            replaceContainerFragment(dealerViewFragment, false);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.flGameContainer, playerViewFragment)
+                    .add(R.id.flGameContainer, dealerViewFragment)
+                    .hide(playerViewFragment)
+                    .commit();
         }
+        isShowingPlayerFragment = isCurrentViewPlayer;
 
         // TODO: This custom data generation is temporary and for testing purposes only
         if (isEmpty(mPlayers)) {
@@ -166,37 +174,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
-    private void replaceContainerFragment(Fragment fragment, boolean isPlayer) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flGameContainer, fragment)
-                .commit();
-        this.isShowingPlayerFragment = isPlayer;
-    }
-
     @OnClick(R.id.fab)
-    public void switchView(View view) {
+    public void switchView() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
-                .replace(R.id.flGameContainer, isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
+                .show(isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
                 .commit();
         this.isShowingPlayerFragment ^= true;
-    }
-
-    @OnClick(R.id.ibComment)
-    public void toggleChatAndLogView(View v) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (!isShowingChat) {
-            fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
-            ibComment.setImageDrawable(ic_cancel);
-            isShowingChat = true;
-        } else {
-            fragmentTransaction.remove(chatAndLogFragment);
-            ibComment.setImageDrawable(ic_comment);
-            isShowingChat = false;
-        }
-        fragmentTransaction.commit();
     }
 
     // TODO: may be use Dialog fragment and reuse that with other fragment when user leave??
@@ -215,6 +200,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @OnClick(R.id.ibComment)
+    public void toggleChatAndLogView(View v) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (!isShowingChat) {
+            fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
+            ibComment.setImageDrawable(ic_cancel);
+            isShowingChat = true;
+        } else {
+            fragmentTransaction.remove(chatAndLogFragment);
+            ibComment.setImageDrawable(ic_comment);
+            isShowingChat = false;
+        }
+        fragmentTransaction.commit();
     }
 
     @Override
