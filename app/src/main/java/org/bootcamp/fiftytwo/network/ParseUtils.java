@@ -278,21 +278,24 @@ public class ParseUtils {
         return new ArrayList<>();
     }
 
-    public void checkGameExists(SelectGameActivity selectGameActivity, String gameName){
+    public void checkGameExists(Context context, String gameName){
         ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
         query.whereEqualTo(PARAM_GAME_NAME, gameName);
         query.findInBackground((itemList, e) -> {
             if (e == null) {
                 Log.d("item", "Found list : " + itemList.size());
-                if(itemList.size() != 0) {
-                    selectGameActivity.gameExistResult(true);
-                } else {
-                    selectGameActivity.gameExistResult(false);
+                if(context instanceof SelectGameActivity) {
+                    if (itemList.size() != 0) {
+                        ((SelectGameActivity)context).gameExistResult(true);
+                    } else {
+                        ((SelectGameActivity)context).gameExistResult(false);
+                    }
                 }
-
             } else {
                 Log.e("item", "Error: " + e.getMessage());
-                selectGameActivity.gameExistResult(false);
+                if(context instanceof SelectGameActivity) {
+                    ((SelectGameActivity) context).gameExistResult(false);
+                }
             }
         });
     }
