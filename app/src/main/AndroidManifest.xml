@@ -30,10 +30,6 @@
         tools:replace="android:icon,android:theme">
 
         <activity
-            android:name=".activities.SplashActivity"
-            android:theme="@style/SplashTheme">
-        </activity>
-        <activity
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
