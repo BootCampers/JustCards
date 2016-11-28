@@ -164,8 +164,6 @@ public class DealerViewFragment extends Fragment
     }
 
     /**
-     * TODO: handle dealing with deal self selected and what to do with remaining cards
-     *
      * @param dealCount        No of cards to deal to each player
      * @param doRemainingCards action that defines handling of the remaining cards
      * @param doShuffle        whether to shuffle the cards before dealing
@@ -185,7 +183,6 @@ public class DealerViewFragment extends Fragment
                     cards = dealerFragment.shuffleCards();
                 }
                 for (User player : mPlayers) {
-                    // TODO: Need to add a condition to check whether the player is dealer here.
                     if (!doDealSelf) {
                         continue;
                     }
