@@ -94,9 +94,20 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         });
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
+        if(card.isShowingFront() == true){
+            Glide.with(mContext)
+                    .load(card.getDrawable(mContext))
+                    .into(holder.ivCard);
+        } else {
+            Glide.with(mContext)
+                    .load(card.getDrawableBack())
+                    .into(holder.ivCard);
+        }
+
         holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
             @Override
             public void onDoubleTap(MotionEvent event) {
+                //TODO: broadcast that user seen the card?
                 if (card.isShowingFront()) {
                     Glide.with(mContext)
                             .load(card.getDrawableBack())
