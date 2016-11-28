@@ -48,7 +48,7 @@ public class SelectGameActivity extends AppCompatActivity {
         } else {
             Intent gameViewManagerIntent = new Intent(SelectGameActivity.this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
-            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); //if false then it's dealer
+            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
         }
     }

@@ -48,7 +48,7 @@ public class PlayerUtils {
                 index = rand.nextInt(playerNames.length);
             }
             indices.add(index);
-            players.add(new User(playerAvatars[index], playerNames[index]));
+            players.add(new User(playerAvatars[index], playerNames[index], String.valueOf(rand.nextInt(10))));
         }
         return players;
     }

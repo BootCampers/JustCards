@@ -60,6 +60,11 @@ public class ParseUtils {
         return currentLoggedInUser;
     }
 
+    public void saveCurrentUser(boolean isDealer) {
+        currentLoggedInUser.setDealer(isDealer);
+        currentLoggedInUser.save(context);
+    }
+
     public static boolean isSelf(final User user) {
         return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
     }

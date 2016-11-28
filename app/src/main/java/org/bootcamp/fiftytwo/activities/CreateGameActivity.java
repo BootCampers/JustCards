@@ -72,7 +72,7 @@ public class CreateGameActivity extends AppCompatActivity {
             Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, tvGameNumber.getText().toString());
             gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
-            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); //do to dealer view by default
+            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); // go to dealer view by default
             startActivity(gameViewManagerIntent);
             finish();
         }

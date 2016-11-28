@@ -118,12 +118,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             gameName = bundle.getString(PARAM_GAME_NAME);
-            isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            Toast.makeText(getApplicationContext(), "Joining " + gameName, Toast.LENGTH_SHORT).show();
+            isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
+            Toast.makeText(getApplicationContext(), "Joining Game: " + gameName, Toast.LENGTH_SHORT).show();
 
             //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
+            parseUtils.saveCurrentUser(isCurrentViewPlayer);
+
             //Get previously joined players
             parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
             parseUtils.joinChannel();

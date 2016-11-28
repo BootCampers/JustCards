@@ -16,6 +16,7 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.IS_DEALER;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
@@ -28,14 +29,10 @@ public class User {
     private String userId; //match this with userId of Parse to keep them unique
     private String displayName;
     private String avatarUri;
-    private List<Card> cards = new ArrayList<>();
     private boolean isDealer;
+    private List<Card> cards = new ArrayList<>();
 
-    public User() {}
-
-    public User(String avatarUri, String displayName) {
-        this.avatarUri = avatarUri;
-        this.displayName = displayName;
+    public User() {
     }
 
     public User(String avatarUri, String displayName, String userId) {
@@ -65,7 +62,7 @@ public class User {
         return json;
     }
 
-    public static User getCurrentUser(final Context context){
+    public static User getCurrentUser(final Context context) {
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String displayName = userPrefs.getString(Constants.DISPLAY_NAME, "unknown");
         String avatarUri = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
@@ -79,7 +76,6 @@ public class User {
 
     public static User get(final Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-
         String displayName = sharedPreferences.getString(DISPLAY_NAME, "");
         String avatarUri = sharedPreferences.getString(USER_AVATAR_URI, "");
         String userId = sharedPreferences.getString(USER_ID, "");
@@ -92,12 +88,13 @@ public class User {
     }
 
     public void save(final Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(DISPLAY_NAME, displayName);
-        editor.putString(USER_AVATAR_URI, avatarUri);
-        editor.putString(USER_ID, userId);
-        editor.apply();
+        context.getSharedPreferences(USER_PREFS, MODE_PRIVATE)
+                .edit()
+                .putString(DISPLAY_NAME, displayName)
+                .putString(USER_AVATAR_URI, avatarUri)
+                .putString(USER_ID, userId)
+                .putBoolean(IS_DEALER, isDealer)
+                .apply();
     }
 
     public String getUserId() {
@@ -118,6 +115,10 @@ public class User {
 
     public boolean isDealer() {
         return isDealer;
+    }
+
+    public void setDealer(boolean dealer) {
+        isDealer = dealer;
     }
 
     @Override

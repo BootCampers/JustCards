@@ -19,7 +19,8 @@ public class Constants {
     public static final String USER_PREFS = "userPrefs";
     public static final String DISPLAY_NAME = "displayName";
     public static final String USER_AVATAR_URI = "avatarURI";
-    public static final String USER_ID = "userId"; // this
+    public static final String USER_ID = "userId";
+    public static final String IS_DEALER = "isDealer";
 
     /** Request Codes Here */
     public static final int REQ_CODE_SELECT_CARDS = 1;
