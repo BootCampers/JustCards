@@ -11,10 +11,8 @@ public class Constants {
     public static final String DEALER_TAG = "dealer";
     public static final String PLAYER_TAG = "player";
     public static final String TABLE_TAG = "table";
-    public static final String USER_TAG = "user";
     public static final String DEALING_OPTIONS_TAG = "dealingOptions";
     public static final String SCORING_OPTIONS_TAG = "scoringOptions";
-
 
     /** Preference Keys here */
     /*DO NOT CHANGE ==  MUST match with member variables of User class*/
@@ -32,6 +30,7 @@ public class Constants {
     public static final String PARAM_CARDS = "cards";
     public static final String PARAM_PLAYERS = "players";
     public static final String PARAM_PLAYER = "player";
+    public static final String PARAM_USER = "user";
     public static final String PARAM_X = "PARAM_X";
     public static final String PARAM_Y = "PARAM_Y";
     public static final String PARAM_PLAYER_CARDS = "playerCards";

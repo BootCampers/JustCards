@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.parse.ParseUser;
+
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +71,19 @@ public class User {
         String profilePic = userPrefs.getString(Constants.USER_AVATAR_URI, getDefaultAvatar());
         String userId = userPrefs.getString(Constants.USER_ID, "usedIdUnknown");
         return new User(profilePic, displayName, userId);
+    }
+
+    public static ParseUser getCurrentUser() {
+        return ParseUser.getCurrentUser();
+    }
+
+    public void save(final Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(DISPLAY_NAME, displayName);
+        editor.putString(USER_AVATAR_URI, avatarUri);
+        editor.putString(USER_ID, userId);
+        editor.apply();
     }
 
     public String getUserId() {

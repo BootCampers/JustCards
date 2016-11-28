@@ -11,15 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
-import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
 public class SelectGameActivity extends AppCompatActivity {
 
@@ -35,10 +36,9 @@ public class SelectGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_game);
         ButterKnife.bind(this);
 
-        Bundle extras = getIntent().getExtras();
-
-        welcomeText.setText("Welcome " + extras.get(DISPLAY_NAME) + "!");
-        loadRoundedImage(this, avatarImageView, extras.get(USER_AVATAR_URI));
+        User user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
+        welcomeText.setText("Welcome " + user.getDisplayName() + "!");
+        loadRoundedImage(this, avatarImageView, user.getAvatarUri());
     }
 
     @OnClick(R.id.joinGameButton)

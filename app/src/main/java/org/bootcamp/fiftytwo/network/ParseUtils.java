@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import com.parse.ParseCloud;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
@@ -62,7 +61,7 @@ public class ParseUtils {
     }
 
     public static boolean isSelf(final User user) {
-        return user.getUserId().equalsIgnoreCase(ParseUser.getCurrentUser().getObjectId());
+        return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
     }
 
     public void joinChannel() {

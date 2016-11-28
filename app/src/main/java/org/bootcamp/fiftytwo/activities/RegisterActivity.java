@@ -15,12 +15,12 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.parse.ParseAnonymousUtils;
-import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,17 +28,17 @@ import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
+import static org.bootcamp.fiftytwo.utils.Constants.PICK_IMAGE_REQUEST;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
-import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_PREFS;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private SharedPreferences sharedPreferences;
     private String userAvatarURI = "";
 
-    @BindView(R.id.userName) EditText usernameTextBox;
+    @BindView(R.id.userName) EditText etUserName;
     @BindView(R.id.ivAvatar) ImageView avatarImageView;
     @BindView(R.id.edit_fab) FloatingActionButton browseButton;
     @BindView(R.id.registerBtn) Button registerButton;
@@ -51,82 +51,72 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
 
-        if (ParseUser.getCurrentUser() != null) {
+        if (User.getCurrentUser() != null) {
             startWithCurrentUser();
         } else {
             loginToParse();
         }
-
-        sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        userAvatarURI = PlayerUtils.getDefaultAvatar();
-        loadRoundedImage(this, avatarImageView, userAvatarURI);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         String userName = sharedPreferences.getString(DISPLAY_NAME, "");
 
-        if (isNetworkAvailable(RegisterActivity.this)) {
+        if (isNetworkAvailable(this)) {
             notifyNetworkFailure(false);
             if (!userName.isEmpty()) {
                 String userAvatarURI = sharedPreferences.getString(USER_AVATAR_URI, "");
-                //TODO: get from Parse server??
-                User user = new User(userAvatarURI, userName);
-                Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
-                createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
-                createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
-                createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
-                startActivity(createGameIntent);
+                User user = new User(userAvatarURI, userName, User.getCurrentUser().getObjectId());
+
+                Intent selectGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
+                selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
+                startActivity(selectGameIntent);
+            } else {
+                userAvatarURI = PlayerUtils.getDefaultAvatar();
+                loadRoundedImage(this, avatarImageView, userAvatarURI);
             }
         } else {
             notifyNetworkFailure(true);
         }
     }
 
+    @OnClick(R.id.edit_fab)
+    public void browse() {
+        Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST, null);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             userAvatarURI = data.getStringExtra(Constants.SELECTED_AVATAR);
             Log.d(Constants.TAG, userAvatarURI);
             loadRoundedImage(this, avatarImageView, userAvatarURI);
         }
     }
 
-    @OnClick(R.id.edit_fab)
-    public void browse() {
-        Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
-        startActivityForResult(intent, Constants.PICK_IMAGE_REQUEST, null);
-    }
-
     @OnClick(R.id.registerBtn)
     public void register() {
-        String username = usernameTextBox.getText().toString();
-        String usernameSansWhiteSpace = username.replaceAll("\\s+", "");
-        if (usernameSansWhiteSpace.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Username must have a value!", Toast.LENGTH_SHORT).show();
-            usernameTextBox.requestFocus();
-            scrollView.scrollTo(usernameTextBox.getScrollX(), usernameTextBox.getScrollY());
+        String username = etUserName.getText().toString().replaceAll("\\s+", "");
+        if (username.isEmpty()) {
+            Toast.makeText(this, "Username must have a value!", Toast.LENGTH_SHORT).show();
+            etUserName.requestFocus();
+            scrollView.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
             return;
         }
 
-        User user = new User(userAvatarURI, username);
+        User user = new User(userAvatarURI, username, User.getCurrentUser().getObjectId());
+        user.save(this);
 
-        SharedPreferences userPrefs = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = userPrefs.edit();
-        editor.putString(DISPLAY_NAME, username);
-        editor.putString(USER_AVATAR_URI, user.getAvatarUri());
-        editor.putString(USER_ID, ParseUser.getCurrentUser().getObjectId());
-        editor.apply();
-
-        Intent createGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
-        createGameIntent.putExtra(USER_AVATAR_URI, user.getAvatarUri());
-        createGameIntent.putExtra(DISPLAY_NAME, user.getDisplayName());
-        createGameIntent.putExtra(USER_ID, ParseUser.getCurrentUser().getObjectId());
+        Intent selectGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
+        selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
         finish();
-        startActivity(createGameIntent);
+        startActivity(selectGameIntent);
     }
 
     private void loginToParse() {
@@ -144,11 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void notifyNetworkFailure(boolean networkFailure) {
-        if (networkFailure)
-            networkFailureBanner.setVisibility(View.VISIBLE);
-        else
-            networkFailureBanner.setVisibility(View.GONE);
-
+        networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
         browseButton.setEnabled(!networkFailure);
         registerButton.setEnabled(!networkFailure);
     }
