@@ -53,11 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             loginToParse();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         if (isNetworkAvailable(this)) {
             notifyNetworkFailure(false);
@@ -67,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent selectGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);
                 selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
                 startActivity(selectGameIntent);
+                finish();
             } else {
                 userAvatarURI = PlayerUtils.getDefaultAvatar();
                 loadRoundedImage(this, ivAvatar, userAvatarURI);
@@ -74,6 +70,11 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             notifyNetworkFailure(true);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @OnClick(R.id.fabBrowseAvatar)
