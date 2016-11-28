@@ -64,20 +64,17 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         }
         holder.flSelected.setTag(card);
 
-        holder.flSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Card card = (Card) v.getTag();
-                if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    if (holder.ivSelected.getVisibility() == View.VISIBLE) {
-                        holder.ivSelected.setVisibility(View.INVISIBLE);
-                        v.setSelected(false);
-                        card.setSelected(false);
-                    } else {
-                        holder.ivSelected.setVisibility(View.VISIBLE);
-                        v.setSelected(true);
-                        card.setSelected(true);
-                    }
+        holder.flSelected.setOnClickListener(v -> {
+            Card card1 = (Card) v.getTag();
+            if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                if (holder.ivSelected.getVisibility() == View.VISIBLE) {
+                    holder.ivSelected.setVisibility(View.INVISIBLE);
+                    v.setSelected(false);
+                    card1.setSelected(false);
+                } else {
+                    holder.ivSelected.setVisibility(View.VISIBLE);
+                    v.setSelected(true);
+                    card1.setSelected(true);
                 }
             }
         });

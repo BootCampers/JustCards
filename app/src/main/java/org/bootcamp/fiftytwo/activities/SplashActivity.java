@@ -56,14 +56,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void login() {
-        ParseAnonymousUtils.logIn(new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    Log.e("DEBUG", "Anonymous login failed: ", e);
-                } else {
-                    startWithCurrentUser();
-                }
+        ParseAnonymousUtils.logIn((user, e) -> {
+            if (e != null) {
+                Log.e("DEBUG", "Anonymous login failed: ", e);
+            } else {
+                startWithCurrentUser();
             }
         });
     }

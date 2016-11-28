@@ -72,15 +72,12 @@ public class ParseUtils {
 
     public void joinChannel() {
         if (isNetworkAvailable(context)) {
-            ParsePush.subscribeInBackground(gameName, new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        Log.d(TAG, "done: Join Channel Succeeded!");
-                        changeGameParticipation(true);
-                    } else {
-                        Log.e(TAG, "done: Join Channel Failed: " + e.getMessage());
-                    }
+            ParsePush.subscribeInBackground(gameName, e -> {
+                if (e == null) {
+                    Log.d(TAG, "done: Join Channel Succeeded!");
+                    changeGameParticipation(true);
+                } else {
+                    Log.e(TAG, "done: Join Channel Failed: " + e.getMessage());
                 }
             });
         }
@@ -95,14 +92,11 @@ public class ParseUtils {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
-            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, new FunctionCallback<Object>() {
-                @Override
-                public void done(Object object, ParseException e) {
-                    if (e == null) {
-                        Log.d(TAG, "sendBroadcastWithPayload: Succeeded!");
-                    } else {
-                        Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
-                    }
+            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
+                if (e == null) {
+                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded!");
+                } else {
+                    Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
                 }
             });
         }
@@ -134,25 +128,23 @@ public class ParseUtils {
         // Define our query conditions
         query.whereEqualTo(PARAM_GAME_NAME, gameName);
         // Execute the find asynchronously
-        query.findInBackground(new FindCallback<Game>() {
-            public void done(List<Game> itemList, ParseException e) {
-                if (e == null) {
-                    Log.d("item", "Found list : " + itemList.size());
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d("item", "Found list : " + itemList.size());
 
-                    final HashSet<User> playersList = new HashSet<>();
+                final HashSet<User> playersList = new HashSet<>();
 
-                    for (Game game : itemList) {
-                        playersList.add(game.getPlayer());
-                    }
-
-                    for (User player : playersList) {
-                        if (!isSelf(player)) {
-                            gameViewManagerActivity.addPlayersToView(getList(player));
-                        }
-                    }
-                } else {
-                    Log.e("item", "Error: " + e.getMessage());
+                for (Game game : itemList) {
+                    playersList.add(game.getPlayer());
                 }
+
+                for (User player : playersList) {
+                    if (!isSelf(player)) {
+                        gameViewManagerActivity.addPlayersToView(getList(player));
+                    }
+                }
+            } else {
+                Log.e("item", "Error: " + e.getMessage());
             }
         });
     }
@@ -163,28 +155,23 @@ public class ParseUtils {
         // Define our query conditions
         query.whereEqualTo(PARAM_GAME_NAME, gameName);
         // Execute the find asynchronously
-        query.findInBackground(new FindCallback<Game>() {
-            public void done(List<Game> itemList, ParseException e) {
-                if (e == null) {
-                    Log.d("item", "Found list : " + itemList.size());
-                    for (Game game : itemList) {
-                        User element = game.getPlayer();
-                        if (element.equals(user)) {
-                            game.deleteInBackground(new DeleteCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    if (e == null) {
-                                        Log.e(Constants.TAG, "Success delete ");
-                                    } else {
-                                        Log.e(Constants.TAG, "Delete error " + e.getMessage());
-                                    }
-                                }
-                            });
-                        }
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d("item", "Found list : " + itemList.size());
+                for (Game game : itemList) {
+                    User element = game.getPlayer();
+                    if (element.equals(user)) {
+                        game.deleteInBackground(e1 -> {
+                            if (e1 == null) {
+                                Log.e(Constants.TAG, "Success delete ");
+                            } else {
+                                Log.e(Constants.TAG, "Delete error " + e1.getMessage());
+                            }
+                        });
                     }
-                } else {
-                    Log.e("item", "Error: " + e.getMessage());
                 }
+            } else {
+                Log.e("item", "Error: " + e.getMessage());
             }
         });
     }

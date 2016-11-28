@@ -42,12 +42,9 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
         holder.mItem = mValues.get(position);
         holder.tvContent.setText(mValues.get(position).getDetails());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onChat(holder.mItem);
-                }
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                mListener.onChat(holder.mItem);
             }
         });
     }

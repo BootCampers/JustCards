@@ -32,12 +32,9 @@ public class NetworkUtils {
             pDialog.setCancelable(true);
             pDialog.setContentText("We are unable to connect to our servers. Please check network connection!");
 
-            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                @Override
-                public void onClick(SweetAlertDialog sDialog) {
-                    mContext.startActivity(new Intent(Settings.ACTION_SETTINGS));
-                    sDialog.dismissWithAnimation();
-                }
+            pDialog.setConfirmClickListener(sDialog -> {
+                mContext.startActivity(new Intent(Settings.ACTION_SETTINGS));
+                sDialog.dismissWithAnimation();
             });
             pDialog.show();
         }

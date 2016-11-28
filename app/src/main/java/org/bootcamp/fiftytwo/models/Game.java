@@ -37,14 +37,11 @@ public class Game extends ParseObject {
         Game game = new Game();
         game.setGameName(gameName);
         game.addPlayer(player);
-        game.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(Constants.TAG, "Passed");
-                } else {
-                    Log.d(Constants.TAG, "Null " + e.getMessage());
-                }
+        game.saveInBackground(e -> {
+            if (e == null) {
+                Log.d(Constants.TAG, "Passed");
+            } else {
+                Log.d(Constants.TAG, "Null " + e.getMessage());
             }
         });
     }

@@ -77,18 +77,15 @@ public class ChatAndLogFragment extends Fragment {
         recyclerView.setAdapter(chatAndLogAdapter);
         recyclerView.smoothScrollToPosition(chatLogs.size());
 
-        etNewMessage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    addNewLogEvent("self", v.getText().toString());
-                    etNewMessage.setText("");
-                    etNewMessage.clearFocus();
-                    handled = true;
-                }
-                return handled;
+        etNewMessage.setOnEditorActionListener((v, actionId, event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                addNewLogEvent("self", v.getText().toString());
+                etNewMessage.setText("");
+                etNewMessage.clearFocus();
+                handled = true;
             }
+            return handled;
         });
 
         return view;

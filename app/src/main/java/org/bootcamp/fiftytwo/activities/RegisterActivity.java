@@ -132,14 +132,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void loginToParse() {
-        ParseAnonymousUtils.logIn(new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
-                } else {
-                    startWithCurrentUser();
-                }
+        ParseAnonymousUtils.logIn((user, e) -> {
+            if (e != null) {
+                Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
+            } else {
+                startWithCurrentUser();
             }
         });
     }

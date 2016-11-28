@@ -206,15 +206,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exiting from game")
                 .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        parseUtils.changeGameParticipation(false);
-                        parseUtils.removeChannel();
-                        parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(GameViewManagerActivity.this));
-                        ((FiftyTwoApplication) getApplication()).removeAllObservers();
-                        finish();
-                    }
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    parseUtils.changeGameParticipation(false);
+                    parseUtils.removeChannel();
+                    parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(GameViewManagerActivity.this));
+                    ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                    finish();
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -276,21 +273,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         switch (event) {
             case PARSE_NEW_PLAYER_ADDED:
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        User user = User.fromJson((JSONObject) arg);
-                        addPlayersToView(getList(user));
-                    }
+                runOnUiThread(() -> {
+                    User user = User.fromJson((JSONObject) arg);
+                    addPlayersToView(getList(user));
                 });
                 break;
             case PARSE_PLAYER_LEFT:
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        User user = User.fromJson((JSONObject) arg);
-                        removePlayersFromView(getList(user));
-                    }
+                runOnUiThread(() -> {
+                    User user = User.fromJson((JSONObject) arg);
+                    removePlayersFromView(getList(user));
                 });
                 break;
             case PARSE_DEAL_CARDS:
