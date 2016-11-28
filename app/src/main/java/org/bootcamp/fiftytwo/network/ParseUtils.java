@@ -11,6 +11,7 @@ import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
+import org.bootcamp.fiftytwo.activities.CreateGameActivity;
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.activities.SelectGameActivity;
 import org.bootcamp.fiftytwo.models.Card;
@@ -280,6 +281,7 @@ public class ParseUtils {
         return new ArrayList<>();
     }
 
+    //TODO: may be make gameExistResult method in interface or another helper class?
     public void checkGameExists(Context context, String gameName){
         ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
         query.whereEqualTo(PARAM_GAME_NAME, gameName);
@@ -292,11 +294,20 @@ public class ParseUtils {
                     } else {
                         ((SelectGameActivity)context).gameExistResult(false);
                     }
+                } else if( context instanceof CreateGameActivity){
+                    if (itemList.size() != 0) {
+                        ((CreateGameActivity)context).gameExistResult(true);
+                    } else {
+                        ((CreateGameActivity)context).gameExistResult(false);
+                    }
                 }
             } else {
                 Log.e(Constants.TAG, "checkGameExists Error: " + e.getMessage());
                 if(context instanceof SelectGameActivity) {
                     ((SelectGameActivity) context).gameExistResult(false);
+                } else if( context instanceof CreateGameActivity){
+                    //Assuming it's ok
+                    ((CreateGameActivity)context).gameExistResult(false);
                 }
             }
         });

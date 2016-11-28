@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -36,6 +37,8 @@ public class CreateGameActivity extends AppCompatActivity {
     @BindView(R.id.btnStartGame) Button btnStartGame;
     @BindView(R.id.btnSelectCards) Button btnSelectCards;
 
+    private ParseUtils parseUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,8 @@ public class CreateGameActivity extends AppCompatActivity {
 
         int gameNumber = new Random().nextInt(99999);
         String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
+        parseUtils = new ParseUtils(CreateGameActivity.this, gameNumberString);
+        parseUtils.checkGameExists(CreateGameActivity.this, gameNumberString);
         tvGameNumber.setText(gameNumberString);
     }
 
@@ -78,4 +83,12 @@ public class CreateGameActivity extends AppCompatActivity {
         }
     }
 
+    public void gameExistResult(boolean isExist) {
+        if(isExist == true) {
+            int gameNumber = new Random().nextInt(99999);
+            String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
+            parseUtils.checkGameExists(CreateGameActivity.this, gameNumberString);
+            tvGameNumber.setText(gameNumberString);
+        }
+    }
 }
