@@ -184,9 +184,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .show(isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
                 .commit();
         this.isShowingPlayerFragment ^= true;
+        toggleSelfView();
     }
 
-    // TODO: may be use Dialog fragment and reuse that with other fragment when user leave??
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -271,6 +271,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         chatAndLogFragment.addNewLogEvent(whoPosted, details);
     }
 
+    /**
+     * Hide self view if it's in player fragment. Show in dealer.
+     */
+    private void toggleSelfView() {
+        User self = User.getCurrentUser(GameViewManagerActivity.this);
+        String playerTag = getPlayerFragmentTag(self);
+        Fragment playerFragmentByTag = getSupportFragmentManager().findFragmentByTag(playerTag);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (isShowingPlayerFragment == true) {
+            transaction.hide(playerFragmentByTag);
+        } else {
+            transaction.show(playerFragmentByTag);
+        }
+        transaction.commit();
+    }
+
     @Override
     public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
@@ -281,6 +297,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     User user = User.fromJson((JSONObject) arg);
                     addPlayersToView(getList(user));
+                    if(user.isDealer() && user.equals(User.getCurrentUser(GameViewManagerActivity.this))){
+                        toggleSelfView();
+                    }
                 });
                 break;
             case PARSE_PLAYER_LEFT:
