@@ -197,6 +197,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     parseUtils.changeGameParticipation(false);
                     parseUtils.removeChannel();
                     parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(this));
+                    if(User.getCurrentUser(this).isDealer() == true) {
+                        parseUtils.deleteGameFromServer(gameName);
+                    }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
                     finish();
                 })
