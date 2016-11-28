@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.parse.ParseUser;
-
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 
 /**
  * Created by baphna on 11/18/2016.
@@ -63,9 +63,5 @@ public class ParseReceiver extends BroadcastReceiver {
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean isSelf(final User user) {
-        return user.getUserId().equalsIgnoreCase(ParseUser.getCurrentUser().getObjectId());
     }
 }

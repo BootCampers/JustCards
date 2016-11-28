@@ -46,7 +46,7 @@ public class SelectCardsFragment extends Fragment {
 
         List<Card> cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 8);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 6);
         rvCards.setAdapter(mAdapter);
         rvCards.setLayoutManager(layoutManager);
         mAdapter.addAll(cards);

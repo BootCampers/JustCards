@@ -12,6 +12,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
@@ -63,6 +64,10 @@ public class ParseUtils {
 
     public User getCurrentUser() {
         return currentLoggedInUser;
+    }
+
+    public static boolean isSelf(final User user) {
+        return user.getUserId().equalsIgnoreCase(ParseUser.getCurrentUser().getObjectId());
     }
 
     public void joinChannel() {
@@ -141,6 +146,9 @@ public class ParseUtils {
 
                     for (User player : playersList) {
                         gameViewManagerActivity.addPlayersToView(getList(player));
+                        /*if (!isSelf(player)) {
+                            gameViewManagerActivity.addPlayersToView(getList(player));
+                        }*/
                     }
                 } else {
                     Log.e("item", "Error: " + e.getMessage());

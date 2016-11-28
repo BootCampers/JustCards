@@ -1,56 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/screen_background"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="@drawable/screen_background"
     tools:context="org.bootcamp.fiftytwo.activities.RegisterActivity">
 
     <ScrollView
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:id="@+id/register_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_username"
                 android:background="@drawable/foggy_textbox"
+                android:hint="@string/prompt_username"
                 android:inputType="textPersonName"
-                android:textColorHint="@color/colorAccent"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
+                android:maxLines="1"
                 android:padding="10dp"
-                android:maxLines="1" />
-
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorAccent"
+                android:textSize="20sp"/>
 
             <ImageView
                 android:id="@+id/ivAvatar"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@mipmap/ic_default_avatar"
                 android:layout_below="@+id/userName"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"/>
-
+                android:layout_marginTop="20dp"
+                android:src="@mipmap/ic_default_avatar"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/edit_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/ivAvatar"
+                android:layout_alignEnd="@id/ivAvatar"
                 android:layout_alignRight="@id/ivAvatar"
                 app:srcCompat="@drawable/ic_action_edit"/>
 
@@ -58,42 +57,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ivAvatar"
+                android:layout_marginTop="20dp"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:layout_marginTop="20dp">
+                android:paddingRight="20dp">
+
                 <Button
                     android:id="@+id/registerBttn"
-                    android:text="@string/register"
-                    android:textColor="@color/white"
-                    android:background="@drawable/red_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
+                    android:background="@drawable/red_button"
                     android:shadowColor="#696969"
                     android:shadowDx="0"
                     android:shadowDy="0"
-                    android:shadowRadius="5" />
+                    android:shadowRadius="5"
+                    android:text="@string/register"
+                    android:textColor="@color/white"/>
+
             </RelativeLayout>
+
         </RelativeLayout>
+
     </ScrollView>
 
     <RelativeLayout
         android:id="@+id/networkFailureBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:background="@color/red_btn_bg_color"
         android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
+            android:layout_centerInParent="true"
             android:text="@string/network_failure_msg"
-            android:layout_centerInParent="true"/>
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
     </RelativeLayout>
 
 </RelativeLayout>

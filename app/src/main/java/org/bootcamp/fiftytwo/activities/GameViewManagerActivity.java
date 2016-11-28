@@ -170,7 +170,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void replaceContainerFragment(Fragment fragment, boolean isPlayer) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.flGameContainer, fragment)
+                .add(R.id.flGameContainer, fragment)
                 .commit();
         this.isShowingPlayerFragment = isPlayer;
     }

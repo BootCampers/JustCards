@@ -1,20 +1,14 @@
 package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -23,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 
@@ -43,7 +38,7 @@ public class SelectGameActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         welcomeText.setText("Welcome " + extras.get(DISPLAY_NAME) + "!");
-        loadAvatar(extras.get(USER_AVATAR_URI));
+        loadRoundedImage(this, avatarImageView, extras.get(USER_AVATAR_URI));
     }
 
     @OnClick(R.id.joinGameButton)
@@ -60,22 +55,8 @@ public class SelectGameActivity extends AppCompatActivity {
 
     @OnClick(R.id.createGameButton)
     public void create() {
-        startActivity(new Intent(SelectGameActivity.this, CreateGameActivity.class));
-    }
-
-    private void loadAvatar(Object userAvatarURI) {
-        Glide.with(this)
-                .load(userAvatarURI)
-                .asBitmap()
-                .centerCrop()
-                .into(new BitmapImageViewTarget(avatarImageView) {
-                    @Override
-                    protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
-                        circularBitmapDrawable.setCircular(true);
-                        avatarImageView.setImageDrawable(circularBitmapDrawable);
-                    }
-                });
+        Intent intent = new Intent(this, CreateGameActivity.class);
+        startActivity(intent);
     }
 
 }
