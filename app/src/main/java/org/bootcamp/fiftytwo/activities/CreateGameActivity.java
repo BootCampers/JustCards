@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.ParseObject;
-
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -34,7 +32,7 @@ public class CreateGameActivity extends AppCompatActivity {
 
     private List<Card> mCards = new ArrayList<>();
 
-    @BindView(R.id.gameIDNumber) TextView gameIdNumber;
+    @BindView(R.id.tvGameNumber) TextView tvGameNumber;
     @BindView(R.id.btnStartGame) Button btnStartGame;
     @BindView(R.id.btnSelectCards) Button btnSelectCards;
 
@@ -44,36 +42,15 @@ public class CreateGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_game);
         ButterKnife.bind(this);
 
-        int gameId = new Random().nextInt(99999);
-        String gameIDString = String.format(Locale.getDefault(), "%05d", gameId);
-        gameIdNumber.setText(gameIDString);
+        int gameNumber = new Random().nextInt(99999);
+        String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
+        tvGameNumber.setText(gameNumberString);
     }
 
     @OnClick(R.id.btnSelectCards)
     public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
-    }
-
-    @OnClick(R.id.btnStartGame)
-    public void startGame(View view) {
-        if (TextUtils.isEmpty(gameIdNumber.getText())) {
-            Snackbar.make(view, "Please enter game name first", Snackbar.LENGTH_SHORT).show();
-        } else if (mCards == null || mCards.size() == 0) {
-            Snackbar.make(view, "Please select cards for the game", Snackbar.LENGTH_SHORT).show();
-        } else {
-            ParseObject testObject = new ParseObject("TestObject");
-            testObject.put("foo", "bar");
-            testObject.saveInBackground();
-
-            Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
-            gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, gameIdNumber.getText().toString());
-            gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
-            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); //do to dealer view by default
-            startActivity(gameViewManagerIntent);
-
-            finish();
-        }
     }
 
     @Override
@@ -84,4 +61,21 @@ public class CreateGameActivity extends AppCompatActivity {
             Toast.makeText(this, "Selected Total: " + mCards.size() + " Cards", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @OnClick(R.id.btnStartGame)
+    public void startGame(View view) {
+        if (TextUtils.isEmpty(tvGameNumber.getText())) {
+            Snackbar.make(view, "Please enter game name first", Snackbar.LENGTH_SHORT).show();
+        } else if (mCards == null || mCards.size() == 0) {
+            Snackbar.make(view, "Please select cards for the game", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
+            gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, tvGameNumber.getText().toString());
+            gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
+            gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); //do to dealer view by default
+            startActivity(gameViewManagerIntent);
+            finish();
+        }
+    }
+
 }
