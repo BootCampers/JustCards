@@ -10,6 +10,7 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
+import org.bootcamp.fiftytwo.activities.SelectGameActivity;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
@@ -275,6 +276,25 @@ public class ParseUtils {
     //TODO
     public List<User> fetchAllTableCards() {
         return new ArrayList<>();
+    }
+
+    public void checkGameExists(SelectGameActivity selectGameActivity, String gameName){
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d("item", "Found list : " + itemList.size());
+                if(itemList.size() != 0) {
+                    selectGameActivity.gameExistResult(true);
+                } else {
+                    selectGameActivity.gameExistResult(false);
+                }
+
+            } else {
+                Log.e("item", "Error: " + e.getMessage());
+                selectGameActivity.gameExistResult(false);
+            }
+        });
     }
 
 }
