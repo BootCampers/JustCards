@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.bootcamp.fiftytwo.R;
@@ -50,6 +51,8 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
 
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
+    @BindView(R.id.flCardsContainer)
+    FrameLayout flCardsContainer;
 
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String detail);
@@ -110,6 +113,14 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         rvCardsList.setAdapter(mAdapter);
         tvNoCards.setOnDragListener(mAdapter.getDragInstance());
         setEmptyList(mAdapter.getItemCount() == 0);
+    }
+
+    public void toggleCardsView(boolean show){
+        if(show ==  true){
+            flCardsContainer.setVisibility(View.VISIBLE);
+        } else {
+            flCardsContainer.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -128,4 +128,8 @@ public class PlayerFragment extends CardsFragment {
         final ViewGroup container = (ViewGroup) view.getParent();
         view.setOnTouchListener(new OnTouchMoveListener(container));
     }
+
+    public void toggleCardsVisibility(boolean show) {
+        toggleCardsView(show);
+    }
 }

@@ -155,6 +155,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .commit();
         }
         isShowingPlayerFragment = isCurrentViewPlayer;
+        toggleAllUsersCardsView(!isShowingPlayerFragment);
 
         // TODO: This custom data generation is temporary and for testing purposes only
         if (isEmpty(mPlayers)) {
@@ -185,6 +186,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .commit();
         this.isShowingPlayerFragment ^= true;
         toggleSelfView();
+        toggleAllUsersCardsView(!isShowingPlayerFragment);
     }
 
     @Override
@@ -285,6 +287,18 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             transaction.show(playerFragmentByTag);
         }
         transaction.commit();
+    }
+
+    private void togglePlayerCardView(User player, boolean show){
+            String playerTag = getPlayerFragmentTag(player);
+            PlayerFragment playerFragmentByTag = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(playerTag);
+            playerFragmentByTag.toggleCardsVisibility(show);
+    }
+
+    private void toggleAllUsersCardsView(boolean show){
+        for (User player: mPlayers){
+            togglePlayerCardView(player, show);
+        }
     }
 
     @Override
