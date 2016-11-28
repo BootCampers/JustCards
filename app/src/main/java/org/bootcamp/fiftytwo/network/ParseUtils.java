@@ -77,6 +77,7 @@ public class ParseUtils {
                 public void done(ParseException e) {
                     if (e == null) {
                         Log.d(TAG, "done: Join Channel Succeeded!");
+                        changeGameParticipation(true);
                     } else {
                         Log.e(TAG, "done: Join Channel Failed: " + e.getMessage());
                     }
@@ -145,10 +146,9 @@ public class ParseUtils {
                     }
 
                     for (User player : playersList) {
-                        gameViewManagerActivity.addPlayersToView(getList(player));
-                        /*if (!isSelf(player)) {
+                        if (!isSelf(player)) {
                             gameViewManagerActivity.addPlayersToView(getList(player));
-                        }*/
+                        }
                     }
                 } else {
                     Log.e("item", "Error: " + e.getMessage());

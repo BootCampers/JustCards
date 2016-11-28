@@ -128,7 +128,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             //Get previously joined players
             parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
             parseUtils.joinChannel();
-            parseUtils.changeGameParticipation(true);
 
             // Add myself to game
             Game.save(gameName, User.getCurrentUser(GameViewManagerActivity.this));
@@ -170,7 +169,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void replaceContainerFragment(Fragment fragment, boolean isPlayer) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.flGameContainer, fragment)
+                .replace(R.id.flGameContainer, fragment)
                 .commit();
         this.isShowingPlayerFragment = isPlayer;
     }
