@@ -27,7 +27,7 @@ import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
-import static org.bootcamp.fiftytwo.utils.Constants.PICK_IMAGE_REQUEST;
+import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_PICK_IMAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.SELECTED_AVATAR;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
@@ -79,14 +79,14 @@ public class RegisterActivity extends AppCompatActivity {
     @OnClick(R.id.fabBrowseAvatar)
     public void browse() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST, null);
+        startActivityForResult(intent, REQ_CODE_PICK_IMAGE, null);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (requestCode == REQ_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
             Log.d(Constants.TAG, userAvatarURI);
             loadRoundedImage(this, ivAvatar, userAvatarURI);

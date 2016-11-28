@@ -127,11 +127,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.saveCurrentUser(isCurrentViewPlayer);
 
             //Get previously joined players
-            parseUtils.fetchPreviouslyJoinedUsers(gameName, GameViewManagerActivity.this);
+            parseUtils.fetchPreviouslyJoinedUsers(gameName, this);
             parseUtils.joinChannel();
 
             // Add myself to game
-            Game.save(gameName, User.getCurrentUser(GameViewManagerActivity.this));
+            Game.save(gameName, User.getCurrentUser(this));
         }
     }
 
@@ -196,7 +196,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setPositiveButton("Yes", (dialog, which) -> {
                     parseUtils.changeGameParticipation(false);
                     parseUtils.removeChannel();
-                    parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(GameViewManagerActivity.this));
+                    parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(this));
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
                     finish();
                 })
@@ -316,7 +316,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (dealerViewFragment != null) {
             dealerViewFragment.addPlayers(players);
         }
-        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.clGameLayout, players);
+        PlayerViewHelper.addPlayers(this, R.id.clGameLayout, players);
         for (User player : players) {
             onNewLogEvent(player.getDisplayName(), player.getDisplayName() + " joined.");
         }
@@ -340,15 +340,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDeal(List<Card> cards, User from, User to) {
-        // TODO: Need to add a condition to check whether the from player is a dealer
-        if (!isEmpty(cards) && from != null && to != null) {
+        if (!isEmpty(cards) && from != null && from.isDealer() && to != null) {
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
                 if (playerFragment != null) {
                     ((PlayerFragment) playerFragment).stackCards(cards);
                 }
             }
-            if (parseUtils.getCurrentUser().getUserId().equals(to.getUserId()) && playerViewFragment != null) {
+            if (parseUtils.getCurrentUser().equals(to) && playerViewFragment != null) {
                 Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).stackCards(cards);
@@ -358,8 +357,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDealTable(User from, List<Card> cards) {
-        // TODO: Need to add a condition to check whether the player is a dealer
-        if (!isEmpty(cards) && from != null) {
+        if (!isEmpty(cards) && from != null && from.isDealer()) {
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
                 ((CardsFragment) fragment).stackCards(cards);

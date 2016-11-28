@@ -241,7 +241,6 @@ public class ParseUtils {
     }
 
     /**
-     * TODO: This API needs discussion
      * Send card to or pick from table
      *
      * @param cards           which cards

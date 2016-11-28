@@ -24,6 +24,7 @@ public class Constants {
 
     /** Request Codes Here */
     public static final int REQ_CODE_SELECT_CARDS = 1;
+    public static final int REQ_CODE_PICK_IMAGE = 2;
 
     /** Intent and Fragment Parameter here */
     public static final String PARAM_GAME_NAME = "gameName";
@@ -66,7 +67,6 @@ public class Constants {
 
     /** Avatar Values here */
     public static final String SELECTED_AVATAR = "selectedAvatar";
-    public static final int PICK_IMAGE_REQUEST = 2987;
 
     /** Layout Type Codes here */
     public static final String LAYOUT_TYPE_STAGGERED_HORIZONTAL = "staggeredHorizontal";

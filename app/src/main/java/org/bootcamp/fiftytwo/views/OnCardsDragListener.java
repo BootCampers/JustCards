@@ -44,7 +44,6 @@ public class OnCardsDragListener implements View.OnDragListener {
             case DragEvent.ACTION_DROP:
 
                 // Handling only drag drop between lists for now
-                // TODO: handle move if lists are empty
                 if (v.getId() == R.id.ivCard || v.getId() == R.id.tvNoCards) {
                     isDropped = true;
                     CardsAdapter sourceAdapter = getSourceAdapter(event);
