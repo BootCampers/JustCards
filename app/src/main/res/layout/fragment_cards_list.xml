@@ -2,9 +2,9 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flCardsContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/flCardsContainer">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tvNoCards"
@@ -20,8 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
+        android:clipToPadding="false"
         tools:listitem="@layout/item_card"
-        tools:orientation="horizontal"
-        android:clipToPadding="false"/>
+        tools:orientation="horizontal"/>
 
 </FrameLayout>

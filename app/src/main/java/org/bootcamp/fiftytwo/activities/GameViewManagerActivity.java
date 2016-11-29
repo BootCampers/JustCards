@@ -376,7 +376,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDeal(List<Card> cards, User from, User to) {
-        if (!isEmpty(cards) && from != null && from.isDealer() && to != null) {
+        // TODO Need to handle is dealer check here
+        if (!isEmpty(cards) && from != null && to != null) {
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
                 if (playerFragment != null) {
@@ -393,7 +394,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDealTable(User from, List<Card> cards) {
-        if (!isEmpty(cards) && from != null && from.isDealer()) {
+        // TODO Need to handle is dealer check here
+        if (!isEmpty(cards) && from != null) {
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
                 ((CardsFragment) fragment).stackCards(cards);

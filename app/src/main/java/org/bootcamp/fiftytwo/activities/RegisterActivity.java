@@ -72,11 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     @OnClick(R.id.fabBrowseAvatar)
     public void browse() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);

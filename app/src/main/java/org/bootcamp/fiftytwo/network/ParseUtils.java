@@ -5,15 +5,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.parse.DeleteCallback;
 import com.parse.ParseCloud;
-import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
-import org.bootcamp.fiftytwo.activities.CreateGameActivity;
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
-import org.bootcamp.fiftytwo.activities.SelectGameActivity;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
@@ -60,6 +56,10 @@ public class ParseUtils {
         currentLoggedInUser = User.getCurrentUser(context);
     }
 
+    public interface OnGameExistsListener {
+        void onGameExistsResult(final boolean result);
+    }
+
     public User getCurrentUser() {
         return currentLoggedInUser;
     }
@@ -71,6 +71,21 @@ public class ParseUtils {
 
     public static boolean isSelf(final User user) {
         return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
+    }
+
+    public void checkGameExists(final String gameName, final OnGameExistsListener listener) {
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        query.findInBackground((itemList, e) -> {
+            boolean result = false;
+            if (e == null) {
+                Log.d(Constants.TAG, " checkGameExists Found list : " + itemList.size());
+                result = itemList.size() != 0;
+            } else {
+                Log.e(Constants.TAG, "checkGameExists Error: " + e.getMessage());
+            }
+            listener.onGameExistsResult(result);
+        });
     }
 
     public void joinChannel() {
@@ -192,7 +207,8 @@ public class ParseUtils {
             JSONObject toUserJson = getJson(toUser);
             payload.put(PARAM_PLAYER, toUserJson);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
+            }.getType());
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
@@ -211,7 +227,8 @@ public class ParseUtils {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
+            }.getType());
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
@@ -254,7 +271,8 @@ public class ParseUtils {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {}.getType());
+            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
+            }.getType());
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(TABLE_PICKED, pickedFromTable);
@@ -264,6 +282,34 @@ public class ParseUtils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * //TODO: Needs discussion
+     * //TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
+     * Existing players can continue to play the game even after dealer leaves. No one else can join.
+     *
+     * @param gameName the game number that needs to be deleted
+     */
+    public void deleteGameFromServer(String gameName) {
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d(Constants.TAG, "deleteGameFromServer Found list : " + itemList.size());
+                for (Game game : itemList) {
+                    game.deleteInBackground(e1 -> {
+                        if (e1 == null) {
+                            Log.d(Constants.TAG, gameName + " deleted");
+                        } else {
+                            Log.e(Constants.TAG, "Failed to delete game on server " + e1.getMessage());
+                        }
+                    });
+                }
+            } else {
+                Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
+            }
+        });
     }
 
     /**
@@ -279,69 +325,6 @@ public class ParseUtils {
     //TODO
     public List<User> fetchAllTableCards() {
         return new ArrayList<>();
-    }
-
-    //TODO: may be make gameExistResult method in interface or another helper class?
-    public void checkGameExists(Context context, String gameName){
-        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
-        query.whereEqualTo(PARAM_GAME_NAME, gameName);
-        query.findInBackground((itemList, e) -> {
-            if (e == null) {
-                Log.d(Constants.TAG, " checkGameExists Found list : " + itemList.size());
-                if(context instanceof SelectGameActivity) {
-                    if (itemList.size() != 0) {
-                        ((SelectGameActivity)context).gameExistResult(true);
-                    } else {
-                        ((SelectGameActivity)context).gameExistResult(false);
-                    }
-                } else if( context instanceof CreateGameActivity){
-                    if (itemList.size() != 0) {
-                        ((CreateGameActivity)context).gameExistResult(true);
-                    } else {
-                        ((CreateGameActivity)context).gameExistResult(false);
-                    }
-                }
-            } else {
-                Log.e(Constants.TAG, "checkGameExists Error: " + e.getMessage());
-                if(context instanceof SelectGameActivity) {
-                    ((SelectGameActivity) context).gameExistResult(false);
-                } else if( context instanceof CreateGameActivity){
-                    //Assuming it's ok
-                    ((CreateGameActivity)context).gameExistResult(false);
-                }
-            }
-        });
-    }
-
-    /**
-     * //TODO: Needs discussion
-     * //TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
-     * Existing players can continue to play the game even after dealer leaves. No one else can join.
-     * @param gameName
-     */
-    public void deleteGameFromServer(String gameName){
-        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
-        query.whereEqualTo(PARAM_GAME_NAME, gameName);
-        query.findInBackground((itemList, e) -> {
-            if (e == null) {
-                Log.d(Constants.TAG, "deleteGameFromServer Found list : " + itemList.size());
-                for (Game game : itemList) {
-                    game.deleteInBackground(new DeleteCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e == null){
-                                Log.d(Constants.TAG, gameName + " deleted");
-                            } else {
-                                Log.e(Constants.TAG, "Failed to delete game on server " + e.getMessage());
-                            }
-                        }
-                    });
-                }
-
-            } else {
-                Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
-            }
-        });
     }
 
 }

@@ -24,16 +24,13 @@ import butterknife.OnClick;
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
-public class SelectGameActivity extends AppCompatActivity {
+public class SelectGameActivity extends AppCompatActivity implements ParseUtils.OnGameExistsListener {
 
     @BindView(R.id.btnJoinGame) Button btnJoinGame;
     @BindView(R.id.btnCreateGame) Button btnCreateGame;
     @BindView(R.id.etGameName) EditText etGameName;
     @BindView(R.id.tvWelcome) TextView tvWelcome;
     @BindView(R.id.ivAvatar) ImageView ivAvatar;
-
-    private ParseUtils parseUtils;
-    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +48,9 @@ public class SelectGameActivity extends AppCompatActivity {
         if (etGameName.getText().toString().isEmpty()) {
             Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
         } else {
-            gameName = etGameName.getText().toString();
-            parseUtils = new ParseUtils(SelectGameActivity.this, gameName);
-            parseUtils.checkGameExists(SelectGameActivity.this, gameName);
+            String gameName = etGameName.getText().toString();
+            ParseUtils parseUtils = new ParseUtils(this, gameName);
+            parseUtils.checkGameExists(gameName, this);
         }
     }
 
@@ -63,9 +60,10 @@ public class SelectGameActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void gameExistResult(boolean isExist){
-        if(isExist == true){
-            Intent gameViewManagerIntent = new Intent(SelectGameActivity.this, GameViewManagerActivity.class);
+    @Override
+    public void onGameExistsResult(boolean result) {
+        if (result) {
+            Intent gameViewManagerIntent = new Intent(this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
@@ -75,8 +73,8 @@ public class SelectGameActivity extends AppCompatActivity {
                     .setTitle("Game invalid")
                     .setMessage("This game id not found. Either create new game or enter a valid id.")
                     .setPositiveButton("Okay", (dialog, which) -> {
-                        ;
                     })
-                    .show();        }
+                    .show();
+        }
     }
 }

@@ -29,15 +29,14 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 
-public class CreateGameActivity extends AppCompatActivity {
+public class CreateGameActivity extends AppCompatActivity implements ParseUtils.OnGameExistsListener {
 
     private List<Card> mCards = new ArrayList<>();
+    private ParseUtils parseUtils;
 
     @BindView(R.id.tvGameNumber) TextView tvGameNumber;
     @BindView(R.id.btnStartGame) Button btnStartGame;
     @BindView(R.id.btnSelectCards) Button btnSelectCards;
-
-    private ParseUtils parseUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +46,8 @@ public class CreateGameActivity extends AppCompatActivity {
 
         int gameNumber = new Random().nextInt(99999);
         String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-        parseUtils = new ParseUtils(CreateGameActivity.this, gameNumberString);
-        parseUtils.checkGameExists(CreateGameActivity.this, gameNumberString);
+        parseUtils = new ParseUtils(this, gameNumberString);
+        parseUtils.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
     }
 
@@ -74,7 +73,7 @@ public class CreateGameActivity extends AppCompatActivity {
         } else if (mCards == null || mCards.size() == 0) {
             Snackbar.make(view, "Please select cards for the game", Snackbar.LENGTH_SHORT).show();
         } else {
-            Intent gameViewManagerIntent = new Intent(CreateGameActivity.this, GameViewManagerActivity.class);
+            Intent gameViewManagerIntent = new Intent(this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, tvGameNumber.getText().toString());
             gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); // go to dealer view by default
@@ -83,11 +82,12 @@ public class CreateGameActivity extends AppCompatActivity {
         }
     }
 
-    public void gameExistResult(boolean isExist) {
-        if(isExist == true) {
+    @Override
+    public void onGameExistsResult(final boolean result) {
+        if (result) {
             int gameNumber = new Random().nextInt(99999);
             String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-            parseUtils.checkGameExists(CreateGameActivity.this, gameNumberString);
+            parseUtils.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
     }
