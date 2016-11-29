@@ -308,7 +308,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
-        // Do Nothing as of now.
+        // Tags for different Card Fragments:
+        // 1.DEALER_TAG, 2.PLAYER_TAG, 3.TABLE_TAG, 4.Custom Player View Tag (player.getDisplayName() + "_" + player.getUserId())
+
+        // Business Rules:
+        //  Player View Fragment:
+        //      1. Table to Player -             Table Exchange
+        //      2. Player to Table -             Table Exchange
+        //      3. Player to Player -            Card Exchange
+        //      4. Player Self to Player Self -  No Broadcast
+        //      5. Table to Table -              Intra table Broadcast
+        //  Dealer View Fragment:
+        //      6. Dealer to Player -            Deal
+        //      7. Player to Player -            Should Not be possible
+        //      8. Player to Dealer -            Should Not be possible
     }
 
     @Override
