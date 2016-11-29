@@ -46,4 +46,6 @@
     <string name="score">Score</string>
     <string name="comment">Comment</string>
     <string name="msg_add_another_deck">Add another deck</string>
+    <string name="what_would_you_like_to_do">What would you like to do?</string>
+    <string name="share_this_game_id_with_whom_you_would_like_to_play">Share this game ID with whom you would like to play</string>
 </resources>

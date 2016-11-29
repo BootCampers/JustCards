@@ -3,13 +3,17 @@ package org.bootcamp.fiftytwo.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
+import org.bootcamp.fiftytwo.R;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -59,6 +63,12 @@ public class AppUtils {
                         view.setImageDrawable(circularBitmapDrawable);
                     }
                 });
+    }
+
+    public static void showSnackBar(Context context, View view, String msg){
+        Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+        snackbar.show();
     }
 
 }

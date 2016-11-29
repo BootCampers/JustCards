@@ -2,11 +2,12 @@ package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +25,11 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
+import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 
@@ -35,26 +39,40 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
     private ParseUtils parseUtils;
 
     @BindView(R.id.tvGameNumber) TextView tvGameNumber;
+    @BindView(R.id.tvGameNumberLabel) TextView tvGameNumberLabel;
     @BindView(R.id.btnStartGame) Button btnStartGame;
-    @BindView(R.id.btnSelectCards) Button btnSelectCards;
+    @BindView(R.id.btnSelectCards) ImageButton btnSelectCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+        initializeWidgets();
+    }
+
+    private void initializeWidgets() {
         int gameNumber = new Random().nextInt(99999);
         String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
         parseUtils = new ParseUtils(this, gameNumberString);
         parseUtils.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
+        tvGameNumberLabel.setText(getIntent().getStringExtra(DISPLAY_NAME) + ", here is your Game ID:");
     }
 
     @OnClick(R.id.btnSelectCards)
     public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
+    }
+
+    @OnLongClick(R.id.btnSelectCards)
+    public boolean showButtonName() {
+        Toast.makeText(getApplicationContext(), "Select cards", Toast.LENGTH_LONG).show();
+        return true;
     }
 
     @Override
@@ -64,14 +82,15 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
             mCards = Parcels.unwrap(data.getExtras().getParcelable(PARAM_CARDS));
             Toast.makeText(this, "Selected Total: " + mCards.size() + " Cards", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     @OnClick(R.id.btnStartGame)
     public void startGame(View view) {
         if (TextUtils.isEmpty(tvGameNumber.getText())) {
-            Snackbar.make(view, "Please enter game name first", Snackbar.LENGTH_SHORT).show();
+            showSnackBar(getApplicationContext(), view, "Please enter game name first");
         } else if (mCards == null || mCards.size() == 0) {
-            Snackbar.make(view, "Please select cards for the game", Snackbar.LENGTH_SHORT).show();
+            showSnackBar(getApplicationContext(), view, "Please select cards for the game");
         } else {
             Intent gameViewManagerIntent = new Intent(this, GameViewManagerActivity.class);
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, tvGameNumber.getText().toString());

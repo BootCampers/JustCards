@@ -2,9 +2,9 @@ package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +22,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
+import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
+import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
 public class SelectGameActivity extends AppCompatActivity implements ParseUtils.OnGameExistsListener {
@@ -31,14 +33,17 @@ public class SelectGameActivity extends AppCompatActivity implements ParseUtils.
     @BindView(R.id.etGameName) EditText etGameName;
     @BindView(R.id.tvWelcome) TextView tvWelcome;
     @BindView(R.id.ivAvatar) ImageView ivAvatar;
+    User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_game);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
-        User user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
+        user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
         tvWelcome.setText("Welcome " + user.getDisplayName() + "!");
         loadRoundedImage(this, ivAvatar, user.getAvatarUri());
     }
@@ -46,7 +51,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseUtils.
     @OnClick(R.id.btnJoinGame)
     public void join(final View view) {
         if (etGameName.getText().toString().isEmpty()) {
-            Snackbar.make(view, "Please enter ID of the game you would like to join...", Snackbar.LENGTH_LONG).show();
+            showSnackBar(getApplicationContext(), view, "Please enter ID of the game you would like to join...");
         } else {
             String gameName = etGameName.getText().toString();
             ParseUtils parseUtils = new ParseUtils(this, gameName);
@@ -57,6 +62,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseUtils.
     @OnClick(R.id.btnCreateGame)
     public void create() {
         Intent intent = new Intent(this, CreateGameActivity.class);
+        intent.putExtra(DISPLAY_NAME, user.getDisplayName());
         startActivity(intent);
     }
 

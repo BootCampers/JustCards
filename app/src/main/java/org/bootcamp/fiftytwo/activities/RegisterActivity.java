@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import com.parse.ParseAnonymousUtils;
 
@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
+import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_PICK_IMAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.SELECTED_AVATAR;
@@ -48,7 +49,11 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
 
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if (User.getCurrentUser() != null) {
+
             startWithCurrentUser();
         } else {
             loginToParse();
@@ -90,10 +95,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btnRegister)
-    public void register() {
+    public void register(final View view) {
         String username = etUserName.getText().toString().replaceAll("\\s+", "");
         if (username.isEmpty()) {
-            Toast.makeText(this, "Username must have a value!", Toast.LENGTH_SHORT).show();
+            showSnackBar(getApplicationContext(), view, "Username must have a value!");
             etUserName.requestFocus();
             scrollViewRegister.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
             return;

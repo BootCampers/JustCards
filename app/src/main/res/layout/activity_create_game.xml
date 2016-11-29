@@ -1,71 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_create_game"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.bootcamp.fiftytwo.activities.CreateGameActivity">
+    tools:context="org.bootcamp.fiftytwo.activities.CreateGameActivity"
+    android:background="@drawable/screen_background">
 
-    <TextView
-        android:id="@+id/tvGameNumberLabel"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        app:theme="@style/ToolbarTheme"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="50dp"
-        android:text="@string/game_number"
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:id="@+id/tvGameNumber"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tvGameNumberLabel"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/tvGameNumberLabel"
-        android:layout_toRightOf="@+id/tvGameNumberLabel"
-        android:text=""
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <Button
-        android:id="@+id/btnSelectCards"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvGameNumberLabel"
-        android:layout_alignStart="@+id/tvGameNumberLabel"
-        android:layout_below="@+id/tvGameNumberLabel"
-        android:layout_marginTop="30dp"
-        android:background="@color/colorAccent"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/select_cards"
-        android:textColor="@color/white"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btnStartGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvGameNumberLabel"
-        android:layout_alignStart="@+id/tvGameNumberLabel"
-        android:layout_below="@+id/btnSelectCards"
-        android:layout_marginTop="30dp"
-        android:background="@color/colorPrimaryDark"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/start_game"
-        android:textColor="@color/white"/>
+            <RelativeLayout
+                android:id="@+id/gameIDLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/accent_translucent_background"
+                android:padding="8dp"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:id="@+id/tvGameNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/tvGameNumberLabel"
+                    android:layout_marginTop="5dp"
+                    tools:text="54321"
+                    android:text=""
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvGameNumberLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Shak, here is your game ID:"
+                    android:text=""
+                    android:textColor="@color/colorAccent"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:id="@+id/gameIDInstr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/tvGameNumber"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"/>
+
+            </RelativeLayout>
+
+
+
+            <ImageButton
+                android:id="@+id/btnSelectCards"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/gameIDLayout"
+                android:layout_marginBottom="-20dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ripple_oval"
+                android:elevation="8dp"
+                android:src="@drawable/ic_action_select_cards" />
+
+            <Button
+                android:id="@+id/btnStartGame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/gameIDLayout"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/black_button"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/start_game"
+                android:textColor="@color/white"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
