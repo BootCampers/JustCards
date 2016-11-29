@@ -32,11 +32,7 @@ public class SelectCardsFragment extends Fragment {
     private Unbinder unbinder;
 
     @BindView(R.id.rvCards) RecyclerView rvCards;
-    @BindView(R.id.btnLoadMore)
-    Button btnLoadMore;
-    private List<Card> cards;
-
-    public SelectCardsFragment() {}
+    @BindView(R.id.btnLoadMore) Button btnLoadMore;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +45,7 @@ public class SelectCardsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_select_cards, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
+        List<Card> cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 6);
         rvCards.setAdapter(mAdapter);
@@ -59,15 +55,15 @@ public class SelectCardsFragment extends Fragment {
         return view;
     }
 
+    @OnClick(R.id.btnLoadMore)
+    public void loadMore() {
+        mAdapter.addAll(CardUtil.selectDefaults(CardUtil.generateDeck(1, true)));
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-    }
-
-    @OnClick(R.id.btnLoadMore)
-    public void loadMore(View view){
-        mAdapter.addAll(CardUtil.selectDefaults(CardUtil.generateDeck(1, true)));
     }
 
     public List<Card> getCards() {

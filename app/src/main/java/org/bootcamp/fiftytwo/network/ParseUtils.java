@@ -195,6 +195,34 @@ public class ParseUtils {
     }
 
     /**
+     * TODO: Needs discussion
+     * TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
+     * Existing players can continue to play the game even after dealer leaves. No one else can join.
+     *
+     * @param gameName the game number that needs to be deleted
+     */
+    public void deleteGameFromServer(String gameName) {
+        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d(Constants.TAG, "deleteGameFromServer Found list : " + itemList.size());
+                for (Game game : itemList) {
+                    game.deleteInBackground(e1 -> {
+                        if (e1 == null) {
+                            Log.d(Constants.TAG, gameName + " deleted");
+                        } else {
+                            Log.e(Constants.TAG, "Failed to delete game on server " + e1.getMessage());
+                        }
+                    });
+                }
+            } else {
+                Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
      * Dealer dealing cards to a particular user
      *
      * @param toUser to whom this is sent
@@ -285,45 +313,20 @@ public class ParseUtils {
     }
 
     /**
-     * //TODO: Needs discussion
-     * //TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
-     * Existing players can continue to play the game even after dealer leaves. No one else can join.
-     *
-     * @param gameName the game number that needs to be deleted
-     */
-    public void deleteGameFromServer(String gameName) {
-        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
-        query.whereEqualTo(PARAM_GAME_NAME, gameName);
-        query.findInBackground((itemList, e) -> {
-            if (e == null) {
-                Log.d(Constants.TAG, "deleteGameFromServer Found list : " + itemList.size());
-                for (Game game : itemList) {
-                    game.deleteInBackground(e1 -> {
-                        if (e1 == null) {
-                            Log.d(Constants.TAG, gameName + " deleted");
-                        } else {
-                            Log.e(Constants.TAG, "Failed to delete game on server " + e1.getMessage());
-                        }
-                    });
-                }
-            } else {
-                Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
-            }
-        });
-    }
-
-    /**
      * Card picked by current user OR placed on table by current user
      *
      * @param cards           which cards
      * @param pickedFromTable is the card picked from table
      */
     public void selfTableCardExchange(List<Card> cards, boolean pickedFromTable) {
-        //tableCardExchange(cards, pickedFromTable);
+        // Do Nothing
     }
 
-    //TODO
-    public List<User> fetchAllTableCards() {
+    /**
+     * TODO
+     * @return the cards on the table
+     */
+    public List<Card> fetchAllTableCards() {
         return new ArrayList<>();
     }
 

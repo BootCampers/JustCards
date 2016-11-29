@@ -193,13 +193,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exiting from game")
+                .setTitle("Exit Game")
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     parseUtils.changeGameParticipation(false);
                     parseUtils.removeChannel();
                     parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(this));
-                    if(User.getCurrentUser(this).isDealer() == true) {
+                    if(User.getCurrentUser(this).isDealer()) {
                         parseUtils.deleteGameFromServer(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
