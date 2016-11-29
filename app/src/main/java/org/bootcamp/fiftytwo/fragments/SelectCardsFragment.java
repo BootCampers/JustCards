@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.SelectCardsAdapter;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
@@ -30,6 +32,9 @@ public class SelectCardsFragment extends Fragment {
     private Unbinder unbinder;
 
     @BindView(R.id.rvCards) RecyclerView rvCards;
+    @BindView(R.id.btnLoadMore)
+    Button btnLoadMore;
+    private List<Card> cards;
 
     public SelectCardsFragment() {}
 
@@ -44,7 +49,7 @@ public class SelectCardsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_select_cards, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        List<Card> cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
+        cards = CardUtil.selectDefaults(CardUtil.generateDeck(1, true));
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 6);
         rvCards.setAdapter(mAdapter);
@@ -58,6 +63,11 @@ public class SelectCardsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @OnClick(R.id.btnLoadMore)
+    public void loadMore(View view){
+        mAdapter.addAll(CardUtil.selectDefaults(CardUtil.generateDeck(1, true)));
     }
 
     public List<Card> getCards() {

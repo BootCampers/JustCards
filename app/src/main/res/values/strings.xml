@@ -45,4 +45,5 @@
     <string name="deal">Deal</string>
     <string name="score">Score</string>
     <string name="comment">Comment</string>
+    <string name="msg_add_another_deck">Add another deck</string>
 </resources>

@@ -17,9 +17,10 @@
         android:id="@+id/ivSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="start"
+        android:layout_marginLeft="18dp"
         android:background="@android:color/transparent"
         android:visibility="invisible"
-        app:srcCompat="@drawable/ic_done"/>
+        app:srcCompat="@drawable/ic_beenhere"/>
 
 </FrameLayout>
