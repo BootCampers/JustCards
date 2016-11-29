@@ -71,6 +71,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         DealerViewFragment.OnDealListener,
         DealingOptionsFragment.OnDealOptionsListener,
         ChatAndLogFragment.OnChatAndLogListener,
+        CardsFragment.OnCardExchangeLister,
         CardsFragment.OnLogEventListener,
         ScoringFragment.OnScoreFragmentInteractionListener,
         Observer {
@@ -306,6 +307,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
+        // Do Nothing as of now.
+    }
+
+    @Override
     public void onNewLogEvent(String whoPosted, String fromAvatar, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
         chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
@@ -431,4 +437,5 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onScoreFragmentInteraction(boolean saveClicked) {
         //Do Nothing
     }
+
 }

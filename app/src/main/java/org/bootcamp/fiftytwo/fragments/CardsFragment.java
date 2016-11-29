@@ -44,7 +44,6 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 public class CardsFragment extends Fragment implements CardsAdapter.CardsListener {
 
     protected CardsAdapter mAdapter;
-    private OnLogEventListener mListener;
     protected Unbinder unbinder;
     protected String tag = TAG;
     protected String layoutType;
@@ -52,6 +51,13 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
     @BindView(R.id.flCardsContainer) FrameLayout flCardsContainer;
+
+    private OnCardExchangeLister mCardExchangeLister;
+    private OnLogEventListener mLogEventListener;
+
+    public interface OnCardExchangeLister {
+        void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
+    }
 
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
@@ -120,15 +126,17 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     @Override
-    public void publish(String fromTag, String toTag, Card card) {
-        // Do Nothing as of now
+    public void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
+        if (mCardExchangeLister != null) {
+            mCardExchangeLister.onCardExchange(fromTag, toTag, fromPosition, toPosition, card);
+        }
     }
 
     @Override
     public void logActivity(String whoPosted, String avatarUri, String details) {
         Log.d(TAG, this.getClass().getSimpleName() + "--" + details + "--" + whoPosted);
-        if (mListener != null) {
-            mListener.onNewLogEvent(whoPosted, avatarUri, details);
+        if (mLogEventListener != null) {
+            mLogEventListener.onNewLogEvent(whoPosted, avatarUri, details);
         }
     }
 
@@ -168,8 +176,14 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnCardExchangeLister) {
+            mCardExchangeLister = (OnCardExchangeLister) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement CardsFragment.OnCardExchangeLister");
+        }
+
         if (context instanceof OnLogEventListener) {
-            mListener = (OnLogEventListener) context;
+            mLogEventListener = (OnLogEventListener) context;
         } else {
             throw new ClassCastException(context.toString() + " must implement CardsFragment.OnLogEventListener");
         }
@@ -178,7 +192,8 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mCardExchangeLister = null;
+        mLogEventListener = null;
     }
 
     @Override
