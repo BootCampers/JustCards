@@ -124,7 +124,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
-            parseUtils.saveCurrentUser(isCurrentViewPlayer);
+            parseUtils.saveCurrentUser(!isCurrentViewPlayer);
 
             //Get previously joined players
             parseUtils.fetchPreviouslyJoinedUsers(gameName, this);
@@ -387,8 +387,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDeal(List<Card> cards, User from, User to) {
-        // TODO Need to handle is dealer check here
-        if (!isEmpty(cards) && from != null && to != null) {
+        if (!isEmpty(cards) && from != null && from.isDealer() && to != null) {
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
@@ -405,8 +404,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDealTable(User from, List<Card> cards) {
-        // TODO Need to handle is dealer check here
-        if (!isEmpty(cards) && from != null) {
+        if (!isEmpty(cards) && from != null && from.isDealer()) {
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
                 ((CardsFragment) fragment).stackCards(cards);
