@@ -118,7 +118,7 @@ public class DealerViewFragment extends Fragment
                 .commit();
     }
 
-    @OnClick({R.id.ibDeal, R.id.btnDeal})
+    @OnClick({ R.id.btnDeal})
     public void deal() {
         List<Card> cards = dealerCardsFragment.getCards();
 
