@@ -102,17 +102,25 @@ public class ParseUtils {
     }
 
     public void removeChannel() {
-        ParsePush.unsubscribeInBackground(gameName);
-    }
+        if (isNetworkAvailable(context)) {
+            ParsePush.unsubscribeInBackground(gameName, e -> {
+                if (e == null) {
+                    Log.d(TAG, "done: Leave Channel Succeeded!");
+                    changeGameParticipation(false);
+                } else {
+                    Log.e(TAG, "done: Leave Channel Failed: " + e.getMessage());
+                }
+            });
+        }    }
 
-    private void sendBroadcastWithPayload(JSONObject payload) {
+    private void sendBroadcastWithPayload(final JSONObject payload) {
         if (isNetworkAvailable(context)) {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
             ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
                 if (e == null) {
-                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded!");
+                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded! " + payload.toString());
                 } else {
                     Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
                 }
@@ -126,7 +134,7 @@ public class ParseUtils {
      *
      * @param joining true if joining the game , false if leaving the game
      */
-    public void changeGameParticipation(boolean joining) {
+    private void changeGameParticipation(boolean joining) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
             if (joining) {
