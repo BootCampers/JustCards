@@ -80,20 +80,20 @@
 
 
 
-            <ImageButton
-                android:id="@+id/btnSelectCards"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btnShareId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignBottom="@id/gameIDLayout"
-                android:layout_marginBottom="-20dp"
+                android:layout_marginBottom="30dp"
+                app:fabSize="mini"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/ripple_oval"
                 android:elevation="8dp"
-                android:src="@drawable/ic_action_select_cards" />
+                app:srcCompat="@drawable/ic_share" />
 
             <Button
-                android:id="@+id/btnStartGame"
+                android:id="@+id/btnGameOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -102,7 +102,7 @@
                 android:background="@drawable/black_button"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="@string/start_game"
+                android:text="@string/select_cards"
                 android:textColor="@color/white"/>
 
         </RelativeLayout>
