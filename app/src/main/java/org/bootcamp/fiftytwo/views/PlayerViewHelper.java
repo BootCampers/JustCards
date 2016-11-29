@@ -53,7 +53,11 @@ public class PlayerViewHelper {
         fm.executePendingTransactions();
     }
 
-    public static String getPlayerFragmentTag(User player) {
+    private static String getPlayerFragmentTag(User player) {
         return player.getDisplayName() + "_" + player.getUserId();
+    }
+
+    public static Fragment getPlayerFragment(FragmentActivity activity, User player) {
+        return activity.getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
     }
 }

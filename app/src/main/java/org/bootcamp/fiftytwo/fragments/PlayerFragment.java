@@ -68,7 +68,7 @@ public class PlayerFragment extends CardsFragment {
         List<Card> cards = new ArrayList<>();
         if (bundle != null) {
             cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            if(isEmpty(cards))
+            if (isEmpty(cards))
                 cards = new ArrayList<>();
             mPlayer = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER));
             tag = bundle.getString(TAG);
@@ -129,7 +129,4 @@ public class PlayerFragment extends CardsFragment {
         view.setOnTouchListener(new OnTouchMoveListener(container));
     }
 
-    public void toggleCardsVisibility(boolean show) {
-        toggleCardsView(show);
-    }
 }

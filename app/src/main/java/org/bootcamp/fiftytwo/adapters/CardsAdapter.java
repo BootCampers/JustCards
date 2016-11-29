@@ -82,7 +82,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Card card = mCards.get(position);
-        holder.ivCard.setImageDrawable(card.getDrawableBack(mContext));
+
+        Glide.with(mContext)
+                .load(card.isShowingFront() ? card.getDrawable(mContext) : card.getDrawableBack())
+                .into(holder.ivCard);
+
         holder.ivCard.setTag(position); //Needed for drag and drop
 
         holder.ivCard.setOnLongClickListener(view -> {
@@ -94,31 +98,13 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         });
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
-        if(card.isShowingFront() == true){
-            Glide.with(mContext)
-                    .load(card.getDrawable(mContext))
-                    .into(holder.ivCard);
-        } else {
-            Glide.with(mContext)
-                    .load(card.getDrawableBack())
-                    .into(holder.ivCard);
-        }
-
         holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
             @Override
             public void onDoubleTap(MotionEvent event) {
-                //TODO: broadcast that user seen the card?
-                if (card.isShowingFront()) {
-                    Glide.with(mContext)
-                            .load(card.getDrawableBack())
-                            .into(holder.ivCard);
-                    card.setShowingFront(false);
-                } else {
-                    Glide.with(mContext)
-                            .load(card.getDrawable(mContext))
-                            .into(holder.ivCard);
-                    card.setShowingFront(true);
-                }
+                Glide.with(mContext)
+                        .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
+                        .into(holder.ivCard);
+                card.setShowingFront(!card.isShowingFront());
                 //TODO: log event and send broadcast
             }
         });

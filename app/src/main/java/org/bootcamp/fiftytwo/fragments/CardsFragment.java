@@ -51,21 +51,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
 
     @BindView(R.id.rvCardsList) RecyclerView rvCardsList;
     @BindView(R.id.tvNoCards) TextView tvNoCards;
-    @BindView(R.id.flCardsContainer)
-    FrameLayout flCardsContainer;
+    @BindView(R.id.flCardsContainer) FrameLayout flCardsContainer;
 
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnLogEventListener) {
-            mListener = (OnLogEventListener) context;
-        } else {
-            throw new ClassCastException(context.toString() + " must implement CardsFragment.OnLogEventListener");
-        }
     }
 
     public static CardsFragment newInstance(final List<Card> cards, final String tag, final String layoutType) {
@@ -115,12 +104,8 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         setEmptyList(mAdapter.getItemCount() == 0);
     }
 
-    public void toggleCardsView(boolean show){
-        if(show ==  true){
-            flCardsContainer.setVisibility(View.VISIBLE);
-        } else {
-            flCardsContainer.setVisibility(View.GONE);
-        }
+    public void toggleCardsVisibility(boolean show) {
+        flCardsContainer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -178,6 +163,16 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnLogEventListener) {
+            mListener = (OnLogEventListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement CardsFragment.OnLogEventListener");
+        }
     }
 
     @Override

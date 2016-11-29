@@ -64,7 +64,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
-import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragmentTag;
+import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
         PlayerViewFragment.onPlayListener,
@@ -136,10 +136,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void initFragments() {
+        // Instantiating all the child fragments for game view
         playerViewFragment = PlayerViewFragment.newInstance(null, null);
         dealerViewFragment = DealerViewFragment.newInstance(mCards, null);
         chatAndLogFragment = ChatAndLogFragment.newInstance(1);
 
+        // Controlling the fragments for display based on player's role
         if (isCurrentViewPlayer) {
             fab.setVisibility(View.GONE);
             getSupportFragmentManager()
@@ -154,8 +156,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .hide(playerViewFragment)
                     .commit();
         }
+
+        // Set the current view state (player vs dealer)
         isShowingPlayerFragment = isCurrentViewPlayer;
-        toggleAllUsersCardsView(!isShowingPlayerFragment);
 
         // TODO: This custom data generation is temporary and for testing purposes only
         if (isEmpty(mPlayers)) {
@@ -168,9 +171,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             @Override
             public void onGlobalLayout() {
                 PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.clGameLayout, mPlayers);
+                toggleCardsVisibilityForPlayerViews();
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 } else {
+                    //noinspection deprecation
                     rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
             }
@@ -185,8 +191,41 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .show(isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
                 .commit();
         this.isShowingPlayerFragment ^= true;
-        toggleSelfView();
-        toggleAllUsersCardsView(!isShowingPlayerFragment);
+        toggleSelfPlayerView();
+        toggleCardsVisibilityForPlayerViews();
+    }
+
+    /**
+     * Hide self view if it's in player fragment. Show in dealer.
+     */
+    private void toggleSelfPlayerView() {
+        togglePlayerView(User.getCurrentUser(this));
+    }
+
+    private void togglePlayerView(User player) {
+        Fragment playerFragment = getPlayerFragment(this, player);
+        if (playerFragment != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            if (isShowingPlayerFragment) {
+                transaction.hide(playerFragment);
+            } else {
+                transaction.show(playerFragment);
+            }
+            transaction.commit();
+        }
+    }
+
+    private void toggleCardsVisibilityForPlayerViews() {
+        for (User player : mPlayers) {
+            toggleCardsVisibilityForPlayerView(player);
+        }
+    }
+
+    private void toggleCardsVisibilityForPlayerView(final User player) {
+        Fragment playerFragment = getPlayerFragment(this, player);
+        if (playerFragment != null) {
+            ((PlayerFragment) playerFragment).toggleCardsVisibility(!isShowingPlayerFragment);
+        }
     }
 
     @Override
@@ -199,7 +238,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     parseUtils.changeGameParticipation(false);
                     parseUtils.removeChannel();
                     parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(this));
-                    if(User.getCurrentUser(this).isDealer()) {
+                    if (User.getCurrentUser(this).isDealer()) {
                         parseUtils.deleteGameFromServer(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
@@ -228,13 +267,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
         //Show and hide all players when dealer option is showing to un-clutter the view
         for (User player : mPlayers) {
-            String playerTag = getPlayerFragmentTag(player);
-            Fragment playerFragmentByTag = getSupportFragmentManager().findFragmentByTag(playerTag);
+            Fragment playerFragment = getPlayerFragment(this, player);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             if (isDealerOptionShowing) {
-                transaction.hide(playerFragmentByTag);
+                transaction.hide(playerFragment);
             } else {
-                transaction.show(playerFragmentByTag);
+                transaction.show(playerFragment);
             }
             transaction.commit();
         }
@@ -242,7 +280,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public boolean onDeal(List<Card> cards, User player) {
-        Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
+        Fragment playerFragment = getPlayerFragment(this, player);
         if (playerFragment != null && !isEmpty(cards)) {
             boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
             if (result) {
@@ -273,34 +311,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
     }
 
-    /**
-     * Hide self view if it's in player fragment. Show in dealer.
-     */
-    private void toggleSelfView() {
-        User self = User.getCurrentUser(GameViewManagerActivity.this);
-        String playerTag = getPlayerFragmentTag(self);
-        Fragment playerFragmentByTag = getSupportFragmentManager().findFragmentByTag(playerTag);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (isShowingPlayerFragment == true) {
-            transaction.hide(playerFragmentByTag);
-        } else {
-            transaction.show(playerFragmentByTag);
-        }
-        transaction.commit();
-    }
-
-    private void togglePlayerCardView(User player, boolean show){
-            String playerTag = getPlayerFragmentTag(player);
-            PlayerFragment playerFragmentByTag = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(playerTag);
-            playerFragmentByTag.toggleCardsVisibility(show);
-    }
-
-    private void toggleAllUsersCardsView(boolean show){
-        for (User player: mPlayers){
-            togglePlayerCardView(player, show);
-        }
-    }
-
     @Override
     public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
@@ -311,9 +321,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     User user = User.fromJson((JSONObject) arg);
                     addPlayersToView(getList(user));
-                    if(user.isDealer() && user.equals(User.getCurrentUser(GameViewManagerActivity.this))){
-                        toggleSelfView();
-                    }
                 });
                 break;
             case PARSE_PLAYER_LEFT:
@@ -352,8 +359,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (dealerViewFragment != null) {
             dealerViewFragment.addPlayers(players);
         }
+
         PlayerViewHelper.addPlayers(this, R.id.clGameLayout, players);
         for (User player : players) {
+            if (player.isDealer() && player.equals(User.getCurrentUser(this))) {
+                togglePlayerView(player);
+            }
+            toggleCardsVisibilityForPlayerView(player);
             onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
         }
     }
@@ -364,12 +376,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (dealerViewFragment != null) {
                 dealerViewFragment.removePlayer(player);
             }
-            String userViewTag = getPlayerFragmentTag(player);
-            Fragment userFragment = getSupportFragmentManager().findFragmentByTag(userViewTag);
-            if (userFragment != null) {
-                getSupportFragmentManager().beginTransaction().remove(userFragment).commitNow();
+            Fragment playerFragment = getPlayerFragment(this, player);
+            if (playerFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(playerFragment).commitNow();
             } else {
-                Log.e(TAG, "NULL Failed to remove view for " + userViewTag);
+                Log.e(TAG, "NULL Failed to remove view for " + player);
             }
             onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " left.");
         }
@@ -379,7 +390,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // TODO Need to handle is dealer check here
         if (!isEmpty(cards) && from != null && to != null) {
             if (isCurrentViewPlayer) {
-                Fragment playerFragment = getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(to));
+                Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
                     ((PlayerFragment) playerFragment).stackCards(cards);
                 }
