@@ -14,6 +14,7 @@ import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
@@ -171,13 +173,18 @@ public class ParseUtils {
             if (e == null) {
                 Log.d(Constants.TAG, "Found list : " + itemList.size());
 
-                final HashSet<User> playersList = new HashSet<>();
+                final HashSet<User> players = new HashSet<>();
 
                 for (Game game : itemList) {
-                    playersList.add(game.getPlayer());
+                    players.add(game.getPlayer());
                 }
 
-                for (User player : playersList) {
+                // TODO: This custom data generation is temporary and for testing purposes only
+                if (isEmpty(players) || players.size() == 1) {
+                    players.addAll(PlayerUtils.getPlayers(4));
+                }
+
+                for (User player : players) {
                     if (!isSelf(player)) {
                         gameViewManagerActivity.addPlayersToView(getList(player));
                     }
@@ -247,17 +254,16 @@ public class ParseUtils {
      * Dealer dealing cards to a particular user
      *
      * @param toUser to whom this is sent
-     * @param cards  which cards
+     * @param card   which card
      */
-    public void dealCards(User toUser, List<Card> cards) {
+    public void dealCards(User toUser, Card card) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
             JSONObject toUserJson = getJson(toUser);
             payload.put(PARAM_PLAYER, toUserJson);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
-            }.getType());
+            String cardJson = new Gson().toJson(card);
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
@@ -270,14 +276,13 @@ public class ParseUtils {
     /**
      * Dealer moving cards to table
      *
-     * @param cards which cards
+     * @param card which card
      */
-    public void dealCardsToTable(List<Card> cards) {
+    public void dealCardsToTable(Card card) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
-            }.getType());
+            String cardJson = new Gson().toJson(card);
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
