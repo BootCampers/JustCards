@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,9 +71,27 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
         parseUtils.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
         tvGameNumberLabel.setText(getIntent().getStringExtra(DISPLAY_NAME) + ", here is your Game ID:");
+
+        btnShareId.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    // get the center for the clipping circle
+                    int cx = btnShareId.getMeasuredWidth() / 2;
+                    int cy = btnShareId.getMeasuredHeight() / 2;
+                    // get the final radius for the clipping circle
+                    int finalRadius = Math.max(btnShareId.getWidth(), btnShareId.getHeight()) / 2;
+                    // create the animator for this view (the start radius is zero)
+                    Animator anim = ViewAnimationUtils.createCircularReveal(btnShareId, cx, cy, 0, finalRadius);
+                    // make the view visible and start the animation
+                    btnShareId.setVisibility(View.VISIBLE);
+                    anim.start();
+                }
+            }
+        }, 1000);
     }
 
-   @Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_CODE_SELECT_CARDS && resultCode == RESULT_OK) {
