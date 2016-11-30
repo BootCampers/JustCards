@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.loadRoundedImage;
-import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
@@ -50,13 +49,14 @@ public class SelectGameActivity extends AppCompatActivity implements ParseUtils.
 
     @OnClick(R.id.btnJoinGame)
     public void join(final View view) {
-        if (etGameName.getText().toString().isEmpty()) {
+        /*if (etGameName.getText().toString().isEmpty()) {
             showSnackBar(getApplicationContext(), view, "Please enter ID of the game you would like to join...");
         } else {
             String gameName = etGameName.getText().toString();
             ParseUtils parseUtils = new ParseUtils(this, gameName);
             parseUtils.checkGameExists(gameName, this);
-        }
+        }*/
+        startActivity(new Intent(SelectGameActivity.this, TutorialActivity.class));
     }
 
     @OnClick(R.id.btnCreateGame)

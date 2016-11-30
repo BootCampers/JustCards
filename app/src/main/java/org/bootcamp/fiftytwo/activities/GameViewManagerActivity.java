@@ -417,9 +417,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
 
             //animation
-            new ParticleSystem(this, 4, R.drawable.dust, 500)
+            new ParticleSystem(this, 4, R.drawable.dust, 300)
                     .setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
-                    .setAcceleration(0.00001f, 30)
+                    .setAcceleration(0.000001f, 30)
                     .setInitialRotationRange(0, 360)
                     .addModifier(new AlphaModifier(255, 0, 1000, 3000))
                     .addModifier(new ScaleModifier(0.5f, 2f, 0, 1000))

@@ -52,5 +52,6 @@
     <string name="msg_no_app_sharing">No app found for sharing</string>
     <string name="msg_show">Show</string>
     <string name="msg_hide">Hide</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>
