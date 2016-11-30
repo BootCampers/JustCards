@@ -399,6 +399,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleDeal(Card card, User from, User to) {
         if (card != null && from != null && from.isDealer() && to != null) {
+            card.setShowingFront(false);
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
@@ -416,6 +417,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleDealTable(User from, Card card) {
         if (card != null && from != null && from.isDealer()) {
+            card.setShowingFront(false);
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
                 ((CardsFragment) fragment).stackCards(getList(card));
