@@ -13,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.plattysoft.leonids.ParticleSystem;
+import com.plattysoft.leonids.modifiers.AlphaModifier;
+import com.plattysoft.leonids.modifiers.ScaleModifier;
+
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
@@ -159,6 +163,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         if (!isEmpty(cards)) {
             mAdapter.addAll(cards);
             setEmptyList(mAdapter.getItemCount() == 0);
+
             return true;
         }
         return false;
