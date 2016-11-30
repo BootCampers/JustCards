@@ -48,4 +48,6 @@
     <string name="msg_add_another_deck">Add another deck</string>
     <string name="what_would_you_like_to_do">What would you like to do?</string>
     <string name="share_this_game_id_with_whom_you_would_like_to_play">Share this game ID with whom you would like to play</string>
+    <string name="msg_share">"Join us for a fun filled cards game on FiftyTwo app with game id: "</string>
+    <string name="msg_no_app_sharing">No app found for sharing</string>
 </resources>

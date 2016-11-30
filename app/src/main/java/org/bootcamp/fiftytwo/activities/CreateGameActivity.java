@@ -1,8 +1,11 @@
 package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -46,6 +49,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
 
     @BindString(R.string.select_cards) String str_select_cards;
     @BindString(R.string.start_game) String str_start_game;
+    private String gameNumberString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
 
     private void initializeWidgets() {
         int gameNumber = new Random().nextInt(99999);
-        String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
+        gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
         parseUtils = new ParseUtils(this, gameNumberString);
         parseUtils.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
@@ -80,6 +84,21 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
             btnGameOptions.setText(str_select_cards);
         } else {
             btnGameOptions.setText(str_start_game);
+        }
+    }
+
+    @OnClick(R.id.btnShareId)
+    public void shareGameId(View view){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameNumberString);
+        sendIntent.setType("text/plain");
+        PackageManager manager = getPackageManager();
+        List<ResolveInfo> infos = manager.queryIntentActivities(sendIntent, 0);
+        if (infos.size() > 0) {
+            startActivity(sendIntent);
+        } else {
+            Snackbar.make(view, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
         }
     }
 
