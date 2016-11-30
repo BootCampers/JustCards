@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.parse.ParseUser;
 
+import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
@@ -16,6 +17,7 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.IS_DEALER;
+import static org.bootcamp.fiftytwo.utils.Constants.IS_SHOWING_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
@@ -29,6 +31,7 @@ public class User {
     private String displayName;
     private String avatarUri;
     private boolean isDealer;
+    private boolean isShowingCards;
     private List<Card> cards = new ArrayList<>();
 
     public User() {}
@@ -39,9 +42,10 @@ public class User {
         this.userId = userId;
     }
 
-    public User(String avatarUri, String displayName, String userId, boolean isDealer) {
+    public User(String avatarUri, String displayName, String userId, boolean isDealer, boolean isShowingCards) {
         this(avatarUri, displayName, userId);
         this.isDealer = isDealer;
+        this.isShowingCards = isShowingCards;
     }
 
     public static User fromJson(JSONObject json) {
@@ -50,8 +54,9 @@ public class User {
             String avatarUri = json.getString(USER_AVATAR_URI);
             String userId = json.getString(USER_ID);
             boolean isDealer = json.getBoolean(IS_DEALER);
+            boolean isShowingCards = json.getBoolean(IS_SHOWING_CARDS);
             Log.d(TAG, "fromJson--" + displayName + "--" + avatarUri + "--" + userId);
-            return new User(avatarUri, displayName, userId, isDealer);
+            return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -64,6 +69,7 @@ public class User {
         json.put(USER_AVATAR_URI, user.getAvatarUri());
         json.put(USER_ID, user.getUserId());
         json.put(IS_DEALER, user.isDealer());
+        json.put(Constants.IS_SHOWING_CARDS, user.isShowingCards());
         return json;
     }
 
@@ -73,7 +79,8 @@ public class User {
         String avatarUri = userPrefs.getString(USER_AVATAR_URI, getDefaultAvatar());
         String userId = userPrefs.getString(USER_ID, "usedIdUnknown");
         boolean isDealer = userPrefs.getBoolean(IS_DEALER, false);
-        return new User(avatarUri, displayName, userId, isDealer);
+        boolean isShowingCards = userPrefs.getBoolean(IS_SHOWING_CARDS, false);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
     }
 
     public static ParseUser getCurrentUser() {
@@ -86,9 +93,10 @@ public class User {
         String avatarUri = sharedPreferences.getString(USER_AVATAR_URI, "");
         String userId = sharedPreferences.getString(USER_ID, "");
         boolean isDealer = sharedPreferences.getBoolean(IS_DEALER, false);
+        boolean isShowingCards = sharedPreferences.getBoolean(IS_SHOWING_CARDS, false);
 
         if (!displayName.isEmpty() && !userId.isEmpty()) {
-            return new User(avatarUri, displayName, userId, isDealer);
+            return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
         } else {
             return null;
         }
@@ -128,9 +136,24 @@ public class User {
         return cards;
     }
 
+    public boolean isShowingCards() {
+        return isShowingCards;
+    }
+
+    public void setShowingCards(boolean showingCards) {
+        isShowingCards = showingCards;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "avatarUri='" + avatarUri + '\'' + ", displayName='" + displayName + '\'' + ", userId='" + userId + '\'' + ", isDealer='" + isDealer + '\'' + '}';
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", avatarUri='" + avatarUri + '\'' +
+                ", isDealer=" + isDealer +
+                ", isShowingCards=" + isShowingCards +
+                ", cards=" + cards +
+                '}';
     }
 
     @Override

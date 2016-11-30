@@ -21,6 +21,7 @@ public class Constants {
     public static final String USER_AVATAR_URI = "avatarURI";
     public static final String USER_ID = "userId";
     public static final String IS_DEALER = "isDealer";
+    public static final String IS_SHOWING_CARDS = "isShowingCards";
 
     /** Request Codes Here */
     public static final int REQ_CODE_SELECT_CARDS = 1;
