@@ -164,7 +164,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .commit();
         this.isShowingPlayerFragment ^= true;
         toggleSelfPlayerView();
-        toggleCardsVisibilityForPlayerViews();
     }
 
     /**
@@ -187,16 +186,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void toggleCardsVisibilityForPlayerViews() {
+    private void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
-            toggleCardsVisibilityForPlayerView(player);
+            toggleCardsVisibilityForPlayerView(player, toShow);
         }
     }
 
-    private void toggleCardsVisibilityForPlayerView(final User player) {
+    /**
+     * Show or hide the user's cards fragment
+     * @param player which player
+     * @param toShow true if want to show, false for hiding
+     */
+    private void toggleCardsVisibilityForPlayerView(final User player, final boolean toShow) {
         Fragment playerFragment = getPlayerFragment(this, player);
         if (playerFragment != null) {
-            ((PlayerFragment) playerFragment).toggleCardsVisibility(!isShowingPlayerFragment);
+            ((PlayerFragment) playerFragment).toggleCardsVisibility(toShow);
         }
     }
 
@@ -354,7 +358,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (player.equals(User.getCurrentUser(this))) {
                 togglePlayerView(player);
             }
-            toggleCardsVisibilityForPlayerView(player);
+            toggleCardsVisibilityForPlayerView(player, false);
             onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
         }
     }
