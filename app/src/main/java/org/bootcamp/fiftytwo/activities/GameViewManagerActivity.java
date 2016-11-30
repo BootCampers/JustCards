@@ -1,6 +1,5 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -46,7 +45,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -93,8 +91,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
-    @BindDrawable(R.drawable.ic_comment) Drawable ic_comment;
-    @BindDrawable(R.drawable.ic_cancel) Drawable ic_cancel;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
@@ -253,11 +249,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (!isShowingChat) {
             fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
-            ibComment.setImageDrawable(ic_cancel);
+            ibComment.setImageResource(R.drawable.ic_cancel);
             isShowingChat = true;
         } else {
             fragmentTransaction.remove(chatAndLogFragment);
-            ibComment.setImageDrawable(ic_comment);
+            ibComment.setImageResource(R.drawable.ic_comment);
             isShowingChat = false;
         }
         fragmentTransaction.commit();
@@ -380,7 +376,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         PlayerViewHelper.addPlayers(this, R.id.clGameLayout, players);
         for (User player : players) {
-            if (player.isDealer() && player.equals(User.getCurrentUser(this))) {
+            if (player.equals(User.getCurrentUser(this))) {
                 togglePlayerView(player);
             }
             toggleCardsVisibilityForPlayerView(player);
