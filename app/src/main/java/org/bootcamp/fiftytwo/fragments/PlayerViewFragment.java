@@ -7,14 +7,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.User;
 import org.parceler.Parcels;
 
 import java.util.List;
 
+import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
@@ -32,6 +39,14 @@ public class PlayerViewFragment extends Fragment {
     private Unbinder unbinder;
     private List<Card> mPlayerCards;
     private List<Card> mTableCards;
+
+    @BindView(R.id.btnLeave)
+    Button btnLeave;
+    @BindView(R.id.btnToggleCardsFragment)
+    Button btnToggleCardsFragment;
+
+    @BindString(R.string.msg_hide) String msgHide;
+    @BindString(R.string.msg_show) String msgShow;
 
     public interface onPlayListener {
         void onPlay();
@@ -80,6 +95,25 @@ public class PlayerViewFragment extends Fragment {
                 .replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG)
                 .replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG)
                 .commit();
+    }
+
+    @OnClick(R.id.btnLeave)
+    public void leaveGameRound(View view){
+        //TODO
+        Toast.makeText(getActivity(), "Leave clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.btnToggleCardsFragment)
+    public void toggleMyCardsToAll(View view){
+        User self = User.getCurrentUser(getActivity());
+        boolean isShowing = self.isShowingCards();
+        self.setShowingCards(!isShowing);
+        if(isShowing){
+            btnToggleCardsFragment.setText(msgShow);
+        } else {
+            btnToggleCardsFragment.setText(msgHide);
+        }
+        ((GameViewManagerActivity)getActivity()).broadcastCardsVisibility(!isShowing);
     }
 
     @Override

@@ -60,6 +60,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
@@ -210,10 +211,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
+    public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
             toggleCardsVisibilityForPlayerView(player, toShow);
         }
+    }
+
+    public void broadcastCardsVisibility(final boolean toShow){
+        parseUtils.toggleCardsVisibility(toShow);
     }
 
     /**
@@ -364,6 +369,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(details);
                     List<Card> cards = new Gson().fromJson(details.getString(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
                     handleDealTable(from, cards);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PARSE_TOGGLE_CARDS_VISIBILITY:
+                try {
+                    User user = User.fromJson((JSONObject) arg);
+                    boolean toShow = ((JSONObject) arg).getBoolean(Constants.PARSE_TOGGLE_CARDS_VISIBILITY);
+                    toggleCardsVisibilityForPlayerView(user, toShow);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

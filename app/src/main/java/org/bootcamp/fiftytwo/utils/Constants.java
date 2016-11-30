@@ -59,6 +59,7 @@ public class Constants {
     public static final String PARSE_DEAL_CARDS_TO_TABLE = "dealCardsToTable";
     public static final String PARSE_PLAYERS_EXCHANGE_CARDS = "playersExchangeCards";
     public static final String PARSE_TABLE_CARD_EXCHANGE = "tableCardExchange";
+    public static final String PARSE_TOGGLE_CARDS_VISIBILITY = "toggleCardsVisibility";
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

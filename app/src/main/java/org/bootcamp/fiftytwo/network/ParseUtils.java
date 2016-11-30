@@ -35,6 +35,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYERS_EXCHANGE_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TABLE_CARD_EXCHANGE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
@@ -54,6 +55,17 @@ public class ParseUtils {
         this.gameName = gameName;
         this.context = context;
         currentLoggedInUser = User.getCurrentUser(context);
+    }
+
+    public void toggleCardsVisibility(boolean toShow) {
+        try {
+            JSONObject payload = getJson(currentLoggedInUser);
+            payload.put(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
+            payload.put(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            Log.e(Constants.TAG, "Toggle cards visibility error " + e.getMessage());
+        }
     }
 
     public interface OnGameExistsListener {
@@ -111,7 +123,8 @@ public class ParseUtils {
                     Log.e(TAG, "done: Leave Channel Failed: " + e.getMessage());
                 }
             });
-        }    }
+        }
+    }
 
     private void sendBroadcastWithPayload(final JSONObject payload) {
         if (isNetworkAvailable(context)) {
@@ -332,6 +345,7 @@ public class ParseUtils {
 
     /**
      * TODO
+     *
      * @return the cards on the table
      */
     public List<Card> fetchAllTableCards() {

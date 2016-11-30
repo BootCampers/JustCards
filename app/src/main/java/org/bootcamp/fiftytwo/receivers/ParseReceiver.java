@@ -49,6 +49,7 @@ public class ParseReceiver extends BroadcastReceiver {
                     case Constants.PARSE_PLAYER_LEFT:
                     case Constants.PARSE_DEAL_CARDS:
                     case Constants.PARSE_DEAL_CARDS_TO_TABLE:
+                    case Constants.PARSE_TOGGLE_CARDS_VISIBILITY:
                         application.notifyObservers(identifier, customData);
                         break;
                     case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
@@ -57,6 +58,9 @@ public class ParseReceiver extends BroadcastReceiver {
                         if (!isSelf(user)) {
                             application.notifyObservers(identifier, customData);
                         }
+                        break;
+                    default:
+                        Log.e(Constants.TAG, "Unknown identifier " + identifier);
                         break;
                 }
             } catch (JSONException e) {
