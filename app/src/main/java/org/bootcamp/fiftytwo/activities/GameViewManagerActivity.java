@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
@@ -186,14 +185,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
-        for (User player : mPlayers) {
-            toggleCardsVisibilityForPlayerView(player, toShow);
-        }
-    }
-
     /**
      * Show or hide the user's cards fragment
+     *
      * @param player which player
      * @param toShow true if want to show, false for hiding
      */
@@ -259,7 +253,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (playerFragment != null && !isEmpty(cards)) {
             boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
             if (result) {
-                parseUtils.dealCards(player, cards);
+                for (Card card : cards) {
+                    parseUtils.dealCards(player, card);
+                }
             }
             return result;
         }
@@ -270,7 +266,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
-                parseUtils.dealCardsToTable(cards);
+                for (Card card : cards) {
+                    parseUtils.dealCardsToTable(card);
+                }
                 return true;
             } else {
                 // TODO: Handle Drop to Sink here
@@ -328,8 +326,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(details);
                     JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
                     User to = fromJson(toUserDetails);
-                    List<Card> cards = new Gson().fromJson(details.getString(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
-                    handleDeal(cards, from, to);
+                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
+                    handleDeal(card, from, to);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -338,8 +336,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 try {
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);
-                    List<Card> cards = new Gson().fromJson(details.getString(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
-                    handleDealTable(from, cards);
+                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
+                    handleDealTable(from, card);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -379,28 +377,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDeal(List<Card> cards, User from, User to) {
-        if (!isEmpty(cards) && from != null && from.isDealer() && to != null) {
+    public void handleDeal(Card card, User from, User to) {
+        if (card != null && from != null && from.isDealer() && to != null) {
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
-                    ((PlayerFragment) playerFragment).stackCards(cards);
+                    ((PlayerFragment) playerFragment).stackCards(getList(card));
                 }
             }
             if (parseUtils.getCurrentUser().equals(to) && playerViewFragment != null) {
                 Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
-                    ((CardsFragment) fragment).stackCards(cards);
+                    ((CardsFragment) fragment).stackCards(getList(card));
                 }
             }
         }
     }
 
-    public void handleDealTable(User from, List<Card> cards) {
-        if (!isEmpty(cards) && from != null && from.isDealer()) {
+    public void handleDealTable(User from, Card card) {
+        if (card != null && from != null && from.isDealer()) {
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
-                ((CardsFragment) fragment).stackCards(cards);
+                ((CardsFragment) fragment).stackCards(getList(card));
             }
         }
     }

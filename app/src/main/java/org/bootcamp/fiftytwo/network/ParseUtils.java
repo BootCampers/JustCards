@@ -113,7 +113,8 @@ public class ParseUtils {
                     Log.e(TAG, "done: Leave Channel Failed: " + e.getMessage());
                 }
             });
-        }    }
+        }
+    }
 
     private void sendBroadcastWithPayload(final JSONObject payload) {
         if (isNetworkAvailable(context)) {
@@ -241,17 +242,16 @@ public class ParseUtils {
      * Dealer dealing cards to a particular user
      *
      * @param toUser to whom this is sent
-     * @param cards  which cards
+     * @param card   which card
      */
-    public void dealCards(User toUser, List<Card> cards) {
+    public void dealCards(User toUser, Card card) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
             JSONObject toUserJson = getJson(toUser);
             payload.put(PARAM_PLAYER, toUserJson);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
-            }.getType());
+            String cardJson = new Gson().toJson(card);
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
@@ -264,14 +264,13 @@ public class ParseUtils {
     /**
      * Dealer moving cards to table
      *
-     * @param cards which cards
+     * @param card which card
      */
-    public void dealCardsToTable(List<Card> cards) {
+    public void dealCardsToTable(Card card) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
 
-            String cardJson = new Gson().toJson(cards, new TypeToken<List<Card>>() {
-            }.getType());
+            String cardJson = new Gson().toJson(card);
             payload.put(PARAM_CARDS, cardJson);
 
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
@@ -339,6 +338,7 @@ public class ParseUtils {
 
     /**
      * TODO
+     *
      * @return the cards on the table
      */
     public List<Card> fetchAllTableCards() {
