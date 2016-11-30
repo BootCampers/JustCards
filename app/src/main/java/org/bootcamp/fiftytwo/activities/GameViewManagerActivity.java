@@ -1,6 +1,5 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -36,7 +34,6 @@ import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,28 +153,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         // Set the current view state (player vs dealer)
         isShowingPlayerFragment = isCurrentViewPlayer;
-
-        // TODO: This custom data generation is temporary and for testing purposes only
-        if (isEmpty(mPlayers)) {
-            mPlayers = PlayerUtils.getPlayers(4);
-            if (dealerViewFragment != null) dealerViewFragment.addPlayers(mPlayers);
-        }
-
-        final View rootView = getWindow().getDecorView().getRootView();
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                PlayerViewHelper.addPlayers(GameViewManagerActivity.this, R.id.clGameLayout, mPlayers);
-                toggleCardsVisibilityForPlayerViews();
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    //noinspection deprecation
-                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-            }
-        });
     }
 
     @OnClick(R.id.fab)
