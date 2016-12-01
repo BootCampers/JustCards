@@ -52,15 +52,18 @@ import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
@@ -323,7 +326,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      */
     @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
-        // Do nothing as of now
+        if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {
+            parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, true);
+        } else if (fromTag.equalsIgnoreCase(PLAYER_TAG) && toTag.equalsIgnoreCase(TABLE_TAG)) {
+            parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, false);
+        }
     }
 
     @Override
@@ -372,6 +379,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     e.printStackTrace();
                 }
                 break;
+            case PARSE_EXCHANGE_CARD_WITH_TABLE:
+                try {
+                    JSONObject details = (JSONObject) arg;
+                    User from = fromJson(details);
+                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
+                    int fromPosition = details.getInt(FROM_POSITION);
+                    int toPosition = details.getInt(FROM_POSITION);
+                    boolean pickedFromTable = details.getBoolean(TABLE_PICKED);
+                    handleCardExchange(from, card, fromPosition, toPosition, pickedFromTable);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
             case PARSE_TOGGLE_CARDS_VISIBILITY:
                 try {
                     User user = User.fromJson((JSONObject) arg);
@@ -384,7 +404,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void addPlayersToView(List<User> players) {
+    public void addPlayersToView(final List<User> players) {
         mPlayers.addAll(players);
         if (dealerViewFragment != null) {
             dealerViewFragment.addPlayers(players);
@@ -400,7 +420,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void removePlayersFromView(List<User> players) {
+    public void removePlayersFromView(final List<User> players) {
         for (User player : players) {
             mPlayers.remove(player);
             if (dealerViewFragment != null) {
@@ -416,7 +436,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDeal(Card card, User from, User to) {
+    public void handleDeal(final Card card, final User from, final User to) {
         if (card != null && from != null && from.isDealer() && to != null) {
             card.setShowingFront(false);
             if (isCurrentViewPlayer) {
@@ -437,7 +457,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDealTable(User from, Card card) {
+    public void handleDealTable(final User from, final Card card) {
         if (card != null && from != null && from.isDealer()) {
             card.setShowingFront(false);
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
@@ -445,6 +465,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ((CardsFragment) fragment).stackCards(getList(card));
             }
         }
+    }
+
+    public void handleCardExchange(final User from, final Card card, final int fromPosition, final int toPositionl, final boolean pickedFromTable) {
+        // Do nothing
     }
 
     @Override

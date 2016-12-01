@@ -52,8 +52,7 @@ public class ParseReceiver extends BroadcastReceiver {
                     case Constants.PARSE_TOGGLE_CARDS_VISIBILITY:
                         application.notifyObservers(identifier, customData);
                         break;
-                    case Constants.PARSE_PLAYERS_EXCHANGE_CARDS:
-                    case Constants.PARSE_TABLE_CARD_EXCHANGE:
+                    case Constants.PARSE_EXCHANGE_CARD_WITH_TABLE:
                         // Process only if it's not from self/current user
                         if (!isSelf(user)) {
                             application.notifyObservers(identifier, customData);
