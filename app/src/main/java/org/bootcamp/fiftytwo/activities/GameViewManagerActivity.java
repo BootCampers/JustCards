@@ -189,14 +189,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
+    @SuppressWarnings("unused")
     public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
             toggleCardsVisibilityForPlayerView(player, toShow);
         }
-    }
-
-    public void broadcastCardsVisibility(final boolean toShow){
-        parseUtils.toggleCardsVisibility(toShow);
     }
 
     /**
@@ -210,6 +207,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (playerFragment != null) {
             ((PlayerFragment) playerFragment).toggleCardsVisibility(toShow);
         }
+    }
+
+    @Override
+    public void onCardsVisibility(boolean toShow) {
+        parseUtils.toggleCardsVisibility(toShow);
     }
 
     @Override
@@ -292,22 +294,36 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         return false;
     }
 
+    /**
+     * Card Exchange Rules:
+     * <p>
+     * ------          Dealer	Player  Table   Player View
+     * Dealer	        X	    Y(D)	Y(DT)	Y(D)
+     * Player	        NP	    X	    Y(CT)	NA
+     * Table	        NP	    Y(CT)	Y(T)	NA
+     * Player View	    NA	    NA	    NA	    NA
+     * <p>
+     * Legends:
+     * X	No Broadcast
+     * Y	Broadcast
+     * NA	Move Not Allowed
+     * NP	Move Not Possible
+     * <p>
+     * Values in parentheses describe the corresponding APIs in use with the legends being:
+     * D   Deal
+     * DT  Deal Table
+     * CT  Card Table
+     * T   Within Table
+     * <p>
+     * Tags for different Card Fragments:
+     * 1.DEALER_TAG
+     * 2.PLAYER_TAG
+     * 3.TABLE_TAG
+     * 4.Custom Player View Tag (player.getDisplayName() + "_" + player.getUserId())
+     */
     @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
-        // Tags for different Card Fragments:
-        // 1.DEALER_TAG, 2.PLAYER_TAG, 3.TABLE_TAG, 4.Custom Player View Tag (player.getDisplayName() + "_" + player.getUserId())
-
-        // Business Rules:
-        //  Player View Fragment:
-        //      1. Table to Player -             Table Exchange
-        //      2. Player to Table -             Table Exchange
-        //      3. Player to Player -            Card Exchange
-        //      4. Player Self to Player Self -  No Broadcast
-        //      5. Table to Table -              Intra table Broadcast
-        //  Dealer View Fragment:
-        //      6. Dealer to Player -            Deal
-        //      7. Player to Player -            Should Not be possible
-        //      8. Player to Dealer -            Should Not be possible
+        // Do nothing as of now
     }
 
     @Override
@@ -416,14 +432,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }
             }
 
-            //animation
-            new ParticleSystem(this, 4, R.drawable.dust, 300)
-                    .setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
-                    .setAcceleration(0.000001f, 30)
-                    .setInitialRotationRange(0, 360)
-                    .addModifier(new AlphaModifier(255, 0, 1000, 3000))
-                    .addModifier(new ScaleModifier(0.5f, 2f, 0, 1000))
-                    .oneShot(findViewById(R.id.flPlayerContainer), 4);
+            // animation deal event on the player view
+            animateDeal();
         }
     }
 
@@ -435,11 +445,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ((CardsFragment) fragment).stackCards(getList(card));
             }
         }
-    }
-
-    @Override
-    public void onPlay() {
-        // Do Nothing
     }
 
     @Override
@@ -455,6 +460,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onScoreFragmentInteraction(boolean saveClicked) {
         //Do Nothing
+    }
+
+    private void animateDeal() {
+        new ParticleSystem(this, 4, R.drawable.dust, 300)
+                .setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
+                .setAcceleration(0.000001f, 30)
+                .setInitialRotationRange(0, 360)
+                .addModifier(new AlphaModifier(255, 0, 1000, 3000))
+                .addModifier(new ScaleModifier(0.5f, 2f, 0, 1000))
+                .oneShot(findViewById(R.id.flPlayerContainer), 4);
     }
 
 }

@@ -13,10 +13,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.plattysoft.leonids.ParticleSystem;
-import com.plattysoft.leonids.modifiers.AlphaModifier;
-import com.plattysoft.leonids.modifiers.ScaleModifier;
-
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
@@ -114,10 +110,6 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         setEmptyList(mAdapter.getItemCount() == 0);
     }
 
-    public void toggleCardsVisibility(boolean show) {
-        flCardsContainer.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
     @Override
     public void setEmptyList(boolean visibility) {
         if (visibility) {
@@ -142,6 +134,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         if (mLogEventListener != null) {
             mLogEventListener.onNewLogEvent(whoPosted, avatarUri, details);
         }
+    }
+
+    public void toggleCardsVisibility(boolean show) {
+        flCardsContainer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public List<Card> getCards() {

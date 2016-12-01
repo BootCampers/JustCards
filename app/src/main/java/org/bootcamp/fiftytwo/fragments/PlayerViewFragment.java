@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 import org.parceler.Parcels;
@@ -40,16 +39,14 @@ public class PlayerViewFragment extends Fragment {
     private List<Card> mPlayerCards;
     private List<Card> mTableCards;
 
-    @BindView(R.id.btnLeave)
-    Button btnLeave;
-    @BindView(R.id.btnToggleCardsFragment)
-    Button btnToggleCardsFragment;
+    @BindView(R.id.btnLeave) Button btnLeave;
+    @BindView(R.id.btnToggleCardsFragment) Button btnToggleCardsFragment;
 
     @BindString(R.string.msg_hide) String msgHide;
     @BindString(R.string.msg_show) String msgShow;
 
     public interface onPlayListener {
-        void onPlay();
+        void onCardsVisibility(final boolean toShow);
     }
 
     public static PlayerViewFragment newInstance(List<Card> playerCards, List<Card> tableCards) {
@@ -98,22 +95,21 @@ public class PlayerViewFragment extends Fragment {
     }
 
     @OnClick(R.id.btnLeave)
-    public void leaveGameRound(View view){
+    public void leaveGameRound() {
         //TODO
         Toast.makeText(getActivity(), "Leave clicked", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btnToggleCardsFragment)
-    public void toggleMyCardsToAll(View view){
-        User self = User.getCurrentUser(getActivity());
+    public void toggleMyCardsToAll() {
+        User self = User.getCurrentUser(getContext());
         boolean isShowing = self.isShowingCards();
+
         self.setShowingCards(!isShowing);
-        if(isShowing){
-            btnToggleCardsFragment.setText(msgShow);
-        } else {
-            btnToggleCardsFragment.setText(msgHide);
+        btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
+        if (mListener != null) {
+            mListener.onCardsVisibility(!isShowing);
         }
-        ((GameViewManagerActivity)getActivity()).broadcastCardsVisibility(!isShowing);
     }
 
     @Override
