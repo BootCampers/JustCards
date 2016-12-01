@@ -1,8 +1,6 @@
 package org.bootcamp.fiftytwo.models;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 
 import org.bootcamp.fiftytwo.R;
 import org.parceler.Parcel;
@@ -75,10 +73,6 @@ public class Card {
         return context.getResources().getIdentifier(name.toLowerCase(), "drawable", context.getPackageName());
     }
 
-    public Drawable getDrawableBack(Context context) {
-        return ContextCompat.getDrawable(context, getDrawableBack());
-    }
-
     public int getDrawableBack() {
         return R.drawable.back;
     }
@@ -93,5 +87,19 @@ public class Card {
     @Override
     public String toString(){
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Card card = (Card) o;
+        return name != null ? name.equals(card.name) : card.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

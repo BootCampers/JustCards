@@ -11,8 +11,6 @@ import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.Constants;
 
-import java.util.List;
-
 /**
  * Author: agoenka
  * Created At: 11/21/2016
@@ -52,8 +50,8 @@ public class OnCardsDragListener implements View.OnDragListener {
                     int targetPosition = getTargetPosition(v);
                     Card movingCard = sourceAdapter.getCards().get(sourcePosition);
 
-                    updateSource(sourceAdapter, sourcePosition);
-                    updateTarget(targetAdapter, targetPosition, movingCard);
+                    sourceAdapter.remove(sourcePosition);
+                    targetAdapter.add(movingCard, targetPosition);
 
                     v.setVisibility(View.VISIBLE);
                     if (v.getId() == R.id.tvNoCards) {
@@ -107,28 +105,5 @@ public class OnCardsDragListener implements View.OnDragListener {
 
     private int getTargetPosition(View v) {
         return v.getId() != R.id.tvNoCards ? (int) v.getTag() : -1;
-    }
-
-    private void updateSource(CardsAdapter adapter, int position) {
-        List<Card> cards = adapter.getCards();
-        cards.remove(position);
-        updateCards(adapter, cards);
-    }
-
-    private void updateTarget(CardsAdapter adapter, int position, Card card) {
-        List<Card> cards = adapter.getCards();
-        if (position >= 0) {
-            cards.add(position, card);
-        } else {
-            cards.add(card);
-        }
-        updateCards(adapter, cards);
-    }
-
-    private void updateCards(CardsAdapter adapter, List<Card> cards) {
-        adapter.setCards(cards);
-        if (cards.size() == 0) {
-            adapter.getCardsListener().setEmptyList(true);
-        }
     }
 }

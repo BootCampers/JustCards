@@ -49,6 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
+import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
@@ -268,9 +269,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public boolean onDeal(List<Card> cards, User player) {
-        Fragment playerFragment = getPlayerFragment(this, player);
-        if (playerFragment != null && !isEmpty(cards)) {
-            boolean result = ((PlayerFragment) playerFragment).stackCards(cards);
+        Fragment fragment = getPlayerFragment(this, player);
+        if (fragment != null && !isEmpty(cards)) {
+            boolean result = ((CardsFragment) fragment).stackCards(cards);
             if (result) {
                 for (Card card : cards) {
                     parseUtils.dealCards(player, card);
@@ -387,7 +388,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     int fromPosition = details.getInt(FROM_POSITION);
                     int toPosition = details.getInt(FROM_POSITION);
                     boolean pickedFromTable = details.getBoolean(TABLE_PICKED);
-                    handleCardExchange(from, card, fromPosition, toPosition, pickedFromTable);
+                    handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -442,7 +443,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (isCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
-                    ((PlayerFragment) playerFragment).stackCards(getList(card));
+                    ((CardsFragment) playerFragment).stackCards(getList(card));
                 }
             }
             if (parseUtils.getCurrentUser().equals(to) && playerViewFragment != null) {
@@ -467,18 +468,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleCardExchange(final User from, final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
+    public void handleCardExchangeWithTable(final User from, final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
         Log.d(TAG, "handleCardExchange: User: " + from +
                 ", Card: " + card +
                 ", fromPosition: " + fromPosition +
                 ", toPosition: " + toPosition +
                 ", pickedFromTable: " + pickedFromTable);
-        if (pickedFromTable) {
-            // Draw from table
-            // Stack to Player View
-        } else {
-            // Draw from Player View
-            // Stack to Player
+
+        if (card != null && from != null && !isSelf(from)) {
+            Fragment playerFragment = getPlayerFragment(this, from);
+            Fragment tableFragment = null;
+            if (playerViewFragment != null) {
+                tableFragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            }
+            if (playerFragment != null && tableFragment != null) {
+                Fragment source = pickedFromTable ? tableFragment : playerFragment;
+                Fragment target = pickedFromTable ? playerFragment : tableFragment;
+
+                boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
+                if (draw) {
+                    ((CardsFragment) target).stackCard(card, toPosition);
+                }
+            }
         }
     }
 

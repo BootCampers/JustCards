@@ -155,11 +155,13 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         return mAdapter.getCards();
     }
 
-    public boolean stackCards(List<Card> cards) {
-        if (!isEmpty(cards)) {
-            mAdapter.addAll(cards);
-            setEmptyList(mAdapter.getItemCount() == 0);
+    public boolean drawCard(int position, Card card) {
+        return card != null && position < mAdapter.getItemCount() && card.equals(mAdapter.getCards().get(position)) && mAdapter.remove(position) != null;
+    }
 
+    public boolean stackCard(Card card, int position) {
+        if (card != null) {
+            mAdapter.add(card, position);
             return true;
         }
         return false;
@@ -168,7 +170,14 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     public boolean drawCards(List<Card> cards) {
         if (!isEmpty(cards)) {
             mAdapter.removeAll(cards);
-            setEmptyList(mAdapter.getItemCount() == 0);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean stackCards(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            mAdapter.addAll(cards);
             return true;
         }
         return false;

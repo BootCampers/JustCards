@@ -40,10 +40,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         void logActivity(String whoPosted, String fromAvatar, String details);
     }
 
-    public CardsListener getCardsListener() {
-        return cardsListener;
-    }
-
     public List<Card> getCards() {
         return mCards;
     }
@@ -92,6 +88,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnLongClickListener(view -> {
             ClipData data = ClipData.newPlainText("", "");
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            // noinspection deprecation
             view.startDrag(data, shadowBuilder, view, 0);
             view.setVisibility(View.INVISIBLE);
             return true;
@@ -127,10 +124,31 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
     }
 
+    public void add(Card card, int position) {
+        if (position >= 0 && position < getItemCount()) {
+            mCards.add(position, card);
+        } else {
+            mCards.add(card);
+        }
+        notifyDataSetChanged();
+        cardsListener.setEmptyList(isEmpty(mCards));
+    }
+
+    public Card remove(int position) {
+        Card card = null;
+        if (position < getItemCount()) {
+            card = mCards.remove(position);
+            notifyDataSetChanged();
+            cardsListener.setEmptyList(isEmpty(mCards));
+        }
+        return card;
+    }
+
     public void addAll(List<Card> cards) {
         if (!isEmpty(cards)) {
             mCards.addAll(cards);
             notifyDataSetChanged();
+            cardsListener.setEmptyList(getItemCount() == 0);
         }
     }
 
@@ -138,6 +156,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         if (!isEmpty(cards)) {
             mCards.removeAll(cards);
             notifyDataSetChanged();
+            cardsListener.setEmptyList(getItemCount() == 0);
         }
     }
 }
