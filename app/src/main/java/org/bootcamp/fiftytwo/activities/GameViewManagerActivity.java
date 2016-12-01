@@ -1,7 +1,12 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -11,7 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -99,7 +106,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fab)
     FloatingActionMenu fab;
     @BindView(R.id.ibComment) ImageButton ibComment;
-    @BindView(R.id.ibSettings) ImageButton ibSettings;
+    @BindView(R.id.ibInfo) ImageButton ibInfo;
     @BindView(R.id.fabSwap)
     FloatingActionButton fabSwap;
     @BindView(R.id.fabExit)
@@ -244,6 +251,40 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onCardsVisibility(boolean toShow) {
         parseUtils.toggleCardsVisibility(toShow);
+    }
+
+    @OnClick(R.id.ibInfo)
+    public void showGameInfo(View view){
+        PopupWindow popup = new PopupWindow(GameViewManagerActivity.this);
+        View layout = getLayoutInflater().inflate(R.layout.popup_gameid, null);
+        Button btnGameId= (Button) layout.findViewById(R.id.btnGameId);
+        btnGameId.setText("Game id " + gameName + " ");
+        btnGameId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameName);
+                sendIntent.setType("text/plain");
+                PackageManager manager = getPackageManager();
+                List<ResolveInfo> info = manager.queryIntentActivities(sendIntent, 0);
+                if (info.size() > 0) {
+                    startActivity(sendIntent);
+                } else {
+                    Snackbar.make(view, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+        popup.setContentView(layout);
+        // Set content width and height
+        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        // Closes the popup window when touch outside of it - when looses focus
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
+        // Show anchored to button
+        popup.setBackgroundDrawable(new BitmapDrawable());
+        popup.showAsDropDown(view);
     }
 
     @OnClick(R.id.fabExit)

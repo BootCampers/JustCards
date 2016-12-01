@@ -40,7 +40,7 @@
         android:layout_marginTop="@dimen/common_margin"/>
 
     <ImageButton
-        android:id="@+id/ibSettings"
+        android:id="@+id/ibInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
@@ -48,7 +48,7 @@
         android:layout_marginRight="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_settings"/>
+        app:srcCompat="@drawable/ic_info_outline"/>
 
     <ImageButton
         android:id="@+id/ibComment"
