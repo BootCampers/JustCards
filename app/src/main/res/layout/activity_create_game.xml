@@ -49,7 +49,7 @@
                     android:layout_marginTop="5dp"
                     tools:text="54321"
                     android:text=""
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="25sp"
                     android:textStyle="bold"/>
 
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     tools:text="Shak, here is your game ID:"
                     android:text=""
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true" />
@@ -99,7 +99,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/gameIDLayout"
                 android:layout_marginTop="50dp"
-                android:background="@drawable/black_button"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="@string/select_cards"
