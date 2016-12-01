@@ -7,11 +7,19 @@ import android.util.Log;
 
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
+import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
  * Created by baphna on 11/18/2016.
@@ -24,9 +32,9 @@ public class ParseReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         application = ((FiftyTwoApplication) context.getApplicationContext());
-        Log.d(Constants.TAG, "onReceive");
+        Log.d(TAG, "onReceive");
         if (intent == null) {
-            Log.d(Constants.TAG, "Receiver intent null");
+            Log.d(TAG, "Receiver intent null");
         } else {
             processBroadcast(intent);
         }
@@ -40,26 +48,27 @@ public class ParseReceiver extends BroadcastReceiver {
                 JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
                 JSONObject customData = new JSONObject(json.getString("customData"));
 
-                String identifier = customData.getString(Constants.COMMON_IDENTIFIER);
-                Log.d(Constants.TAG, identifier + "--" + customData.toString());
+                String identifier = customData.getString(COMMON_IDENTIFIER);
+                Log.d(TAG, identifier + "--" + customData.toString());
                 User user = User.fromJson(customData);
 
                 switch (identifier) {
-                    case Constants.PARSE_NEW_PLAYER_ADDED:
-                    case Constants.PARSE_PLAYER_LEFT:
-                    case Constants.PARSE_DEAL_CARDS:
-                    case Constants.PARSE_DEAL_CARDS_TO_TABLE:
-                    case Constants.PARSE_TOGGLE_CARDS_VISIBILITY:
+                    case PARSE_NEW_PLAYER_ADDED:
+                    case PARSE_PLAYER_LEFT:
+                    case PARSE_DEAL_CARDS:
+                    case PARSE_DEAL_CARDS_TO_TABLE:
+                    case PARSE_TOGGLE_CARDS_VISIBILITY:
                         application.notifyObservers(identifier, customData);
                         break;
-                    case Constants.PARSE_EXCHANGE_CARD_WITH_TABLE:
+                    case PARSE_EXCHANGE_CARD_WITH_TABLE:
+                    case PARSE_SWAP_CARD_WITHIN_TABLE:
                         // Process only if it's not from self/current user
                         if (!isSelf(user)) {
                             application.notifyObservers(identifier, customData);
                         }
                         break;
                     default:
-                        Log.e(Constants.TAG, "Unknown identifier " + identifier);
+                        Log.e(TAG, "Unknown identifier " + identifier);
                         break;
                 }
             } catch (JSONException e) {

@@ -62,6 +62,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
@@ -331,6 +332,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, true);
         } else if (fromTag.equalsIgnoreCase(PLAYER_TAG) && toTag.equalsIgnoreCase(TABLE_TAG)) {
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, false);
+        } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(TABLE_TAG)) {
+            parseUtils.swapCardWithinTable(card, fromPosition, toPosition);
         }
     }
 
@@ -389,6 +392,18 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     int toPosition = details.getInt(FROM_POSITION);
                     boolean pickedFromTable = details.getBoolean(TABLE_PICKED);
                     handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PARSE_SWAP_CARD_WITHIN_TABLE:
+                try {
+                    JSONObject details = (JSONObject) arg;
+                    User from = fromJson(details);
+                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
+                    int fromPosition = details.getInt(FROM_POSITION);
+                    int toPosition = details.getInt(FROM_POSITION);
+                    handleCardExchangeWithinTable(from, card, fromPosition, toPosition);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -469,8 +484,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleCardExchangeWithTable(final User from, final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
-        Log.d(TAG, "handleCardExchange: User: " + from +
-                ", Card: " + card +
+        Log.d(TAG, "handleCardExchangeWithTable: Card: " + card +
+                ", User: " + from +
                 ", fromPosition: " + fromPosition +
                 ", toPosition: " + toPosition +
                 ", pickedFromTable: " + pickedFromTable);
@@ -486,8 +501,31 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 Fragment target = pickedFromTable ? playerFragment : tableFragment;
 
                 boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
+                Log.d(TAG, "handleCardExchangeWithTable: Draw Status: " + draw);
                 if (draw) {
-                    ((CardsFragment) target).stackCard(card, toPosition);
+                    boolean stack = ((CardsFragment) target).stackCard(card, toPosition);
+                    Log.d(TAG, "handleCardExchangeWithTable: Stack Status: " + stack);
+                }
+            }
+        }
+    }
+
+    private void handleCardExchangeWithinTable(final User from, final Card card, final int fromPosition, final int toPosition) {
+        Log.d(TAG, "handleCardExchangeWithinTable: Card: " + card +
+                ", User: " + from +
+                ", fromPosition: " + fromPosition +
+                ", toPosition: " + toPosition);
+
+        // TODO
+
+        if (card != null && from != null && !isSelf(from) && playerViewFragment != null) {
+            Fragment tableFragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            if (tableFragment != null) {
+                boolean draw = ((CardsFragment) tableFragment).drawCard(fromPosition, card);
+                Log.d(TAG, "handleCardExchangeWithinTable: Draw Status: " + draw);
+                if (draw) {
+                    boolean stack = ((CardsFragment) tableFragment).stackCard(card, toPosition);
+                    Log.d(TAG, "handleCardExchangeWithinTable: Stack Status: " + stack);
                 }
             }
         }

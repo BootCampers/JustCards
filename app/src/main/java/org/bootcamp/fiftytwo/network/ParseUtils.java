@@ -36,6 +36,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
@@ -309,13 +310,23 @@ public class ParseUtils {
     }
 
     /**
-     * Card picked by current user OR placed on table by current user
+     * Player swaps a card on the table from one position to another
      *
-     * @param cards           which cards
-     * @param pickedFromTable is the card picked from table
+     * @param card         which card
+     * @param fromPosition position of the card where it was picked from
+     * @param toPosition   position of the card where it is dropped in
      */
-    public void selfTableCardExchange(List<Card> cards, boolean pickedFromTable) {
-        // Do Nothing
+    public void swapCardWithinTable(final Card card, final int fromPosition, final int toPosition) {
+        try {
+            JSONObject payload = getJson(currentLoggedInUser);
+            payload.put(PARAM_CARDS, new Gson().toJson(card));
+            payload.put(FROM_POSITION, fromPosition);
+            payload.put(TO_POSITION, toPosition);
+            payload.put(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
