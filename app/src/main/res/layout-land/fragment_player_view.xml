@@ -13,20 +13,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/ic_table_background">
 
-        <Button
-            android:text="@string/msg_show"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnToggleCardsFragment"
-            android:layout_marginStart="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            app:layout_constraintHorizontal_bias="0.17"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
         <FrameLayout
             android:id="@+id/flPlayerContainer"
             android:layout_width="400dp"
@@ -45,24 +31,6 @@
             app:layout_constraintVertical_bias="0.9">
 
         </FrameLayout>
-
-        <Button
-            android:text="Leave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnLeave"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            app:layout_constraintHorizontal_bias="0.79"
-            app:layout_constraintVertical_bias="1.0" />
 
         <FrameLayout
             android:id="@+id/flTableContainer"

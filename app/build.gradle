@@ -77,4 +77,6 @@ dependencies {
     compile 'com.github.chenupt.android:springindicator:1.0.2@aar'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     apt 'org.parceler:parceler:1.1.1'
+    compile 'com.github.clans:fab:1.6.4'
+
 }

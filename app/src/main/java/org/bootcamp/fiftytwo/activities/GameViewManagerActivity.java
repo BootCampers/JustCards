@@ -1,7 +1,7 @@
 package org.bootcamp.fiftytwo.activities;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
@@ -44,6 +46,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -93,9 +96,29 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private ChatAndLogFragment chatAndLogFragment;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.fab)
+    FloatingActionMenu fab;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibSettings) ImageButton ibSettings;
+    @BindView(R.id.fabSwap)
+    FloatingActionButton fabSwap;
+    @BindView(R.id.fabExit)
+    FloatingActionButton fabExit;
+    @BindView(R.id.fabMute)
+    FloatingActionButton fabMute;
+    @BindView(R.id.fabToggleCardsVisibility)
+    FloatingActionButton fabToggleCardsVisibility;
+
+    @BindDrawable(R.drawable.ic_power)
+    Drawable icPower;
+    @BindDrawable(R.drawable.ic_swap)
+    Drawable icSwap;
+    @BindDrawable(R.drawable.ic_not_interested)
+    Drawable icNotInterested;
+    @BindDrawable(R.drawable.ic_visibility_on)
+    Drawable icVisibilityOn;
+    @BindDrawable(R.drawable.ic_visibility_off)
+    Drawable icVisibilityOff;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
@@ -109,6 +132,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        fabSwap.setImageDrawable(icSwap);
+        fabMute.setImageDrawable(icNotInterested);
+        fabExit.setImageDrawable(icPower);
+        fabToggleCardsVisibility.setImageDrawable(icVisibilityOn);
 
         initGameParams();
         initFragments();
@@ -163,7 +190,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         isShowingPlayerFragment = isCurrentViewPlayer;
     }
 
-    @OnClick(R.id.fab)
+    @OnClick(R.id.fabSwap)
     public void switchView() {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -219,6 +246,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         parseUtils.toggleCardsVisibility(toShow);
     }
 
+    @OnClick(R.id.fabExit)
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)

@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
@@ -18,9 +16,7 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindString;
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
@@ -38,9 +34,6 @@ public class PlayerViewFragment extends Fragment {
     private Unbinder unbinder;
     private List<Card> mPlayerCards;
     private List<Card> mTableCards;
-
-    @BindView(R.id.btnLeave) Button btnLeave;
-    @BindView(R.id.btnToggleCardsFragment) Button btnToggleCardsFragment;
 
     @BindString(R.string.msg_hide) String msgHide;
     @BindString(R.string.msg_show) String msgShow;
@@ -94,19 +87,14 @@ public class PlayerViewFragment extends Fragment {
                 .commit();
     }
 
-    @OnClick(R.id.btnLeave)
-    public void leaveGameRound() {
-        //TODO
-        Toast.makeText(getActivity(), "Leave clicked", Toast.LENGTH_SHORT).show();
-    }
 
-    @OnClick(R.id.btnToggleCardsFragment)
+    //@OnClick(R.id.btnToggleCardsFragment)
     public void toggleMyCardsToAll() {
         User self = User.getCurrentUser(getContext());
         boolean isShowing = self.isShowingCards();
 
         self.setShowingCards(!isShowing);
-        btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
+        //btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
         if (mListener != null) {
             mListener.onCardsVisibility(!isShowing);
         }
