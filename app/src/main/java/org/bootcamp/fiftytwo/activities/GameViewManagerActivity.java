@@ -287,8 +287,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
-                for (Card card : cards) {
-                    parseUtils.dealCardsToTable(card);
+                for (int i=0; i<cards.size(); i++) {
+                    Card card = cards.get(i);
+                    parseUtils.dealCardsToTable(card, i);
                 }
                 return true;
             } else {
@@ -378,7 +379,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);
                     Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
-                    handleDealTable(from, card);
+                    int position =  details.getInt(Constants.PARAM_POSITION);
+                    handleDealTable(from, card, position);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -473,12 +475,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDealTable(final User from, final Card card) {
+    public void handleDealTable(final User from, final Card card, final int position) {
         if (card != null && from != null && from.isDealer()) {
             card.setShowingFront(false);
             Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             if (fragment != null) {
-                ((CardsFragment) fragment).stackCards(getList(card));
+                ((CardsFragment) fragment).stackCard(card, position);
             }
         }
     }

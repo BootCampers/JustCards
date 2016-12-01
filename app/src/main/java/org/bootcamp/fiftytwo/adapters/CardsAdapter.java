@@ -3,6 +3,7 @@ package org.bootcamp.fiftytwo.adapters;
 import android.content.ClipData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 import org.bootcamp.fiftytwo.views.OnGestureListener;
 
@@ -128,6 +130,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         if (position >= 0 && position < getItemCount()) {
             mCards.add(position, card);
         } else {
+            //TODO : must be added to specific position or else cards are out of order on different devices
+            Log.d(Constants.TAG, "Problem here " + position);
             mCards.add(card);
         }
         notifyDataSetChanged();

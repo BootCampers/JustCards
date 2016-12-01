@@ -31,6 +31,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -276,10 +277,11 @@ public class ParseUtils {
      *
      * @param card which card
      */
-    public void dealCardsToTable(final Card card) {
+    public synchronized void dealCardsToTable(final Card card, final int position) {
         try {
             JSONObject payload = getJson(currentLoggedInUser);
             payload.put(PARAM_CARDS, new Gson().toJson(card));
+            payload.put(PARAM_POSITION, position);
             payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
             sendBroadcastWithPayload(payload);
         } catch (JSONException e) {

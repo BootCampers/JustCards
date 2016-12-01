@@ -32,6 +32,7 @@ public class User {
     private String avatarUri;
     private boolean isDealer;
     private boolean isShowingCards;
+    private boolean isActive;
     private List<Card> cards = new ArrayList<>();
 
     public User() {}
