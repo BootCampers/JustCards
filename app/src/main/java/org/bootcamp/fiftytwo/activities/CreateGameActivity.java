@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
@@ -41,26 +42,25 @@ import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 public class CreateGameActivity extends AppCompatActivity implements ParseUtils.OnGameExistsListener {
 
     private List<Card> mCards = new ArrayList<>();
+    private String gameNumberString;
     private ParseUtils parseUtils;
 
     @BindView(R.id.tvGameNumber) TextView tvGameNumber;
     @BindView(R.id.tvGameNumberLabel) TextView tvGameNumberLabel;
     @BindView(R.id.btnGameOptions) Button btnGameOptions;
-    @BindView(R.id.btnShareId)
-    FloatingActionButton btnShareId;
+    @BindView(R.id.btnShareId) FloatingActionButton btnShareId;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @BindString(R.string.select_cards) String str_select_cards;
     @BindString(R.string.start_game) String str_start_game;
-    private String gameNumberString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
         initializeWidgets();
     }
 
@@ -70,52 +70,20 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
         parseUtils = new ParseUtils(this, gameNumberString);
         parseUtils.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
-        tvGameNumberLabel.setText(getIntent().getStringExtra(DISPLAY_NAME) + ", here is your Game ID:");
-
-        btnShareId.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    // get the center for the clipping circle
-                    int cx = btnShareId.getMeasuredWidth() / 2;
-                    int cy = btnShareId.getMeasuredHeight() / 2;
-                    // get the final radius for the clipping circle
-                    int finalRadius = Math.max(btnShareId.getWidth(), btnShareId.getHeight()) / 2;
-                    // create the animator for this view (the start radius is zero)
-                    Animator anim = ViewAnimationUtils.createCircularReveal(btnShareId, cx, cy, 0, finalRadius);
-                    // make the view visible and start the animation
-                    btnShareId.setVisibility(View.VISIBLE);
-                    anim.start();
-                }
-            }
-        }, 1000);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_CODE_SELECT_CARDS && resultCode == RESULT_OK) {
-            mCards = Parcels.unwrap(data.getExtras().getParcelable(PARAM_CARDS));
-            Toast.makeText(this, "Selected Total: " + mCards.size() + " Cards", Toast.LENGTH_SHORT).show();
-        }
-
-       //Change select cards to start game
-        if (mCards == null || mCards.size() == 0){
-            btnGameOptions.setText(str_select_cards);
-        } else {
-            btnGameOptions.setText(str_start_game);
-        }
+        tvGameNumberLabel.setText(String.format("%s, here is your Game ID:", getIntent().getStringExtra(DISPLAY_NAME)));
+        // animation
+        animateFab(btnShareId);
     }
 
     @OnClick(R.id.btnShareId)
-    public void shareGameId(View view){
+    public void shareGameId(View view) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameNumberString);
         sendIntent.setType("text/plain");
         PackageManager manager = getPackageManager();
-        List<ResolveInfo> infos = manager.queryIntentActivities(sendIntent, 0);
-        if (infos.size() > 0) {
+        List<ResolveInfo> info = manager.queryIntentActivities(sendIntent, 0);
+        if (info.size() > 0) {
             startActivity(sendIntent);
         } else {
             Snackbar.make(view, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
@@ -142,6 +110,18 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_CODE_SELECT_CARDS && resultCode == RESULT_OK) {
+            mCards = Parcels.unwrap(data.getExtras().getParcelable(PARAM_CARDS));
+            Toast.makeText(this, "Selected Total: " + mCards.size() + " Cards", Toast.LENGTH_SHORT).show();
+        }
+
+        //Change select cards to start game
+        btnGameOptions.setText(isEmpty(mCards) ? str_select_cards : str_start_game);
+    }
+
+    @Override
     public void onGameExistsResult(final boolean result) {
         if (result) {
             int gameNumber = new Random().nextInt(99999);
@@ -149,5 +129,22 @@ public class CreateGameActivity extends AppCompatActivity implements ParseUtils.
             parseUtils.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
+    }
+
+    private void animateFab(final View view) {
+        view.postDelayed(() -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                // get the center for the clipping circle
+                int cx = view.getMeasuredWidth() / 2;
+                int cy = view.getMeasuredHeight() / 2;
+                // get the final radius for the clipping circle
+                int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
+                // create the animator for this view (the start radius is zero)
+                Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+                // make the view visible and start the animation
+                view.setVisibility(View.VISIBLE);
+                anim.start();
+            }
+        }, 1000);
     }
 }

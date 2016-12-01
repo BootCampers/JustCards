@@ -467,8 +467,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleCardExchange(final User from, final Card card, final int fromPosition, final int toPositionl, final boolean pickedFromTable) {
-        // Do nothing
+    public void handleCardExchange(final User from, final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
+        Log.d(TAG, "handleCardExchange: User: " + from +
+                ", Card: " + card +
+                ", fromPosition: " + fromPosition +
+                ", toPosition: " + toPosition +
+                ", pickedFromTable: " + pickedFromTable);
+        if (pickedFromTable) {
+            // Draw from table
+            // Stack to Player View
+        } else {
+            // Draw from Player View
+            // Stack to Player
+        }
     }
 
     @Override
