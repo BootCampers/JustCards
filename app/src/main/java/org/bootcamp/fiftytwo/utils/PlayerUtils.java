@@ -11,7 +11,6 @@ import java.util.Random;
  * Created At: 11/22/2016
  * Version: ${VERSION}
  */
-
 public class PlayerUtils {
 
     private static String[] playerNames = {
@@ -48,7 +47,7 @@ public class PlayerUtils {
                 index = rand.nextInt(playerNames.length);
             }
             indices.add(index);
-            players.add(new User(playerAvatars[index], playerNames[index], String.valueOf(rand.nextInt(10))));
+            players.add(new User(playerAvatars[index], playerNames[index], String.valueOf(index)));
         }
         return players;
     }

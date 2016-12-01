@@ -59,17 +59,6 @@ public class ParseUtils {
         currentLoggedInUser = User.getCurrentUser(context);
     }
 
-    public void toggleCardsVisibility(boolean toShow) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
-            payload.put(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            Log.e(Constants.TAG, "Toggle cards visibility error " + e.getMessage());
-        }
-    }
-
     public interface OnGameExistsListener {
         void onGameExistsResult(final boolean result);
     }
@@ -128,22 +117,6 @@ public class ParseUtils {
         }
     }
 
-    private void sendBroadcastWithPayload(final JSONObject payload) {
-        if (isNetworkAvailable(context)) {
-            HashMap<String, String> data = new HashMap<>();
-            data.put("customData", payload.toString());
-            data.put("channel", gameName);
-            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
-                if (e == null) {
-                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded! " + payload.toString());
-                } else {
-                    Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
-                }
-            });
-        }
-        //TODO: retry this operation if it's network failure..
-    }
-
     /**
      * Broadcast whether current user is joining the game or leaving
      *
@@ -163,6 +136,22 @@ public class ParseUtils {
         }
     }
 
+    private void sendBroadcastWithPayload(final JSONObject payload) {
+        if (isNetworkAvailable(context)) {
+            HashMap<String, String> data = new HashMap<>();
+            data.put("customData", payload.toString());
+            data.put("channel", gameName);
+            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
+                if (e == null) {
+                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded! " + payload.toString());
+                } else {
+                    Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
+                }
+            });
+        }
+        //TODO: retry this operation if it's network failure..
+    }
+
     public void fetchPreviouslyJoinedUsers(final String gameName, final GameViewManagerActivity gameViewManagerActivity) {
         // Define the class we would like to query
         ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
@@ -178,6 +167,8 @@ public class ParseUtils {
                 for (Game game : itemList) {
                     players.add(game.getPlayer());
                 }
+
+                Log.d(TAG, "fetchPreviouslyJoinedUsers: No of players fetched from db: " + players.size());
 
                 // TODO: This custom data generation is temporary and for testing purposes only
                 if (isEmpty(players) || players.size() == 1) {
@@ -248,6 +239,17 @@ public class ParseUtils {
                 Log.e(Constants.TAG, "deleteGameFromServer Error: " + e.getMessage());
             }
         });
+    }
+
+    public void toggleCardsVisibility(boolean toShow) {
+        try {
+            JSONObject payload = getJson(currentLoggedInUser);
+            payload.put(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
+            payload.put(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
+            sendBroadcastWithPayload(payload);
+        } catch (JSONException e) {
+            Log.e(Constants.TAG, "Toggle cards visibility error " + e.getMessage());
+        }
     }
 
     /**
