@@ -11,16 +11,15 @@ import com.parse.ParseQuery;
 import org.bootcamp.fiftytwo.activities.GameViewManagerActivity;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.Game;
+import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.models.User.getJson;
@@ -331,13 +330,21 @@ public class ParseUtils {
         }
     }
 
-    /**
-     * TODO
-     *
-     * @return the cards on the table
-     */
-    public List<Card> fetchAllTableCards() {
-        return new ArrayList<>();
+    public void fetchAllTableCards(final String gameName) {
+
+        // Define the class we would like to query
+        ParseQuery<GameTable> query = ParseQuery.getQuery(GameTable.class);
+        // Define our query conditions
+        query.whereEqualTo(PARAM_GAME_NAME, gameName);
+        // Execute the find asynchronously
+        query.findInBackground((itemList, e) -> {
+            if (e == null) {
+                Log.d(Constants.TAG, "GameTable Found list : " + itemList.size());
+                //TODO: Parse cards list from incoming json
+            } else {
+                Log.e(Constants.TAG, "Error: " + e.getMessage());
+            }
+        });
     }
 
 }
