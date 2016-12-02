@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/foggy_textbox"
                 android:hint="@string/prompt_username"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textCapWords"
                 android:maxLines="1"
                 android:padding="10dp"
                 android:textColor="@color/colorPrimary"
