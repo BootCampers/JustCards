@@ -18,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -115,6 +116,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     FloatingActionButton fabMute;
     @BindView(R.id.fabToggleCardsVisibility)
     FloatingActionButton fabToggleCardsVisibility;
+    @BindView(R.id.ivSink)
+    ImageView ivSink;
 
     @BindDrawable(R.drawable.ic_power)
     Drawable icPower;
@@ -126,8 +129,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     Drawable icVisibilityOn;
     @BindDrawable(R.drawable.ic_visibility_off)
     Drawable icVisibilityOff;
+    @BindDrawable(R.drawable.ic_sink_empty)
+    Drawable icSinkEmpty;
+    @BindDrawable (R.drawable.ic_sink_full)
+    Drawable icSinkFull;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
+
+    List<Card> sinkCards = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,6 +260,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onCardsVisibility(boolean toShow) {
         parseUtils.toggleCardsVisibility(toShow);
+    }
+
+    public void addCardToSink(Card card){
+        sinkCards.add(card);
+        ivSink.setImageDrawable(icSinkFull);
+    }
+
+    public void removeCardFromSink(Card card){
+        sinkCards.remove(card);
+        if(sinkCards.size() == 0){
+            ivSink.setImageDrawable(icSinkEmpty);
+        }
+    }
+
+    public void removeAllSinkCards(){
+        sinkCards.clear();
+        ivSink.setImageDrawable(icSinkEmpty);
     }
 
     @OnClick(R.id.ibInfo)

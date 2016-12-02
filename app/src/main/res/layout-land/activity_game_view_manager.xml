@@ -71,10 +71,10 @@
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true"
         app:menu_backgroundColor="#ccffffff"
-        app:menu_labels_position="right"
+        app:menu_labels_position="left"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
@@ -106,6 +106,19 @@
 
     </com.github.clans.fab.FloatingActionMenu>
 
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_sink_empty"
+        android:id="@+id/ivSink"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        app:layout_anchor="@+id/fab"
+        app:layout_anchorGravity="bottom|left"
+        android:layout_gravity="top|right" />
 
 
 </android.support.design.widget.CoordinatorLayout>
