@@ -12,6 +12,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Game;
+import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class FiftyTwoApplication extends Application implements Observable {
         ViewTarget.setTagId(R.id.glide_tag);
 
         ParseObject.registerSubclass(Game.class);
+        ParseObject.registerSubclass(GameTable.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(APPLICATION_ID)

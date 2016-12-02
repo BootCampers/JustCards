@@ -42,6 +42,7 @@ import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.Game;
+import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
@@ -356,6 +357,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
+                GameTable.save(gameName, cards);
                 for (int i=0; i<cards.size(); i++) {
                     Card card = cards.get(i);
                     parseUtils.dealCardsToTable(card, i);
@@ -432,6 +434,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 });
                 break;
             case PARSE_DEAL_CARDS:
+                parseUtils.fetchAllTableCards(gameName);
                 try {
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);

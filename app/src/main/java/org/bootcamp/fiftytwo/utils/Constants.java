@@ -29,6 +29,7 @@ public class Constants {
 
     /** Intent and Fragment Parameter here */
     public static final String PARAM_GAME_NAME = "gameName";
+    public static final String PARAM_GAME_TABLE = "gameTable";
     public static final String PARAM_CURRENT_VIEW_PLAYER = "currentView";
     public static final String PARAM_CARDS = "cards";
     public static final String PARAM_PLAYERS = "players";
