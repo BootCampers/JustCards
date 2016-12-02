@@ -46,6 +46,7 @@ import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
+import org.bootcamp.fiftytwo.utils.MediaUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -137,6 +138,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
     List<Card> sinkCards = new ArrayList<>();
+    MediaUtils mediaUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +155,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fabExit.setImageDrawable(icPower);
         fabToggleCardsVisibility.setImageDrawable(icVisibilityOn);
 
+        mediaUtils = new MediaUtils(GameViewManagerActivity.this);
         initGameParams();
         initFragments();
 
@@ -446,18 +449,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         switch (event) {
             case PARSE_NEW_PLAYER_ADDED:
+                mediaUtils.playTingTone();
                 runOnUiThread(() -> {
                     User user = User.fromJson((JSONObject) arg);
                     addPlayersToView(getList(user));
                 });
                 break;
             case PARSE_PLAYER_LEFT:
+                mediaUtils.playTingTone();
                 runOnUiThread(() -> {
                     User user = User.fromJson((JSONObject) arg);
                     removePlayersFromView(getList(user));
                 });
                 break;
             case PARSE_DEAL_CARDS:
+                mediaUtils.playGlassBreakingTone();
                 try {
                     JSONObject details = (JSONObject) arg;
                     User from = fromJson(details);
