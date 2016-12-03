@@ -84,6 +84,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILIT
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -473,7 +474,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(json);
                     Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
-                    int toPosition = json.get(FROM_POSITION).getAsInt();
+                    int toPosition = json.get(TO_POSITION).getAsInt();
                     boolean pickedFromTable = json.get(TABLE_PICKED).getAsBoolean();
                     handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
                 });
@@ -483,7 +484,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(json);
                     Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
-                    int toPosition = json.get(FROM_POSITION).getAsInt();
+                    int toPosition = json.get(TO_POSITION).getAsInt();
                     handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
                 });
                 break;

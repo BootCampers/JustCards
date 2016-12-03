@@ -167,7 +167,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     public boolean drawCard(int position, Card card) {
         if (card != null && position < mAdapter.getItemCount()) {
             Log.d(TAG, "drawCard: Drawing card: " + mAdapter.getCards().get(position));
-            return card.equals(mAdapter.getCards().get(position)) && mAdapter.remove(position) != null;
+            return mAdapter.remove(position) != null;
         }
         return false;
     }
