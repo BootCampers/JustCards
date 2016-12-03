@@ -42,7 +42,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_select_avatar, parent, false);
         return new ViewHolder(view);
     }
 
