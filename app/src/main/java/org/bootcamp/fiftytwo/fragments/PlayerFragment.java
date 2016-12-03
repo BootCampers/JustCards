@@ -150,5 +150,5 @@ public class PlayerFragment extends CardsFragment{
         Log.d(Constants.TAG, PlayerFragment.class.getSimpleName()+"--" + mPlayer.getDisplayName() + "--cardCountChange--"+String.valueOf(newCount));
         tvCardsCount.setText(String.valueOf(newCount));
     }
-    
+
 }
