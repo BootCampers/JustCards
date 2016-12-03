@@ -14,6 +14,7 @@ import org.bootcamp.fiftytwo.models.User;
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
@@ -56,9 +57,10 @@ public class ParseReceiver extends BroadcastReceiver {
             switch (identifier) {
                 case PARSE_NEW_PLAYER_ADDED:
                 case PARSE_PLAYER_LEFT:
+                case PARSE_TOGGLE_CARDS_VISIBILITY:
                 case PARSE_DEAL_CARDS:
                 case PARSE_DEAL_CARDS_TO_TABLE:
-                case PARSE_TOGGLE_CARDS_VISIBILITY:
+                case PARSE_DEAL_CARDS_TO_SINK:
                     application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:

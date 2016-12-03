@@ -46,8 +46,9 @@ import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.network.ParseStorage;
+import org.bootcamp.fiftytwo.network.ParseDB;
 import org.bootcamp.fiftytwo.network.ParseUtils;
+import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
@@ -73,6 +74,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
@@ -164,7 +166,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.saveCurrentUser(!isCurrentViewPlayer);
 
             //Get previously joined players
-            ParseStorage.findUsers(gameName, this::addPlayersToView);
+            ParseDB.findUsers(gameName, this::addPlayersToView);
             parseUtils.joinChannel();
 
             // Add myself to game
@@ -293,9 +295,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     parseUtils.removeChannel();
-                    ParseStorage.deleteGamesForUser(gameName, User.getCurrentUser(this));
+                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(this));
                     if (User.getCurrentUser(this).isDealer()) {
-                        ParseStorage.deleteGame(gameName);
+                        ParseDB.deleteGame(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
                     finish();
@@ -356,7 +358,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 parseUtils.dealCardsToTable(cards);
                 return true;
             } else {
-                addCardsToSink(cards);
+                parseUtils.dealCardsToSink(cards);
                 return true;
             }
         }
@@ -446,6 +448,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     removePlayersFromView(getList(user));
                 });
                 break;
+            case PARSE_TOGGLE_CARDS_VISIBILITY:
+                runOnUiThread(() -> {
+                    User user = User.fromJson(json);
+                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_VISIBILITY).getAsBoolean();
+                    toggleCardsVisibilityForPlayerView(user, toShow);
+                });
+                break;
             case PARSE_DEAL_CARDS:
                 mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
@@ -456,12 +465,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 });
                 break;
             case PARSE_DEAL_CARDS_TO_TABLE:
+                mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
                     User from = fromJson(json);
                     int cardCount = json.get(PARAM_CARD_COUNT).getAsInt();
-                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
-                    }.getType());
+                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
                     handleDealTable(from, cards, cardCount);
+                });
+                break;
+            case PARSE_DEAL_CARDS_TO_SINK:
+                mediaUtils.playGlassBreakingTone();
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
+                    handleDealSink(from, cards);
                 });
                 break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
@@ -483,13 +500,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleCardExchangeWithinTable(from, card, fromPosition, toPosition);
                 });
                 break;
-            case PARSE_TOGGLE_CARDS_VISIBILITY:
-                runOnUiThread(() -> {
-                    User user = User.fromJson(json);
-                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_VISIBILITY).getAsBoolean();
-                    toggleCardsVisibilityForPlayerView(user, toShow);
-                });
-                break;
+
         }
     }
 
@@ -549,7 +560,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void handleDealTable(final User from, final List<Card> cards, final int cardCount) {
         if (from != null && from.isDealer() && cardCount > 0) {
             if (isEmpty(cards)) {
-                ParseStorage.getGameTableCards(gameName, cardCount, this::handleDealTable);
+                ParseDB.getGameTableCards(gameName, cardCount, this::handleDealTable);
             } else {
                 handleDealTable(cards);
             }
@@ -557,12 +568,17 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleDealTable(final List<Card> cards) {
-        for (Card card : cards) {
-            card.setShowingFront(false);
-        }
+        CardUtil.setShowingFront(cards);
         Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
         if (fragment != null) {
             ((CardsFragment) fragment).stackCards(cards);
+        }
+    }
+
+    public void handleDealSink(final User from, final List<Card> cards) {
+        if (from != null && from.isDealer() && !isEmpty(cards)) {
+            CardUtil.setShowingFront(cards);
+            addCardsToSink(cards);
         }
     }
 

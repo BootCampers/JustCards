@@ -61,6 +61,7 @@ public class Constants {
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
     public static final String PARSE_DEAL_CARDS = "dealCards";
     public static final String PARSE_DEAL_CARDS_TO_TABLE = "dealCardsToTable";
+    public static final String PARSE_DEAL_CARDS_TO_SINK = "dealCardsToSink";
     public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
     public static final String PARSE_SWAP_CARD_WITHIN_TABLE = "swapCardWithinTable";
     public static final String PARSE_TOGGLE_CARDS_VISIBILITY = "toggleCardsVisibility";

@@ -23,6 +23,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
@@ -90,6 +91,22 @@ public class ParseUtils {
         }
     }
 
+    private void sendBroadcast(final JsonObject payload) {
+        if (isNetworkAvailable(context)) {
+            HashMap<String, String> data = new HashMap<>();
+            data.put("customData", payload.toString());
+            data.put("channel", gameName);
+            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
+                if (e == null) {
+                    Log.d(TAG, "sendBroadcast: Succeeded! " + payload.toString());
+                } else {
+                    Log.e(TAG, "sendBroadcast: Failed: Message: " + e.getMessage() + ": Object: " + object);
+                }
+            });
+        }
+        //TODO: retry this operation if it's network failure..
+    }
+
     /**
      * Broadcast whether current user is joining the game or leaving
      *
@@ -102,30 +119,14 @@ public class ParseUtils {
         } else {
             payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
         }
-        sendBroadcastWithPayload(payload);
-    }
-
-    private void sendBroadcastWithPayload(final JsonObject payload) {
-        if (isNetworkAvailable(context)) {
-            HashMap<String, String> data = new HashMap<>();
-            data.put("customData", payload.toString());
-            data.put("channel", gameName);
-            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
-                if (e == null) {
-                    Log.d(TAG, "sendBroadcastWithPayload: Succeeded! " + payload.toString());
-                } else {
-                    Log.e(TAG, "sendBroadcastWithPayload: Failed: Message: " + e.getMessage() + ": Object: " + object);
-                }
-            });
-        }
-        //TODO: retry this operation if it's network failure..
+        sendBroadcast(payload);
     }
 
     public void toggleCardsVisibility(boolean toShow) {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
         payload.addProperty(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
-        sendBroadcastWithPayload(payload);
+        sendBroadcast(payload);
     }
 
     /**
@@ -139,7 +140,7 @@ public class ParseUtils {
         payload.add(PARAM_PLAYER, getJson(toUser));
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
-        sendBroadcastWithPayload(payload);
+        sendBroadcast(payload);
     }
 
     /**
@@ -148,14 +149,21 @@ public class ParseUtils {
      * @param cards which cards
      */
     public void dealCardsToTable(final List<Card> cards) {
-        ParseStorage.deleteGameTables(gameName, () -> {
+        ParseDB.deleteGameTables(gameName, () -> {
             GameTable.save(gameName, cards);
             JsonObject payload = getJson(currentLoggedInUser);
             /*payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));*/
             payload.addProperty(PARAM_CARD_COUNT, cards.size());
             payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
-            sendBroadcastWithPayload(payload);
+            sendBroadcast(payload);
         });
+    }
+
+    public void dealCardsToSink(final List<Card> cards) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_SINK);
+        sendBroadcast(payload);
     }
 
     /**
@@ -173,7 +181,7 @@ public class ParseUtils {
         payload.addProperty(TO_POSITION, toPosition);
         payload.addProperty(TABLE_PICKED, pickedFromTable);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_EXCHANGE_CARD_WITH_TABLE);
-        sendBroadcastWithPayload(payload);
+        sendBroadcast(payload);
     }
 
     /**
@@ -189,7 +197,7 @@ public class ParseUtils {
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(TO_POSITION, toPosition);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
-        sendBroadcastWithPayload(payload);
+        sendBroadcast(payload);
     }
 
 }

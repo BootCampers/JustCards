@@ -105,4 +105,12 @@ public class CardUtil {
 
         return shuffledDeck;
     }
+
+    public static void setShowingFront(List<Card> cards) {
+        if (!isEmpty(cards)) {
+            for (Card card : cards) {
+                card.setShowingFront(false);
+            }
+        }
+    }
 }

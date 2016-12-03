@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.network.ParseStorage;
+import org.bootcamp.fiftytwo.network.ParseDB;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -39,7 +39,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 
-public class CreateGameActivity extends AppCompatActivity implements ParseStorage.OnGameExistsListener {
+public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnGameExistsListener {
 
     private List<Card> mCards = new ArrayList<>();
     private String gameNumberString;
@@ -66,7 +66,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseStorag
     private void initializeWidgets() {
         int gameNumber = new Random().nextInt(99999);
         gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-        ParseStorage.checkGameExists(gameNumberString, this);
+        ParseDB.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
         tvGameNumberLabel.setText(String.format("%s, here is your Game ID:", getIntent().getStringExtra(DISPLAY_NAME)));
         // animation
@@ -124,7 +124,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseStorag
         if (result) {
             int gameNumber = new Random().nextInt(99999);
             String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-            ParseStorage.checkGameExists(gameNumberString, this);
+            ParseDB.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
     }

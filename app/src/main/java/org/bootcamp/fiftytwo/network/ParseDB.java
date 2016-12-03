@@ -32,7 +32,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
  * Created At: 12/2/2016
  * Version: ${VERSION}
  */
-public class ParseStorage {
+public class ParseDB {
 
     public interface OnGameExistsListener {
         void onGameExistsResult(final boolean result);
@@ -44,7 +44,7 @@ public class ParseStorage {
         query.findInBackground(callback);
     }
 
-    public static void checkGameExists(final String gameName, final ParseStorage.OnGameExistsListener listener) {
+    public static void checkGameExists(final String gameName, final ParseDB.OnGameExistsListener listener) {
         findGame(gameName, (itemList, e) -> {
             boolean result = false;
             if (e == null) {
