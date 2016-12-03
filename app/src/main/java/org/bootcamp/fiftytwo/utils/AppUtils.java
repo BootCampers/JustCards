@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -25,7 +26,6 @@ import java.util.List;
  * Created At: 11/22/2016
  * Version: ${VERSION}
  */
-
 public class AppUtils {
 
     private AppUtils() {
@@ -69,6 +69,10 @@ public class AppUtils {
         Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
         snackbar.show();
+    }
+
+    public static VectorDrawableCompat getVectorCompat(final Context context, final int resId) {
+        return VectorDrawableCompat.create(context.getResources(), resId, context.getTheme());
     }
 
 }

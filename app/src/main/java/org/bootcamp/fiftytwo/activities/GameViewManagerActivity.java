@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -57,7 +56,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -65,6 +63,7 @@ import butterknife.OnClick;
 import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getVectorCompat;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
@@ -122,14 +121,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabToggleCardsVisibility) FloatingActionButton fabToggleCardsVisibility;
     @BindView(R.id.ivSink) ImageView ivSink;
 
-    @BindDrawable(R.drawable.ic_power) Drawable icPower;
-    @BindDrawable(R.drawable.ic_swap) Drawable icSwap;
-    @BindDrawable(R.drawable.ic_not_interested) Drawable icNotInterested;
-    @BindDrawable(R.drawable.ic_visibility_on) Drawable icVisibilityOn;
-    @BindDrawable(R.drawable.ic_visibility_off) Drawable icVisibilityOff;
-    @BindDrawable(R.drawable.ic_sink_empty) Drawable icSinkEmpty;
-    @BindDrawable(R.drawable.ic_sink_full) Drawable icSinkFull;
-
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
     @Override
@@ -142,10 +133,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        fabSwap.setImageDrawable(icSwap);
-        fabMute.setImageDrawable(icNotInterested);
-        fabExit.setImageDrawable(icPower);
-        fabToggleCardsVisibility.setImageDrawable(icVisibilityOn);
+        fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
+        fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
+        fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
+        fabToggleCardsVisibility.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
 
         mediaUtils = new MediaUtils(this);
         initGameParams();
@@ -633,19 +624,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void addCardsToSink(List<Card> cards) {
         sinkCards.addAll(cards);
-        ivSink.setImageDrawable(icSinkFull);
+        ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_full));
     }
 
     public void removeCardFromSink(Card card) {
         sinkCards.remove(card);
         if (sinkCards.size() == 0) {
-            ivSink.setImageDrawable(icSinkEmpty);
+            ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_empty));
         }
     }
 
     public void removeAllSinkCards() {
         sinkCards.clear();
-        ivSink.setImageDrawable(icSinkEmpty);
+        ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_empty));
     }
 
     public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
