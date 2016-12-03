@@ -624,19 +624,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void addCardsToSink(List<Card> cards) {
         sinkCards.addAll(cards);
-        ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_full));
+        ivSink.setImageResource(R.drawable.ic_sink_full);
     }
 
     public void removeCardFromSink(Card card) {
         sinkCards.remove(card);
         if (sinkCards.size() == 0) {
-            ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_empty));
+            ivSink.setImageResource(R.drawable.ic_sink_empty);
         }
     }
 
     public void removeAllSinkCards() {
         sinkCards.clear();
-        ivSink.setImageDrawable(getVectorCompat(this, R.drawable.ic_sink_empty));
+        ivSink.setImageResource(R.drawable.ic_sink_empty);
     }
 
     public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
