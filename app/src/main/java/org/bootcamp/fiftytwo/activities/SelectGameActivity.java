@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.network.ParseUtils;
+import org.bootcamp.fiftytwo.network.ParseStorage;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -26,7 +26,7 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
-public class SelectGameActivity extends AppCompatActivity implements ParseUtils.OnGameExistsListener {
+public class SelectGameActivity extends AppCompatActivity implements ParseStorage.OnGameExistsListener {
 
     @BindView(R.id.btnJoinGame) Button btnJoinGame;
     @BindView(R.id.btnCreateGame) Button btnCreateGame;
@@ -54,8 +54,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseUtils.
             showSnackBar(getApplicationContext(), view, "Please enter ID of the game you would like to join...");
         } else {
             String gameName = etGameName.getText().toString();
-            ParseUtils parseUtils = new ParseUtils(this, gameName);
-            parseUtils.checkGameExists(gameName, this);
+            ParseStorage.checkGameExists(gameName, this);
         }
         /*startActivity(new Intent(SelectGameActivity.this, TutorialActivity.class));*/
     }

@@ -26,6 +26,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
@@ -44,8 +45,8 @@ import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.Game;
-import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.network.ParseStorage;
 import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
@@ -67,9 +68,10 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
-import static org.bootcamp.fiftytwo.utils.Constants.PARAM_POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -142,7 +144,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fabExit.setImageDrawable(icPower);
         fabToggleCardsVisibility.setImageDrawable(icVisibilityOn);
 
-        mediaUtils = new MediaUtils(GameViewManagerActivity.this);
+        mediaUtils = new MediaUtils(this);
         initGameParams();
         initFragments();
 
@@ -227,7 +229,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    @SuppressWarnings("unused")
     public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
             toggleCardsVisibilityForPlayerView(player, toShow);
@@ -250,23 +251,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onCardsVisibility(boolean toShow) {
         parseUtils.toggleCardsVisibility(toShow);
-    }
-
-    public void addCardToSink(Card card) {
-        sinkCards.add(card);
-        ivSink.setImageDrawable(icSinkFull);
-    }
-
-    public void removeCardFromSink(Card card) {
-        sinkCards.remove(card);
-        if (sinkCards.size() == 0) {
-            ivSink.setImageDrawable(icSinkEmpty);
-        }
-    }
-
-    public void removeAllSinkCards() {
-        sinkCards.clear();
-        ivSink.setImageDrawable(icSinkEmpty);
     }
 
     @OnClick(R.id.ibInfo)
@@ -369,18 +353,31 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             if (!toSink) {
-                GameTable.save(gameName, cards);
-                for (int i = 0; i < cards.size(); i++) {
-                    Card card = cards.get(i);
-                    parseUtils.dealCardsToTable(card, i);
-                }
+                parseUtils.dealCardsToTable(cards);
                 return true;
             } else {
-                // TODO: Handle Drop to Sink here
+                addCardsToSink(cards);
                 return true;
             }
         }
         return false;
+    }
+
+    public void addCardsToSink(List<Card> cards) {
+        sinkCards.addAll(cards);
+        ivSink.setImageDrawable(icSinkFull);
+    }
+
+    public void removeCardFromSink(Card card) {
+        sinkCards.remove(card);
+        if (sinkCards.size() == 0) {
+            ivSink.setImageDrawable(icSinkEmpty);
+        }
+    }
+
+    public void removeAllSinkCards() {
+        sinkCards.clear();
+        ivSink.setImageDrawable(icSinkEmpty);
     }
 
     /**
@@ -388,8 +385,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * <p>
      * ------          Dealer	Player  Table   Player View
      * Dealer	        X	    Y(D)	Y(DT)	Y(D)
-     * Player	        NP	    X	    Y(CT)	NA
-     * Table	        NP	    Y(CT)	Y(T)	NA
+     * Player	        NP	    Y(P)	Y(CT)	NA
+     * Table	        NP	    Y(CT)	NA	    NA
      * Player View	    NA	    NA	    NA	    NA
      * <p>
      * Legends:
@@ -403,6 +400,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * DT  Deal Table
      * CT  Card Table
      * T   Within Table
+     * P   Within Player
      * <p>
      * Tags for different Card Fragments:
      * 1.DEALER_TAG
@@ -450,24 +448,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_DEAL_CARDS:
                 mediaUtils.playGlassBreakingTone();
-                parseUtils.fetchAllTableCards(gameName);
-                /*try {
-                    JSONObject details = (JSONObject) arg;
-                    User from = fromJson(details);
-                    JSONObject toUserDetails = details.getJSONObject(PLAYER_TAG);
-                    User to = fromJson(toUserDetails);
-                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    User to = fromJson(json.get(PARAM_PLAYER).getAsJsonObject());
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
                     handleDeal(card, from, to);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
+                });
                 break;
             case PARSE_DEAL_CARDS_TO_TABLE:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
-                    int position = json.get(PARAM_POSITION).getAsInt();
-                    handleDealTable(from, card, position);
+                    int cardCount = json.get(PARAM_CARD_COUNT).getAsInt();
+                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
+                    }.getType());
+                    handleDealTable(from, cards, cardCount);
                 });
                 break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
@@ -552,13 +546,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDealTable(final User from, final Card card, final int position) {
-        if (card != null && from != null && from.isDealer()) {
-            card.setShowingFront(false);
-            Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
-            if (fragment != null) {
-                ((CardsFragment) fragment).stackCard(card, position);
+    public void handleDealTable(final User from, final List<Card> cards, final int cardCount) {
+        if (from != null && from.isDealer() && cardCount > 0) {
+            if (isEmpty(cards)) {
+                ParseStorage.getGameTableCards(gameName, cardCount, this::handleDealTable);
+            } else {
+                handleDealTable(cards);
             }
+        }
+    }
+
+    public void handleDealTable(final List<Card> cards) {
+        for (Card card : cards) {
+            card.setShowingFront(false);
+        }
+        Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+        if (fragment != null) {
+            ((CardsFragment) fragment).stackCards(cards);
         }
     }
 

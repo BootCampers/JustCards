@@ -44,8 +44,7 @@ public class Constants {
     public static final String ARG_CARD_COUNT = "cardCount";
     public static final String ARG_COLUMN_COUNT = "columnCount";
     public static final String PARAMS_PLAYER_GAME = "playerGame";
-    public static final String PARAM_POSITION = "position";
-
+    public static final String PARAM_CARD_COUNT = "cardCount";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged

@@ -19,6 +19,7 @@ import org.bootcamp.fiftytwo.utils.PlayerUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.models.User.getJson;
@@ -27,9 +28,9 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
-import static org.bootcamp.fiftytwo.utils.Constants.PARAM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -59,10 +60,6 @@ public class ParseUtils {
         currentLoggedInUser = User.getCurrentUser(context);
     }
 
-    public interface OnGameExistsListener {
-        void onGameExistsResult(final boolean result);
-    }
-
     public User getCurrentUser() {
         return currentLoggedInUser;
     }
@@ -74,21 +71,6 @@ public class ParseUtils {
 
     public static boolean isSelf(final User user) {
         return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
-    }
-
-    public void checkGameExists(final String gameName, final OnGameExistsListener listener) {
-        ParseQuery<Game> query = ParseQuery.getQuery(Game.class);
-        query.whereEqualTo(PARAM_GAME_NAME, gameName);
-        query.findInBackground((itemList, e) -> {
-            boolean result = false;
-            if (e == null) {
-                Log.d(Constants.TAG, " checkGameExists Found list : " + itemList.size());
-                result = itemList.size() != 0;
-            } else {
-                Log.e(Constants.TAG, "checkGameExists Error: " + e.getMessage());
-            }
-            listener.onGameExistsResult(result);
-        });
     }
 
     public void joinChannel() {
@@ -159,11 +141,9 @@ public class ParseUtils {
                 Log.d(Constants.TAG, "Found list : " + itemList.size());
 
                 final HashSet<User> players = new HashSet<>();
-
                 for (Game game : itemList) {
                     players.add(game.getPlayer());
                 }
-
                 Log.d(TAG, "fetchPreviouslyJoinedUsers: No of players fetched from db: " + players.size());
 
                 // TODO: This custom data generation is temporary and for testing purposes only
@@ -253,7 +233,7 @@ public class ParseUtils {
     public void dealCards(final User toUser, final Card card) {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.add(PARAM_PLAYER, getJson(toUser));
-        payload.addProperty(PARAM_CARDS, new Gson().toJson(card));
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
         sendBroadcastWithPayload(payload);
     }
@@ -261,14 +241,17 @@ public class ParseUtils {
     /**
      * Dealer moving cards to table
      *
-     * @param card which card
+     * @param cards which cards
      */
-    public synchronized void dealCardsToTable(final Card card, final int position) {
-        JsonObject payload = getJson(currentLoggedInUser);
-        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
-        payload.addProperty(PARAM_POSITION, position);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
-        sendBroadcastWithPayload(payload);
+    public void dealCardsToTable(final List<Card> cards) {
+        ParseStorage.deleteGameTables(gameName, () -> {
+            GameTable.save(gameName, cards);
+            JsonObject payload = getJson(currentLoggedInUser);
+            /*payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));*/
+            payload.addProperty(PARAM_CARD_COUNT, cards.size());
+            payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
+            sendBroadcastWithPayload(payload);
+        });
     }
 
     /**
@@ -303,22 +286,6 @@ public class ParseUtils {
         payload.addProperty(TO_POSITION, toPosition);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
         sendBroadcastWithPayload(payload);
-    }
-
-    public void fetchAllTableCards(final String gameName) {
-        // Define the class we would like to query
-        ParseQuery<GameTable> query = ParseQuery.getQuery(GameTable.class);
-        // Define our query conditions
-        query.whereEqualTo(PARAM_GAME_NAME, gameName);
-        // Execute the find asynchronously
-        query.findInBackground((itemList, e) -> {
-            if (e == null) {
-                Log.d(Constants.TAG, "GameTable Found list : " + itemList.size());
-                //TODO: Parse cards list from incoming json
-            } else {
-                Log.e(Constants.TAG, "Error: " + e.getMessage());
-            }
-        });
     }
 
 }
