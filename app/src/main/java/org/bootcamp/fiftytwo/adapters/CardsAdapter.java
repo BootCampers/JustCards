@@ -40,6 +40,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         void setEmptyList(boolean visibility);
         void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
         void logActivity(String whoPosted, String fromAvatar, String details);
+        void cardCountChange(int newCount);
     }
 
     public List<Card> getCards() {
@@ -136,6 +137,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
         notifyDataSetChanged();
         cardsListener.setEmptyList(isEmpty(mCards));
+        cardsListener.cardCountChange(mCards.size());
     }
 
     public Card remove(int position) {
@@ -145,6 +147,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             notifyDataSetChanged();
             cardsListener.setEmptyList(isEmpty(mCards));
         }
+        cardsListener.cardCountChange(mCards.size());
         return card;
     }
 
@@ -154,6 +157,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             notifyDataSetChanged();
             cardsListener.setEmptyList(getItemCount() == 0);
         }
+        cardsListener.cardCountChange(mCards.size());
     }
 
     public void removeAll(List<Card> cards) {
@@ -162,5 +166,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             notifyDataSetChanged();
             cardsListener.setEmptyList(getItemCount() == 0);
         }
+        cardsListener.cardCountChange(mCards.size());
     }
 }

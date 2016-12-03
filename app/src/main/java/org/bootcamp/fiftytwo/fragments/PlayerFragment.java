@@ -4,6 +4,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.OnTouchMoveListener;
 import org.parceler.Parcels;
 
@@ -39,7 +41,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 /**
  * Created by baphna on 11/11/2016.
  */
-public class PlayerFragment extends CardsFragment {
+public class PlayerFragment extends CardsFragment{
 
     private int x;
     private int y;
@@ -131,6 +133,7 @@ public class PlayerFragment extends CardsFragment {
         countDrawable.setColor(color);
         tvCardsCount.setBackground(countDrawable);
         tvCardsCount.setAlpha(0.6f);
+        tvCardsCount.setText(String.valueOf(mPlayer.getCards().size()));
 
         GradientDrawable scoreDrawable = (GradientDrawable) tvScore.getBackground();
         scoreDrawable.setColor(color);
@@ -141,5 +144,10 @@ public class PlayerFragment extends CardsFragment {
 
         final ViewGroup container = (ViewGroup) view.getParent();
         view.setOnTouchListener(new OnTouchMoveListener(container));
+    }
+
+    public void cardCountChange(int newCount) {
+        Log.d(Constants.TAG, "Chut"+PlayerFragment.class.getSimpleName()+"--" + mPlayer.getDisplayName() + "--cardCountChange--"+String.valueOf(newCount));
+        tvCardsCount.setText(String.valueOf(newCount));
     }
 }

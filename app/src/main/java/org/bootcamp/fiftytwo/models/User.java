@@ -32,6 +32,7 @@ public class User {
     private boolean isDealer;
     private boolean isShowingCards;
     private boolean isActive;
+    private int score;
     private List<Card> cards = new ArrayList<>();
 
     public User() {}
@@ -139,6 +140,14 @@ public class User {
         isShowingCards = showingCards;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -147,6 +156,8 @@ public class User {
                 ", avatarUri='" + avatarUri + '\'' +
                 ", isDealer=" + isDealer +
                 ", isShowingCards=" + isShowingCards +
+                ", isActive=" + isActive +
+                ", score=" + score +
                 ", cards=" + cards +
                 '}';
     }

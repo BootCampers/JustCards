@@ -654,5 +654,4 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .addModifier(new ScaleModifier(0.5f, 2f, 0, 1000))
                 .oneShot(findViewById(R.id.flPlayerContainer), 4);
     }
-
 }

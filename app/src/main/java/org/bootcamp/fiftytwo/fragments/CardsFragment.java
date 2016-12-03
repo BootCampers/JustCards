@@ -59,6 +59,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
     }
 
+
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
     }
@@ -133,6 +134,14 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         Log.d(TAG, this.getClass().getSimpleName() + "--" + details + "--" + whoPosted);
         if (mLogEventListener != null) {
             mLogEventListener.onNewLogEvent(whoPosted, avatarUri, details);
+        }
+    }
+
+    @Override
+    public synchronized void cardCountChange(int newCount) {
+        Log.d(TAG, CardsFragment.class.getSimpleName() + "--newCount--" + newCount);
+        if(getParentFragment() instanceof  PlayerFragment) {
+            ((PlayerFragment) getParentFragment()).cardCountChange(newCount);
         }
     }
 
