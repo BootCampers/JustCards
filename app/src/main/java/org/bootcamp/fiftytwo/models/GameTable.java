@@ -10,11 +10,13 @@ import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.List;
 
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
+
 /**
  * Created by baphna on 12/2/2016.
  */
 @ParseClassName("GameTable")
-public class GameTable extends ParseObject{
+public class GameTable extends ParseObject {
 
     public GameTable() {
         super();
@@ -25,10 +27,9 @@ public class GameTable extends ParseObject{
     }
 
     private void addCards(List<Card> cards) {
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(cards);
-        put(Constants.PARAM_GAME_TABLE, jsonString);
-        Log.d(Constants.TAG, "GameTable saving cards: " + jsonString);
+        String json = new Gson().toJson(cards);
+        put(Constants.PARAM_GAME_TABLE, json);
+        Log.d(TAG, "GameTable saving cards: " + json);
     }
 
     public static void save(String gameName, List<Card> cards) {
@@ -37,9 +38,9 @@ public class GameTable extends ParseObject{
         gameTable.addCards(cards);
         gameTable.saveInBackground(e -> {
             if (e == null) {
-                Log.d(Constants.TAG, "GameTable save Passed");
+                Log.d(TAG, "GameTable save Passed");
             } else {
-                Log.d(Constants.TAG, "GameTable save Null " + e.getMessage());
+                Log.d(TAG, "GameTable save Null " + e.getMessage());
             }
         });
     }

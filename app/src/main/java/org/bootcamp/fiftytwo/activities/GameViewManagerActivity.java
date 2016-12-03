@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
@@ -49,8 +50,6 @@ import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -70,6 +69,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -95,7 +95,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
     private String gameName;
+    private List<Card> sinkCards = new ArrayList<>();
     private ParseUtils parseUtils;
+    private MediaUtils mediaUtils;
 
     private boolean isCurrentViewPlayer = true;
     private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
@@ -106,40 +108,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private ChatAndLogFragment chatAndLogFragment;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab)
-    FloatingActionMenu fab;
+    @BindView(R.id.fab) FloatingActionMenu fab;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
-    @BindView(R.id.fabSwap)
-    FloatingActionButton fabSwap;
-    @BindView(R.id.fabExit)
-    FloatingActionButton fabExit;
-    @BindView(R.id.fabMute)
-    FloatingActionButton fabMute;
-    @BindView(R.id.fabToggleCardsVisibility)
-    FloatingActionButton fabToggleCardsVisibility;
-    @BindView(R.id.ivSink)
-    ImageView ivSink;
+    @BindView(R.id.fabSwap) FloatingActionButton fabSwap;
+    @BindView(R.id.fabExit) FloatingActionButton fabExit;
+    @BindView(R.id.fabMute) FloatingActionButton fabMute;
+    @BindView(R.id.fabToggleCardsVisibility) FloatingActionButton fabToggleCardsVisibility;
+    @BindView(R.id.ivSink) ImageView ivSink;
 
-    @BindDrawable(R.drawable.ic_power)
-    Drawable icPower;
-    @BindDrawable(R.drawable.ic_swap)
-    Drawable icSwap;
-    @BindDrawable(R.drawable.ic_not_interested)
-    Drawable icNotInterested;
-    @BindDrawable(R.drawable.ic_visibility_on)
-    Drawable icVisibilityOn;
-    @BindDrawable(R.drawable.ic_visibility_off)
-    Drawable icVisibilityOff;
-    @BindDrawable(R.drawable.ic_sink_empty)
-    Drawable icSinkEmpty;
-    @BindDrawable (R.drawable.ic_sink_full)
-    Drawable icSinkFull;
+    @BindDrawable(R.drawable.ic_power) Drawable icPower;
+    @BindDrawable(R.drawable.ic_swap) Drawable icSwap;
+    @BindDrawable(R.drawable.ic_not_interested) Drawable icNotInterested;
+    @BindDrawable(R.drawable.ic_visibility_on) Drawable icVisibilityOn;
+    @BindDrawable(R.drawable.ic_visibility_off) Drawable icVisibilityOff;
+    @BindDrawable(R.drawable.ic_sink_empty) Drawable icSinkEmpty;
+    @BindDrawable(R.drawable.ic_sink_full) Drawable icSinkFull;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
-
-    List<Card> sinkCards = new ArrayList<>();
-    MediaUtils mediaUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,43 +252,40 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         parseUtils.toggleCardsVisibility(toShow);
     }
 
-    public void addCardToSink(Card card){
+    public void addCardToSink(Card card) {
         sinkCards.add(card);
         ivSink.setImageDrawable(icSinkFull);
     }
 
-    public void removeCardFromSink(Card card){
+    public void removeCardFromSink(Card card) {
         sinkCards.remove(card);
-        if(sinkCards.size() == 0){
+        if (sinkCards.size() == 0) {
             ivSink.setImageDrawable(icSinkEmpty);
         }
     }
 
-    public void removeAllSinkCards(){
+    public void removeAllSinkCards() {
         sinkCards.clear();
         ivSink.setImageDrawable(icSinkEmpty);
     }
 
     @OnClick(R.id.ibInfo)
-    public void showGameInfo(View view){
+    public void showGameInfo(View view) {
         PopupWindow popup = new PopupWindow(GameViewManagerActivity.this);
         View layout = getLayoutInflater().inflate(R.layout.popup_gameid, null);
-        Button btnGameId= (Button) layout.findViewById(R.id.btnGameId);
+        Button btnGameId = (Button) layout.findViewById(R.id.btnGameId);
         btnGameId.setText("Game id " + gameName + " ");
-        btnGameId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameName);
-                sendIntent.setType("text/plain");
-                PackageManager manager = getPackageManager();
-                List<ResolveInfo> info = manager.queryIntentActivities(sendIntent, 0);
-                if (info.size() > 0) {
-                    startActivity(sendIntent);
-                } else {
-                    Snackbar.make(view, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
-                }
+        btnGameId.setOnClickListener(view1 -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameName);
+            sendIntent.setType("text/plain");
+            PackageManager manager = getPackageManager();
+            List<ResolveInfo> info = manager.queryIntentActivities(sendIntent, 0);
+            if (info.size() > 0) {
+                startActivity(sendIntent);
+            } else {
+                Snackbar.make(view1, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
             }
         });
         popup.setContentView(layout);
@@ -387,7 +370,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (!isEmpty(cards)) {
             if (!toSink) {
                 GameTable.save(gameName, cards);
-                for (int i=0; i<cards.size(); i++) {
+                for (int i = 0; i < cards.size(); i++) {
                     Card card = cards.get(i);
                     parseUtils.dealCardsToTable(card, i);
                 }
@@ -447,20 +430,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
+        JsonObject json = (JsonObject) arg;
         Log.d(TAG, "onUpdate: " + event);
 
         switch (event) {
             case PARSE_NEW_PLAYER_ADDED:
                 mediaUtils.playTingTone();
                 runOnUiThread(() -> {
-                    User user = User.fromJson((JSONObject) arg);
+                    User user = User.fromJson(json);
                     addPlayersToView(getList(user));
                 });
                 break;
             case PARSE_PLAYER_LEFT:
                 mediaUtils.playTingTone();
                 runOnUiThread(() -> {
-                    User user = User.fromJson((JSONObject) arg);
+                    User user = User.fromJson(json);
                     removePlayersFromView(getList(user));
                 });
                 break;
@@ -479,49 +463,38 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }*/
                 break;
             case PARSE_DEAL_CARDS_TO_TABLE:
-                try {
-                    JSONObject details = (JSONObject) arg;
-                    User from = fromJson(details);
-                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
-                    int position =  details.getInt(Constants.PARAM_POSITION);
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    int position = json.get(PARAM_POSITION).getAsInt();
                     handleDealTable(from, card, position);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
                 break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
-                try {
-                    JSONObject details = (JSONObject) arg;
-                    User from = fromJson(details);
-                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
-                    int fromPosition = details.getInt(FROM_POSITION);
-                    int toPosition = details.getInt(FROM_POSITION);
-                    boolean pickedFromTable = details.getBoolean(TABLE_PICKED);
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    int fromPosition = json.get(FROM_POSITION).getAsInt();
+                    int toPosition = json.get(FROM_POSITION).getAsInt();
+                    boolean pickedFromTable = json.get(TABLE_PICKED).getAsBoolean();
                     handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
                 break;
             case PARSE_SWAP_CARD_WITHIN_TABLE:
-                try {
-                    JSONObject details = (JSONObject) arg;
-                    User from = fromJson(details);
-                    Card card = new Gson().fromJson(details.getString(PARAM_CARDS), Card.class);
-                    int fromPosition = details.getInt(FROM_POSITION);
-                    int toPosition = details.getInt(FROM_POSITION);
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    int fromPosition = json.get(FROM_POSITION).getAsInt();
+                    int toPosition = json.get(FROM_POSITION).getAsInt();
                     handleCardExchangeWithinTable(from, card, fromPosition, toPosition);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
                 break;
             case PARSE_TOGGLE_CARDS_VISIBILITY:
-                try {
-                    User user = User.fromJson((JSONObject) arg);
-                    boolean toShow = ((JSONObject) arg).getBoolean(Constants.PARSE_TOGGLE_CARDS_VISIBILITY);
+                runOnUiThread(() -> {
+                    User user = User.fromJson(json);
+                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_VISIBILITY).getAsBoolean();
                     toggleCardsVisibilityForPlayerView(user, toShow);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
                 break;
         }
     }

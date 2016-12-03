@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.models.User;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
@@ -44,35 +45,32 @@ public class ParseReceiver extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (action.equals(intentAction)) {
-            try {
-                JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
-                JSONObject customData = new JSONObject(json.getString("customData"));
+            JsonParser parser = new JsonParser();
+            JsonObject data = (JsonObject) parser.parse(intent.getExtras().getString("com.parse.Data"));
+            JsonObject customData = (JsonObject) parser.parse(data.get("customData").getAsString());
 
-                String identifier = customData.getString(COMMON_IDENTIFIER);
-                Log.d(TAG, identifier + "--" + customData.toString());
-                User user = User.fromJson(customData);
+            String identifier = customData.get(COMMON_IDENTIFIER).getAsString();
+            User user = User.fromJson(customData);
+            Log.d(TAG, identifier + "--" + customData.toString());
 
-                switch (identifier) {
-                    case PARSE_NEW_PLAYER_ADDED:
-                    case PARSE_PLAYER_LEFT:
-                    case PARSE_DEAL_CARDS:
-                    case PARSE_DEAL_CARDS_TO_TABLE:
-                    case PARSE_TOGGLE_CARDS_VISIBILITY:
+            switch (identifier) {
+                case PARSE_NEW_PLAYER_ADDED:
+                case PARSE_PLAYER_LEFT:
+                case PARSE_DEAL_CARDS:
+                case PARSE_DEAL_CARDS_TO_TABLE:
+                case PARSE_TOGGLE_CARDS_VISIBILITY:
+                    application.notifyObservers(identifier, customData);
+                    break;
+                case PARSE_EXCHANGE_CARD_WITH_TABLE:
+                case PARSE_SWAP_CARD_WITHIN_TABLE:
+                    // Process only if it's not from self/current user
+                    if (!isSelf(user)) {
                         application.notifyObservers(identifier, customData);
-                        break;
-                    case PARSE_EXCHANGE_CARD_WITH_TABLE:
-                    case PARSE_SWAP_CARD_WITHIN_TABLE:
-                        // Process only if it's not from self/current user
-                        if (!isSelf(user)) {
-                            application.notifyObservers(identifier, customData);
-                        }
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown identifier " + identifier);
-                        break;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    }
+                    break;
+                default:
+                    Log.e(TAG, "Unknown identifier " + identifier);
+                    break;
             }
         }
     }

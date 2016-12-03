@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
 import com.parse.ParseUser;
 
 import org.bootcamp.fiftytwo.utils.Constants;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -49,28 +48,23 @@ public class User {
         this.isShowingCards = isShowingCards;
     }
 
-    public static User fromJson(JSONObject json) {
-        try {
-            String displayName = json.getString(DISPLAY_NAME);
-            String avatarUri = json.getString(USER_AVATAR_URI);
-            String userId = json.getString(USER_ID);
-            boolean isDealer = json.getBoolean(IS_DEALER);
-            boolean isShowingCards = json.getBoolean(IS_SHOWING_CARDS);
-            Log.d(TAG, "fromJson--" + displayName + "--" + avatarUri + "--" + userId);
-            return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static User fromJson(JsonObject json) {
+        String displayName = json.get(DISPLAY_NAME).getAsString();
+        String avatarUri = json.get(USER_AVATAR_URI).getAsString();
+        String userId = json.get(USER_ID).getAsString();
+        boolean isDealer = json.get(IS_DEALER).getAsBoolean();
+        boolean isShowingCards = json.get(IS_SHOWING_CARDS).getAsBoolean();
+        Log.d(TAG, "fromJson--" + displayName + "--" + avatarUri + "--" + userId);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
     }
 
-    public static JSONObject getJson(User user) throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put(DISPLAY_NAME, user.getDisplayName());
-        json.put(USER_AVATAR_URI, user.getAvatarUri());
-        json.put(USER_ID, user.getUserId());
-        json.put(IS_DEALER, user.isDealer());
-        json.put(Constants.IS_SHOWING_CARDS, user.isShowingCards());
+    public static JsonObject getJson(User user) {
+        JsonObject json = new JsonObject();
+        json.addProperty(DISPLAY_NAME, user.getDisplayName());
+        json.addProperty(USER_AVATAR_URI, user.getAvatarUri());
+        json.addProperty(USER_ID, user.getUserId());
+        json.addProperty(IS_DEALER, user.isDealer());
+        json.addProperty(Constants.IS_SHOWING_CARDS, user.isShowingCards());
         return json;
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.parse.ParseCloud;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -15,8 +16,6 @@ import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,20 +123,16 @@ public class ParseUtils {
      * @param joining true if joining the game , false if leaving the game
      */
     private void changeGameParticipation(boolean joining) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            if (joining) {
-                payload.put(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
-            } else {
-                payload.put(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
-            }
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JsonObject payload = getJson(currentLoggedInUser);
+        if (joining) {
+            payload.addProperty(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
+        } else {
+            payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
         }
+        sendBroadcastWithPayload(payload);
     }
 
-    private void sendBroadcastWithPayload(final JSONObject payload) {
+    private void sendBroadcastWithPayload(final JsonObject payload) {
         if (isNetworkAvailable(context)) {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
@@ -243,14 +238,10 @@ public class ParseUtils {
     }
 
     public void toggleCardsVisibility(boolean toShow) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
-            payload.put(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            Log.e(Constants.TAG, "Toggle cards visibility error " + e.getMessage());
-        }
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
+        payload.addProperty(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
+        sendBroadcastWithPayload(payload);
     }
 
     /**
@@ -260,15 +251,11 @@ public class ParseUtils {
      * @param card   which card
      */
     public void dealCards(final User toUser, final Card card) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(PARAM_PLAYER, getJson(toUser));
-            payload.put(PARAM_CARDS, new Gson().toJson(card));
-            payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_PLAYER, getJson(toUser));
+        payload.addProperty(PARAM_CARDS, new Gson().toJson(card));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
+        sendBroadcastWithPayload(payload);
     }
 
     /**
@@ -277,15 +264,11 @@ public class ParseUtils {
      * @param card which card
      */
     public synchronized void dealCardsToTable(final Card card, final int position) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(PARAM_CARDS, new Gson().toJson(card));
-            payload.put(PARAM_POSITION, position);
-            payload.put(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(PARAM_POSITION, position);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
+        sendBroadcastWithPayload(payload);
     }
 
     /**
@@ -297,17 +280,13 @@ public class ParseUtils {
      * @param pickedFromTable true: if picked from table, false: if dropped on table
      */
     public void exchangeCardWithTable(final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(PARAM_CARDS, new Gson().toJson(card));
-            payload.put(FROM_POSITION, fromPosition);
-            payload.put(TO_POSITION, toPosition);
-            payload.put(TABLE_PICKED, pickedFromTable);
-            payload.put(COMMON_IDENTIFIER, PARSE_EXCHANGE_CARD_WITH_TABLE);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(TO_POSITION, toPosition);
+        payload.addProperty(TABLE_PICKED, pickedFromTable);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_EXCHANGE_CARD_WITH_TABLE);
+        sendBroadcastWithPayload(payload);
     }
 
     /**
@@ -318,20 +297,15 @@ public class ParseUtils {
      * @param toPosition   position of the card where it is dropped in
      */
     public void swapCardWithinTable(final Card card, final int fromPosition, final int toPosition) {
-        try {
-            JSONObject payload = getJson(currentLoggedInUser);
-            payload.put(PARAM_CARDS, new Gson().toJson(card));
-            payload.put(FROM_POSITION, fromPosition);
-            payload.put(TO_POSITION, toPosition);
-            payload.put(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
-            sendBroadcastWithPayload(payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(TO_POSITION, toPosition);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
+        sendBroadcastWithPayload(payload);
     }
 
     public void fetchAllTableCards(final String gameName) {
-
         // Define the class we would like to query
         ParseQuery<GameTable> query = ParseQuery.getQuery(GameTable.class);
         // Define our query conditions
