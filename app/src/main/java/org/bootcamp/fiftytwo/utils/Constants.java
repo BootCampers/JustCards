@@ -55,6 +55,7 @@ public class Constants {
     public static final String TABLE_PICKED = "pickedFromTable";
     public static final String FROM_POSITION = "fromPosition";
     public static final String TO_POSITION = "toPosition";
+    public static final String USER_TAG_SCORE = "userTag";
 
     /** Parse Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
@@ -65,6 +66,8 @@ public class Constants {
     public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
     public static final String PARSE_SWAP_CARD_WITHIN_TABLE = "swapCardWithinTable";
     public static final String PARSE_TOGGLE_CARDS_VISIBILITY = "toggleCardsVisibility";
+    public static final String PARSE_SCORE_UPDATED = "scoreUpdated";
+
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

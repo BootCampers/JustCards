@@ -104,7 +104,6 @@ public class ScoringFragment extends Fragment {
 
     @OnClick(R.id.btnSave)
     public void saveScore(View view){
-        //TODO : save score
         if (mListener != null) {
             mListener.onScoreFragmentInteraction(true);
         }

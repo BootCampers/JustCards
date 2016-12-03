@@ -11,6 +11,7 @@ import com.parse.ParsePush;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
@@ -200,4 +202,10 @@ public class ParseUtils {
         sendBroadcast(payload);
     }
 
+    public void updateUsersScore(final List<User> users){
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(Constants.USER_TAG_SCORE, new Gson().toJsonTree(users));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORE_UPDATED);
+        sendBroadcast(payload);
+    }
 }

@@ -63,7 +63,7 @@ public class DealerViewFragment extends Fragment
                 .commit();
         mDealListener.onDealerOptionsShowing(false);
 
-        //ToDo: save
+        mScoreListener.onScoreFragmentInteraction(saveClicked);
     }
 
 

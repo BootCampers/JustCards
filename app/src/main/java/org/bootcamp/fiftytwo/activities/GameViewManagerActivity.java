@@ -79,6 +79,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
@@ -501,7 +502,25 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 });
                 break;
 
+            case PARSE_SCORE_UPDATED:
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    List<User> users = new Gson().fromJson(json.get(Constants.USER_TAG_SCORE), new TypeToken<List<User>>() {}.getType());
+                    handleScoresUpdate(from, users);
+                });
+                break;
+
         }
+    }
+
+    private void handleScoresUpdate(User from, List<User> users) {
+        for(User user : users) {
+            Fragment fragment = getPlayerFragment(this, user);
+            if (fragment != null) {
+                ((PlayerFragment) fragment).scoreChange(user.getScore());
+            }
+        }
+        //TODO: log it
     }
 
     public void addPlayersToView(final List<User> players) {
@@ -642,7 +661,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onScoreFragmentInteraction(boolean saveClicked) {
-        //Do Nothing
+        if(saveClicked == true){
+            parseUtils.updateUsersScore(mPlayers);
+        }
     }
 
     private void animateDeal() {

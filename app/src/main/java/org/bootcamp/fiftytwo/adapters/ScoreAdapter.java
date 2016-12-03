@@ -36,6 +36,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         User user = users.get(position);
         holder.tvPlayerName.setText(user.getDisplayName());
+        holder.tvScore.setText(String.valueOf(user.getScore()));
     }
 
     @Override
@@ -65,6 +66,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             currentScore = Integer.parseInt(tvScore.getText().toString());
             currentScore++;
             tvScore.setText(String.valueOf(currentScore));
+            users.get(getAdapterPosition()).setScore(currentScore);
         }
 
         @OnClick(R.id.ibReduce)
@@ -72,8 +74,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
             currentScore = Integer.parseInt(tvScore.getText().toString());
             currentScore--;
             tvScore.setText(String.valueOf(currentScore));
+            users.get(getAdapterPosition()).setScore(currentScore);
         }
-
-
     }
 }
