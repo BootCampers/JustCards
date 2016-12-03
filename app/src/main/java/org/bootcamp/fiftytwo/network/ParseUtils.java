@@ -30,7 +30,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
@@ -187,22 +187,22 @@ public class ParseUtils {
     }
 
     /**
-     * Player swaps a card on the table from one position to another
+     * Player swaps a card within his/her hand from one position to another
      *
      * @param card         which card
      * @param fromPosition position of the card where it was picked from
      * @param toPosition   position of the card where it is dropped in
      */
-    public void swapCardWithinTable(final Card card, final int fromPosition, final int toPosition) {
+    public void swapCardWithinPlayer(final Card card, final int fromPosition, final int toPosition) {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(TO_POSITION, toPosition);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_TABLE);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_PLAYER);
         sendBroadcast(payload);
     }
 
-    public void updateUsersScore(final List<User> users){
+    public void updateUsersScore(final List<User> users) {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.add(Constants.USER_TAG_SCORE, new Gson().toJsonTree(users));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORE_UPDATED);

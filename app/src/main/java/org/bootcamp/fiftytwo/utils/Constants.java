@@ -63,11 +63,10 @@ public class Constants {
     public static final String PARSE_DEAL_CARDS = "dealCards";
     public static final String PARSE_DEAL_CARDS_TO_TABLE = "dealCardsToTable";
     public static final String PARSE_DEAL_CARDS_TO_SINK = "dealCardsToSink";
-    public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
-    public static final String PARSE_SWAP_CARD_WITHIN_TABLE = "swapCardWithinTable";
     public static final String PARSE_TOGGLE_CARDS_VISIBILITY = "toggleCardsVisibility";
+    public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
+    public static final String PARSE_SWAP_CARD_WITHIN_PLAYER = "swapCardWithinPlayer";
     public static final String PARSE_SCORE_UPDATED = "scoreUpdated";
-
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

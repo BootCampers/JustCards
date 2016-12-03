@@ -20,7 +20,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -66,7 +66,7 @@ public class ParseReceiver extends BroadcastReceiver {
                     application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:
-                case PARSE_SWAP_CARD_WITHIN_TABLE:
+                case PARSE_SWAP_CARD_WITHIN_PLAYER:
                     // Process only if it's not from self/current user
                     if (!isSelf(user)) {
                         application.notifyObservers(identifier, customData);

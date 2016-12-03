@@ -80,7 +80,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
@@ -232,12 +232,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
-        for (User player : mPlayers) {
-            toggleCardsVisibilityForPlayerView(player, toShow);
-        }
-    }
-
     /**
      * Show or hide the user's cards fragment
      *
@@ -254,6 +248,26 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onCardsVisibility(boolean toShow) {
         parseUtils.toggleCardsVisibility(toShow);
+    }
+
+    @OnClick(R.id.fabExit)
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exit Game")
+                .setMessage("Are you sure you want to exit from game?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    parseUtils.removeChannel();
+                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(this));
+                    if (User.getCurrentUser(this).isDealer()) {
+                        ParseDB.deleteGame(gameName);
+                    }
+                    ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                    finish();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @OnClick(R.id.ibInfo)
@@ -285,26 +299,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Show anchored to button
         popup.setBackgroundDrawable(new BitmapDrawable());
         popup.showAsDropDown(view);
-    }
-
-    @OnClick(R.id.fabExit)
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exit Game")
-                .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    parseUtils.removeChannel();
-                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(this));
-                    if (User.getCurrentUser(this).isDealer()) {
-                        ParseDB.deleteGame(gameName);
-                    }
-                    ((FiftyTwoApplication) getApplication()).removeAllObservers();
-                    finish();
-                })
-                .setNegativeButton("No", null)
-                .show();
     }
 
     @OnClick(R.id.ibComment)
@@ -366,21 +360,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         return false;
     }
 
-    public void addCardsToSink(List<Card> cards) {
-        sinkCards.addAll(cards);
-        ivSink.setImageDrawable(icSinkFull);
-    }
-
-    public void removeCardFromSink(Card card) {
-        sinkCards.remove(card);
-        if (sinkCards.size() == 0) {
-            ivSink.setImageDrawable(icSinkEmpty);
+    @Override
+    public void onScoreFragmentInteraction(boolean saveClicked) {
+        if (saveClicked) {
+            parseUtils.updateUsersScore(mPlayers);
         }
-    }
-
-    public void removeAllSinkCards() {
-        sinkCards.clear();
-        ivSink.setImageDrawable(icSinkEmpty);
     }
 
     /**
@@ -388,9 +372,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * <p>
      * ------          Dealer	Player  Table   Player View
      * Dealer	        X	    Y(D)	Y(DT)	Y(D)
-     * Player	        NP	    Y(P)	Y(CT)	NA
-     * Table	        NP	    Y(CT)	NA	    NA
-     * Player View	    NA	    NA	    NA	    NA
+     * Player	        NP	    Y(P)	Y(CT)	NP
+     * Table	        NP	    Y(CT)	NA	    NP
+     * Player View	    NP	    NP	    NP	    NP
      * <p>
      * Legends:
      * X	No Broadcast
@@ -402,7 +386,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * D   Deal
      * DT  Deal Table
      * CT  Card Table
-     * T   Within Table
      * P   Within Player
      * <p>
      * Tags for different Card Fragments:
@@ -417,8 +400,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, true);
         } else if (fromTag.equalsIgnoreCase(PLAYER_TAG) && toTag.equalsIgnoreCase(TABLE_TAG)) {
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, false);
-        } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(TABLE_TAG)) {
-            parseUtils.swapCardWithinTable(card, fromPosition, toPosition);
+        } else if (fromTag.equalsIgnoreCase(PLAYER_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {
+            parseUtils.swapCardWithinPlayer(card, fromPosition, toPosition);
         }
     }
 
@@ -426,6 +409,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onNewLogEvent(String whoPosted, String fromAvatar, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
         chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
+    }
+
+    @Override
+    public void onDealOptionSelected(Bundle bundle) {
+        // Do Nothing
+    }
+
+    @Override
+    public void onChat(ChatLog item) {
+        // Do Nothing
     }
 
     @Override
@@ -470,7 +463,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 runOnUiThread(() -> {
                     User from = fromJson(json);
                     int cardCount = json.get(PARAM_CARD_COUNT).getAsInt();
-                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
+                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
+                    }.getType());
                     handleDealTable(from, cards, cardCount);
                 });
                 break;
@@ -478,7 +472,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {}.getType());
+                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
+                    }.getType());
                     handleDealSink(from, cards);
                 });
                 break;
@@ -492,35 +487,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
                 });
                 break;
-            case PARSE_SWAP_CARD_WITHIN_TABLE:
+            case PARSE_SWAP_CARD_WITHIN_PLAYER:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
                     Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
                     int toPosition = json.get(FROM_POSITION).getAsInt();
-                    handleCardExchangeWithinTable(from, card, fromPosition, toPosition);
+                    handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
                 });
                 break;
-
             case PARSE_SCORE_UPDATED:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<User> users = new Gson().fromJson(json.get(Constants.USER_TAG_SCORE), new TypeToken<List<User>>() {}.getType());
+                    List<User> users = new Gson().fromJson(json.get(Constants.USER_TAG_SCORE), new TypeToken<List<User>>() {
+                    }.getType());
                     handleScoresUpdate(from, users);
                 });
                 break;
-
         }
-    }
-
-    private void handleScoresUpdate(User from, List<User> users) {
-        for(User user : users) {
-            Fragment fragment = getPlayerFragment(this, user);
-            if (fragment != null) {
-                ((PlayerFragment) fragment).scoreChange(user.getScore());
-            }
-        }
-        //TODO: log it
     }
 
     public void addPlayersToView(final List<User> players) {
@@ -617,52 +601,65 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (playerFragment != null && tableFragment != null) {
                 Fragment source = pickedFromTable ? tableFragment : playerFragment;
                 Fragment target = pickedFromTable ? playerFragment : tableFragment;
-
-                boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
-                Log.d(TAG, "handleCardExchangeWithTable: Draw Status: " + draw);
-                if (draw) {
-                    boolean stack = ((CardsFragment) target).stackCard(card, toPosition);
-                    Log.d(TAG, "handleCardExchangeWithTable: Stack Status: " + stack);
-                }
+                exchangeCard(source, target, card, fromPosition, toPosition);
             }
         }
     }
 
-    private void handleCardExchangeWithinTable(final User from, final Card card, final int fromPosition, final int toPosition) {
-        Log.d(TAG, "handleCardExchangeWithinTable: Card: " + card +
+    private void handleCardExchangeWithinPlayer(final User from, final Card card, final int fromPosition, final int toPosition) {
+        Log.d(TAG, "handleCardExchangeWithinPlayer: Card: " + card +
                 ", User: " + from +
                 ", fromPosition: " + fromPosition +
                 ", toPosition: " + toPosition);
 
-        // TODO
-
-        if (card != null && from != null && !isSelf(from) && playerViewFragment != null) {
-            Fragment tableFragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
-            if (tableFragment != null) {
-                boolean draw = ((CardsFragment) tableFragment).drawCard(fromPosition, card);
-                Log.d(TAG, "handleCardExchangeWithinTable: Draw Status: " + draw);
-                if (draw) {
-                    boolean stack = ((CardsFragment) tableFragment).stackCard(card, toPosition);
-                    Log.d(TAG, "handleCardExchangeWithinTable: Stack Status: " + stack);
-                }
+        if (card != null && from != null && !isSelf(from)) {
+            Fragment fragment = getPlayerFragment(this, from);
+            if (fragment != null) {
+                exchangeCard(fragment, fragment, card, fromPosition, toPosition);
             }
         }
     }
 
-    @Override
-    public void onDealOptionSelected(Bundle bundle) {
-        // Do Nothing
+    private void handleScoresUpdate(User from, List<User> users) {
+        Log.d(TAG, "handleScoresUpdate: Score update received from: " + from);
+        for (User user : users) {
+            Fragment fragment = getPlayerFragment(this, user);
+            if (fragment != null) {
+                ((PlayerFragment) fragment).scoreChange(user.getScore());
+            }
+        }
+        //TODO: log it
     }
 
-    @Override
-    public void onChat(ChatLog item) {
-        // Do Nothing
+    public void addCardsToSink(List<Card> cards) {
+        sinkCards.addAll(cards);
+        ivSink.setImageDrawable(icSinkFull);
     }
 
-    @Override
-    public void onScoreFragmentInteraction(boolean saveClicked) {
-        if(saveClicked == true){
-            parseUtils.updateUsersScore(mPlayers);
+    public void removeCardFromSink(Card card) {
+        sinkCards.remove(card);
+        if (sinkCards.size() == 0) {
+            ivSink.setImageDrawable(icSinkEmpty);
+        }
+    }
+
+    public void removeAllSinkCards() {
+        sinkCards.clear();
+        ivSink.setImageDrawable(icSinkEmpty);
+    }
+
+    public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
+        for (User player : mPlayers) {
+            toggleCardsVisibilityForPlayerView(player, toShow);
+        }
+    }
+
+    private void exchangeCard(Fragment source, Fragment target, Card card, int fromPosition, int toPosition) {
+        boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
+        Log.d(TAG, "exchangeCard: Draw Status: " + draw);
+        if (draw) {
+            boolean stack = ((CardsFragment) target).stackCard(card, toPosition);
+            Log.d(TAG, "exchangeCard: Stack Status: " + stack);
         }
     }
 
