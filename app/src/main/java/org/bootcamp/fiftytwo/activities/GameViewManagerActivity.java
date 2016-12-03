@@ -164,7 +164,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.saveCurrentUser(!isCurrentViewPlayer);
 
             //Get previously joined players
-            parseUtils.fetchPreviouslyJoinedUsers(gameName, this);
+            ParseStorage.findUsers(gameName, this::addPlayersToView);
             parseUtils.joinChannel();
 
             // Add myself to game
@@ -293,9 +293,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     parseUtils.removeChannel();
-                    parseUtils.deleteUserFromDb(gameName, User.getCurrentUser(this));
+                    ParseStorage.deleteGamesForUser(gameName, User.getCurrentUser(this));
                     if (User.getCurrentUser(this).isDealer()) {
-                        parseUtils.deleteGameFromServer(gameName);
+                        ParseStorage.deleteGame(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
                     finish();
