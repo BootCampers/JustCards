@@ -1,15 +1,19 @@
 package org.bootcamp.fiftytwo.views;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.utils.Constants;
+
+import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
  * Author: agoenka
@@ -29,41 +33,39 @@ public class OnCardsDragListener implements View.OnDragListener {
     public boolean onDrag(View v, DragEvent event) {
         int action = event.getAction();
         switch (action) {
-
             case DragEvent.ACTION_DRAG_STARTED:
                 break;
-
             case DragEvent.ACTION_DRAG_ENTERED:
                 break;
-
             case DragEvent.ACTION_DRAG_EXITED:
                 break;
-
             case DragEvent.ACTION_DROP:
-
                 // Handling only drag drop between lists for now
                 if (v.getId() == R.id.ivCard || v.getId() == R.id.tvNoCards) {
                     isDropped = true;
                     CardsAdapter sourceAdapter = getSourceAdapter(event);
                     CardsAdapter targetAdapter = getTargetAdapter(v);
-                    int sourcePosition = getSourcePosition(event);
-                    int targetPosition = getTargetPosition(v);
-                    Card movingCard = sourceAdapter.getCards().get(sourcePosition);
 
-                    sourceAdapter.remove(sourcePosition);
-                    targetAdapter.add(movingCard, targetPosition);
+                    if (isMoveAllowed(sourceAdapter, targetAdapter)) {
+                        int sourcePosition = getSourcePosition(event);
+                        int targetPosition = getTargetPosition(v);
+                        Card movingCard = sourceAdapter.getCards().get(sourcePosition);
 
-                    v.setVisibility(View.VISIBLE);
-                    if (v.getId() == R.id.tvNoCards) {
-                        cardsListener.setEmptyList(false);
-                    }
+                        sourceAdapter.remove(sourcePosition);
+                        targetAdapter.add(movingCard, targetPosition);
 
-                    cardsListener.publish(sourceAdapter.getTag(), targetAdapter.getTag(), sourcePosition, targetPosition, movingCard);
+                        v.setVisibility(View.VISIBLE);
+                        if (v.getId() == R.id.tvNoCards) {
+                            cardsListener.setEmptyList(false);
+                        }
 
-                    // If source and target adapters are different then log otherwise this is shuffling within
-                    if (!sourceAdapter.getTag().endsWith(targetAdapter.getTag())) {
-                        Log.d(Constants.TAG, sourceAdapter.getTag() + "--" + targetAdapter.getTag());
-                        cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + targetAdapter.getTag() + "--" + movingCard.getName());
+                        cardsListener.publish(sourceAdapter.getTag(), targetAdapter.getTag(), sourcePosition, targetPosition, movingCard);
+
+                        // If source and target adapters are different then log otherwise this is shuffling within
+                        if (!sourceAdapter.getTag().endsWith(targetAdapter.getTag())) {
+                            Log.d(TAG, sourceAdapter.getTag() + "--" + targetAdapter.getTag());
+                            cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + targetAdapter.getTag() + "--" + movingCard.getName());
+                        }
                     }
                 }
                 break;
@@ -105,5 +107,20 @@ public class OnCardsDragListener implements View.OnDragListener {
 
     private int getTargetPosition(View v) {
         return v.getId() != R.id.tvNoCards ? (int) v.getTag() : -1;
+    }
+
+    private boolean isMoveAllowed(final CardsAdapter source, final CardsAdapter target) {
+        String sourceTag = source.getTag();
+        String targetTag = target.getTag();
+        if (!TextUtils.isEmpty(sourceTag) && !TextUtils.isEmpty(targetTag)) {
+            if (sourceTag.equalsIgnoreCase(TABLE_TAG) && targetTag.equalsIgnoreCase(TABLE_TAG)) {
+                Log.w(TAG, "isMoveAllowed: Attempted to move cards within " + sourceTag + " and " + targetTag + " which is not allowed");
+                Toast.makeText(source.getContext(), "This move is not allowed", Toast.LENGTH_SHORT).show();
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

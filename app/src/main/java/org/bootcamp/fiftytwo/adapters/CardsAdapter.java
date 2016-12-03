@@ -56,6 +56,10 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         return tag;
     }
 
+    public Context getContext() {
+        return mContext;
+    }
+
     public CardsAdapter(Context context, List<Card> cards, CardsListener cardsListener, String tag) {
         this.mContext = context;
         if (cards == null) {
