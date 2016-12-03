@@ -1,6 +1,7 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -46,6 +47,8 @@ public class PlayerFragment extends CardsFragment {
 
     @BindView(R.id.ivPlayerAvatar) CircularImageView ivPlayerAvatar;
     @BindView(R.id.tvUserName) TextView tvUserName;
+    @BindView(R.id.tvCardsCount) TextView tvCardsCount;
+    @BindView(R.id.tvScore) TextView tvScore;
 
     public static PlayerFragment newInstance(List<Card> cards, final User player, final String tag, final String layoutType, int x, int y) {
         PlayerFragment fragment = new PlayerFragment();
@@ -124,10 +127,19 @@ public class PlayerFragment extends CardsFragment {
         ivPlayerAvatar.setBorderColor(color);
         ivPlayerAvatar.setBorderWidth(6);
 
+        GradientDrawable countDrawable = (GradientDrawable) tvCardsCount.getBackground();
+        countDrawable.setColor(color);
+        tvCardsCount.setBackground(countDrawable);
+        tvCardsCount.setAlpha(0.6f);
+
+        GradientDrawable scoreDrawable = (GradientDrawable) tvScore.getBackground();
+        scoreDrawable.setColor(color);
+        tvScore.setBackground(scoreDrawable);
+        tvScore.setAlpha(0.6f);
+
         initCards();
 
         final ViewGroup container = (ViewGroup) view.getParent();
         view.setOnTouchListener(new OnTouchMoveListener(container));
     }
-
 }

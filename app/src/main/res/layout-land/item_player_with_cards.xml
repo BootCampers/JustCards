@@ -8,12 +8,50 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/ivPlayerAvatar"
-        android:layout_width="58dp"
-        android:layout_height="58dp"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_face"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="68dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp">
+
+            <TextView
+                android:id="@+id/tvCardsCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_rounded"
+                android:gravity="end|center_vertical"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_rounded"
+                android:gravity="end|center_vertical"
+                android:paddingTop="15dp"
+                android:text="0"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+        </FrameLayout>
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/ivPlayerAvatar"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_face"/>
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvUserName"
