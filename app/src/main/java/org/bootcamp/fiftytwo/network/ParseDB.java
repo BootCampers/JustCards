@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.network;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -103,7 +104,7 @@ public class ParseDB {
         });
     }
 
-    public static void findUsers(final String gameName, final Callback<List<User>> callback) {
+    public static void findUsers(final Context context, final String gameName, final Callback<List<User>> callback) {
         findGame(gameName, (itemList, e) -> {
             if (e == null) {
                 Log.d(Constants.TAG, "Found list : " + itemList.size());
@@ -115,14 +116,17 @@ public class ParseDB {
                 Log.d(TAG, "findUsers: No of players fetched from db: " + players.size());
 
                 // TODO: This custom data generation is temporary and for testing purposes only
-                if (isEmpty(players) || players.size() == 1) {
-                    players.addAll(PlayerUtils.getPlayers(4));
+                if ((isEmpty(players) || players.size() == 1) && User.getCurrentUser(context).isDealer()) {
+                    List<User> dummyPlayers = PlayerUtils.getPlayers(4);
+                    for (User dummyPlayer : dummyPlayers) {
+                        Game.save(gameName, dummyPlayer);
+                    }
+                    players.addAll(dummyPlayers);
                 }
 
                 for (User player : players) {
                     if (!isSelf(player)) {
                         callback.call(getList(player));
-                        //gameViewManagerActivity.addPlayersToView(getList(player));
                     }
                 }
             } else {

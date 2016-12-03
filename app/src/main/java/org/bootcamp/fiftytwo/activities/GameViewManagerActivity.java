@@ -158,7 +158,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.saveCurrentUser(!isCurrentViewPlayer);
 
             //Get previously joined players
-            ParseDB.findUsers(gameName, this::addPlayersToView);
+            ParseDB.findUsers(this, gameName, this::addPlayersToView);
             parseUtils.joinChannel();
 
             // Add myself to game

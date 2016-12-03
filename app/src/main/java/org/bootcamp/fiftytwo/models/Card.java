@@ -11,30 +11,16 @@ import org.parceler.Parcel;
 @Parcel(analyze = Card.class)
 public class Card {
 
-    private CardSuit suit;
-    private CardRank rank;
     private String name;
     private boolean isJoker;
     private boolean isShowingFront;
     private boolean isViewAllowed;
-    private boolean isSelected;
+    private transient boolean isSelected;
 
     public Card() {}
 
     public Card(CardSuit suit, CardRank rank){
-        this.suit = suit;
-        this.rank = rank;
         name = suit.name() + "_" + CardRank.get(rank);
-    }
-
-    @SuppressWarnings("unused")
-    public CardSuit getSuit(){
-        return suit;
-    }
-
-    @SuppressWarnings("unused")
-    public CardRank getRank(){
-        return rank;
     }
 
     public String getName() {
