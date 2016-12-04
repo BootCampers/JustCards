@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -31,6 +33,7 @@ import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.application.FiftyTwoApplication;
 import org.bootcamp.fiftytwo.fragments.CardsFragment;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
@@ -50,6 +53,7 @@ import org.bootcamp.fiftytwo.network.ParseUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
+import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
@@ -61,12 +65,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
-import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getVectorCompat;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
@@ -75,6 +79,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
@@ -82,6 +87,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
@@ -121,6 +127,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabToggleCardsVisibility) FloatingActionButton fabToggleCardsVisibility;
     @BindView(R.id.ivSink) ImageView ivSink;
+    @BindView(R.id.tvSinkCardsCount) TextView tvSinkCardsCount;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
@@ -191,6 +198,29 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         // Set the current view state (player vs dealer)
         isShowingPlayerFragment = isCurrentViewPlayer;
+
+        ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
+            @Override
+            public void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
+                if (card != null) {
+                    addCardsToSink(getList(card));
+                    onCardExchange(fromTag, toTag, fromPosition, toPosition, card);
+                }
+            }
+
+            @Override
+            public void logActivity(String whoPosted, String fromAvatar, String details) {
+                onNewLogEvent(whoPosted, fromAvatar, details);
+            }
+
+            @Override
+            public void setEmptyList(boolean visibility) {
+            }
+
+            @Override
+            public void cardCountChange(int newCount) {
+            }
+        }));
     }
 
     @OnClick(R.id.fabSwap)
@@ -394,6 +424,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, false);
         } else if (fromTag.equalsIgnoreCase(PLAYER_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {
             parseUtils.swapCardWithinPlayer(card, fromPosition, toPosition);
+        } else if (toTag.equalsIgnoreCase(SINK_TAG)) {
+            parseUtils.dropCardToSink(card, fromTag, fromPosition);
         }
     }
 
@@ -486,6 +518,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
                     int toPosition = json.get(TO_POSITION).getAsInt();
                     handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
+                });
+                break;
+            case PARSE_DROP_CARD_TO_SINK:
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    String fromTag = json.get(FROM_TAG).getAsString();
+                    int fromPosition = json.get(FROM_POSITION).getAsInt();
+                    handleCardDropToSink(from, card, fromTag, fromPosition);
                 });
                 break;
             case PARSE_SCORE_UPDATED:
@@ -584,7 +625,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ", toPosition: " + toPosition +
                 ", pickedFromTable: " + pickedFromTable);
 
-        if (card != null && from != null && !isSelf(from)) {
+        if (card != null && from != null) {
             Fragment playerFragment = getPlayerFragment(this, from);
             Fragment tableFragment = null;
             if (playerViewFragment != null) {
@@ -604,10 +645,44 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ", fromPosition: " + fromPosition +
                 ", toPosition: " + toPosition);
 
-        if (card != null && from != null && !isSelf(from)) {
+        if (card != null && from != null) {
             Fragment fragment = getPlayerFragment(this, from);
             if (fragment != null) {
                 exchangeCard(fragment, fragment, card, fromPosition, toPosition);
+            }
+        }
+    }
+
+    private void exchangeCard(Fragment source, Fragment target, Card card, int fromPosition, int toPosition) {
+        boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
+        Log.d(TAG, "exchangeCard: Draw Status: " + draw);
+        if (draw) {
+            boolean stack = ((CardsFragment) target).stackCard(card, toPosition);
+            Log.d(TAG, "exchangeCard: Stack Status: " + stack);
+        }
+    }
+
+    private void handleCardDropToSink(User from, Card card, String fromTag, int fromPosition) {
+        Log.d(TAG, "handleCardDropToSink: Card: " + card +
+                ", User: " + from +
+                ", fromTag: " + fromTag +
+                ", fromPosition: " + fromPosition);
+
+        if (from != null && card != null && !TextUtils.isEmpty(fromTag)) {
+            Fragment fragment = null;
+            if (fromTag.equalsIgnoreCase(PLAYER_TAG)) {
+                fragment = getPlayerFragment(this, from);
+            } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
+                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            }
+
+            if (fragment != null) {
+                boolean draw = ((CardsFragment) fragment).drawCard(fromPosition, card);
+                if (draw) {
+                    addCardsToSink(getList(card));
+                }
+            } else {
+                addCardsToSink(getList(card));
             }
         }
     }
@@ -626,13 +701,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void addCardsToSink(List<Card> cards) {
         sinkCards.addAll(cards);
         ivSink.setImageResource(R.drawable.ic_sink_full);
-    }
-
-    public void removeCardFromSink(Card card) {
-        sinkCards.remove(card);
-        if (sinkCards.size() == 0) {
-            ivSink.setImageResource(R.drawable.ic_sink_empty);
-        }
+        tvSinkCardsCount.setText(String.valueOf(sinkCards.size()));
     }
 
     public void removeAllSinkCards() {
@@ -643,15 +712,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
             toggleCardsVisibilityForPlayerView(player, toShow);
-        }
-    }
-
-    private void exchangeCard(Fragment source, Fragment target, Card card, int fromPosition, int toPosition) {
-        boolean draw = ((CardsFragment) source).drawCard(fromPosition, card);
-        Log.d(TAG, "exchangeCard: Draw Status: " + draw);
-        if (draw) {
-            boolean stack = ((CardsFragment) target).stackCard(card, toPosition);
-            Log.d(TAG, "exchangeCard: Stack Status: " + stack);
         }
     }
 

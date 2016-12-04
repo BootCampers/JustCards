@@ -16,6 +16,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
@@ -52,7 +53,7 @@ public class ParseReceiver extends BroadcastReceiver {
             JsonObject customData = (JsonObject) parser.parse(data.get("customData").getAsString());
 
             String identifier = customData.get(COMMON_IDENTIFIER).getAsString();
-            User user = User.fromJson(customData);
+            User from = User.fromJson(customData);
             Log.d(TAG, identifier + "--" + customData.toString());
 
             switch (identifier) {
@@ -67,8 +68,9 @@ public class ParseReceiver extends BroadcastReceiver {
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 case PARSE_SWAP_CARD_WITHIN_PLAYER:
+                case PARSE_DROP_CARD_TO_SINK:
                     // Process only if it's not from self/current user
-                    if (!isSelf(user)) {
+                    if (!isSelf(from)) {
                         application.notifyObservers(identifier, customData);
                     }
                     break;

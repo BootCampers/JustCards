@@ -65,60 +65,80 @@
         android:id="@+id/fab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         app:menu_labels_ellipsize="end"
-        app:menu_labels_singleLine="true"
-        app:menu_backgroundColor="#ccffffff"
         app:menu_labels_position="left"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        app:menu_labels_singleLine="true">
 
         <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_size="mini"
             android:id="@+id/fabExit"
-            app:fab_label="Exit from game" />
-
-        <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_size="mini"
+            app:fab_label="Exit from game"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabMute"
-            app:fab_label="Mute for this round" />
-
-        <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_size="mini"
+            app:fab_label="Mute for this round"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabToggleCardsVisibility"
-            app:fab_label="Show to cards to everyone" />
-
-        <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_size="mini"
+            app:fab_label="Show to cards to everyone"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSwap"
-            app:fab_label="Switch view" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Switch view"
+            app:fab_size="mini"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@drawable/ic_sink_empty"
-        android:id="@+id/ivSink"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
+    <LinearLayout
+        android:id="@+id/llSink"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical"
         app:layout_anchor="@+id/fab"
-        app:layout_anchorGravity="bottom|left"
-        android:layout_gravity="top|right" />
+        app:layout_anchorGravity="bottom|left">
 
+        <TextView
+            android:id="@+id/tvSinkCardsCount"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@drawable/text_round"
+            android:gravity="center"
+            android:text="@string/zero"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            tools:text="0"/>
+
+        <ImageView
+            android:id="@+id/ivSink"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp"
+            app:srcCompat="@drawable/ic_sink_empty"/>
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

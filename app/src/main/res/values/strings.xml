@@ -53,5 +53,6 @@
     <string name="msg_show">Show</string>
     <string name="msg_hide">Hide</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="zero">0</string>
 
 </resources>

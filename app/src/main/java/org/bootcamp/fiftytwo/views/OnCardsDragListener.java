@@ -12,6 +12,9 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 
+import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -67,12 +70,23 @@ public class OnCardsDragListener implements View.OnDragListener {
                             cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + targetAdapter.getTag() + "--" + movingCard.getName());
                         }
                     }
+                } else if (v.getId() == R.id.ivSink) {
+                    isDropped = true;
+                    CardsAdapter sourceAdapter = getSourceAdapter(event);
+
+                    if (isSinkMoveAllowed(sourceAdapter)) {
+                        int sourcePosition = getSourcePosition(event);
+                        Card movingCard = sourceAdapter.getCards().get(sourcePosition);
+                        sourceAdapter.remove(sourcePosition);
+                        Log.d(TAG, sourceAdapter.getTag() + "--" + SINK_TAG);
+
+                        cardsListener.publish(sourceAdapter.getTag(), SINK_TAG, sourcePosition, 0, movingCard);
+                        cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + SINK_TAG + "--" + movingCard.getName());
+                    }
                 }
                 break;
-
             case DragEvent.ACTION_DRAG_ENDED:
                 break;
-
             default:
                 break;
         }
@@ -122,5 +136,10 @@ public class OnCardsDragListener implements View.OnDragListener {
             }
         }
         return false;
+    }
+
+    private boolean isSinkMoveAllowed(final CardsAdapter source) {
+        String sourceTag = source.getTag();
+        return !TextUtils.isEmpty(sourceTag) && (sourceTag.equalsIgnoreCase(TABLE_TAG) || sourceTag.equalsIgnoreCase(PLAYER_TAG) || sourceTag.equalsIgnoreCase(DEALER_TAG));
     }
 }

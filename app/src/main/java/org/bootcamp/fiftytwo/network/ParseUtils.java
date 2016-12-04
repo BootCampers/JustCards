@@ -20,12 +20,14 @@ import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
@@ -199,6 +201,22 @@ public class ParseUtils {
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(TO_POSITION, toPosition);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_PLAYER);
+        sendBroadcast(payload);
+    }
+
+    /**
+     * Player picks up a card from a stack of cards and drops them on to the Sink
+     *
+     * @param card         which card
+     * @param fromTag      from which stack of cards
+     * @param fromPosition from which position in the stack of cards
+     */
+    public void dropCardToSink(final Card card, final String fromTag, final int fromPosition) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_TAG, fromTag);
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DROP_CARD_TO_SINK);
         sendBroadcast(payload);
     }
 
