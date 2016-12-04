@@ -105,7 +105,7 @@ public class PlayerFragment extends CardsFragment{
             view.setY(y);
         }
 
-        toggleCardsVisibility(mPlayer.isShowingCards());
+        toggleCardsList(mPlayer.isShowingCards());
         return view;
     }
 

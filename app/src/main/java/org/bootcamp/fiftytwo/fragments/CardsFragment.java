@@ -54,6 +54,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
 
     private OnCardExchangeLister mCardExchangeLister;
     private OnLogEventListener mLogEventListener;
+    private OnToggleCardListener mOnToggleCardListener;
 
     public interface OnCardExchangeLister {
         void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
@@ -62,6 +63,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
 
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
+    }
+
+    public interface OnToggleCardListener {
+        void onToggleCard(Card card, int position, String onTag);
     }
 
     public static CardsFragment newInstance(final List<Card> cards, final String tag, final String layoutType) {
@@ -123,7 +128,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     @Override
-    public void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
+    public void exchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
         if (mCardExchangeLister != null) {
             mCardExchangeLister.onCardExchange(fromTag, toTag, fromPosition, toPosition, card);
         }
@@ -145,7 +150,15 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         }
     }
 
-    public void toggleCardsVisibility(boolean show) {
+    @Override
+    public void toggleCard(Card card, int position, String onTag) {
+        Log.d(TAG, CardsFragment.class.getSimpleName() + " -- toggleCard: " + card + ", Tag: " + onTag + ", position: " + position);
+        if (mOnToggleCardListener != null) {
+            mOnToggleCardListener.onToggleCard(card, position, onTag);
+        }
+    }
+
+    public void toggleCardsList(boolean show) {
         flCardsContainer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
@@ -210,6 +223,12 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         } else {
             throw new ClassCastException(context.toString() + " must implement CardsFragment.OnLogEventListener");
         }
+
+        if (context instanceof OnToggleCardListener) {
+            mOnToggleCardListener = (OnToggleCardListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement CardsFragment.OnToggleCardListener");
+        }
     }
 
     @Override
@@ -217,6 +236,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         super.onDetach();
         mCardExchangeLister = null;
         mLogEventListener = null;
+        mOnToggleCardListener = null;
     }
 
     @Override

@@ -71,6 +71,7 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.ON_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
@@ -85,8 +86,10 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST_VISIBILITY;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
@@ -99,6 +102,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         DealingOptionsFragment.OnDealOptionsListener,
         ChatAndLogFragment.OnChatAndLogListener,
         CardsFragment.OnCardExchangeLister,
+        CardsFragment.OnToggleCardListener,
         CardsFragment.OnLogEventListener,
         ScoringFragment.OnScoreFragmentListener,
         Observer {
@@ -204,7 +208,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void initViews() {
         ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
             @Override
-            public void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
+            public void exchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
                 if (card != null) {
                     addCardsToSink(getList(card));
                     onCardExchange(fromTag, toTag, fromPosition, toPosition, card);
@@ -222,6 +226,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             @Override
             public void cardCountChange(int newCount) {
+            }
+
+            @Override
+            public void toggleCard(Card card, int position, String onTag) {
             }
         }));
     }
@@ -263,16 +271,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * @param player which player
      * @param toShow true if want to show, false for hiding
      */
-    private void toggleCardsVisibilityForPlayerView(final User player, final boolean toShow) {
+    private void toggleCardsListForPlayerView(final User player, final boolean toShow) {
         Fragment playerFragment = getPlayerFragment(this, player);
         if (playerFragment != null) {
-            ((PlayerFragment) playerFragment).toggleCardsVisibility(toShow);
+            ((PlayerFragment) playerFragment).toggleCardsList(toShow);
         }
     }
 
     @Override
-    public void onCardsVisibility(boolean toShow) {
-        parseUtils.toggleCardsVisibility(toShow);
+    public void onCardsListVisibility(boolean toShow) {
+        parseUtils.toggleCardsListVisibility(toShow);
     }
 
     @OnClick(R.id.fabExit)
@@ -413,6 +421,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onToggleCard(Card card, int position, String onTag) {
+        if (card != null) {
+            parseUtils.toggleCard(card, position, onTag);
+        }
+    }
+
+    @Override
     public void onNewLogEvent(String whoPosted, String fromAvatar, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
         chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
@@ -449,11 +464,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     removePlayersFromView(getList(user));
                 });
                 break;
-            case PARSE_TOGGLE_CARDS_VISIBILITY:
+            case PARSE_TOGGLE_CARDS_LIST_VISIBILITY:
                 runOnUiThread(() -> {
                     User user = User.fromJson(json);
-                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_VISIBILITY).getAsBoolean();
-                    toggleCardsVisibilityForPlayerView(user, toShow);
+                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_LIST_VISIBILITY).getAsBoolean();
+                    toggleCardsListForPlayerView(user, toShow);
                 });
                 break;
             case PARSE_DEAL_CARDS:
@@ -512,6 +527,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleCardDropToSink(from, card, fromTag, fromPosition);
                 });
                 break;
+            case PARSE_TOGGLE_CARD:
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    int position = json.get(POSITION).getAsInt();
+                    String onTag = json.get(ON_TAG).getAsString();
+                    handleToggleCard(from, card, position, onTag);
+                });
+                break;
             case PARSE_SCORE_UPDATED:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
@@ -534,7 +558,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (player.equals(User.getCurrentUser(this))) {
                 togglePlayerView(player);
             }
-            toggleCardsVisibilityForPlayerView(player, false);
+            toggleCardsListForPlayerView(player, false);
             onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
         }
     }
@@ -670,6 +694,32 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
+    private void handleToggleCard(User from, Card card, int position, String onTag) {
+        Log.d(TAG, "handleToggleCard: Card: " + card +
+                ", User: " + from +
+                ", position: " + position +
+                ", onTag: " + onTag);
+
+        if (from != null && card != null && !TextUtils.isEmpty(onTag)) {
+            /*Fragment fragment = null;
+            if (fromTag.equalsIgnoreCase(PLAYER_TAG)) {
+                fragment = getPlayerFragment(this, from);
+            } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
+                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            }
+
+            if (fragment != null) {
+                boolean draw = ((CardsFragment) fragment).drawCard(fromPosition, card);
+                if (draw) {
+                    addCardsToSink(getList(card));
+                }
+            } else {
+                addCardsToSink(getList(card));
+            }*/
+        }
+
+    }
+
     private void handleScoresUpdate(User from, List<User> users) {
         Log.d(TAG, "handleScoresUpdate: Score update received from: " + from);
         for (User user : users) {
@@ -692,9 +742,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ivSink.setImageResource(R.drawable.ic_sink_empty);
     }
 
-    public void toggleCardsVisibilityOfAllPlayers(boolean toShow) {
+    public void toggleCardsListOfAllPlayers(boolean toShow) {
         for (User player : mPlayers) {
-            toggleCardsVisibilityForPlayerView(player, toShow);
+            toggleCardsListForPlayerView(player, toShow);
         }
     }
 
@@ -707,4 +757,5 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .addModifier(new ScaleModifier(0.5f, 2f, 0, 1000))
                 .oneShot(findViewById(R.id.flPlayerContainer), 4);
     }
+
 }

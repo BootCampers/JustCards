@@ -39,7 +39,7 @@ public class PlayerViewFragment extends Fragment {
     @BindString(R.string.msg_show) String msgShow;
 
     public interface onPlayListener {
-        void onCardsVisibility(final boolean toShow);
+        void onCardsListVisibility(final boolean toShow);
     }
 
     public static PlayerViewFragment newInstance(List<Card> playerCards, List<Card> tableCards) {
@@ -96,7 +96,7 @@ public class PlayerViewFragment extends Fragment {
         self.setShowingCards(!isShowing);
         //btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
         if (mListener != null) {
-            mListener.onCardsVisibility(!isShowing);
+            mListener.onCardsListVisibility(!isShowing);
         }
     }
 

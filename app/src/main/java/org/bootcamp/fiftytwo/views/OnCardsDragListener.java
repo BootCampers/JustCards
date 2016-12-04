@@ -59,7 +59,7 @@ public class OnCardsDragListener implements View.OnDragListener {
                             cardsListener.setEmptyList(false);
                         }
 
-                        cardsListener.publish(sourceAdapter.getTag(), targetAdapter.getTag(), sourcePosition, targetPosition, movingCard);
+                        cardsListener.exchange(sourceAdapter.getTag(), targetAdapter.getTag(), sourcePosition, targetPosition, movingCard);
 
                         // If source and target adapters are different then log otherwise this is shuffling within
                         if (!sourceAdapter.getTag().endsWith(targetAdapter.getTag())) {
@@ -77,7 +77,7 @@ public class OnCardsDragListener implements View.OnDragListener {
                         sourceAdapter.remove(sourcePosition);
                         Log.d(TAG, sourceAdapter.getTag() + "--" + SINK_TAG);
 
-                        cardsListener.publish(sourceAdapter.getTag(), SINK_TAG, sourcePosition, 0, movingCard);
+                        cardsListener.exchange(sourceAdapter.getTag(), SINK_TAG, sourcePosition, 0, movingCard);
                         cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + SINK_TAG + "--" + movingCard.getName());
                     }
                 }

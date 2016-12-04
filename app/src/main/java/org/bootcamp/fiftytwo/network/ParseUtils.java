@@ -21,6 +21,7 @@ import static org.bootcamp.fiftytwo.models.User.getJson;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.ON_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
@@ -33,7 +34,9 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
@@ -126,10 +129,10 @@ public class ParseUtils {
         sendBroadcast(payload);
     }
 
-    public void toggleCardsVisibility(boolean toShow) {
+    public void toggleCardsListVisibility(boolean toShow) {
         JsonObject payload = getJson(currentLoggedInUser);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_VISIBILITY);
-        payload.addProperty(PARSE_TOGGLE_CARDS_VISIBILITY, toShow);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST_VISIBILITY);
+        payload.addProperty(PARSE_TOGGLE_CARDS_LIST_VISIBILITY, toShow);
         sendBroadcast(payload);
     }
 
@@ -217,6 +220,15 @@ public class ParseUtils {
         payload.addProperty(FROM_TAG, fromTag);
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_DROP_CARD_TO_SINK);
+        sendBroadcast(payload);
+    }
+
+    public void toggleCard(final Card card, final int position, final String onTag) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(POSITION, position);
+        payload.addProperty(ON_TAG, onTag);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARD);
         sendBroadcast(payload);
     }
 

@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 
 import java.util.ArrayList;
@@ -25,7 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.RuleUtils.isCardViewable;
+import static org.bootcamp.fiftytwo.utils.RuleUtils.isToggleCardBroadcastRequired;
 
 /**
  * Created by baphna on 11/11/2016.
@@ -39,9 +40,10 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     public interface CardsListener {
         void setEmptyList(boolean visibility);
-        void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
+        void exchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
         void logActivity(String whoPosted, String fromAvatar, String details);
         void cardCountChange(int newCount);
+        void toggleCard(Card card, int position, String onTag);
     }
 
     public List<Card> getCards() {
@@ -104,7 +106,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
         holder.ivCard.setOnClickListener(view -> {
-            card.setViewAllowed(isCardViewable(card, tag));
+            card.setViewAllowed(isCardViewable(card, getTag()));
             if (!card.isShowingFront() && !card.isViewAllowed()) {
                 Toast.makeText(mContext, "This card is not allowed to be seen", Toast.LENGTH_SHORT).show();
             } else {
@@ -116,9 +118,10 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                     User self = User.getCurrentUser(mContext);
                     cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(), "Looking at cards in the " + tag + " section");
                 }
-
+                if (isToggleCardBroadcastRequired(getTag())) {
+                    cardsListener.toggleCard(card, (int) holder.ivCard.getTag(), getTag());
+                }
             }
-            //TODO: log event and send broadcast
         });
     }
 
@@ -143,7 +146,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         if (position >= 0 && position < getItemCount()) {
             mCards.add(position, card);
         } else {
-            Log.d(Constants.TAG, "Problem here " + position);
+            Log.d(TAG, "Problem here " + position);
             mCards.add(card);
         }
         notifyDataSetChanged();
