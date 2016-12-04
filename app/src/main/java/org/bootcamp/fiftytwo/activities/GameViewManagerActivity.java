@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -123,15 +122,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private ChatAndLogFragment chatAndLogFragment;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab) FloatingActionMenu fab;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
+    @BindView(R.id.ivSink) ImageView ivSink;
+    @BindView(R.id.tvSinkCardsCount) TextView tvSinkCardsCount;
     @BindView(R.id.fabSwap) FloatingActionButton fabSwap;
     @BindView(R.id.fabExit) FloatingActionButton fabExit;
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabToggleCardsVisibility) FloatingActionButton fabToggleCardsVisibility;
-    @BindView(R.id.ivSink) ImageView ivSink;
-    @BindView(R.id.tvSinkCardsCount) TextView tvSinkCardsCount;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
@@ -187,7 +185,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         // Controlling the fragments for display based on player's role
         if (isCurrentViewPlayer) {
-            fab.setVisibility(View.GONE);
+            fabSwap.setVisibility(View.GONE);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, playerViewFragment)
