@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.models.User;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -30,17 +29,12 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 
 public class PlayerViewFragment extends Fragment {
 
-    private onPlayListener mListener;
     private Unbinder unbinder;
     private List<Card> mPlayerCards;
     private List<Card> mTableCards;
 
     @BindString(R.string.msg_hide) String msgHide;
     @BindString(R.string.msg_show) String msgShow;
-
-    public interface onPlayListener {
-        void onCardsListVisibility(final boolean toShow);
-    }
 
     public static PlayerViewFragment newInstance(List<Card> playerCards, List<Card> tableCards) {
         PlayerViewFragment fragment = new PlayerViewFragment();
@@ -87,33 +81,14 @@ public class PlayerViewFragment extends Fragment {
                 .commit();
     }
 
-
-    //@OnClick(R.id.btnToggleCardsFragment)
-    public void toggleMyCardsToAll() {
-        User self = User.getCurrentUser(getContext());
-        boolean isShowing = self.isShowingCards();
-
-        self.setShowingCards(!isShowing);
-        //btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
-        if (mListener != null) {
-            mListener.onCardsListVisibility(!isShowing);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof onPlayListener) {
-            mListener = (onPlayListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement onPlayListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override

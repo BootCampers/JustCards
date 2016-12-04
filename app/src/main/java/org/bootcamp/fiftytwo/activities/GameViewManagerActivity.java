@@ -96,7 +96,6 @@ import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
-        PlayerViewFragment.onPlayListener,
         DealerViewFragment.OnDealListener,
         DealingOptionsFragment.OnDealOptionsListener,
         ChatAndLogFragment.OnChatAndLogListener,
@@ -126,10 +125,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.ibInfo) ImageButton ibInfo;
     @BindView(R.id.ivSink) ImageView ivSink;
     @BindView(R.id.tvSinkCardsCount) TextView tvSinkCardsCount;
-    @BindView(R.id.fabSwap) FloatingActionButton fabSwap;
     @BindView(R.id.fabExit) FloatingActionButton fabExit;
+    @BindView(R.id.fabSwap) FloatingActionButton fabSwap;
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
-    @BindView(R.id.fabToggleCardsVisibility) FloatingActionButton fabToggleCardsVisibility;
+    @BindView(R.id.fabShow) FloatingActionButton fabShow;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
@@ -143,10 +142,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_power));
         fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
         fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
-        fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
-        fabToggleCardsVisibility.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
 
         mediaUtils = new MediaUtils(this);
         initGameParams();
@@ -276,9 +275,29 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onCardsListVisibility(boolean toShow) {
-        parseUtils.toggleCardsListVisibility(toShow);
+    @OnClick(R.id.fabMute)
+    public void onMute(View view) {
+        // Do nothing as of now
+    }
+
+    @OnClick(R.id.fabShow)
+    public void onShow(View view) {
+        //parseUtils.toggleCardsListVisibility(toShow);
+        User self = User.getCurrentUser(this);
+        boolean isShowing = self.isShowingCards();
+
+        self.setShowingCards(!isShowing);
+        //btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
+        /*if (mListener != null) {
+            mListener.onCardsListVisibility(!isShowing);
+        }*/
+        if (fabShow.getTag() == null || ((boolean) fabShow.getTag())) {
+            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_off));
+            fabShow.setTag(false);
+        } else {
+            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+            fabShow.setTag(true);
+        }
     }
 
     @OnClick(R.id.fabExit)

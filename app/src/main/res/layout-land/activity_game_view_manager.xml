@@ -83,6 +83,13 @@
             app:fab_size="mini"/>
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabSwap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Switch view"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabMute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,17 +97,10 @@
             app:fab_size="mini"/>
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabToggleCardsVisibility"
+            android:id="@+id/fabShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Show to cards to everyone"
-            app:fab_size="mini"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabSwap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_label="Switch view"
             app:fab_size="mini"/>
 
     </com.github.clans.fab.FloatingActionMenu>
