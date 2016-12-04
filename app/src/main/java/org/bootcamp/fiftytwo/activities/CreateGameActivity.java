@@ -1,6 +1,5 @@
 package org.bootcamp.fiftytwo.activities;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -11,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +17,7 @@ import android.widget.Toast;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.network.ParseDB;
+import org.bootcamp.fiftytwo.utils.AppUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -69,8 +68,12 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         ParseDB.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
         tvGameNumberLabel.setText(String.format("%s, here is your Game ID:", getIntent().getStringExtra(DISPLAY_NAME)));
-        // animation
-        animateFab(btnShareId);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppUtils.animateCircularReveal(btnShareId);
     }
 
     @OnClick(R.id.btnShareId)
@@ -127,22 +130,5 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
             ParseDB.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
-    }
-
-    private void animateFab(final View view) {
-        view.postDelayed(() -> {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                // get the center for the clipping circle
-                int cx = view.getMeasuredWidth() / 2;
-                int cy = view.getMeasuredHeight() / 2;
-                // get the final radius for the clipping circle
-                int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
-                // create the animator for this view (the start radius is zero)
-                Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
-                // make the view visible and start the animation
-                view.setVisibility(View.VISIBLE);
-                anim.start();
-            }
-        }, 1000);
     }
 }

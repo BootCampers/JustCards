@@ -151,5 +151,4 @@ public class PlayerFragment extends CardsFragment{
         Log.d(Constants.TAG, PlayerFragment.class.getSimpleName()+"--" + mPlayer.getDisplayName() + "--scoreChange--"+String.valueOf(newScore));
         tvScore.setText(String.valueOf(newScore));
     }
-
 }

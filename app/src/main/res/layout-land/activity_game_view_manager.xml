@@ -62,7 +62,7 @@
         app:srcCompat="@drawable/ic_comment"/>
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fab"
+        android:id="@+id/fabMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
@@ -71,6 +71,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:visibility="invisible"
         app:menu_labels_ellipsize="end"
         app:menu_labels_position="left"
         app:menu_labels_singleLine="true">
@@ -121,7 +122,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="15dp"
         android:orientation="vertical"
-        app:layout_anchor="@+id/fab"
+        app:layout_anchor="@+id/fabMenu"
         app:layout_anchorGravity="bottom|left">
 
         <TextView

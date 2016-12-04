@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -49,6 +50,7 @@ import org.bootcamp.fiftytwo.models.Game;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseDB;
 import org.bootcamp.fiftytwo.network.ParseUtils;
+import org.bootcamp.fiftytwo.utils.AppUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
@@ -62,6 +64,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
@@ -130,8 +133,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabShow) FloatingActionButton fabShow;
     @BindView(R.id.fabRound) FloatingActionButton fabRound;
+    @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +145,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view_manager);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        fabMenu.setClosedOnTouchOutside(true);
         fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_power));
         fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
         fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
@@ -155,6 +161,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         initViews();
 
         ((FiftyTwoApplication) getApplication()).addObserver(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     private void initGameParams() {
@@ -232,10 +244,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             public void toggleCard(Card card, int position, String onTag) {
             }
         }));
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppUtils.animateCircularReveal(fabMenu);
     }
 
     @OnClick(R.id.fabSwap)
     public void switchView() {
+        fabMenu.close(true);
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
@@ -280,12 +301,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.fabMute)
     public void onMute(View view) {
+        fabMenu.close(true);
         // Do nothing as of now
         Toast.makeText(this, "Clicked on Mute", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.fabShow)
     public void onShow(View view) {
+        fabMenu.close(true);
+
         //parseUtils.toggleCardsListVisibility(toShow);
         User self = User.getCurrentUser(this);
         boolean isShowing = self.isShowingCards();
@@ -306,6 +330,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.fabRound)
     public void onRound(View view) {
+        fabMenu.close(true);
+
         // Do nothing as of now
         Toast.makeText(this, "Clicked on Round", Toast.LENGTH_SHORT).show();
     }
@@ -313,6 +339,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabExit)
     @Override
     public void onBackPressed() {
+        fabMenu.close(true);
+
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exit Game")

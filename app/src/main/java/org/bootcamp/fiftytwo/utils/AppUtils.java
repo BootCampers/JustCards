@@ -1,5 +1,6 @@
 package org.bootcamp.fiftytwo.utils;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -73,6 +75,25 @@ public class AppUtils {
 
     public static VectorDrawableCompat getVectorCompat(final Context context, final int resId) {
         return VectorDrawableCompat.create(context.getResources(), resId, context.getTheme());
+    }
+
+
+
+    public static void animateCircularReveal(final View view) {
+        view.postDelayed(() -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                // get the center for the clipping circle
+                int cx = view.getMeasuredWidth() / 2;
+                int cy = view.getMeasuredHeight() / 2;
+                // get the final radius for the clipping circle
+                int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
+                // create the animator for this view (the start radius is zero)
+                Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+                // make the view visible and start the animation
+                view.setVisibility(View.VISIBLE);
+                anim.start();
+            }
+        }, Constants.FAB_ANIMATION_TIME);
     }
 
 }

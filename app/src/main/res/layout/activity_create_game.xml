@@ -78,8 +78,6 @@
 
             </RelativeLayout>
 
-
-
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btnShareId"
                 android:layout_width="wrap_content"
@@ -90,7 +88,8 @@
                 app:fabSize="mini"
                 android:layout_marginRight="10dp"
                 android:elevation="8dp"
-                app:srcCompat="@drawable/ic_share" />
+                app:srcCompat="@drawable/ic_share"
+                android:visibility="invisible"/>
 
             <Button
                 android:id="@+id/btnGameOptions"

@@ -87,4 +87,7 @@ public class Constants {
     public static final String LAYOUT_TYPE_STAGGERED_HORIZONTAL = "staggeredHorizontal";
     public static final String LAYOUT_TYPE_CIRCULAR = "circular";
     public static final String LAYOUT_TYPE_SCROLL_ZOOM = "scrollZoom";
+
+    /** Animation durations here */
+    public static final long FAB_ANIMATION_TIME = 300;
 }
