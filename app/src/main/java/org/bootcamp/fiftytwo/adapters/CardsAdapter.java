@@ -5,10 +5,10 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -16,7 +16,6 @@ import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
-import org.bootcamp.fiftytwo.views.OnGestureListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.RuleUtils.isCardViewable;
 
 /**
  * Created by baphna on 11/11/2016.
@@ -102,15 +102,17 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         });
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
-        holder.ivCard.setOnTouchListener(new OnGestureListener(mContext) {
-            @Override
-            public void onDoubleTap(MotionEvent event) {
+        holder.ivCard.setOnClickListener(view -> {
+            card.setViewAllowed(isCardViewable(card, tag));
+            if (!card.isShowingFront() && !card.isViewAllowed()) {
+                Toast.makeText(mContext, "This card is not allowed to be seen", Toast.LENGTH_SHORT).show();
+            } else {
                 Glide.with(mContext)
                         .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
                         .into(holder.ivCard);
                 card.setShowingFront(!card.isShowingFront());
-                //TODO: log event and send broadcast
             }
+            //TODO: log event and send broadcast
         });
     }
 
@@ -135,7 +137,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         if (position >= 0 && position < getItemCount()) {
             mCards.add(position, card);
         } else {
-            //TODO : must be added to specific position or else cards are out of order on different devices
             Log.d(Constants.TAG, "Problem here " + position);
             mCards.add(card);
         }

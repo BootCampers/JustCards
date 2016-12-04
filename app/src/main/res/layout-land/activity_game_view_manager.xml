@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!-- ToDo make log view a drawer instead? -->
+    <!-- TODO make log view a drawer instead? -->
     <FrameLayout
         android:id="@+id/flLogContainer"
         android:layout_width="200dp"

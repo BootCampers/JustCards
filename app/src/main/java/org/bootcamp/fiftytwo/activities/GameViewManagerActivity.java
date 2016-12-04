@@ -149,6 +149,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mediaUtils = new MediaUtils(this);
         initGameParams();
         initFragments();
+        initViews();
 
         ((FiftyTwoApplication) getApplication()).addObserver(this);
     }
@@ -198,7 +199,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         // Set the current view state (player vs dealer)
         isShowingPlayerFragment = isCurrentViewPlayer;
+    }
 
+    private void initViews() {
         ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
             @Override
             public void publish(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
@@ -319,6 +322,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         popup.setOutsideTouchable(true);
         popup.setFocusable(true);
         // Show anchored to button
+        //noinspection deprecation
         popup.setBackgroundDrawable(new BitmapDrawable());
         popup.showAsDropDown(view);
     }
@@ -389,33 +393,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Card Exchange Rules:
-     * <p>
-     * ------          Dealer	Player  Table   Player View
-     * Dealer	        X	    Y(D)	Y(DT)	Y(D)
-     * Player	        NP	    Y(P)	Y(CT)	NP
-     * Table	        NP	    Y(CT)	NA	    NP
-     * Player View	    NP	    NP	    NP	    NP
-     * <p>
-     * Legends:
-     * X	No Broadcast
-     * Y	Broadcast
-     * NA	Move Not Allowed
-     * NP	Move Not Possible
-     * <p>
-     * Values in parentheses describe the corresponding APIs in use with the legends being:
-     * D   Deal
-     * DT  Deal Table
-     * CT  Card Table
-     * P   Within Player
-     * <p>
-     * Tags for different Card Fragments:
-     * 1.DEALER_TAG
-     * 2.PLAYER_TAG
-     * 3.TABLE_TAG
-     * 4.Custom Player View Tag (player.getDisplayName() + "_" + player.getUserId())
-     */
     @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
         if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {

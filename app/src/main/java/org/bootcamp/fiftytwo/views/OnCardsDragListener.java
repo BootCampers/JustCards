@@ -1,22 +1,19 @@
 package org.bootcamp.fiftytwo.views;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 
-import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
-import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
-import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
+import static org.bootcamp.fiftytwo.utils.RuleUtils.isCardMoveAllowed;
+import static org.bootcamp.fiftytwo.utils.RuleUtils.isCardSinkDropAllowed;
 
 /**
  * Author: agoenka
@@ -49,7 +46,7 @@ public class OnCardsDragListener implements View.OnDragListener {
                     CardsAdapter sourceAdapter = getSourceAdapter(event);
                     CardsAdapter targetAdapter = getTargetAdapter(v);
 
-                    if (isMoveAllowed(sourceAdapter, targetAdapter)) {
+                    if (isCardMoveAllowed(sourceAdapter, targetAdapter)) {
                         int sourcePosition = getSourcePosition(event);
                         int targetPosition = getTargetPosition(v);
                         Card movingCard = sourceAdapter.getCards().get(sourcePosition);
@@ -74,7 +71,7 @@ public class OnCardsDragListener implements View.OnDragListener {
                     isDropped = true;
                     CardsAdapter sourceAdapter = getSourceAdapter(event);
 
-                    if (isSinkMoveAllowed(sourceAdapter)) {
+                    if (isCardSinkDropAllowed(sourceAdapter)) {
                         int sourcePosition = getSourcePosition(event);
                         Card movingCard = sourceAdapter.getCards().get(sourcePosition);
                         sourceAdapter.remove(sourcePosition);
@@ -121,25 +118,5 @@ public class OnCardsDragListener implements View.OnDragListener {
 
     private int getTargetPosition(View v) {
         return v.getId() != R.id.tvNoCards ? (int) v.getTag() : -1;
-    }
-
-    private boolean isMoveAllowed(final CardsAdapter source, final CardsAdapter target) {
-        String sourceTag = source.getTag();
-        String targetTag = target.getTag();
-        if (!TextUtils.isEmpty(sourceTag) && !TextUtils.isEmpty(targetTag)) {
-            if (sourceTag.equalsIgnoreCase(TABLE_TAG) && targetTag.equalsIgnoreCase(TABLE_TAG)) {
-                Log.w(TAG, "isMoveAllowed: Attempted to move cards within " + sourceTag + " and " + targetTag + " which is not allowed");
-                Toast.makeText(source.getContext(), "This move is not allowed", Toast.LENGTH_SHORT).show();
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSinkMoveAllowed(final CardsAdapter source) {
-        String sourceTag = source.getTag();
-        return !TextUtils.isEmpty(sourceTag) && (sourceTag.equalsIgnoreCase(TABLE_TAG) || sourceTag.equalsIgnoreCase(PLAYER_TAG) || sourceTag.equalsIgnoreCase(DEALER_TAG));
     }
 }

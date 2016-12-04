@@ -11,9 +11,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.jcmore2.shakeit.ShakeIt;
-import com.jcmore2.shakeit.ShakeListener;
-
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
@@ -97,8 +94,6 @@ public class DealerViewFragment extends Fragment
             if (!isEmpty(players))
                 mPlayers = players;
         }
-
-        attachShakeListener();
     }
 
     @Override
@@ -218,25 +213,6 @@ public class DealerViewFragment extends Fragment
         return mPlayers.remove(player);
     }
 
-    /**
-     * TODO: Remove this and library from gradle and service from manifest if we don't need shake
-     * OR else implement what to do when it's shaken
-     * Optimize it to save battery..use it to detect shake and then stop it
-     */
-    private void attachShakeListener() {
-        ShakeIt.initializeShakeService(getActivity(), new ShakeListener() {
-            @Override
-            public void onShake(float force) {
-                Log.d(TAG, "shaking phone");
-            }
-
-            @Override
-            public void onAccelerationChanged(float x, float y, float z) {
-                // Do Nothing
-            }
-        });
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -258,7 +234,6 @@ public class DealerViewFragment extends Fragment
     @Override
     public void onStop() {
         super.onStop();
-        ShakeIt.stopShakeService(getActivity());
     }
 
     @Override

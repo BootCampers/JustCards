@@ -8,7 +8,8 @@ import android.view.View;
 /**
  * Created by baphna on 11/20/2016.
  */
-public class OnGestureListener implements View.OnTouchListener {
+@SuppressWarnings("unused")
+class OnGestureListener implements View.OnTouchListener {
 
     private GestureDetector gestureDetector;
 
@@ -35,7 +36,7 @@ public class OnGestureListener implements View.OnTouchListener {
         }
     }
 
-    public void onDoubleTap(MotionEvent event) {
+    private void onDoubleTap(MotionEvent event) {
         // To be overridden when implementing listener
     }
 }

@@ -91,10 +91,6 @@ public class PlayerFragment extends CardsFragment{
         unbinder = ButterKnife.bind(this, view);
 
         if (x > 0 && y > 0) {
-            /*
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, Gravity.CENTER);
-                view.setLayoutParams(params);
-            */
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
