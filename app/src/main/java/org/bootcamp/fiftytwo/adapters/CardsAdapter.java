@@ -125,8 +125,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         });
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ivCard) ImageView ivCard;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.ivCard) public ImageView ivCard;
 
         ViewHolder(View itemView) {
             super(itemView);

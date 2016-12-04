@@ -11,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
@@ -162,6 +165,22 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         flCardsContainer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
+    public void toggleCard(Card card, int position) {
+        RecyclerView.ViewHolder holder = rvCardsList.findViewHolderForAdapterPosition(position);
+        if (holder != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+            ImageView ivCard = ((CardsAdapter.ViewHolder) holder).ivCard;
+            Card holderCard = mAdapter.getCards().get(position);
+            if (card.equals(holderCard)) {
+                Glide.with(mAdapter.getContext())
+                        .load(card.isShowingFront() ? holderCard.getDrawable(mAdapter.getContext()) : holderCard.getDrawableBack())
+                        .into(ivCard);
+                holderCard.setShowingFront(card.isShowingFront());
+            } else {
+                Log.d(TAG, "Problem found in toggleCard: " + "Received: " + card + ", but Found: " + holderCard);
+            }
+        }
+    }
+
     public List<Card> getCards() {
         return mAdapter.getCards();
     }
@@ -247,26 +266,27 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     private void setLayoutManager() {
+        RecyclerView.LayoutManager mLayoutManager;
         if (LAYOUT_TYPE_CIRCULAR.equalsIgnoreCase(layoutType)) {
             rvCardsList.addOnScrollListener(new CenterScrollListener());
-            rvCardsList.setLayoutManager(new CircleLayoutManager(getContext())
+            mLayoutManager = new CircleLayoutManager(getContext())
                     .setFirstChildRotate(0)
                     .setIntervalAngle(13)
                     .setRadius(500)
                     .setRadialDistortionFactor(3)
                     .setContentOffsetX(-1)
                     .setContentOffsetY(-1)
-                    .setDegreeRangeWillShow(-60, 60));
+                    .setDegreeRangeWillShow(-60, 60);
         } else if (LAYOUT_TYPE_SCROLL_ZOOM.equalsIgnoreCase(layoutType)) {
             rvCardsList.addOnScrollListener(new CenterScrollListener());
-            rvCardsList.setLayoutManager(new ScrollZoomLayoutManager(getContext(), -30)
+            mLayoutManager = new ScrollZoomLayoutManager(getContext(), -30)
                     .setContentOffsetY(-1)
-                    .setMaxScale(1.2f));
+                    .setMaxScale(1.2f);
         } else {
             RecyclerView.ItemDecoration overlapDecoration = new OverlapDecoration(getContext(), -50, 0);
             rvCardsList.addItemDecoration(overlapDecoration);
-            StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
-            rvCardsList.setLayoutManager(staggeredGridLayoutManager);
+            mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         }
+        rvCardsList.setLayoutManager(mLayoutManager);
     }
 }

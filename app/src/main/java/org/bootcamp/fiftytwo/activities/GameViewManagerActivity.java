@@ -677,9 +677,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         if (from != null && card != null && !TextUtils.isEmpty(fromTag)) {
             Fragment fragment = null;
-            if (fromTag.equalsIgnoreCase(PLAYER_TAG)) {
+            if (PLAYER_TAG.equalsIgnoreCase(fromTag)) {
                 fragment = getPlayerFragment(this, from);
-            } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
+            } else if (TABLE_TAG.equalsIgnoreCase(fromTag) && playerViewFragment != null) {
                 fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             }
 
@@ -701,23 +701,17 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ", onTag: " + onTag);
 
         if (from != null && card != null && !TextUtils.isEmpty(onTag)) {
-            /*Fragment fragment = null;
-            if (fromTag.equalsIgnoreCase(PLAYER_TAG)) {
-                fragment = getPlayerFragment(this, from);
-            } else if (fromTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
+            Fragment fragment = null;
+            if (onTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
                 fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            } else if (onTag.equalsIgnoreCase(PLAYER_TAG)) {
+                fragment = getPlayerFragment(this, from);
             }
 
             if (fragment != null) {
-                boolean draw = ((CardsFragment) fragment).drawCard(fromPosition, card);
-                if (draw) {
-                    addCardsToSink(getList(card));
-                }
-            } else {
-                addCardsToSink(getList(card));
-            }*/
+                ((CardsFragment) fragment).toggleCard(card, position);
+            }
         }
-
     }
 
     private void handleScoresUpdate(User from, List<User> users) {
