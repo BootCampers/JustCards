@@ -60,9 +60,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="5dp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@android:color/white"
+        android:textSize="14sp"
         tools:text="Name"/>
 
     <include layout="@layout/fragment_cards_list"/>

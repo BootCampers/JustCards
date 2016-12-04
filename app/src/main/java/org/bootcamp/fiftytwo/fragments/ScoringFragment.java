@@ -28,34 +28,20 @@ import butterknife.Unbinder;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnScoreFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ScoringFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ScoringFragment extends Fragment {
 
-    private OnScoreFragmentInteractionListener mListener;
+    private List<User> users = new ArrayList<>();
+    private ScoreAdapter scoringAdapter;
+    private StaggeredGridLayoutManager staggeredLayoutManager;
+    private OnScoreFragmentListener mListener;
     private Unbinder unbinder;
 
-    @BindView(R.id.rvPlayersScores)
-    RecyclerView rvPlayersScores;
-    @BindView(R.id.btnSave)
-    Button btnSave;
-    @BindView(R.id.ibCancel)
-    ImageButton ibCancel;
+    @BindView(R.id.rvPlayersScores) RecyclerView rvPlayersScores;
+    @BindView(R.id.btnSave) Button btnSave;
+    @BindView(R.id.ibCancel) ImageButton ibCancel;
 
-    private StaggeredGridLayoutManager staggeredLayoutManager;
-
-
-    List<User> users = new ArrayList<>();
-    private ScoreAdapter scoringAdapter;
-
-    public ScoringFragment() {
-        // Required empty public constructor
+    public interface OnScoreFragmentListener {
+        void onScore(boolean saveClicked);
     }
 
     public static ScoringFragment newInstance(List<User> users) {
@@ -78,9 +64,7 @@ public class ScoringFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_scoring, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -91,30 +75,30 @@ public class ScoringFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnScoreFragmentInteractionListener) {
-            mListener = (OnScoreFragmentInteractionListener) getParentFragment();
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnScoreFragmentInteractionListener");
-        }
-    }
-
     @OnClick(R.id.btnSave)
-    public void saveScore(View view){
+    public void saveScore(){
         if (mListener != null) {
-            mListener.onScoreFragmentInteraction(true);
+            mListener.onScore(true);
         }
     }
 
     @OnClick(R.id.ibCancel)
     public void onCancelPressed() {
         if (mListener != null) {
-            mListener.onScoreFragmentInteraction(false);
+            mListener.onScore(false);
         }
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnScoreFragmentListener) {
+            mListener = (OnScoreFragmentListener) getParentFragment();
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnScoreFragmentListener");
+        }
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -127,17 +111,4 @@ public class ScoringFragment extends Fragment {
         unbinder.unbind();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnScoreFragmentInteractionListener {
-        void onScoreFragmentInteraction(boolean saveClicked);
-    }
 }

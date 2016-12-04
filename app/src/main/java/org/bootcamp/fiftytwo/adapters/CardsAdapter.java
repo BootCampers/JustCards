@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 
@@ -111,6 +112,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                         .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
                         .into(holder.ivCard);
                 card.setShowingFront(!card.isShowingFront());
+                if (card.isShowingFront()) {
+                    User self = User.getCurrentUser(mContext);
+                    cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(), "Looking at cards in the " + tag + " section");
+                }
+
             }
             //TODO: log event and send broadcast
         });

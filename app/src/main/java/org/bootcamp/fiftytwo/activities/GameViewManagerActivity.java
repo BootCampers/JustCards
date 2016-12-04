@@ -100,7 +100,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         ChatAndLogFragment.OnChatAndLogListener,
         CardsFragment.OnCardExchangeLister,
         CardsFragment.OnLogEventListener,
-        ScoringFragment.OnScoreFragmentInteractionListener,
+        ScoringFragment.OnScoreFragmentListener,
         Observer {
 
     private List<User> mPlayers = new ArrayList<>();
@@ -366,6 +366,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 for (Card card : cards) {
                     parseUtils.dealCards(player, card);
                 }
+                User self = User.getCurrentUser(this);
+                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to everyone");
             }
             return result;
         }
@@ -377,6 +379,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (!isEmpty(cards)) {
             if (!toSink) {
                 parseUtils.dealCardsToTable(cards);
+                User self = User.getCurrentUser(this);
+                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the table");
                 return true;
             } else {
                 parseUtils.dealCardsToSink(cards);
@@ -387,9 +391,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onScoreFragmentInteraction(boolean saveClicked) {
+    public void onScore(boolean saveClicked) {
         if (saveClicked) {
             parseUtils.updateUsersScore(mPlayers);
+            User self = User.getCurrentUser(this);
+            onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Scoring everyone now!");
         }
     }
 
