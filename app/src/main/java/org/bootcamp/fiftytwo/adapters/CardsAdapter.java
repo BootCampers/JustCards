@@ -107,8 +107,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
         holder.ivCard.setOnClickListener(view -> {
             card.setViewAllowed(isCardViewable(getContext(), card, getTag()));
-            if (!card.isShowingFront() && !card.isViewAllowed()) {
-                RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be seen");
+            if (!card.isViewAllowed()) {
+                RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be flipped!");
             } else {
                 Glide.with(mContext)
                         .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
