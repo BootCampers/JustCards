@@ -18,6 +18,7 @@ import org.bootcamp.fiftytwo.utils.AppUtils;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +41,8 @@ public class ScoringFragment extends Fragment {
     @BindView(R.id.btnSave) Button btnSave;
     @BindView(R.id.ibCancel) ImageButton ibCancel;
 
+    private HashMap<User, Integer> savedScoreMap = new HashMap<>();
+
     public interface OnScoreFragmentListener {
         void onScore(boolean saveClicked);
     }
@@ -59,6 +62,9 @@ public class ScoringFragment extends Fragment {
             users = Parcels.unwrap(getArguments().getParcelable(PARAM_PLAYERS));
             if (isEmpty(users)) {
                 users = new ArrayList<>();
+            }
+            for(User user:users){
+                savedScoreMap.put(user, user.getScore());
             }
         }
     }
@@ -86,6 +92,10 @@ public class ScoringFragment extends Fragment {
     public void onCancelPressed() {
         if (mListener != null) {
             mListener.onScore(false);
+        }
+        //Go back to original score
+        for (User user : users){
+            user.setScore(savedScoreMap.get(user));
         }
     }
 
