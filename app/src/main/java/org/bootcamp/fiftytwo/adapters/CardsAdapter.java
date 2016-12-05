@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.RuleUtils;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnClickListener(view -> {
             card.setViewAllowed(isCardViewable(card, getTag()));
             if (!card.isShowingFront() && !card.isViewAllowed()) {
-                Toast.makeText(mContext, "This card is not allowed to be seen", Toast.LENGTH_SHORT).show();
+                RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be seen");
             } else {
                 Glide.with(mContext)
                         .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
