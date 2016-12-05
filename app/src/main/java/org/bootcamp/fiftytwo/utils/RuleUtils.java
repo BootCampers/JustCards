@@ -91,13 +91,13 @@ public class RuleUtils {
         }
     }
 
-    public static boolean isCardViewable(final Card card, String tag) {
+    public static boolean isCardViewable(final Context context, final Card card, final String tag) {
         if (card != null && !TextUtils.isEmpty(tag)) {
             if (DEALER_TAG.equalsIgnoreCase(tag)) {
                 return false;
             } else if (PLAYER_TAG.equalsIgnoreCase(tag)) {
                 return true;
-            } else if (TABLE_TAG.equalsIgnoreCase(tag)) {
+            } else if (TABLE_TAG.equalsIgnoreCase(tag) && !isPlayerNotEligible(context, tag)) {
                 return true;
             } else if (isFloatingPlayerTag(tag)) {
                 return true;
@@ -106,7 +106,7 @@ public class RuleUtils {
         return false;
     }
 
-    public static boolean isToggleCardBroadcastRequired(String tag) {
+    public static boolean isToggleCardBroadcastRequired(final String tag) {
         return !TextUtils.isEmpty(tag) && TABLE_TAG.equalsIgnoreCase(tag);
     }
 
@@ -124,7 +124,7 @@ public class RuleUtils {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    private static boolean isPlayerNotEligible(final Context context, String tag) {
+    private static boolean isPlayerNotEligible(final Context context, final String tag) {
         User self = User.getCurrentUser(context);
         return self.isShowingCards() && !DEALER_TAG.equalsIgnoreCase(tag);
     }

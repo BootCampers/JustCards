@@ -283,20 +283,31 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabShow)
     public void onShow(View view) {
         if (fabShow.getTag() == null || !((boolean) fabShow.getTag())) {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Show Cards to Everyone")
-                    .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        fabShow.setTag(true);
-                        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
-                        fabMenu.close(true);
-                        User self = parseUtils.getCurrentUser();
-                        parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
-                        parseUtils.toggleCardsList(true);
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+            boolean hasCards = true;
+            if (playerViewFragment != null) {
+                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    hasCards = ((CardsFragment) fragment).getCards().size() > 0;
+                }
+            }
+            if (hasCards) {
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Show Cards to Everyone")
+                        .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            fabShow.setTag(true);
+                            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+                            fabMenu.close(true);
+                            User self = parseUtils.getCurrentUser();
+                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
+                            parseUtils.toggleCardsList(true);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            } else {
+                Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "You're currently showing your cards and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
         }
@@ -309,6 +320,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * @param toShow true if want to show, false for hiding
      */
     private void toggleCardsListForPlayerView(final User player, final boolean toShow) {
+        if (mPlayers.contains(player)) {
+            mPlayers.get(mPlayers.indexOf(player)).setShowingCards(toShow);
+        }
+        player.setShowingCards(toShow);
         Fragment fragment = getPlayerFragment(this, player);
         if (fragment != null) {
             ((CardsFragment) fragment).toggleCardsList(toShow);
@@ -346,6 +361,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         ParseDB.deleteGame(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                    parseUtils.resetCurrentUser();
                     finish();
                 })
                 .setNegativeButton("No", null)

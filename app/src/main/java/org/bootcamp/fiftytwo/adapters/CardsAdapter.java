@@ -106,7 +106,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
         holder.ivCard.setOnClickListener(view -> {
-            card.setViewAllowed(isCardViewable(card, getTag()));
+            card.setViewAllowed(isCardViewable(getContext(), card, getTag()));
             if (!card.isShowingFront() && !card.isViewAllowed()) {
                 RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be seen");
             } else {

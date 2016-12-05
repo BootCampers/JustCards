@@ -53,7 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         if (User.getCurrentUser() != null) {
-
             startWithCurrentUser();
         } else {
             loginToParse();
@@ -61,7 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (isNetworkAvailable(this)) {
             notifyNetworkFailure(false);
-
             User user = User.get(this);
             if (null != user) {
                 Intent selectGameIntent = new Intent(RegisterActivity.this, SelectGameActivity.class);

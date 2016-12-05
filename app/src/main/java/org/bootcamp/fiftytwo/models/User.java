@@ -98,13 +98,8 @@ public class User {
         String userId = sharedPreferences.getString(USER_ID, "");
         String displayName = sharedPreferences.getString(DISPLAY_NAME, "");
         String avatarUri = sharedPreferences.getString(USER_AVATAR_URI, "");
-        boolean isDealer = sharedPreferences.getBoolean(IS_DEALER, false);
-        boolean isShowingCards = sharedPreferences.getBoolean(IS_SHOWING_CARDS, false);
-        boolean isActive = sharedPreferences.getBoolean(IS_ACTIVE, true);
-        int score = sharedPreferences.getInt(SCORE, 0);
-
         if (!displayName.isEmpty() && !userId.isEmpty()) {
-            return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
+            return new User(avatarUri, displayName, userId, false, false, true, 0);
         } else {
             return null;
         }

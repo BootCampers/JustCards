@@ -74,6 +74,14 @@ public class ParseUtils {
         currentLoggedInUser.save(context);
     }
 
+    public void resetCurrentUser() {
+        currentLoggedInUser.setDealer(false);
+        currentLoggedInUser.setShowingCards(false);
+        currentLoggedInUser.setActive(true);
+        currentLoggedInUser.setScore(0);
+        currentLoggedInUser.save(context);
+    }
+
     public static boolean isSelf(final User user) {
         return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
     }
