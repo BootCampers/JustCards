@@ -59,6 +59,10 @@ public class ParseUtils {
         currentLoggedInUser = User.getCurrentUser(context);
     }
 
+    public static boolean isSelf(final User user) {
+        return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
+    }
+
     public User getCurrentUser() {
         return currentLoggedInUser;
     }
@@ -66,10 +70,6 @@ public class ParseUtils {
     public void saveCurrentUser(boolean isDealer) {
         currentLoggedInUser.setDealer(isDealer);
         currentLoggedInUser.save(context);
-    }
-
-    public static boolean isSelf(final User user) {
-        return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
     }
 
     public void joinChannel() {
@@ -236,6 +236,13 @@ public class ParseUtils {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.add(Constants.USER_TAG_SCORE, new Gson().toJsonTree(users));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORE_UPDATED);
+        sendBroadcast(payload);
+    }
+
+    public void declareRoundWinners(List<User> roundWinners) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.add(PARAM_PLAYER, new Gson().toJsonTree(roundWinners));
+        payload.addProperty(COMMON_IDENTIFIER, Constants.PARSE_ROUND_WINNERS);
         sendBroadcast(payload);
     }
 }

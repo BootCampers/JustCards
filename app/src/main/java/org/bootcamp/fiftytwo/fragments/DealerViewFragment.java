@@ -123,6 +123,11 @@ public class DealerViewFragment extends Fragment implements
         mScoreListener.onScore(saveClicked);
     }
 
+    @Override
+    public void roundWinners(List<User> roundWinners) {
+        mScoreListener.roundWinners(roundWinners);
+    }
+
     @OnClick({R.id.btnDeal})
     public void deal() {
         List<Card> cards = dealerCardsFragment.getCards();
@@ -218,7 +223,7 @@ public class DealerViewFragment extends Fragment implements
             mDealListener = (OnDealListener) context;
         }
         if (context instanceof ScoringFragment.OnScoreFragmentListener) {
-            mScoreListener = (ScoringFragment.OnScoreFragmentListener) context;
+            mScoreListener = (ScoringFragment.OnScoreFragmentListener) context; //GameViewManagerActivity
         }
     }
 

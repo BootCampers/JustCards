@@ -73,6 +73,7 @@ public class Constants {
     public static final String PARSE_DROP_CARD_TO_SINK = "dropCardToSink";
     public static final String PARSE_TOGGLE_CARD = "toggleCard";
     public static final String PARSE_SCORE_UPDATED = "scoreUpdated";
+    public static final String PARSE_ROUND_WINNERS = "roundWinners";
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";
@@ -90,4 +91,6 @@ public class Constants {
 
     /** Animation durations here */
     public static final long FAB_ANIMATION_TIME = 300;
+
+    public static final float CIRCULAR_BORDER_WIDTH = 6f;
 }

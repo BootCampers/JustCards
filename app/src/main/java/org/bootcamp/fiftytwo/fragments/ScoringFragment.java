@@ -42,9 +42,12 @@ public class ScoringFragment extends Fragment {
     @BindView(R.id.ibCancel) ImageButton ibCancel;
 
     private HashMap<User, Integer> savedScoreMap = new HashMap<>();
+    private List<User> roundWinners = new ArrayList<>();
+    private int roundHighScore = 0;
 
     public interface OnScoreFragmentListener {
         void onScore(boolean saveClicked);
+        void roundWinners(List<User> roundWinners);
     }
 
     public static ScoringFragment newInstance(List<User> users) {
@@ -85,6 +88,23 @@ public class ScoringFragment extends Fragment {
     public void saveScore(){
         if (mListener != null) {
             mListener.onScore(true);
+        }
+        //Scores of all users is already updated to latest in Score adapter
+        if(users.size() >= 2){
+            for(User user:users){
+                int scoreDelta = user.getScore() - savedScoreMap.get(user);
+                if (scoreDelta > roundHighScore){
+                    roundWinners.clear();
+                    roundWinners.add(user);
+                    roundHighScore = scoreDelta;
+                } else if (scoreDelta == roundHighScore){
+                    roundWinners.add(user);
+                    roundHighScore = scoreDelta;
+                }
+            }
+            if (mListener != null) {
+                mListener.roundWinners(roundWinners);
+            }
         }
     }
 

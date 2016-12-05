@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ import org.bootcamp.fiftytwo.fragments.DealerViewFragment;
 import org.bootcamp.fiftytwo.fragments.DealingOptionsFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
+import org.bootcamp.fiftytwo.fragments.RoundWinnersFragment;
 import org.bootcamp.fiftytwo.fragments.ScoringFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
@@ -86,6 +88,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
@@ -463,6 +466,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void roundWinners(List<User> roundWinners) {
+        parseUtils.declareRoundWinners(roundWinners);
+    }
+
+    public void handleRoundWinners(List<User> roundWinners){
+        Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
+        if(roundWinners.size() > 0) {
+            mediaUtils.playClapsTone();
+            FragmentManager fm = getSupportFragmentManager();
+            RoundWinnersFragment winnerDialog = RoundWinnersFragment.newInstance(roundWinners);
+            winnerDialog.show(fm, "winnerDialog");
+        }
+    }
+
+    @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
         if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, true);
@@ -597,6 +615,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     List<User> users = new Gson().fromJson(json.get(Constants.USER_TAG_SCORE), new TypeToken<List<User>>() {
                     }.getType());
                     handleScoresUpdate(from, users);
+                });
+                break;
+            case PARSE_ROUND_WINNERS:
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    List<User> users = new Gson().fromJson(json.get(Constants.PARAM_PLAYER), new TypeToken<List<User>>() {
+                    }.getType());
+                    handleRoundWinners(users);
                 });
                 break;
         }

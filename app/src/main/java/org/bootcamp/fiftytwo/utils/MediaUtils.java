@@ -30,4 +30,9 @@ public class MediaUtils {
         MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.glass_breaking);
         mediaPlayer.start(); // no need to call prepare(); create() does that for you
     }
+
+    public void playClapsTone() {
+        MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.crowd_applause);
+        mediaPlayer.start(); // no need to call prepare(); create() does that for you
+    }
 }

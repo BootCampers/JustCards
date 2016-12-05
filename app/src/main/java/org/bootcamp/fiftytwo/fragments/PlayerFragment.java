@@ -123,7 +123,7 @@ public class PlayerFragment extends CardsFragment{
 
         // Set Border
         ivPlayerAvatar.setBorderColor(color);
-        ivPlayerAvatar.setBorderWidth(6);
+        ivPlayerAvatar.setBorderWidth(Constants.CIRCULAR_BORDER_WIDTH);
 
         GradientDrawable countDrawable = (GradientDrawable) tvCardsCount.getBackground();
         countDrawable.setColor(color);

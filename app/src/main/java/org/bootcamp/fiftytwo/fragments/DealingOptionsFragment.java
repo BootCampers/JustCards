@@ -32,8 +32,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.ARG_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_PLAYER_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
-public class
-DealingOptionsFragment extends Fragment {
+public class DealingOptionsFragment extends Fragment {
 
     @BindView(R.id.tvCardsToDeal) TextView tvCardsToDeal;
     @BindView(R.id.ibAdd) ImageButton ibAdd;
