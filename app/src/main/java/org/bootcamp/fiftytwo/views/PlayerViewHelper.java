@@ -44,7 +44,7 @@ public class PlayerViewHelper {
     }
 
     private static void addPlayerFragment(@NonNull final FragmentManager fm, final int containerResId, final User player, int x, int y) {
-        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, PLAYER_TAG + player.getDisplayName(), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
+        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
 
         fm.beginTransaction()
                 .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
@@ -53,8 +53,12 @@ public class PlayerViewHelper {
         fm.executePendingTransactions();
     }
 
-    private static String getPlayerFragmentTag(User player) {
+    private static String getPlayerFragmentTag(final User player) {
         return player.getDisplayName() + "_" + player.getUserId();
+    }
+
+    private static String getPlayerCardsAdapterTag(final User player) {
+        return PLAYER_TAG + "_" + player.getDisplayName();
     }
 
     public static Fragment getPlayerFragment(FragmentActivity activity, User player) {

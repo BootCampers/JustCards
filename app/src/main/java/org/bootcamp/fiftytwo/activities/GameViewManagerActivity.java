@@ -66,7 +66,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
@@ -92,13 +91,14 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -139,7 +139,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
-    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,15 +147,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view_manager);
-        unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        fabMenu.setClosedOnTouchOutside(true);
-        fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_power));
-        fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
-        fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
-        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
-        fabRound.setImageDrawable(getVectorCompat(this, R.drawable.ic_repeat));
 
         mediaUtils = new MediaUtils(this);
         initGameParams();
@@ -164,12 +157,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         initViews();
 
         ((FiftyTwoApplication) getApplication()).addObserver(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
     }
 
     private void initGameParams() {
@@ -182,7 +169,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
-            parseUtils.saveCurrentUser(!isCurrentViewPlayer);
+            parseUtils.saveCurrentUserIsDealer(!isCurrentViewPlayer);
 
             //Get previously joined players
             ParseDB.findUsers(this, gameName, this::addPlayersToView);
@@ -221,6 +208,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void initViews() {
+        fabMenu.setClosedOnTouchOutside(true);
+        fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_power));
+        fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
+        fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
+        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_off));
+        fabRound.setImageDrawable(getVectorCompat(this, R.drawable.ic_repeat));
+
         ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
             @Override
             public void exchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
@@ -289,6 +283,39 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
+    @OnClick(R.id.fabShow)
+    public void onShow(View view) {
+        if (fabShow.getTag() == null || !((boolean) fabShow.getTag())) {
+            boolean hasCards = true;
+            if (playerViewFragment != null) {
+                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    hasCards = ((CardsFragment) fragment).getCards().size() > 0;
+                }
+            }
+            if (hasCards) {
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Show Cards to Everyone")
+                        .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            fabShow.setTag(true);
+                            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+                            fabMenu.close(true);
+                            User self = parseUtils.getCurrentUser();
+                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
+                            parseUtils.toggleCardsList(true);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            } else {
+                Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "You're currently showing your cards and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Show or hide the user's cards fragment
      *
@@ -296,9 +323,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * @param toShow true if want to show, false for hiding
      */
     private void toggleCardsListForPlayerView(final User player, final boolean toShow) {
-        Fragment playerFragment = getPlayerFragment(this, player);
-        if (playerFragment != null) {
-            ((PlayerFragment) playerFragment).toggleCardsList(toShow);
+        if (mPlayers.contains(player)) {
+            mPlayers.get(mPlayers.indexOf(player)).setShowingCards(toShow);
+        }
+        player.setShowingCards(toShow);
+        Fragment fragment = getPlayerFragment(this, player);
+        if (fragment != null) {
+            ((CardsFragment) fragment).toggleCardsList(toShow);
         }
     }
 
@@ -307,28 +338,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fabMenu.close(true);
         // Do nothing as of now
         Toast.makeText(this, "Clicked on Mute", Toast.LENGTH_SHORT).show();
-    }
-
-    @OnClick(R.id.fabShow)
-    public void onShow(View view) {
-        fabMenu.close(true);
-
-        //parseUtils.toggleCardsListVisibility(toShow);
-        User self = User.getCurrentUser(this);
-        boolean isShowing = self.isShowingCards();
-
-        self.setShowingCards(!isShowing);
-        //btnToggleCardsFragment.setText(isShowing ? msgShow : msgHide);
-        /*if (mListener != null) {
-            mListener.onCardsListVisibility(!isShowing);
-        }*/
-        if (fabShow.getTag() == null || ((boolean) fabShow.getTag())) {
-            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_off));
-            fabShow.setTag(false);
-        } else {
-            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
-            fabShow.setTag(true);
-        }
     }
 
     @OnClick(R.id.fabRound)
@@ -355,6 +364,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         ParseDB.deleteGame(gameName);
                     }
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                    parseUtils.resetCurrentUser();
                     finish();
                 })
                 .setNegativeButton("No", null)
@@ -537,13 +547,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     removePlayersFromView(getList(user));
                 });
                 break;
-            case PARSE_TOGGLE_CARDS_LIST_VISIBILITY:
-                runOnUiThread(() -> {
-                    User user = User.fromJson(json);
-                    boolean toShow = json.get(PARSE_TOGGLE_CARDS_LIST_VISIBILITY).getAsBoolean();
-                    toggleCardsListForPlayerView(user, toShow);
-                });
-                break;
             case PARSE_DEAL_CARDS:
                 mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
@@ -607,6 +610,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     int position = json.get(POSITION).getAsInt();
                     String onTag = json.get(ON_TAG).getAsString();
                     handleToggleCard(from, card, position, onTag);
+                });
+                break;
+            case PARSE_TOGGLE_CARDS_LIST:
+                runOnUiThread(() -> {
+                    User user = User.fromJson(json);
+                    boolean toShow = json.get(TO_SHOW).getAsBoolean();
+                    toggleCardsListForPlayerView(user, toShow);
                 });
                 break;
             case PARSE_SCORE_UPDATED:
@@ -803,7 +813,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 ((PlayerFragment) fragment).scoreChange(user.getScore());
             }
         }
-        //TODO: log it
     }
 
     public void addCardsToSink(List<Card> cards) {
@@ -815,12 +824,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void removeAllSinkCards() {
         sinkCards.clear();
         ivSink.setImageResource(R.drawable.ic_sink_empty);
-    }
-
-    public void toggleCardsListOfAllPlayers(boolean toShow) {
-        for (User player : mPlayers) {
-            toggleCardsListForPlayerView(player, toShow);
-        }
     }
 
     private void animateDeal() {

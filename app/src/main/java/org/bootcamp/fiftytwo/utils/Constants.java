@@ -23,6 +23,8 @@ public class Constants {
     public static final String USER_ID = "userId";
     public static final String IS_DEALER = "isDealer";
     public static final String IS_SHOWING_CARDS = "isShowingCards";
+    public static final String IS_ACTIVE = "isActive";
+    public static final String SCORE = "score";
 
     /** Request Codes Here */
     public static final int REQ_CODE_SELECT_CARDS = 1;
@@ -46,6 +48,7 @@ public class Constants {
     public static final String ARG_COLUMN_COUNT = "columnCount";
     public static final String PARAMS_PLAYER_GAME = "playerGame";
     public static final String PARAM_CARD_COUNT = "cardCount";
+    public static final String SELECTED_AVATAR = "selectedAvatar";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
@@ -60,6 +63,7 @@ public class Constants {
     public static final String FROM_TAG = "fromTag";
     public static final String POSITION = "position";
     public static final String ON_TAG = "onTag";
+    public static final String TO_SHOW = "toShow";
 
     /** Parse Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
@@ -67,11 +71,11 @@ public class Constants {
     public static final String PARSE_DEAL_CARDS = "dealCards";
     public static final String PARSE_DEAL_CARDS_TO_TABLE = "dealCardsToTable";
     public static final String PARSE_DEAL_CARDS_TO_SINK = "dealCardsToSink";
-    public static final String PARSE_TOGGLE_CARDS_LIST_VISIBILITY = "toggleCardsListVisibility";
     public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
     public static final String PARSE_SWAP_CARD_WITHIN_PLAYER = "swapCardWithinPlayer";
     public static final String PARSE_DROP_CARD_TO_SINK = "dropCardToSink";
     public static final String PARSE_TOGGLE_CARD = "toggleCard";
+    public static final String PARSE_TOGGLE_CARDS_LIST = "toggleCardsList";
     public static final String PARSE_SCORE_UPDATED = "scoreUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
 
@@ -80,9 +84,6 @@ public class Constants {
     public static final String DO_REMAINING_CARDS = "remainingCards";
     public static final String DO_DEAL_SELF = "dealSelf";
     public static final String DO_SHUFFLE = "shuffle";
-
-    /** Avatar Values here */
-    public static final String SELECTED_AVATAR = "selectedAvatar";
 
     /** Layout Type Codes here */
     public static final String LAYOUT_TYPE_STAGGERED_HORIZONTAL = "staggeredHorizontal";

@@ -1,14 +1,17 @@
 package org.bootcamp.fiftytwo.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.User;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -55,10 +58,14 @@ public class RuleUtils {
         String sourceTag = source.getTag();
         String targetTag = target.getTag();
         if (!TextUtils.isEmpty(sourceTag) && !TextUtils.isEmpty(targetTag)) {
-            if (TABLE_TAG.equalsIgnoreCase(sourceTag) && TABLE_TAG.equalsIgnoreCase(targetTag)) {
+            if (isPlayerNotEligible(source.getContext(), sourceTag)) {
+                Log.w(TAG, "isCardMoveAllowed: A not eligible player attempted cards moves in the current round");
+                handleNotAllowed(source.getContext(), "This move is not allowed since you're not playing in this round any more!");
+            } else if ((TABLE_TAG.equalsIgnoreCase(sourceTag) && TABLE_TAG.equalsIgnoreCase(targetTag))
+                    || isFloatingPlayerTag(sourceTag)
+                    || isFloatingPlayerTag(targetTag)) {
                 Log.w(TAG, "isCardMoveAllowed: Attempted to move cards within " + sourceTag + " and " + targetTag + " which is not allowed");
-                Toast.makeText(source.getContext(), "This move is not allowed", Toast.LENGTH_SHORT).show();
-                return false;
+                handleNotAllowed(source.getContext(), "This move is not allowed!");
             } else {
                 return true;
             }
@@ -68,23 +75,57 @@ public class RuleUtils {
 
     public static boolean isCardSinkDropAllowed(final CardsAdapter source) {
         String sourceTag = source.getTag();
-        return !TextUtils.isEmpty(sourceTag) && (TABLE_TAG.equalsIgnoreCase(sourceTag) || PLAYER_TAG.equalsIgnoreCase(sourceTag) || DEALER_TAG.equalsIgnoreCase(sourceTag));
+        if (isPlayerNotEligible(source.getContext(), sourceTag)) {
+            Log.w(TAG, "isCardMoveAllowed: A not eligible player attempted to drop cards to sink");
+            handleNotAllowed(source.getContext(), "This card cannot be dropped to sink since you're not playing in this round any more!!");
+            return false;
+        } else if (!TextUtils.isEmpty(sourceTag)
+                && (TABLE_TAG.equalsIgnoreCase(sourceTag)
+                || PLAYER_TAG.equalsIgnoreCase(sourceTag)
+                || DEALER_TAG.equalsIgnoreCase(sourceTag))) {
+            return true;
+        } else {
+            Log.w(TAG, "isCardMoveAllowed: Attempted to drop cards from " + sourceTag + " to the sink which is not allowed");
+            handleNotAllowed(source.getContext(), "This card cannot be dropped to sink!");
+            return false;
+        }
     }
 
-    public static boolean isCardViewable(final Card card, String tag) {
+    public static boolean isCardViewable(final Context context, final Card card, final String tag) {
         if (card != null && !TextUtils.isEmpty(tag)) {
             if (DEALER_TAG.equalsIgnoreCase(tag)) {
                 return false;
             } else if (PLAYER_TAG.equalsIgnoreCase(tag)) {
                 return true;
-            } else if (TABLE_TAG.equalsIgnoreCase(tag)) {
+            } else if (TABLE_TAG.equalsIgnoreCase(tag) && !isPlayerNotEligible(context, tag)) {
+                return true;
+            } else if (isFloatingPlayerTag(tag)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean isToggleCardBroadcastRequired(String tag) {
+    public static boolean isToggleCardBroadcastRequired(final String tag) {
         return !TextUtils.isEmpty(tag) && TABLE_TAG.equalsIgnoreCase(tag);
+    }
+
+    private static boolean isFloatingPlayerTag(final String tag) {
+        return !TextUtils.isEmpty(tag)
+                && !DEALER_TAG.equalsIgnoreCase(tag)
+                && !TABLE_TAG.equalsIgnoreCase(tag)
+                && !PLAYER_TAG.equalsIgnoreCase(tag)
+                && !SINK_TAG.equalsIgnoreCase(tag)
+                && tag.contains("_");
+    }
+
+    public static void handleNotAllowed(final Context context, final String message) {
+        new MediaUtils(context).playNotAllowedTone();
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private static boolean isPlayerNotEligible(final Context context, final String tag) {
+        User self = User.getCurrentUser(context);
+        return self.isShowingCards() && !DEALER_TAG.equalsIgnoreCase(tag);
     }
 }

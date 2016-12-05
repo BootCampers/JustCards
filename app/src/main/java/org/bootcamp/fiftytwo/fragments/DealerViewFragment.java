@@ -176,6 +176,9 @@ public class DealerViewFragment extends Fragment implements
             if (!doDealSelf)
                 numPlayers--;
 
+            // TODO: Add Muted Player Check Logic Here to exclude from dealing
+            // TODO: Provide one more option to keep the cards in the dealing section itself after dealing?
+
             if (cards.size() >= numPlayers * dealCount) {
                 if (doShuffle) {
                     cards = dealerFragment.shuffleCards();
@@ -199,6 +202,7 @@ public class DealerViewFragment extends Fragment implements
                     Log.d(TAG, "dealNow: Remaining Cards Action Selected: " + doRemainingCards);
                     boolean toSink = !doRemainingCards.equals(msgSendToTable);
                     mDealListener.onDealTable(cards, toSink);
+                    dealerFragment.drawCards(cards);
                 }
             } else {
                 Toast.makeText(getActivity(), "Not enough cards to deal", Toast.LENGTH_LONG).show();
