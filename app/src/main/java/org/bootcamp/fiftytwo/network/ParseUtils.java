@@ -35,11 +35,12 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -63,8 +64,13 @@ public class ParseUtils {
         return currentLoggedInUser;
     }
 
-    public void saveCurrentUser(boolean isDealer) {
+    public void saveCurrentUserIsDealer(boolean isDealer) {
         currentLoggedInUser.setDealer(isDealer);
+        currentLoggedInUser.save(context);
+    }
+
+    public void saveCurrentUserIsShowingCards(boolean isShowingCards) {
+        currentLoggedInUser.setShowingCards(isShowingCards);
         currentLoggedInUser.save(context);
     }
 
@@ -126,13 +132,6 @@ public class ParseUtils {
         } else {
             payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
         }
-        sendBroadcast(payload);
-    }
-
-    public void toggleCardsListVisibility(boolean toShow) {
-        JsonObject payload = getJson(currentLoggedInUser);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST_VISIBILITY);
-        payload.addProperty(PARSE_TOGGLE_CARDS_LIST_VISIBILITY, toShow);
         sendBroadcast(payload);
     }
 
@@ -229,6 +228,13 @@ public class ParseUtils {
         payload.addProperty(POSITION, position);
         payload.addProperty(ON_TAG, onTag);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARD);
+        sendBroadcast(payload);
+    }
+
+    public void toggleCardsList(boolean toShow) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(TO_SHOW, toShow);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST);
         sendBroadcast(payload);
     }
 

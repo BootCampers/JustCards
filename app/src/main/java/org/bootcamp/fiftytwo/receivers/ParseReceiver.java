@@ -23,7 +23,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST_VISIBILITY;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 /**
@@ -60,10 +60,10 @@ public class ParseReceiver extends BroadcastReceiver {
             switch (identifier) {
                 case PARSE_NEW_PLAYER_ADDED:
                 case PARSE_PLAYER_LEFT:
-                case PARSE_TOGGLE_CARDS_LIST_VISIBILITY:
                 case PARSE_DEAL_CARDS:
                 case PARSE_DEAL_CARDS_TO_TABLE:
                 case PARSE_DEAL_CARDS_TO_SINK:
+                case PARSE_TOGGLE_CARDS_LIST:
                 case PARSE_SCORE_UPDATED:
                     application.notifyObservers(identifier, customData);
                     break;
