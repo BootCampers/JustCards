@@ -15,8 +15,10 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
+import static org.bootcamp.fiftytwo.utils.Constants.IS_ACTIVE;
 import static org.bootcamp.fiftytwo.utils.Constants.IS_DEALER;
 import static org.bootcamp.fiftytwo.utils.Constants.IS_SHOWING_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.SCORE;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_AVATAR_URI;
 import static org.bootcamp.fiftytwo.utils.Constants.USER_ID;
@@ -31,7 +33,7 @@ public class User {
     private String avatarUri;
     private boolean isDealer;
     private boolean isShowingCards;
-    private boolean isActive;
+    private boolean isActive = true;
     private int score;
     private List<Card> cards = new ArrayList<>();
 
@@ -43,40 +45,48 @@ public class User {
         this.userId = userId;
     }
 
-    public User(String avatarUri, String displayName, String userId, boolean isDealer, boolean isShowingCards) {
+    public User(String avatarUri, String displayName, String userId, boolean isDealer, boolean isShowingCards, boolean isActive, int score) {
         this(avatarUri, displayName, userId);
         this.isDealer = isDealer;
         this.isShowingCards = isShowingCards;
+        this.isActive = isActive;
+        this.score = score;
     }
 
     public static User fromJson(JsonObject json) {
+        String userId = json.get(USER_ID).getAsString();
         String displayName = json.get(DISPLAY_NAME).getAsString();
         String avatarUri = json.get(USER_AVATAR_URI).getAsString();
-        String userId = json.get(USER_ID).getAsString();
         boolean isDealer = json.get(IS_DEALER).getAsBoolean();
         boolean isShowingCards = json.get(IS_SHOWING_CARDS).getAsBoolean();
-        Log.d(TAG, "fromJson--" + displayName + "--" + avatarUri + "--" + userId);
-        return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
+        boolean isActive = json.get(IS_ACTIVE).getAsBoolean();
+        int score = json.get(SCORE).getAsInt();
+        Log.d(TAG, "fromJson--" + userId + "--" + displayName + "--" + avatarUri);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 
     public static JsonObject getJson(User user) {
         JsonObject json = new JsonObject();
+        json.addProperty(USER_ID, user.getUserId());
         json.addProperty(DISPLAY_NAME, user.getDisplayName());
         json.addProperty(USER_AVATAR_URI, user.getAvatarUri());
-        json.addProperty(USER_ID, user.getUserId());
         json.addProperty(IS_DEALER, user.isDealer());
         json.addProperty(Constants.IS_SHOWING_CARDS, user.isShowingCards());
+        json.addProperty(Constants.IS_ACTIVE, user.isActive);
+        json.addProperty(Constants.SCORE, user.getScore());
         return json;
     }
 
     public static User getCurrentUser(final Context context) {
         SharedPreferences userPrefs = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        String userId = userPrefs.getString(USER_ID, "usedIdUnknown");
         String displayName = userPrefs.getString(DISPLAY_NAME, "unknown");
         String avatarUri = userPrefs.getString(USER_AVATAR_URI, getDefaultAvatar());
-        String userId = userPrefs.getString(USER_ID, "usedIdUnknown");
         boolean isDealer = userPrefs.getBoolean(IS_DEALER, false);
         boolean isShowingCards = userPrefs.getBoolean(IS_SHOWING_CARDS, false);
-        return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
+        boolean isActive = userPrefs.getBoolean(IS_ACTIVE, true);
+        int score = userPrefs.getInt(SCORE, 0);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 
     public static ParseUser getCurrentUser() {
@@ -85,14 +95,16 @@ public class User {
 
     public static User get(final Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(USER_PREFS, MODE_PRIVATE);
+        String userId = sharedPreferences.getString(USER_ID, "");
         String displayName = sharedPreferences.getString(DISPLAY_NAME, "");
         String avatarUri = sharedPreferences.getString(USER_AVATAR_URI, "");
-        String userId = sharedPreferences.getString(USER_ID, "");
         boolean isDealer = sharedPreferences.getBoolean(IS_DEALER, false);
         boolean isShowingCards = sharedPreferences.getBoolean(IS_SHOWING_CARDS, false);
+        boolean isActive = sharedPreferences.getBoolean(IS_ACTIVE, true);
+        int score = sharedPreferences.getInt(SCORE, 0);
 
         if (!displayName.isEmpty() && !userId.isEmpty()) {
-            return new User(avatarUri, displayName, userId, isDealer, isShowingCards);
+            return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
         } else {
             return null;
         }
@@ -101,10 +113,13 @@ public class User {
     public void save(final Context context) {
         context.getSharedPreferences(USER_PREFS, MODE_PRIVATE)
                 .edit()
+                .putString(USER_ID, userId)
                 .putString(DISPLAY_NAME, displayName)
                 .putString(USER_AVATAR_URI, avatarUri)
-                .putString(USER_ID, userId)
                 .putBoolean(IS_DEALER, isDealer)
+                .putBoolean(IS_SHOWING_CARDS, isShowingCards)
+                .putBoolean(IS_ACTIVE, isActive)
+                .putInt(SCORE, score)
                 .apply();
     }
 
@@ -128,10 +143,6 @@ public class User {
         isDealer = dealer;
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
-
     public boolean isShowingCards() {
         return isShowingCards;
     }
@@ -140,12 +151,24 @@ public class User {
         isShowingCards = showingCards;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public int getScore() {
         return score;
     }
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 
     @Override

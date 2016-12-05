@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.User;
 
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
@@ -57,12 +58,14 @@ public class RuleUtils {
         String sourceTag = source.getTag();
         String targetTag = target.getTag();
         if (!TextUtils.isEmpty(sourceTag) && !TextUtils.isEmpty(targetTag)) {
-            if ((TABLE_TAG.equalsIgnoreCase(sourceTag) && TABLE_TAG.equalsIgnoreCase(targetTag))
+            if (isPlayerNotEligible(source.getContext(), sourceTag)) {
+                Log.w(TAG, "isCardMoveAllowed: A not eligible player attempted cards moves in the current round");
+                handleNotAllowed(source.getContext(), "This move is not allowed since you're not playing in this round any more!");
+            } else if ((TABLE_TAG.equalsIgnoreCase(sourceTag) && TABLE_TAG.equalsIgnoreCase(targetTag))
                     || isFloatingPlayerTag(sourceTag)
                     || isFloatingPlayerTag(targetTag)) {
                 Log.w(TAG, "isCardMoveAllowed: Attempted to move cards within " + sourceTag + " and " + targetTag + " which is not allowed");
                 handleNotAllowed(source.getContext(), "This move is not allowed!");
-                return false;
             } else {
                 return true;
             }
@@ -72,7 +75,11 @@ public class RuleUtils {
 
     public static boolean isCardSinkDropAllowed(final CardsAdapter source) {
         String sourceTag = source.getTag();
-        if (!TextUtils.isEmpty(sourceTag)
+        if (isPlayerNotEligible(source.getContext(), sourceTag)) {
+            Log.w(TAG, "isCardMoveAllowed: A not eligible player attempted to drop cards to sink");
+            handleNotAllowed(source.getContext(), "This card cannot be dropped to sink since you're not playing in this round any more!!");
+            return false;
+        } else if (!TextUtils.isEmpty(sourceTag)
                 && (TABLE_TAG.equalsIgnoreCase(sourceTag)
                 || PLAYER_TAG.equalsIgnoreCase(sourceTag)
                 || DEALER_TAG.equalsIgnoreCase(sourceTag))) {
@@ -115,5 +122,10 @@ public class RuleUtils {
     public static void handleNotAllowed(final Context context, final String message) {
         new MediaUtils(context).playNotAllowedTone();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private static boolean isPlayerNotEligible(final Context context, String tag) {
+        User self = User.getCurrentUser(context);
+        return self.isShowingCards() && !DEALER_TAG.equalsIgnoreCase(tag);
     }
 }
