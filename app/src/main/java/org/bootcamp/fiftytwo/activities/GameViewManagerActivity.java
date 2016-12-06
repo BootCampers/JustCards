@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -32,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
@@ -305,19 +305,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }
             }
             if (hasCards) {
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                new LovelyStandardDialog(this)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setButtonsColorRes(R.color.colorAccent)
+                        .setIcon(R.drawable.ic_visibility_on_36dp)
                         .setTitle("Show Cards to Everyone")
                         .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            fabShow.setTag(true);
-                            fabShow.setEnabled(false);
-                            fabMenu.close(true);
-                            User self = parseUtils.getCurrentUser();
-                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
-                            parseUtils.toggleCardsList(true);
+                        .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fabShow.setTag(true);
+                                fabShow.setEnabled(false);
+                                fabMenu.close(true);
+                                User self = parseUtils.getCurrentUser();
+                                parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
+                                parseUtils.toggleCardsList(true);
+                            }
                         })
-                        .setNegativeButton("No", null)
+                        .setNegativeButton(android.R.string.no, null)
                         .show();
             } else {
                 Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
@@ -330,19 +335,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabMute)
     public void onMute(View view) {
         if (fabMute.getTag() == null || !((boolean) fabMute.getTag())) {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+            new LovelyStandardDialog(this)
+                    .setTopColorRes(R.color.colorPrimary)
+                    .setButtonsColorRes(R.color.colorAccent)
+                    .setIcon(R.drawable.ic_not_interested_36dp)
                     .setTitle("Mute for current round")
                     .setMessage("Are you sure you want to mute yourself for this round? Once muted, you cannot play in this round any more!")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        fabMute.setTag(true);
-                        fabMenu.close(true);
-                        fabMute.setEnabled(false);
-                        User self = parseUtils.getCurrentUser();
-                        parseUtils.saveCurrentUserIsActive(!self.isActive());
-                        parseUtils.mutePlayerForRound(true);
+                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fabMute.setTag(true);
+                            fabMenu.close(true);
+                            fabMute.setEnabled(false);
+                            User self = parseUtils.getCurrentUser();
+                            parseUtils.saveCurrentUserIsActive(!self.isActive());
+                            parseUtils.mutePlayerForRound(true);
+                        }
                     })
-                    .setNegativeButton("No", null)
+                    .setNegativeButton(android.R.string.no, null)
                     .show();
         } else {
             Toast.makeText(this, "You're already on mute for this round!", Toast.LENGTH_SHORT).show();
@@ -354,21 +364,26 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onBackPressed() {
         fabMenu.close(true);
 
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+        new LovelyStandardDialog(this)
+                .setTopColorRes(R.color.colorPrimary)
+                .setButtonsColorRes(R.color.colorAccent)
+                .setIcon(R.drawable.ic_power_36dp)
                 .setTitle("Exit Game")
                 .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    parseUtils.removeChannel();
-                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(this));
-                    if (User.getCurrentUser(this).isDealer()) {
-                        ParseDB.deleteGame(gameName);
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        parseUtils.removeChannel();
+                        ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(GameViewManagerActivity.this));
+                        if (User.getCurrentUser(GameViewManagerActivity.this).isDealer()) {
+                            ParseDB.deleteGame(gameName);
+                        }
+                        ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                        parseUtils.resetCurrentUser();
+                        finish();
                     }
-                    ((FiftyTwoApplication) getApplication()).removeAllObservers();
-                    parseUtils.resetCurrentUser();
-                    finish();
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 

@@ -2,13 +2,15 @@ package org.bootcamp.fiftytwo.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+
+import org.bootcamp.fiftytwo.R;
 
 /**
  * Created by baphna on 11/26/2016.
@@ -23,18 +25,20 @@ public class NetworkUtils {
         if(!result){
             Log.e(Constants.TAG, "No network");
 
-            SweetAlertDialog pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
-            pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-            pDialog.setTitleText("Oops! Network failure!!");
-            pDialog.setConfirmText("Okay");
-            pDialog.setCancelable(true);
-            pDialog.setContentText("We are unable to connect to our servers. Please check network connection!");
+            new LovelyStandardDialog(mContext)
+                    .setTopColorRes(R.color.red)
+                    .setButtonsColorRes(R.color.colorAccent)
+                    .setTitle("Oops! Network failure!!")
+                    .setIcon(R.drawable.ic_network_check_36dp)
+                    .setMessage("We are unable to connect to our servers. Please check network connection!")
+                    .setPositiveButton(R.string.msg_okay, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mContext.startActivity(new Intent(Settings.ACTION_SETTINGS));
+                        }
+                    })
+                    .show();
 
-            pDialog.setConfirmClickListener(sDialog -> {
-                mContext.startActivity(new Intent(Settings.ACTION_SETTINGS));
-                sDialog.dismissWithAnimation();
-            });
-            pDialog.show();
         }
 
         return result;

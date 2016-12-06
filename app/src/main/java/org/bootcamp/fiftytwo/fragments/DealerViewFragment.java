@@ -4,13 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
@@ -105,18 +106,24 @@ public class DealerViewFragment extends Fragment implements
 
     @OnClick({R.id.btnRestart})
     public void score() {
-        new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
+
+        new LovelyStandardDialog(getActivity())
+                .setTopColorRes(R.color.colorPrimary)
+                .setButtonsColorRes(R.color.colorAccent)
+                .setIcon(R.drawable.ic_repeat_36dp)
                 .setTitle("Restart Round")
                 .setMessage("Set scores to announce round winners and restart game round?")
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    scoringFragment = ScoringFragment.newInstance(mPlayers);
-                    getChildFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
-                            .hide(dealerCardsFragment)
-                            .commit();
-                    mDealListener.onDealerOptionsShowing(true);
+                .setPositiveButton("Restart", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        scoringFragment = ScoringFragment.newInstance(mPlayers);
+                        getChildFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
+                                .hide(dealerCardsFragment)
+                                .commit();
+                        mDealListener.onDealerOptionsShowing(true);
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

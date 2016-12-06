@@ -2,7 +2,6 @@ package org.bootcamp.fiftytwo.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
@@ -74,11 +75,16 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
         } else {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+            new LovelyStandardDialog(this)
+                    .setTopColorRes(R.color.colorPrimary)
+                    .setButtonsColorRes(R.color.colorAccent)
+                    .setIcon(R.drawable.ic_not_interested_36dp)
                     .setTitle("Game invalid")
                     .setMessage("This game id not found. Either create new game or enter a valid id.")
-                    .setPositiveButton("Okay", (dialog, which) -> {
+                    .setPositiveButton(R.string.msg_okay, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
                     })
                     .show();
         }
