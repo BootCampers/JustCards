@@ -103,13 +103,6 @@
             app:fab_label="Show cards to everyone"
             app:fab_size="mini"/>
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabRound"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_label="Start next round"
-            app:fab_size="mini"/>
-
     </com.github.clans.fab.FloatingActionMenu>
 
     <LinearLayout

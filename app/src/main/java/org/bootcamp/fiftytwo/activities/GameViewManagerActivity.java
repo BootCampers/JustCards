@@ -138,7 +138,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabSwap) FloatingActionButton fabSwap;
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabShow) FloatingActionButton fabShow;
-    @BindView(R.id.fabRound) FloatingActionButton fabRound;
     @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
@@ -192,7 +191,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Controlling the fragments for display based on player's role
         if (isCurrentViewPlayer) {
             fabSwap.setVisibility(View.GONE);
-            fabRound.setVisibility(View.GONE);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, playerViewFragment)
@@ -216,7 +214,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
         fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
         fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
-        fabRound.setImageDrawable(getVectorCompat(this, R.drawable.ic_repeat));
 
         ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
             @Override
@@ -339,14 +336,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         } else {
             Toast.makeText(this, "You're already on mute for this round!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @OnClick(R.id.fabRound)
-    public void onRound(View view) {
-        fabMenu.close(true);
-
-        // Do nothing as of now
-        Toast.makeText(this, "Clicked on Round", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.fabExit)
