@@ -16,6 +16,9 @@ import org.bootcamp.fiftytwo.R;
 
 import github.chenupt.springindicator.SpringIndicator;
 
+import static org.bootcamp.fiftytwo.utils.Constants.ARG_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.ARG_PLAYER_COUNT;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -37,6 +40,22 @@ public class TutorialFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static TutorialFragment newInstance(int fromPage, int toPage) {
+        TutorialFragment fragment = new TutorialFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_PLAYER_COUNT, fromPage);
+        args.putInt(ARG_CARD_COUNT, toPage);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            getArguments().getInt(ARG_PLAYER_COUNT);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

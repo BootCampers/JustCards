@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clGameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     android:fitsSystemWindows="true"
     tools:context="org.bootcamp.fiftytwo.activities.GameViewManagerActivity">
 
@@ -20,14 +20,14 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/flGameContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <!-- TODO make log view a drawer instead? -->
     <FrameLayout
@@ -37,7 +37,18 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end"
-        android:layout_marginTop="@dimen/common_margin"/>
+        android:layout_marginTop="@dimen/common_margin" />
+
+    <ImageButton
+        android:id="@+id/ibHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:layout_marginLeft="@dimen/common_margin"
+        android:layout_marginStart="@dimen/common_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_help_outline" />
 
     <ImageButton
         android:id="@+id/ibInfo"
@@ -48,7 +59,7 @@
         android:layout_marginRight="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_info_outline"/>
+        app:srcCompat="@drawable/ic_info_outline" />
 
     <ImageButton
         android:id="@+id/ibComment"
@@ -59,7 +70,7 @@
         android:layout_marginRight="@dimen/common_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_comment"/>
+        app:srcCompat="@drawable/ic_comment" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fabMenu"
@@ -80,28 +91,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Exit from game"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSwap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="@string/msg_show_dealer_view"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabMute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Mute for this round"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Show cards to everyone"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -128,7 +139,7 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="normal"
-            tools:text="0"/>
+            tools:text="0" />
 
         <ImageView
             android:id="@+id/ivSink"
@@ -137,7 +148,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:layout_marginStart="2dp"
-            app:srcCompat="@drawable/ic_sink_empty"/>
+            app:srcCompat="@drawable/ic_sink_empty" />
 
     </LinearLayout>
 

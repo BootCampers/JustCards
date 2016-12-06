@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -44,6 +45,7 @@ import org.bootcamp.fiftytwo.fragments.PlayerFragment;
 import org.bootcamp.fiftytwo.fragments.PlayerViewFragment;
 import org.bootcamp.fiftytwo.fragments.RoundWinnersFragment;
 import org.bootcamp.fiftytwo.fragments.ScoringFragment;
+import org.bootcamp.fiftytwo.fragments.TutorialFragment;
 import org.bootcamp.fiftytwo.interfaces.Observable;
 import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
@@ -114,6 +116,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         CardsFragment.OnToggleCardListener,
         CardsFragment.OnLogEventListener,
         ScoringFragment.OnScoreFragmentListener,
+        TutorialFragment.OnFragmentInteractionListener,
         Observer {
 
     private List<User> mPlayers = new ArrayList<>();
@@ -134,6 +137,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
+    @BindView(R.id.ibHelp) ImageButton ibHelp;
     @BindView(R.id.ivSink) ImageView ivSink;
     @BindView(R.id.tvSinkCardsCount) TextView tvSinkCardsCount;
     @BindView(R.id.fabExit) FloatingActionButton fabExit;
@@ -432,6 +436,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             isShowingChat = false;
         }
         fragmentTransaction.commit();
+    }
+
+    @OnClick(R.id.ibHelp)
+    public void showTutorial(View view){
+        /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        TutorialFragment tutorialFragment = TutorialFragment.newInstance(0,0);
+        fragmentTransaction.add(R.id.flGameContainer, tutorialFragment, "Tutorial");
+        fragmentTransaction.commit();*/
+        startActivity(new Intent(GameViewManagerActivity.this, TutorialActivity.class));
     }
 
     @Override
@@ -955,4 +968,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .oneShot(findViewById(R.id.flPlayerContainer), 4);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //Do nothing
+    }
 }
