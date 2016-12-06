@@ -40,6 +40,15 @@ The following **bonus** features are implemented:
 * [ ] Every activity will be logged in list which anyone can review anytime.
 * [ ] When a card is moved from 1 place to another it should show nice animation of actual card moving out from one’s hand to other place.
 
+**Future plans**:
+
+* Compatible iOS app
+* Compatible VR app - daydream/oculus. This could be first real phone and VR inter-operable app.
+* Funding - either from VCs or Kickstarter\crowdsource
+* Attach app to Google Play Games to show leaderboard, awards, levels, etc. 
+* Do user trials and get feedback to improve usability
+* Support ads
+
 ## Wireframes
 
 * **Wireframes are in assets directory**
@@ -63,7 +72,7 @@ Describe any challenges encountered while building the app.
 
 ## License
 
-    Copyright [yyyy] [name of copyright owner]
+    Copyright [2016] [Bootamp org]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
