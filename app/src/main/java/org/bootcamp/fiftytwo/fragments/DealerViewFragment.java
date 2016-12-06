@@ -49,7 +49,8 @@ public class DealerViewFragment extends Fragment implements
     private Unbinder unbinder;
 
     @BindView(R.id.flDealerViewContainer) FrameLayout flDealerViewContainer;
-    @BindString(R.string.msg_send_to_table) String msgSendToTable;
+    @BindString(R.string.msg_keep_on_dealer_stack) String msgKeepOnDealerStack;
+    @BindString(R.string.msg_discard) String msgDiscard;
 
     public interface OnDealListener {
         boolean onDeal(List<Card> cards, User player);
@@ -177,7 +178,6 @@ public class DealerViewFragment extends Fragment implements
                 numPlayers--;
 
             // TODO: Add Muted Player Check Logic Here to exclude from dealing
-            // TODO: Provide one more option to keep the cards in the dealing section itself after dealing?
 
             if (cards.size() >= numPlayers * dealCount) {
                 if (doShuffle) {
@@ -200,9 +200,10 @@ public class DealerViewFragment extends Fragment implements
                 // Handle Remaining Cards Here
                 if (cards.size() > 0) {
                     Log.d(TAG, "dealNow: Remaining Cards Action Selected: " + doRemainingCards);
-                    boolean toSink = !doRemainingCards.equals(msgSendToTable);
-                    mDealListener.onDealTable(cards, toSink);
-                    dealerFragment.drawCards(cards);
+                    if (!doRemainingCards.equalsIgnoreCase(msgKeepOnDealerStack)) {
+                        boolean toSink = doRemainingCards.equals(msgDiscard);
+                        mDealListener.onDealTable(cards, toSink);
+                    }
                 }
             } else {
                 Toast.makeText(getActivity(), "Not enough cards to deal", Toast.LENGTH_LONG).show();
@@ -218,6 +219,14 @@ public class DealerViewFragment extends Fragment implements
 
     public boolean removePlayer(User player) {
         return mPlayers.remove(player);
+    }
+
+    public boolean drawDealerCards(final List<Card> cards) {
+        if (!isEmpty(cards)) {
+            CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
+            return dealerFragment.drawCards(cards);
+        }
+        return false;
     }
 
     @Override

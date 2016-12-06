@@ -29,7 +29,8 @@
 
     <string name="gcm_sender_id">id:761078236734</string>
 
-    <string name="msg_send_to_table">Keep on table</string>
+    <string name="msg_send_to_table">Move to table</string>
+    <string name="msg_keep_on_dealer_stack">Keep on dealer stack</string>
     <string name="msg_discard">Discard</string>
     <string name="title_activity_avatar_selection">Choose your Avatar</string>
     <string name="dealing_options">Deal Options</string>

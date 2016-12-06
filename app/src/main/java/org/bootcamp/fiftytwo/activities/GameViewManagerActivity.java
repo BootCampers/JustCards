@@ -336,8 +336,36 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabMute)
     public void onMute(View view) {
         fabMenu.close(true);
-        // Do nothing as of now
-        Toast.makeText(this, "Clicked on Mute", Toast.LENGTH_SHORT).show();
+
+        if (fabShow.getTag() == null || !((boolean) fabShow.getTag())) {
+            boolean hasCards = true;
+            if (playerViewFragment != null) {
+                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    hasCards = ((CardsFragment) fragment).getCards().size() > 0;
+                }
+            }
+            if (hasCards) {
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Show Cards to Everyone")
+                        .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            fabShow.setTag(true);
+                            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+                            fabMenu.close(true);
+                            User self = parseUtils.getCurrentUser();
+                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
+                            parseUtils.toggleCardsList(true);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            } else {
+                Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "You're currently showing your cards and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.fabRound)
@@ -467,30 +495,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onScore(boolean saveClicked) {
-        if (saveClicked) {
-            parseUtils.updateUsersScore(mPlayers);
-            User self = User.getCurrentUser(this);
-            onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Scoring everyone now!");
-        }
-    }
-
-    @Override
-    public void roundWinners(List<User> roundWinners) {
-        parseUtils.declareRoundWinners(roundWinners);
-    }
-
-    public void handleRoundWinners(List<User> roundWinners){
-        Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
-        if(roundWinners.size() > 0) {
-            mediaUtils.playClapsTone();
-            FragmentManager fm = getSupportFragmentManager();
-            RoundWinnersFragment winnerDialog = RoundWinnersFragment.newInstance(roundWinners);
-            winnerDialog.show(fm, "winnerDialog");
-        }
-    }
-
-    @Override
     public void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card) {
         if (fromTag.equalsIgnoreCase(TABLE_TAG) && toTag.equalsIgnoreCase(PLAYER_TAG)) {
             parseUtils.exchangeCardWithTable(card, fromPosition, toPosition, true);
@@ -508,6 +512,20 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (card != null) {
             parseUtils.toggleCard(card, position, onTag);
         }
+    }
+
+    @Override
+    public void onScore(boolean saveClicked) {
+        if (saveClicked) {
+            parseUtils.updateUsersScore(mPlayers);
+            User self = User.getCurrentUser(this);
+            onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Scoring everyone now!");
+        }
+    }
+
+    @Override
+    public void roundWinners(List<User> roundWinners) {
+        parseUtils.declareRoundWinners(roundWinners);
     }
 
     @Override
@@ -632,7 +650,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User from = fromJson(json);
                     List<User> users = new Gson().fromJson(json.get(Constants.PARAM_PLAYER), new TypeToken<List<User>>() {
                     }.getType());
-                    handleRoundWinners(users);
+                    handleRoundWinners(users, from);
                 });
                 break;
         }
@@ -705,7 +723,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         CardUtil.setShowingFront(cards);
         Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
         if (fragment != null) {
-            ((CardsFragment) fragment).stackCards(cards);
+            boolean stacked = ((CardsFragment) fragment).stackCards(cards);
+            if (stacked && parseUtils.getCurrentUser().isDealer() && dealerViewFragment != null) {
+                dealerViewFragment.drawDealerCards(cards);
+            }
         }
     }
 
@@ -713,6 +734,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (from != null && from.isDealer() && !isEmpty(cards)) {
             CardUtil.setShowingFront(cards);
             addCardsToSink(cards);
+            if (parseUtils.getCurrentUser().isDealer() && dealerViewFragment != null) {
+                dealerViewFragment.drawDealerCards(cards);
+            }
         }
     }
 
@@ -812,6 +836,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (fragment != null) {
                 ((PlayerFragment) fragment).scoreChange(user.getScore());
             }
+        }
+    }
+
+    public void handleRoundWinners(final List<User> roundWinners, final User from){
+        Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
+        if(!isEmpty(roundWinners) && from != null && from.isDealer()) {
+            mediaUtils.playClapsTone();
+            FragmentManager fm = getSupportFragmentManager();
+            RoundWinnersFragment winnerDialog = RoundWinnersFragment.newInstance(roundWinners);
+            winnerDialog.show(fm, "winnerDialog");
         }
     }
 

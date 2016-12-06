@@ -166,7 +166,6 @@ public class ParseUtils {
         ParseDB.deleteGameTables(gameName, () -> {
             GameTable.save(gameName, cards);
             JsonObject payload = getJson(currentLoggedInUser);
-            /*payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));*/
             payload.addProperty(PARAM_CARD_COUNT, cards.size());
             payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
             sendBroadcast(payload);

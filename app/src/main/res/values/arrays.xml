@@ -2,6 +2,7 @@
 <resources>
     <string-array name="remaining_cards_array">
         <item>@string/msg_send_to_table</item>
+        <item>@string/msg_keep_on_dealer_stack</item>
         <item>@string/msg_discard</item>
     </string-array>
 </resources>
