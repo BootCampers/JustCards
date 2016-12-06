@@ -272,4 +272,10 @@ public class ParseUtils {
         payload.addProperty(COMMON_IDENTIFIER, Constants.PARSE_ROUND_WINNERS);
         sendBroadcast(payload);
     }
+
+    public void restartRound() {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(COMMON_IDENTIFIER, Constants.PARSE_RESTART_ROUND);
+        sendBroadcast(payload);
+    }
 }

@@ -68,7 +68,7 @@
             app:layout_constraintVertical_bias="1.0"/>
 
         <Button
-            android:id="@+id/btnScore"
+            android:id="@+id/btnRestart"
             style="?android:attr/buttonStyle"
             android:layout_width="70dp"
             android:layout_height="40dp"
@@ -76,7 +76,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="272dp"
-            android:text="@string/score"
+            android:text="@string/msg_restart_round"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintLeft_toLeftOf="@+id/flPlayersContainer"

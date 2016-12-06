@@ -90,6 +90,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
@@ -492,6 +493,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.updateUsersScore(mPlayers);
             User self = User.getCurrentUser(this);
             onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Scoring everyone now!");
+
+            //now restart the round
+            parseUtils.restartRound();
+            //TODO: take care of things on dealer side
+            //player side stuff will be done through broadcast
         }
     }
 
@@ -631,7 +637,30 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleRoundWinners(users, from);
                 });
                 break;
+            case PARSE_RESTART_ROUND:
+                handleRestartPlayerRound();
+                break;
         }
+    }
+
+    private void handleRestartPlayerRound() {
+        fabMute.setEnabled(true);
+        fabMute.setTag(false);
+
+        fabShow.setEnabled(true);
+        fabShow.setTag(false);
+
+        //TODO: needs discussion. Now users can't tap on other player cards to see what they have. Is that ok?
+        for(User user:mPlayers){
+            user.setShowingCards(false);
+            user.setActive(true);
+            //TODO: clear all user cards
+        }
+        //TODO: clear table and sink cards
+    }
+
+    private void doRestartDealerRound(){
+        //TODO
     }
 
     public void addPlayersToView(final List<User> players) {

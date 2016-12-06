@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,16 +103,23 @@ public class DealerViewFragment extends Fragment implements
                 .commit();
     }
 
-    @OnClick({R.id.btnScore})
+    @OnClick({R.id.btnRestart})
     public void score() {
-        scoringFragment = ScoringFragment.newInstance(mPlayers);
-        getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
-                .hide(dealerCardsFragment)
-                .commit();
-        mDealListener.onDealerOptionsShowing(true);
-
+        new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Restart Round")
+                .setMessage("Set scores to announce round winners and restart game round?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    scoringFragment = ScoringFragment.newInstance(mPlayers);
+                    getChildFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
+                            .hide(dealerCardsFragment)
+                            .commit();
+                    mDealListener.onDealerOptionsShowing(true);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override
