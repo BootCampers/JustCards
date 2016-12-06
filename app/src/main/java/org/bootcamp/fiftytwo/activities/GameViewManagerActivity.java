@@ -311,7 +311,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         .setIcon(R.drawable.ic_visibility_on_36dp)
                         .setTitle("Show Cards to Everyone")
                         .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
-                        .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                        .setPositiveButton("Yes Show", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 fabShow.setTag(true);
@@ -341,7 +341,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .setIcon(R.drawable.ic_not_interested_36dp)
                     .setTitle("Mute for current round")
                     .setMessage("Are you sure you want to mute yourself for this round? Once muted, you cannot play in this round any more!")
-                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    .setPositiveButton("Yes Mute", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             fabMute.setTag(true);
@@ -370,7 +370,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_power_36dp)
                 .setTitle("Exit Game")
                 .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                .setPositiveButton("Yes Exit", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         parseUtils.removeChannel();

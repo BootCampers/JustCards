@@ -11,8 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
@@ -48,9 +48,12 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     @BindView(R.id.btnGameOptions) Button btnGameOptions;
     @BindView(R.id.btnShareId) FloatingActionButton btnShareId;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.rlSelectedCards) RelativeLayout rlSelectedCards;
+    @BindView(R.id.tvSelectedCards) TextView tvSelectedCards;
 
-    @BindString(R.string.select_cards) String str_select_cards;
-    @BindString(R.string.start_game) String str_start_game;
+    @BindString(R.string.select_cards) String msgSelectCards;
+    @BindString(R.string.start_game) String msgStartGame;
+    @BindString(R.string.msg_selected_cards_count) String msgSelectedCardsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,16 +113,23 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         }
     }
 
+    @OnClick(R.id.btnReselect)
+    public void selectCards(){
+        Intent intent = new Intent(this, SelectCardsActivity.class);
+        startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_CODE_SELECT_CARDS && resultCode == RESULT_OK) {
             mCards = Parcels.unwrap(data.getExtras().getParcelable(PARAM_CARDS));
-            Toast.makeText(this, "Selected Total: " + mCards.size() + " Cards", Toast.LENGTH_SHORT).show();
+            rlSelectedCards.setVisibility(View.VISIBLE);
+            tvSelectedCards.setText(String.format(msgSelectedCardsCount, mCards.size()));
         }
 
         //Change select cards to start game
-        btnGameOptions.setText(isEmpty(mCards) ? str_select_cards : str_start_game);
+        btnGameOptions.setText(isEmpty(mCards) ? msgSelectCards : msgStartGame);
     }
 
     @Override

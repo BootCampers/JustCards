@@ -79,6 +79,42 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/rlSelectedCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameIDLayout"
+                android:background="@drawable/accent_translucent_background"
+                android:padding="8dp"
+                android:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/tvSelectedCards"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="@string/msg_selected_cards_count"
+                    android:layout_centerVertical="true"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tvSelectedCards"
+                    android:layout_toEndOf="@id/tvSelectedCards"
+                    android:text="Reselect"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:id="@+id/btnReselect"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"/>
+
+            </RelativeLayout>
+
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btnShareId"
                 android:layout_width="wrap_content"
@@ -98,7 +134,7 @@
                 android:id="@+id/btnGameOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/gameIDLayout"
+                android:layout_below="@+id/rlSelectedCards"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
                 android:paddingLeft="5dp"
