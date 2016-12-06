@@ -566,7 +566,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 });
                 break;
             case PARSE_DEAL_CARDS:
-                mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
                     User from = fromJson(json);
                     User to = fromJson(json.get(PARAM_PLAYER).getAsJsonObject());
