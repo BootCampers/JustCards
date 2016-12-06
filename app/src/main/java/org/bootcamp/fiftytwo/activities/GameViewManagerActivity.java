@@ -839,8 +839,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 } else {
                     Toast.makeText(this, player.getDisplayName() + " is currently showing cards!", Toast.LENGTH_SHORT).show();
                 }
+                onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is showing cards.");
             }
-            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is showing cards.");
         }
     }
 
@@ -865,8 +865,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 } else {
                     Toast.makeText(this, player.getDisplayName() + " is on mute!", Toast.LENGTH_SHORT).show();
                 }
+                onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is on mute.");
             }
-            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is on mute.");
         }
     }
 
