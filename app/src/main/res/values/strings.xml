@@ -56,5 +56,8 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="zero">0</string>
     <string name="msg_congratulations_winner">Congratulations to the Winners of this round!</string>
+    <string name="msg_show_dealer_view">Show Dealer side</string>
+    <string name="msg_show_player_view">Show Player side</string>
+
 
 </resources>

@@ -63,6 +63,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -140,6 +141,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabShow) FloatingActionButton fabShow;
     @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
 
+    @BindString(R.string.msg_show_dealer_view) String msgDealerSide;
+    @BindString(R.string.msg_show_player_view) String msgPlayerSide;
+
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
     @Override
@@ -191,11 +195,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Controlling the fragments for display based on player's role
         if (isCurrentViewPlayer) {
             fabSwap.setVisibility(View.GONE);
+            fabSwap.setLabelText(msgDealerSide);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, playerViewFragment)
                     .commit();
         } else {
+            fabSwap.setLabelText(msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, playerViewFragment)
@@ -253,7 +259,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabSwap)
     public void switchView() {
         fabMenu.close(true);
-
+        if (isCurrentViewPlayer) {
+            fabSwap.setLabelText(msgPlayerSide);
+        } else {
+            fabSwap.setLabelText(msgDealerSide);
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
