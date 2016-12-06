@@ -215,7 +215,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         fabExit.setImageDrawable(getVectorCompat(this, R.drawable.ic_power));
         fabSwap.setImageDrawable(getVectorCompat(this, R.drawable.ic_swap));
         fabMute.setImageDrawable(getVectorCompat(this, R.drawable.ic_not_interested));
-        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_off));
+        fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
         fabRound.setImageDrawable(getVectorCompat(this, R.drawable.ic_repeat));
 
         ivSink.setOnDragListener(new OnCardsDragListener(new CardsAdapter.CardsListener() {
@@ -303,7 +303,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             fabShow.setTag(true);
-                            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
+                            fabShow.setEnabled(false);
                             fabMenu.close(true);
                             User self = parseUtils.getCurrentUser();
                             parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
@@ -329,6 +329,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .setPositiveButton("Yes", (dialog, which) -> {
                         fabMute.setTag(true);
                         fabMenu.close(true);
+                        fabMute.setEnabled(false);
                         User self = parseUtils.getCurrentUser();
                         parseUtils.saveCurrentUserIsActive(!self.isActive());
                         parseUtils.mutePlayerForRound(true);
