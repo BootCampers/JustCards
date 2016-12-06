@@ -29,6 +29,7 @@ import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.ARG_IS_SELF_ELIGIBLE;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_PLAYER_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
@@ -45,6 +46,7 @@ public class DealingOptionsFragment extends Fragment {
 
     private int playerCount;
     private int cardCount;
+    private boolean isSelfEligible = true;
     private boolean dealToSelf = true;
     private int maxAllowed = 0;
     private int currentDealingCount = 0;
@@ -56,11 +58,12 @@ public class DealingOptionsFragment extends Fragment {
         void onDealOptionSelected(Bundle bundle);
     }
 
-    public static DealingOptionsFragment newInstance(int playerCount, int cardCount) {
+    public static DealingOptionsFragment newInstance(int playerCount, int cardCount, boolean isSelfEligible) {
         DealingOptionsFragment fragment = new DealingOptionsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PLAYER_COUNT, playerCount);
         args.putInt(ARG_CARD_COUNT, cardCount);
+        args.putBoolean(ARG_IS_SELF_ELIGIBLE, isSelfEligible);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,8 +74,10 @@ public class DealingOptionsFragment extends Fragment {
         if (getArguments() != null) {
             playerCount = getArguments().getInt(ARG_PLAYER_COUNT);
             cardCount = getArguments().getInt(ARG_CARD_COUNT);
+            isSelfEligible = getArguments().getBoolean(ARG_IS_SELF_ELIGIBLE);
+
             if (playerCount == 0) {
-                Toast.makeText(getActivity(), "Please let some players to join first", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "There are no active players to deal cards", Toast.LENGTH_LONG).show();
             } else if (playerCount > cardCount) {
                 Toast.makeText(getActivity(), "More players than cards in game. Please deal cards manually.", Toast.LENGTH_LONG).show();
             } else {
@@ -87,6 +92,11 @@ public class DealingOptionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dealing_options, container, false);
         unbinder = ButterKnife.bind(this, view);
         tvCardsToDeal.setText(String.valueOf(currentDealingCount));
+        if (!isSelfEligible) {
+            switchDealSelf.setChecked(false);
+            switchDealSelf.setEnabled(false);
+            switchDealSelf.setClickable(false);
+        }
         return view;
     }
 

@@ -49,6 +49,7 @@ public class Constants {
     public static final String PARAMS_PLAYER_GAME = "playerGame";
     public static final String PARAM_CARD_COUNT = "cardCount";
     public static final String SELECTED_AVATAR = "selectedAvatar";
+    public static final String ARG_IS_SELF_ELIGIBLE = "isSelfEligible";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
@@ -64,6 +65,7 @@ public class Constants {
     public static final String POSITION = "position";
     public static final String ON_TAG = "onTag";
     public static final String TO_SHOW = "toShow";
+    public static final String TO_MUTE = "toMute";
 
     /** Parse Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
@@ -76,6 +78,7 @@ public class Constants {
     public static final String PARSE_DROP_CARD_TO_SINK = "dropCardToSink";
     public static final String PARSE_TOGGLE_CARD = "toggleCard";
     public static final String PARSE_TOGGLE_CARDS_LIST = "toggleCardsList";
+    public static final String PARSE_MUTE_PLAYER_FOR_ROUND = "mutePlayerForRound";
     public static final String PARSE_SCORE_UPDATED = "scoreUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
 
@@ -90,8 +93,7 @@ public class Constants {
     public static final String LAYOUT_TYPE_CIRCULAR = "circular";
     public static final String LAYOUT_TYPE_SCROLL_ZOOM = "scrollZoom";
 
-    /** Animation durations here */
+    /** View Properties here */
     public static final long FAB_ANIMATION_TIME = 300;
-
     public static final float CIRCULAR_BORDER_WIDTH = 6f;
 }

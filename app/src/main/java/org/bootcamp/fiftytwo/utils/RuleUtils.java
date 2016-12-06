@@ -9,6 +9,7 @@ import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
 
+import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
@@ -126,6 +127,11 @@ public class RuleUtils {
 
     private static boolean isPlayerNotEligible(final Context context, final String tag) {
         User self = User.getCurrentUser(context);
-        return self.isShowingCards() && !DEALER_TAG.equalsIgnoreCase(tag);
+        return (self.isShowingCards() || !self.isActive()) && !DEALER_TAG.equalsIgnoreCase(tag);
     }
+
+    public static boolean isPlayerNotEligibleForDeal(final User player, final boolean doDealSelf) {
+        return !player.isActive() || player.isShowingCards() || (!doDealSelf && isSelf(player));
+    }
+
 }

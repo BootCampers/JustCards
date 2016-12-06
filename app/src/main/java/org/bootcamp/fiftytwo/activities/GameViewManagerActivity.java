@@ -68,6 +68,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
+import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getVectorCompat;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
@@ -85,6 +86,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
@@ -97,6 +99,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.TO_MUTE;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
@@ -312,59 +315,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "You're currently showing your cards and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Show or hide the user's cards fragment
-     *
-     * @param player which player
-     * @param toShow true if want to show, false for hiding
-     */
-    private void toggleCardsListForPlayerView(final User player, final boolean toShow) {
-        if (mPlayers.contains(player)) {
-            mPlayers.get(mPlayers.indexOf(player)).setShowingCards(toShow);
-        }
-        player.setShowingCards(toShow);
-        Fragment fragment = getPlayerFragment(this, player);
-        if (fragment != null) {
-            ((CardsFragment) fragment).toggleCardsList(toShow);
+            Toast.makeText(this, "You're showing your cards already and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
         }
     }
 
     @OnClick(R.id.fabMute)
     public void onMute(View view) {
-        fabMenu.close(true);
-
-        if (fabShow.getTag() == null || !((boolean) fabShow.getTag())) {
-            boolean hasCards = true;
-            if (playerViewFragment != null) {
-                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
-                if (fragment != null) {
-                    hasCards = ((CardsFragment) fragment).getCards().size() > 0;
-                }
-            }
-            if (hasCards) {
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Show Cards to Everyone")
-                        .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            fabShow.setTag(true);
-                            fabShow.setImageDrawable(getVectorCompat(this, R.drawable.ic_visibility_on));
-                            fabMenu.close(true);
-                            User self = parseUtils.getCurrentUser();
-                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
-                            parseUtils.toggleCardsList(true);
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            } else {
-                Toast.makeText(this, "You've no cards to show!", Toast.LENGTH_SHORT).show();
-            }
+        if (fabMute.getTag() == null || !((boolean) fabMute.getTag())) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Mute for current round")
+                    .setMessage("Are you sure you want to mute yourself for this round? Once muted, you cannot play in this round any more!")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        fabMute.setTag(true);
+                        fabMenu.close(true);
+                        User self = parseUtils.getCurrentUser();
+                        parseUtils.saveCurrentUserIsActive(!self.isActive());
+                        parseUtils.mutePlayerForRound(true);
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         } else {
-            Toast.makeText(this, "You're currently showing your cards and cannot hide them once shown!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You're already on mute for this round!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -636,6 +608,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     toggleCardsListForPlayerView(user, toShow);
                 });
                 break;
+            case PARSE_MUTE_PLAYER_FOR_ROUND:
+                runOnUiThread(() -> {
+                    User user = User.fromJson(json);
+                    boolean toMute = json.get(TO_MUTE).getAsBoolean();
+                    handleMutePlayerForRound(user, toMute);
+                });
+                break;
             case PARSE_SCORE_UPDATED:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
@@ -825,6 +804,69 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (fragment != null) {
                 ((CardsFragment) fragment).toggleCard(card, position);
             }
+        }
+    }
+
+    /**
+     * Show or hide the user's cards fragment
+     *
+     * @param player which player
+     * @param toShow true if want to show, false for hiding
+     */
+    private void toggleCardsListForPlayerView(final User player, final boolean toShow) {
+        if (player != null) {
+            if (mPlayers.contains(player)) {
+                mPlayers.get(mPlayers.indexOf(player)).setShowingCards(toShow);
+            }
+
+            if (dealerViewFragment != null) {
+                List<User> players = dealerViewFragment.getPlayers();
+                if (!isEmpty(players) && players.contains(player)) {
+                    players.get(players.indexOf(player)).setShowingCards(toShow);
+                }
+            }
+
+            player.setShowingCards(toShow);
+
+            Fragment fragment = getPlayerFragment(this, player);
+            if (fragment != null) {
+                ((CardsFragment) fragment).toggleCardsList(toShow);
+            }
+
+            if (player.isShowingCards()) {
+                if (isSelf(player)) {
+                    Toast.makeText(this, "You are showing your cards now!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, player.getDisplayName() + " is currently showing cards!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is showing cards.");
+        }
+    }
+
+    private void handleMutePlayerForRound(final User player, final boolean toMute) {
+        if (player != null) {
+            if (mPlayers.contains(player)) {
+                mPlayers.get(mPlayers.indexOf(player)).setActive(!toMute);
+            }
+
+            if (dealerViewFragment != null) {
+                List<User> players = dealerViewFragment.getPlayers();
+                if (!isEmpty(players) && players.contains(player)) {
+                    players.get(players.indexOf(player)).setActive(!toMute);
+                }
+            }
+
+            player.setActive(!toMute);
+
+            if (!player.isActive()) {
+                if (isSelf(player)) {
+                    Toast.makeText(this, "You are on mute now!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, player.getDisplayName() + " is on mute!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " is on mute.");
         }
     }
 

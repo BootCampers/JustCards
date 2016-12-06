@@ -34,6 +34,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_STAGGERED_HORIZO
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
+import static org.bootcamp.fiftytwo.utils.RuleUtils.isPlayerNotEligibleForDeal;
 
 public class DealerViewFragment extends Fragment implements
         DealingOptionsFragment.OnDealOptionsListener,
@@ -131,9 +132,19 @@ public class DealerViewFragment extends Fragment implements
 
     @OnClick({R.id.btnDeal})
     public void deal() {
+        int numPlayers = mPlayers.size();
+        for (User player : mPlayers) {
+            if (!player.isActive() || player.isShowingCards()) {
+                numPlayers--;
+            }
+        }
+
         List<Card> cards = dealerCardsFragment.getCards();
 
-        dealingOptionsFragment = DealingOptionsFragment.newInstance(mPlayers.size(), cards.size());
+        User self = User.getCurrentUser(getContext());
+        boolean isSelfEligible = self.isActive() && !self.isShowingCards();
+
+        dealingOptionsFragment = DealingOptionsFragment.newInstance(numPlayers, cards.size(), isSelfEligible);
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(R.id.flDealerViewContainer, dealingOptionsFragment, Constants.DEALING_OPTIONS_TAG)
@@ -172,19 +183,24 @@ public class DealerViewFragment extends Fragment implements
         if (mDealListener != null) {
             CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);
             List<Card> cards = dealerFragment.getCards();
-
+            User self = User.getCurrentUser(getContext());
             int numPlayers = mPlayers.size();
-            if (!doDealSelf)
-                numPlayers--;
 
-            // TODO: Add Muted Player Check Logic Here to exclude from dealing
+            for (User player : mPlayers) {
+                if (!player.isActive() || player.isShowingCards()) {
+                    numPlayers--;
+                }
+            }
+
+            if (!doDealSelf && (self.isActive() || !self.isShowingCards()))
+                numPlayers--;
 
             if (cards.size() >= numPlayers * dealCount) {
                 if (doShuffle) {
                     cards = dealerFragment.shuffleCards();
                 }
                 for (User player : mPlayers) {
-                    if (!doDealSelf) {
+                    if (isPlayerNotEligibleForDeal(player, doDealSelf)) {
                         continue;
                     }
 
@@ -219,6 +235,10 @@ public class DealerViewFragment extends Fragment implements
 
     public boolean removePlayer(User player) {
         return mPlayers.remove(player);
+    }
+
+    public List<User> getPlayers() {
+        return mPlayers;
     }
 
     public boolean drawDealerCards(final List<Card> cards) {

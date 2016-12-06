@@ -55,5 +55,6 @@
     <string name="msg_hide">Hide</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="zero">0</string>
+    <string name="msg_congratulations_winner">Congratulations to the Winners of this round!</string>
 
 </resources>

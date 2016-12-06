@@ -30,6 +30,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
@@ -39,6 +40,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
+import static org.bootcamp.fiftytwo.utils.Constants.TO_MUTE;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
@@ -75,6 +77,11 @@ public class ParseUtils {
 
     public void saveCurrentUserIsShowingCards(boolean isShowingCards) {
         currentLoggedInUser.setShowingCards(isShowingCards);
+        currentLoggedInUser.save(context);
+    }
+
+    public void saveCurrentUserIsActive(boolean isActive) {
+        currentLoggedInUser.setActive(isActive);
         currentLoggedInUser.save(context);
     }
 
@@ -242,6 +249,13 @@ public class ParseUtils {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.addProperty(TO_SHOW, toShow);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST);
+        sendBroadcast(payload);
+    }
+
+    public void mutePlayerForRound(boolean toMute) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(TO_MUTE, toMute);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_MUTE_PLAYER_FOR_ROUND);
         sendBroadcast(payload);
     }
 
