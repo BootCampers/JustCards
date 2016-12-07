@@ -1,4 +1,4 @@
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,6 +8,14 @@
     android:padding="16dp"
     tools:context="org.bootcamp.fiftytwo.fragments.RoundWinnersFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ivFireworks"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -27,5 +35,5 @@
         android:layout_centerHorizontal="false"
         android:paddingTop="16dp"
         tools:listitem="@layout/item_winners"/>
-
-</RelativeLayout>
+    </RelativeLayout>
+</FrameLayout>

@@ -7,6 +7,9 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.RoundWinnersAdapter;
@@ -30,6 +33,8 @@ public class RoundWinnersFragment extends DialogFragment {
     private Unbinder unbinder;
 
     @BindView(R.id.rvWinners) RecyclerView rvWinners;
+    @BindView(R.id.ivFireworks)
+    ImageView ivFireworks;
 
     public static RoundWinnersFragment newInstance(List<User> winners) {
         RoundWinnersFragment fragment = new RoundWinnersFragment();
@@ -59,6 +64,12 @@ public class RoundWinnersFragment extends DialogFragment {
         RoundWinnersAdapter roundWinnersAdapter = new RoundWinnersAdapter(winners);
         rvWinners.setLayoutManager(staggeredLayoutManager);
         rvWinners.setAdapter(roundWinnersAdapter);
+
+        Glide.with(getActivity())
+                .load(R.drawable.fireworks)
+                .asGif()
+                .into(ivFireworks);
+
         return view;
     }
 
