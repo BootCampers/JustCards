@@ -104,7 +104,7 @@ public class DealerViewFragment extends Fragment implements
                 .commit();
     }
 
-    @OnClick({R.id.btnRestart})
+    @OnClick({R.id.btnEnd})
     public void endRound() {
         new LovelyStandardDialog(getActivity())
                 .setTopColorRes(R.color.colorPrimary)
@@ -112,7 +112,7 @@ public class DealerViewFragment extends Fragment implements
                 .setIcon(R.drawable.ic_repeat_36dp)
                 .setTitle("End Round")
                 .setMessage("Score players to declare round winners and end this round? You can deal again to start the next round")
-                .setPositiveButton("End", v -> {
+                .setPositiveButton("Score & End", v -> {
                     scoringFragment = ScoringFragment.newInstance(mPlayers);
                     getChildFragmentManager()
                             .beginTransaction()
