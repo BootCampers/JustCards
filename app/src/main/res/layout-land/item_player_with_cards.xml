@@ -26,7 +26,7 @@
                 android:background="@drawable/text_rounded"
                 android:gravity="end|center_vertical"
                 android:text="@string/zero"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="0"/>
@@ -39,7 +39,7 @@
                 android:gravity="end|center_vertical"
                 android:paddingTop="15dp"
                 android:text="@string/zero"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="0"/>
@@ -62,7 +62,7 @@
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="14sp"
         tools:text="Name"/>
 

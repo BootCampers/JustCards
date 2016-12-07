@@ -20,7 +20,7 @@
         android:layout_gravity="start"
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_beenhere"/>
 

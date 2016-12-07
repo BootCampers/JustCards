@@ -6,33 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
         <item name="android:buttonStyle">@style/AppButtons</item>
-    </style>
-
-    <style name="ToolbarTheme" parent="AppTheme">
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="AppButtons" parent="Widget.AppCompat.ActionButton">
         <item name="android:background">@drawable/app_button</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">0</item>
         <item name="android:shadowRadius">5</item>
-    </style>
-
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -44,11 +29,11 @@
         <item name="fab_size">mini</item>
         <item name="fab_colorNormal">?attr/colorAccent</item>
         <item name="fab_colorPressed">?attr/colorAccent</item>
-        <item name="fab_colorRipple">@android:color/white</item>
+        <item name="fab_colorRipple">@color/colorRipple</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 </resources>

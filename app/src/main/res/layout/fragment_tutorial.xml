@@ -9,7 +9,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:siTextSize="18sp"
         app:siTextColor="@color/colorPrimaryDark"
-        app:siSelectedTextColor="@android:color/white"
+        app:siSelectedTextColor="@color/white"
         app:siIndicatorColor="@color/colorPrimary"
         android:id="@+id/indicator"
         android:layout_width="match_parent"

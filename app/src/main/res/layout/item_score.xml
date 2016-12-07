@@ -17,7 +17,7 @@
         android:gravity="center"
         android:layout_margin="12dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         tools:text="Player Name"/>
 
     <ImageButton
@@ -26,7 +26,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_remove_circle"/>
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:layout_height="wrap_content"
         android:id="@+id/tvScore" />
 
@@ -46,7 +46,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_add_circle"/>
 
 </LinearLayout>

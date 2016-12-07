@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clGameLayout"
@@ -20,14 +21,14 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/flGameContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <!-- TODO make log view a drawer instead? -->
     <FrameLayout
@@ -37,7 +38,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end"
-        android:layout_marginTop="@dimen/common_margin" />
+        android:layout_marginTop="@dimen/common_margin"/>
 
     <ImageButton
         android:id="@+id/ibHelp"
@@ -47,8 +48,8 @@
         android:layout_marginLeft="@dimen/common_margin"
         android:layout_marginStart="@dimen/common_margin"
         android:layout_marginTop="@dimen/common_margin"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_help_outline" />
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_help_outline"/>
 
     <ImageButton
         android:id="@+id/ibInfo"
@@ -58,8 +59,8 @@
         android:layout_marginEnd="@dimen/setting_right_margin"
         android:layout_marginRight="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_info_outline" />
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_info_outline"/>
 
     <ImageButton
         android:id="@+id/ibComment"
@@ -69,8 +70,8 @@
         android:layout_marginEnd="@dimen/common_margin"
         android:layout_marginRight="@dimen/common_margin"
         android:layout_marginTop="@dimen/common_margin"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_comment" />
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_comment"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fabMenu"
@@ -80,42 +81,42 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:paddingBottom="10dp"
-        app:menu_colorNormal="?attr/colorAccent"
-        app:menu_colorPressed="?attr/colorAccent"
-        app:menu_colorRipple="@android:color/white"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:menu_colorNormal="?attr/colorAccent"
+        app:menu_colorPressed="?attr/colorAccent"
+        app:menu_colorRipple="@color/colorRipple"
         app:menu_labels_ellipsize="end"
         app:menu_labels_position="left"
         app:menu_labels_singleLine="true">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabExit"
+            style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Exit from game"
-            style="@style/FabMenuButtonsSmall" />
+            app:fab_label="Exit from game"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSwap"
+            style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="@string/msg_show_dealer_view"
-            style="@style/FabMenuButtonsSmall" />
+            app:fab_label="@string/msg_show_dealer_view"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabMute"
+            style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Mute for this round"
-            style="@style/FabMenuButtonsSmall" />
+            app:fab_label="Mute for this round"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabShow"
+            style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Show cards to everyone"
-            style="@style/FabMenuButtonsSmall" />
+            app:fab_label="Show cards to everyone"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
@@ -139,10 +140,10 @@
             android:background="@drawable/text_round"
             android:gravity="center"
             android:text="@string/zero"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="normal"
-            tools:text="0" />
+            tools:text="0"/>
 
         <ImageView
             android:id="@+id/ivSink"
@@ -151,7 +152,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:layout_marginStart="2dp"
-            app:srcCompat="@drawable/ic_sink_empty" />
+            app:srcCompat="@drawable/ic_sink_empty"/>
 
     </LinearLayout>
 

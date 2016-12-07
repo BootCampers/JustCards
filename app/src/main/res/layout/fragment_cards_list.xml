@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/msg_no_cards"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvCardsList"

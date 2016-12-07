@@ -18,7 +18,7 @@
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/dealing_options"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="24sp"/>
 
     <TextView
@@ -31,7 +31,7 @@
         android:gravity="center"
         android:text="@string/card_for_each_player"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <ImageButton
         android:id="@+id/ibAdd"
@@ -43,7 +43,7 @@
         android:layout_marginTop="27dp"
         android:layout_toEndOf="@+id/tvCardsToDeal"
         android:layout_toRightOf="@+id/tvCardsToDeal"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_add_circle"/>
 
     <TextView
@@ -56,7 +56,7 @@
         android:layout_toEndOf="@+id/ibReduce"
         android:layout_toRightOf="@+id/ibReduce"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         tools:text="0"/>
 
     <ImageButton
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tvCardsToDeal"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_remove_circle"/>
 
     <TextView
@@ -78,7 +78,7 @@
         android:layout_marginTop="13dp"
         android:text="@string/remaining_cards_after_dealing"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <Spinner
         android:id="@+id/spnrRemainingCards"
@@ -99,7 +99,7 @@
         android:layout_marginTop="13dp"
         android:text="@string/shuffle_before_dealing"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <Switch
         android:id="@+id/switchShuffle"
@@ -120,7 +120,7 @@
         android:layout_marginTop="13dp"
         android:text="@string/deal_to_self"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <Switch
         android:id="@+id/switchDealSelf"
@@ -141,7 +141,7 @@
         android:layout_marginTop="13dp"
         android:text="@string/rule_view_table_card"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <Switch
         android:id="@+id/switchRuleViewTableCard"
@@ -161,7 +161,7 @@
         android:layout_marginTop="12dp"
         android:background="@color/colorPrimary"
         android:text="@string/deal_now"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 
     <ImageButton
         android:id="@+id/ibCancel"
@@ -170,7 +170,7 @@
         android:layout_above="@+id/ibAdd"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
+        android:background="@color/colorTransparent"
         android:paddingEnd="8dp"
         android:paddingRight="8dp"
         android:paddingStart="8dp"
