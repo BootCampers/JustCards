@@ -52,6 +52,8 @@ public class Constants {
     public static final String PARAM_CARD_COUNT = "cardCount";
     public static final String SELECTED_AVATAR = "selectedAvatar";
     public static final String ARG_IS_SELF_ELIGIBLE = "isSelfEligible";
+    public static final String ARG_FROM_PAGE = "fromPage";
+    public static final String ARG_TO_PAGE = "toPage";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
