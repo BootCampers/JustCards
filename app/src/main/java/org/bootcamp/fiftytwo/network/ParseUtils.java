@@ -29,11 +29,11 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
@@ -85,6 +85,17 @@ public class ParseUtils {
 
     public void saveCurrentUserIsActive(boolean isActive) {
         currentLoggedInUser.setActive(isActive);
+        currentLoggedInUser.save(context);
+    }
+
+    public void saveCurrentUserScore(final int score) {
+        currentLoggedInUser.setScore(score);
+        currentLoggedInUser.save(context);
+    }
+
+    public void resetCurrentUserForRound() {
+        currentLoggedInUser.setShowingCards(false);
+        currentLoggedInUser.setActive(true);
         currentLoggedInUser.save(context);
     }
 
@@ -276,9 +287,9 @@ public class ParseUtils {
         sendBroadcast(payload);
     }
 
-    public void restartRound() {
+    public void endRound() {
         JsonObject payload = getJson(currentLoggedInUser);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_RESTART_ROUND);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_END_ROUND);
         sendBroadcast(payload);
     }
 }

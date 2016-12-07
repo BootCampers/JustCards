@@ -188,4 +188,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         }
         cardsListener.cardCountChange(mCards.size());
     }
+
+    public void clear() {
+        mCards.clear();
+        notifyDataSetChanged();
+        cardsListener.setEmptyList(getItemCount() == 0);
+        cardsListener.cardCountChange(mCards.size());
+    }
 }

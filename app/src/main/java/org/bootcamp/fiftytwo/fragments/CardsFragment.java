@@ -228,6 +228,10 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         return false;
     }
 
+    public void clearCards() {
+        mAdapter.clear();
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

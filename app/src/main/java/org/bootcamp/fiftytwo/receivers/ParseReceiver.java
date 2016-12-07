@@ -21,7 +21,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
@@ -70,7 +70,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_MUTE_PLAYER_FOR_ROUND:
                 case PARSE_SCORES_UPDATED:
                 case PARSE_ROUND_WINNERS:
-                case PARSE_RESTART_ROUND:
+                case PARSE_END_ROUND:
                     application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:

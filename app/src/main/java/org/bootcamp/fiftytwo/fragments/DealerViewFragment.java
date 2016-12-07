@@ -252,6 +252,13 @@ public class DealerViewFragment extends Fragment implements
         return mPlayers;
     }
 
+    public void setCards(List<Card> cards) {
+        mCards.clear();
+        if (!isEmpty(cards)) {
+            mCards.addAll(cards);
+        }
+    }
+
     public boolean drawDealerCards(final List<Card> cards) {
         if (!isEmpty(cards)) {
             CardsFragment dealerFragment = (CardsFragment) getChildFragmentManager().findFragmentByTag(DEALER_TAG);

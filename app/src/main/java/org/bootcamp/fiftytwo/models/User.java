@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
+import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.IS_ACTIVE;
 import static org.bootcamp.fiftytwo.utils.Constants.IS_DEALER;
@@ -116,6 +117,20 @@ public class User {
                 .putBoolean(IS_ACTIVE, isActive)
                 .putInt(SCORE, score)
                 .apply();
+    }
+
+    private void resetForRound() {
+        isShowingCards = false;
+        isActive = true;
+        cards = new ArrayList<>();
+    }
+
+    public static void resetForRound(final List<User> users) {
+        if (!isEmpty(users)) {
+            for (User user : users) {
+                user.resetForRound();
+            }
+        }
     }
 
     public String getUserId() {

@@ -81,7 +81,7 @@ public class Constants {
     public static final String PARSE_MUTE_PLAYER_FOR_ROUND = "mutePlayerForRound";
     public static final String PARSE_SCORES_UPDATED = "scoresUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
-    public static final String PARSE_RESTART_ROUND = "restartRound";
+    public static final String PARSE_END_ROUND = "endRound";
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

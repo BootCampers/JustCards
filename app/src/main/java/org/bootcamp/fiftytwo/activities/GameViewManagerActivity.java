@@ -71,10 +71,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.bootcamp.fiftytwo.models.User.fromJson;
+import static org.bootcamp.fiftytwo.models.User.resetForRound;
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getVectorCompat;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
+import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FRAGMENT_CHAT_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
@@ -93,7 +95,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
@@ -512,13 +514,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onScore(boolean saveClicked) {
         if (saveClicked) {
             parseUtils.updateUsersScore(mPlayers);
-            User self = User.getCurrentUser(this);
-            onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Scoring everyone now!");
-
-            //now restart the round
-            parseUtils.restartRound();
-            //TODO: take care of things on dealer side
-            //player side stuff will be done through broadcast
+            parseUtils.endRound();
         }
     }
 
@@ -541,6 +537,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onChat(ChatLog item) {
         // Do Nothing
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //Do nothing
     }
 
     @Override
@@ -645,19 +646,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             case PARSE_SCORES_UPDATED:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<User> players = new Gson().fromJson(json.get(USER_TAG_SCORE), new TypeToken<List<User>>() {}.getType());
+                    List<User> players = new Gson().fromJson(json.get(USER_TAG_SCORE), new TypeToken<List<User>>() {
+                    }.getType());
                     handleScoresUpdate(from, players);
                 });
                 break;
             case PARSE_ROUND_WINNERS:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<User> roundWinners = new Gson().fromJson(json.get(PARAM_PLAYERS), new TypeToken<List<User>>() {}.getType());
+                    List<User> roundWinners = new Gson().fromJson(json.get(PARAM_PLAYERS), new TypeToken<List<User>>() {
+                    }.getType());
                     handleRoundWinners(roundWinners, from);
                 });
                 break;
-            case PARSE_RESTART_ROUND:
-                handleRestartPlayerRound();
+            case PARSE_END_ROUND:
+                runOnUiThread(() -> {
+                    User from = fromJson(json);
+                    handleEndRound(from);
+                });
                 break;
         }
     }
@@ -898,7 +904,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleScoresUpdate(User from, List<User> players) {
+    private void handleScoresUpdate(final User from, final List<User> players) {
         Log.d(TAG, "handleScoresUpdate: Score update received from: " + from);
         if (from != null && from.isDealer() && !isEmpty(players)) {
             for (User player : players) {
@@ -911,6 +917,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     if (!isEmpty(dPlayers) && dPlayers.contains(player)) {
                         dPlayers.get(dPlayers.indexOf(player)).setScore(player.getScore());
                     }
+                }
+
+                if (isSelf(player)) {
+                    parseUtils.saveCurrentUserScore(player.getScore());
                 }
 
                 Fragment fragment = getPlayerFragment(this, player);
@@ -932,24 +942,61 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleRestartPlayerRound() {
-        fabMute.setEnabled(true);
-        fabMute.setTag(false);
+    private void handleEndRound(final User from) {
+        if (from != null && from.isDealer()) {
+            onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), "Ending the current round now.");
 
-        fabShow.setEnabled(true);
-        fabShow.setTag(false);
+            // Reset Button States
+            fabMute.setEnabled(true);
+            fabMute.setTag(false);
+            fabShow.setEnabled(true);
+            fabShow.setTag(false);
 
-        //TODO: needs discussion. Now users can't tap on other player cards to see what they have. Is that ok?
-        for (User user : mPlayers) {
-            user.setShowingCards(false);
-            user.setActive(true);
-            //TODO: clear all user cards
+            // Reset player statuses in game manager and dealer view fragment
+            resetForRound(mPlayers);
+            if (dealerViewFragment != null) {
+                List<User> players = dealerViewFragment.getPlayers();
+                resetForRound(players);
+            }
+
+            // Reset current player status and save
+            parseUtils.resetCurrentUserForRound();
+
+            // Clear leftover cards from player's hand and table
+            Fragment fragment;
+            if (playerViewFragment != null) {
+                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).clearCards();
+                }
+                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).clearCards();
+                }
+            }
+
+            // Clear leftover cards from dealer's stack and re-stack with selected cards for the game
+            if (dealerViewFragment != null) {
+                fragment = dealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).clearCards();
+                    dealerViewFragment.setCards(mCards);
+                    ((CardsFragment) fragment).stackCards(mCards);
+                }
+            }
+
+            // Clear leftover cards from floating players and toggle the cards list
+            for (User player : mPlayers) {
+                fragment = getPlayerFragment(this, player);
+                if (fragment != null) {
+                    ((CardsFragment) fragment).clearCards();
+                    ((CardsFragment) fragment).toggleCardsList(false);
+                }
+            }
+
+            // Clear cards from the sink
+            clearSink();
         }
-        //TODO: clear table and sink cards
-    }
-
-    private void doRestartDealerRound() {
-        //TODO
     }
 
     public void addCardsToSink(List<Card> cards) {
@@ -958,9 +1005,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         tvSinkCardsCount.setText(String.valueOf(sinkCards.size()));
     }
 
-    public void removeAllSinkCards() {
+    public void clearSink() {
         sinkCards.clear();
         ivSink.setImageResource(R.drawable.ic_sink_empty);
+        tvSinkCardsCount.setText(String.valueOf(sinkCards.size()));
     }
 
     private void animateDeal() {
@@ -973,8 +1021,4 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .oneShot(findViewById(R.id.flPlayerContainer), 4);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //Do nothing
-    }
 }
