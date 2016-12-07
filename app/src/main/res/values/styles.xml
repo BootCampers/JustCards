@@ -40,6 +40,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="FabMenuButtonsSmall">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">?attr/colorAccent</item>
+        <item name="fab_colorPressed">?attr/colorAccent</item>
+        <item name="fab_colorRipple">@android:color/white</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

@@ -80,6 +80,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:paddingBottom="10dp"
+        app:menu_colorNormal="?attr/colorAccent"
+        app:menu_colorPressed="?attr/colorAccent"
+        app:menu_colorRipple="@android:color/white"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         app:menu_labels_ellipsize="end"
@@ -91,28 +94,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Exit from game"
-            app:fab_size="mini" />
+            style="@style/FabMenuButtonsSmall" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSwap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="@string/msg_show_dealer_view"
-            app:fab_size="mini" />
+            style="@style/FabMenuButtonsSmall" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabMute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Mute for this round"
-            app:fab_size="mini" />
+            style="@style/FabMenuButtonsSmall" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_label="Show cards to everyone"
-            app:fab_size="mini" />
+            style="@style/FabMenuButtonsSmall" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
