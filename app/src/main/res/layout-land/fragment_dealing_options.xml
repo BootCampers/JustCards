@@ -131,6 +131,27 @@
         android:layout_toRightOf="@+id/ibReduce"
         android:checked="true"/>
 
+    <TextView
+        android:id="@+id/tvRuleViewTableCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvDealToSelf"
+        android:layout_marginTop="13dp"
+        android:text="@string/rule_view_table_card"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"/>
+
+    <Switch
+        android:id="@+id/switchRuleViewTableCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvRuleViewTableCard"
+        android:layout_toEndOf="@+id/ibReduce"
+        android:layout_toRightOf="@+id/ibReduce"
+        android:checked="true"/>
+
     <Button
         android:id="@+id/btnDealNow"
         android:layout_width="wrap_content"

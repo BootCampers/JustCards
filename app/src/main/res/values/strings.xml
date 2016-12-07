@@ -39,6 +39,7 @@
     <string name="remaining_cards_after_dealing">Remaining cards after dealing</string>
     <string name="deal_now">Deal Now</string>
     <string name="deal_to_self">Deal to Self</string>
+    <string name="rule_view_table_card">Can table cards be seen by players</string>
     <string name="network_failure_msg">FAILED TO CONNECT TO NETWORK</string>
     <string name="avatar_image_description">User Avatar Image</string>
     <string name="msg_score_sheet">Score sheet</string>
