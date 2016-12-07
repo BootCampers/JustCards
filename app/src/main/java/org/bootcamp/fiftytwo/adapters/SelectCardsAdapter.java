@@ -51,7 +51,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         holder.ivCard.setImageDrawable(null);
         Glide.with(holder.ivCard.getContext())
                 .load(card.getDrawable(getContext()))
-                .bitmapTransform(new RoundedCornersTransformation(holder.ivCard.getContext(), 20, 0))
+                .bitmapTransform(new RoundedCornersTransformation(getContext(), 20, 0))
                 .fitCenter()
                 .into(holder.ivCard);
 
@@ -65,16 +65,16 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         holder.flSelected.setTag(card);
 
         holder.flSelected.setOnClickListener(v -> {
-            Card card1 = (Card) v.getTag();
+            Card c = (Card) v.getTag();
             if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                 if (holder.ivSelected.getVisibility() == View.VISIBLE) {
                     holder.ivSelected.setVisibility(View.INVISIBLE);
                     v.setSelected(false);
-                    card1.setSelected(false);
+                    c.setSelected(false);
                 } else {
                     holder.ivSelected.setVisibility(View.VISIBLE);
                     v.setSelected(true);
-                    card1.setSelected(true);
+                    c.setSelected(true);
                 }
             }
         });
@@ -86,7 +86,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         Glide.clear(holder.ivCard);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivCard) ImageView ivCard;
         @BindView(R.id.ivSelected) ImageView ivSelected;
         @BindView(R.id.flSelectCard) FrameLayout flSelected;
