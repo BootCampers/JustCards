@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -24,6 +23,7 @@ import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getCardsType;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
@@ -182,8 +182,7 @@ public class ParseDB {
                     Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
                 } else {
                     String cardsString = itemList.get(0).getCards();
-                    List<Card> cards = new Gson().fromJson(cardsString, new TypeToken<List<Card>>() {
-                    }.getType());
+                    List<Card> cards = new Gson().fromJson(cardsString, getCardsType());
                     if (cards == null) {
                         Log.e(TAG, "getGameTableCards: received cards from game table are null");
                     } else if (expectedCardCount != cards.size()) {

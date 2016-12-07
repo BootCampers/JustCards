@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.R;
-import org.bootcamp.fiftytwo.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +30,11 @@ import butterknife.Unbinder;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_IS_SELF_ELIGIBLE;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_PLAYER_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_DEAL_SELF;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_REMAINING_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_SHUFFLE;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_VIEW_TABLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 
 public class DealingOptionsFragment extends Fragment {
@@ -41,6 +45,7 @@ public class DealingOptionsFragment extends Fragment {
     @BindView(R.id.spnrRemainingCards) Spinner spnrRemainingCards;
     @BindView(R.id.switchShuffle) Switch switchShuffle;
     @BindView(R.id.switchDealSelf) Switch switchDealSelf;
+    @BindView(R.id.switchRuleViewTableCard) Switch switchRuleViewTableCard;
     @BindView(R.id.btnDealNow) Button btnDealNow;
     @BindView(R.id.ibCancel) ImageButton ibCancel;
 
@@ -104,10 +109,11 @@ public class DealingOptionsFragment extends Fragment {
     public void onDealNowPressed() {
         if (mListener != null) {
             Bundle bundle = new Bundle();
-            bundle.putInt(Constants.DO_CARD_COUNT, Integer.parseInt(tvCardsToDeal.getText().toString()));
-            bundle.putString(Constants.DO_REMAINING_CARDS, spnrRemainingCards.getSelectedItem().toString());
-            bundle.putBoolean(Constants.DO_SHUFFLE, switchShuffle.isChecked());
-            bundle.putBoolean(Constants.DO_DEAL_SELF, switchDealSelf.isChecked());
+            bundle.putInt(DO_CARD_COUNT, Integer.parseInt(tvCardsToDeal.getText().toString()));
+            bundle.putString(DO_REMAINING_CARDS, spnrRemainingCards.getSelectedItem().toString());
+            bundle.putBoolean(DO_SHUFFLE, switchShuffle.isChecked());
+            bundle.putBoolean(DO_DEAL_SELF, switchDealSelf.isChecked());
+            bundle.putBoolean(RULE_VIEW_TABLE_CARD, switchRuleViewTableCard.isChecked());
             mListener.onDealOptionSelected(bundle);
         }
     }

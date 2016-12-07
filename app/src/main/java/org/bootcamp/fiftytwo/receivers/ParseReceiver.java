@@ -17,13 +17,14 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
@@ -71,6 +72,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_SCORES_UPDATED:
                 case PARSE_ROUND_WINNERS:
                 case PARSE_END_ROUND:
+                case PARSE_SELECT_GAME_RULES:
                     application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:

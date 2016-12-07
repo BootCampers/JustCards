@@ -27,8 +27,8 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
@@ -51,6 +51,7 @@ import org.bootcamp.fiftytwo.interfaces.Observer;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.ChatLog;
 import org.bootcamp.fiftytwo.models.Game;
+import org.bootcamp.fiftytwo.models.GameRules;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseDB;
 import org.bootcamp.fiftytwo.network.ParseUtils;
@@ -70,10 +71,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static org.bootcamp.fiftytwo.models.GameRules.getRuleDescription;
 import static org.bootcamp.fiftytwo.models.User.fromJson;
 import static org.bootcamp.fiftytwo.models.User.resetForRound;
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getCardsType;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getList;
+import static org.bootcamp.fiftytwo.utils.AppUtils.getUsersType;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getVectorCompat;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
@@ -91,18 +95,22 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DROP_CARD_TO_SINK;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_END_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.PLAYER_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_CODE;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_SELECTION;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_VIEW_TABLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.SINK_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
@@ -129,6 +137,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private List<Card> sinkCards = new ArrayList<>();
     private ParseUtils parseUtils;
     private MediaUtils mediaUtils;
+    private Gson gson = new Gson();
 
     private boolean isCurrentViewPlayer = true;
     private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
@@ -458,6 +467,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onSelectGameRule(String code, Object selection) {
+        parseUtils.selectGameRules(code, selection);
+    }
+
+    @Override
     public boolean onDeal(List<Card> cards, User player) {
         Fragment fragment = getPlayerFragment(this, player);
         if (fragment != null && !isEmpty(cards)) {
@@ -548,54 +562,43 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
         JsonObject json = (JsonObject) arg;
+        User from = User.fromJson(json);
         Log.d(TAG, "onUpdate: " + event);
 
         switch (event) {
             case PARSE_NEW_PLAYER_ADDED:
                 mediaUtils.playTingTone();
-                runOnUiThread(() -> {
-                    User user = User.fromJson(json);
-                    addPlayersToView(getList(user));
-                });
+                runOnUiThread(() -> addPlayersToView(getList(from)));
                 break;
             case PARSE_PLAYER_LEFT:
                 mediaUtils.playTingTone();
-                runOnUiThread(() -> {
-                    User user = User.fromJson(json);
-                    removePlayersFromView(getList(user));
-                });
+                runOnUiThread(() -> removePlayersFromView(getList(from)));
                 break;
             case PARSE_DEAL_CARDS:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
                     User to = fromJson(json.get(PARAM_PLAYER).getAsJsonObject());
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
                     handleDeal(card, from, to);
                 });
                 break;
             case PARSE_DEAL_CARDS_TO_TABLE:
                 mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
                     int cardCount = json.get(PARAM_CARD_COUNT).getAsInt();
-                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
-                    }.getType());
+                    List<Card> cards = gson.fromJson(json.get(PARAM_CARDS), getCardsType());
                     handleDealTable(from, cards, cardCount);
                 });
                 break;
             case PARSE_DEAL_CARDS_TO_SINK:
                 mediaUtils.playGlassBreakingTone();
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    List<Card> cards = new Gson().fromJson(json.get(PARAM_CARDS), new TypeToken<List<Card>>() {
-                    }.getType());
+                    List<Card> cards = gson.fromJson(json.get(PARAM_CARDS), getCardsType());
                     handleDealSink(from, cards);
                 });
                 break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
                     int toPosition = json.get(TO_POSITION).getAsInt();
                     boolean pickedFromTable = json.get(TABLE_PICKED).getAsBoolean();
@@ -604,8 +607,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_SWAP_CARD_WITHIN_PLAYER:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
                     int toPosition = json.get(TO_POSITION).getAsInt();
                     handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
@@ -613,8 +615,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_DROP_CARD_TO_SINK:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
                     String fromTag = json.get(FROM_TAG).getAsString();
                     int fromPosition = json.get(FROM_POSITION).getAsInt();
                     handleCardDropToSink(from, card, fromTag, fromPosition);
@@ -622,8 +623,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_TOGGLE_CARD:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    Card card = new Gson().fromJson(json.get(PARAM_CARDS), Card.class);
+                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
                     int position = json.get(POSITION).getAsInt();
                     String onTag = json.get(ON_TAG).getAsString();
                     handleToggleCard(from, card, position, onTag);
@@ -631,38 +631,42 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_TOGGLE_CARDS_LIST:
                 runOnUiThread(() -> {
-                    User user = User.fromJson(json);
                     boolean toShow = json.get(TO_SHOW).getAsBoolean();
-                    toggleCardsListForPlayerView(user, toShow);
+                    toggleCardsListForPlayerView(from, toShow);
                 });
                 break;
             case PARSE_MUTE_PLAYER_FOR_ROUND:
                 runOnUiThread(() -> {
-                    User user = User.fromJson(json);
                     boolean toMute = json.get(TO_MUTE).getAsBoolean();
-                    handleMutePlayerForRound(user, toMute);
+                    handleMutePlayerForRound(from, toMute);
                 });
                 break;
             case PARSE_SCORES_UPDATED:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    List<User> players = new Gson().fromJson(json.get(USER_TAG_SCORE), new TypeToken<List<User>>() {
-                    }.getType());
+                    List<User> players = gson.fromJson(json.get(USER_TAG_SCORE), getUsersType());
                     handleScoresUpdate(from, players);
                 });
                 break;
             case PARSE_ROUND_WINNERS:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    List<User> roundWinners = new Gson().fromJson(json.get(PARAM_PLAYERS), new TypeToken<List<User>>() {
-                    }.getType());
+                    List<User> roundWinners = gson.fromJson(json.get(PARAM_PLAYERS), getUsersType());
                     handleRoundWinners(roundWinners, from);
                 });
                 break;
             case PARSE_END_ROUND:
+                runOnUiThread(() -> handleEndRound(from));
+                break;
+            case PARSE_SELECT_GAME_RULES:
                 runOnUiThread(() -> {
-                    User from = fromJson(json);
-                    handleEndRound(from);
+                    String code = json.get(RULE_CODE).getAsString();
+                    Object selection = null;
+                    JsonElement selectionElement = json.get(RULE_SELECTION);
+                    if (selectionElement.isJsonPrimitive()) {
+                        if (selectionElement.getAsJsonPrimitive().isBoolean()) {
+                            selection = selectionElement.getAsJsonPrimitive().getAsBoolean();
+                        }
+                    }
+                    handleGameRules(from, code, selection);
                 });
                 break;
         }
@@ -1009,6 +1013,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         sinkCards.clear();
         ivSink.setImageResource(R.drawable.ic_sink_empty);
         tvSinkCardsCount.setText(String.valueOf(sinkCards.size()));
+    }
+
+    private void handleGameRules(final User from, final String code, final Object selection) {
+        Log.d(TAG, "handleGameRules: from: " + from +
+                ", code: " + code +
+                ", selection: " + selection);
+
+        if (from != null && from.isDealer() && !TextUtils.isEmpty(code) && selection != null) {
+            if (RULE_VIEW_TABLE_CARD.equalsIgnoreCase(code)) {
+                GameRules.get(this)
+                        .setViewTableCardAllowed((boolean) selection)
+                        .save(this);
+                onNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
+                        "Rule set for the round: " + getRuleDescription(RULE_VIEW_TABLE_CARD, this) + ": " + ((boolean) selection ? "Yes" : "No"));
+            }
+        }
     }
 
     private void animateDeal() {

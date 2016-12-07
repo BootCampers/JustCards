@@ -105,9 +105,11 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tvSelectedCards"
                     android:layout_toEndOf="@id/tvSelectedCards"
-                    android:text="Reselect"
+                    android:text="@string/reselect"
                     android:paddingLeft="8dp"
                     android:paddingStart="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingEnd="8dp"
                     android:id="@+id/btnReselect"
                     android:scaleX="0.8"
                     android:scaleY="0.8"/>

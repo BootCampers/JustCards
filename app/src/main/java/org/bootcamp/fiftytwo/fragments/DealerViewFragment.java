@@ -32,9 +32,16 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.CardUtil.draw;
 import static org.bootcamp.fiftytwo.utils.Constants.DEALER_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.DEALING_OPTIONS_TAG;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_DEAL_SELF;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_REMAINING_CARDS;
+import static org.bootcamp.fiftytwo.utils.Constants.DO_SHUFFLE;
 import static org.bootcamp.fiftytwo.utils.Constants.LAYOUT_TYPE_STAGGERED_HORIZONTAL;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_VIEW_TABLE_CARD;
+import static org.bootcamp.fiftytwo.utils.Constants.SCORING_OPTIONS_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.RuleUtils.isPlayerNotEligibleForDeal;
 
@@ -59,6 +66,7 @@ public class DealerViewFragment extends Fragment implements
         boolean onDeal(List<Card> cards, User player);
         boolean onDealTable(List<Card> cards, boolean toSink);
         void onDealerOptionsShowing(boolean isDealerOptionShowing);
+        void onSelectGameRule(String code, Object selection);
     }
 
     public static DealerViewFragment newInstance(List<Card> cards, List<User> players) {
@@ -116,7 +124,7 @@ public class DealerViewFragment extends Fragment implements
                     scoringFragment = ScoringFragment.newInstance(mPlayers);
                     getChildFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
+                            .replace(R.id.flDealerViewContainer, scoringFragment, SCORING_OPTIONS_TAG)
                             .hide(dealerCardsFragment)
                             .commit();
                     mDealListener.onDealerOptionsShowing(true);
@@ -158,7 +166,7 @@ public class DealerViewFragment extends Fragment implements
         dealingOptionsFragment = DealingOptionsFragment.newInstance(numPlayers, cards.size(), isSelfEligible);
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.flDealerViewContainer, dealingOptionsFragment, Constants.DEALING_OPTIONS_TAG)
+                .replace(R.id.flDealerViewContainer, dealingOptionsFragment, DEALING_OPTIONS_TAG)
                 .hide(dealerCardsFragment)
                 .commit();
 
@@ -169,10 +177,14 @@ public class DealerViewFragment extends Fragment implements
     public void onDealOptionSelected(Bundle bundle) {
         if (bundle != null) {
             Log.d(Constants.TAG, bundle.toString());
-            int doCardCount = bundle.getInt(Constants.DO_CARD_COUNT);
-            String doRemainingCards = bundle.getString(Constants.DO_REMAINING_CARDS);
-            boolean doShuffle = bundle.getBoolean(Constants.DO_SHUFFLE);
-            boolean doDealSelf = bundle.getBoolean(Constants.DO_DEAL_SELF);
+            int doCardCount = bundle.getInt(DO_CARD_COUNT);
+            String doRemainingCards = bundle.getString(DO_REMAINING_CARDS);
+            boolean doShuffle = bundle.getBoolean(DO_SHUFFLE);
+            boolean doDealSelf = bundle.getBoolean(DO_DEAL_SELF);
+            boolean ruleViewTableCard = bundle.getBoolean(RULE_VIEW_TABLE_CARD);
+            if (mDealListener != null) {
+                mDealListener.onSelectGameRule(RULE_VIEW_TABLE_CARD, ruleViewTableCard);
+            }
             dealNow(doCardCount, doRemainingCards, doShuffle, doDealSelf);
         }
 

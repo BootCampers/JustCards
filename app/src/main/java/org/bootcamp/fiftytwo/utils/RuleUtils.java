@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.GameRules;
 import org.bootcamp.fiftytwo.models.User;
 
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
@@ -98,7 +99,7 @@ public class RuleUtils {
                 return false;
             } else if (PLAYER_TAG.equalsIgnoreCase(tag)) {
                 return true;
-            } else if (TABLE_TAG.equalsIgnoreCase(tag) && !isPlayerNotEligible(context, tag)) {
+            } else if (TABLE_TAG.equalsIgnoreCase(tag) && !isPlayerNotEligible(context, tag) && GameRules.get(context).isViewTableCardAllowed()) {
                 return true;
             } else if (isFloatingPlayerTag(tag)) {
                 return true;

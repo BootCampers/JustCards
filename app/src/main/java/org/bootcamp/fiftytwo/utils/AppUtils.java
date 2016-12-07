@@ -15,10 +15,14 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.gson.reflect.TypeToken;
 
 import org.bootcamp.fiftytwo.R;
+import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.models.User;
 import org.parceler.Parcels;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +56,14 @@ public class AppUtils {
         return list;
     }
 
+    public static Type getCardsType() {
+        return new TypeToken<List<Card>>() {}.getType();
+    }
+
+    public static Type getUsersType() {
+        return new TypeToken<List<User>>() {}.getType();
+    }
+
     public static void loadRoundedImage(final Context context, final ImageView view, final Object uri) {
         Glide.with(context)
                 .load(uri)
@@ -76,8 +88,6 @@ public class AppUtils {
     public static VectorDrawableCompat getVectorCompat(final Context context, final int resId) {
         return VectorDrawableCompat.create(context.getResources(), resId, context.getTheme());
     }
-
-
 
     public static void animateCircularReveal(final View view) {
         view.postDelayed(() -> {

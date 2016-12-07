@@ -25,6 +25,8 @@ public class Constants {
     public static final String IS_SHOWING_CARDS = "isShowingCards";
     public static final String IS_ACTIVE = "isActive";
     public static final String SCORE = "score";
+    public static final String RULE_PREFS = "rulePrefs";
+    public static final String RULE_VIEW_TABLE_CARD = "ruleViewTableCard";
 
     /** Request Codes Here */
     public static final int REQ_CODE_SELECT_CARDS = 1;
@@ -66,6 +68,8 @@ public class Constants {
     public static final String ON_TAG = "onTag";
     public static final String TO_SHOW = "toShow";
     public static final String TO_MUTE = "toMute";
+    public static final String RULE_CODE = "ruleCode";
+    public static final String RULE_SELECTION = "ruleSelection";
 
     /** Parse Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
@@ -82,6 +86,7 @@ public class Constants {
     public static final String PARSE_SCORES_UPDATED = "scoresUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
     public static final String PARSE_END_ROUND = "endRound";
+    public static final String PARSE_SELECT_GAME_RULES = "selectGameRules";
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

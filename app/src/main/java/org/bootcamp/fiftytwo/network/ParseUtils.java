@@ -36,10 +36,13 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.bootcamp.fiftytwo.utils.Constants.POSITION;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_CODE;
+import static org.bootcamp.fiftytwo.utils.Constants.RULE_SELECTION;
 import static org.bootcamp.fiftytwo.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_MUTE;
@@ -290,6 +293,16 @@ public class ParseUtils {
     public void endRound() {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_END_ROUND);
+        sendBroadcast(payload);
+    }
+
+    public void selectGameRules(String code, Object selection) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(RULE_CODE, code);
+        if (selection instanceof Boolean) {
+            payload.addProperty(RULE_SELECTION, (Boolean) selection);
+        }
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SELECT_GAME_RULES);
         sendBroadcast(payload);
     }
 }
