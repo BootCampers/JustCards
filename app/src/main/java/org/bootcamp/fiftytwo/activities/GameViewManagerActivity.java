@@ -264,7 +264,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabSwap)
     public void switchView() {
         fabMenu.close(true);
-        if (isCurrentViewPlayer) {
+        if (isCurrentViewPlayer || isShowingPlayerFragment) {
             fabSwap.setLabelText(msgPlayerSide);
         } else {
             fabSwap.setLabelText(msgDealerSide);
