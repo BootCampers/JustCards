@@ -55,8 +55,7 @@
                     android:layout_below="@+id/tvGameNumberLabel"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    android:text=""
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="25sp"
                     android:textStyle="bold"
                     tools:text="54321"/>
@@ -66,8 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="Here is your game ID:"/>
@@ -81,7 +79,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center_horizontal"
                     android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="15sp"/>
 
             </RelativeLayout>
@@ -94,7 +92,7 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/accent_translucent_background"
                 android:padding="8dp"
-                android:visibility="invisible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvSelectedCards"
@@ -103,7 +101,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:text="@string/msg_selected_cards_count"/>
@@ -146,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rlSelectedCards"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="@string/select_cards"/>

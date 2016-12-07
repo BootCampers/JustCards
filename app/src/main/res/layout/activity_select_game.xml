@@ -62,7 +62,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_toEndOf="@+id/ivAvatar"
                     android:layout_toRightOf="@+id/ivAvatar"
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="20sp"
                     android:textStyle="bold|italic"/>
 
@@ -76,7 +76,7 @@
                     android:layout_toEndOf="@+id/ivAvatar"
                     android:layout_toRightOf="@+id/ivAvatar"
                     android:text="@string/what_would_you_like_to_do"
-                    android:textColor="@color/colorPrimary"
+                    style="@style/LabelTextStyle"
                     android:textSize="20sp"
                     android:textStyle="bold|italic"/>
 

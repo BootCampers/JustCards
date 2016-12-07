@@ -36,4 +36,8 @@
         <item name="fab_colorRipple">@color/colorRipple</item>
     </style>
 
+    <style name="LabelTextStyle">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 </resources>
