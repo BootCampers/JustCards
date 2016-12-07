@@ -32,8 +32,6 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 public class ScoringFragment extends Fragment {
 
     private List<User> users = new ArrayList<>();
-    private ScoreAdapter scoringAdapter;
-    private StaggeredGridLayoutManager staggeredLayoutManager;
     private OnScoreFragmentListener mListener;
     private Unbinder unbinder;
 
@@ -66,7 +64,7 @@ public class ScoringFragment extends Fragment {
             if (isEmpty(users)) {
                 users = new ArrayList<>();
             }
-            for(User user:users){
+            for (User user : users) {
                 savedScoreMap.put(user, user.getScore());
             }
         }
@@ -74,30 +72,30 @@ public class ScoringFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_scoring, container, false);
+        View view = inflater.inflate(R.layout.fragment_scoring, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        scoringAdapter = new ScoreAdapter(users);
+        StaggeredGridLayoutManager staggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        ScoreAdapter scoringAdapter = new ScoreAdapter(users);
         rvPlayersScores.setLayoutManager(staggeredLayoutManager);
         rvPlayersScores.setAdapter(scoringAdapter);
         return view;
     }
 
     @OnClick(R.id.btnSave)
-    public void saveScore(){
+    public void saveScore() {
         if (mListener != null) {
             mListener.onScore(true);
         }
         //Scores of all users is already updated to latest in Score adapter
-        if(users.size() >= 2){
-            for(User user:users){
+        if (users.size() >= 2) {
+            for (User user : users) {
                 int scoreDelta = user.getScore() - savedScoreMap.get(user);
-                if (scoreDelta > roundHighScore){
+                if (scoreDelta > roundHighScore) {
                     roundWinners.clear();
                     roundWinners.add(user);
                     roundHighScore = scoreDelta;
-                } else if (scoreDelta == roundHighScore){
+                } else if (scoreDelta == roundHighScore) {
                     roundWinners.add(user);
                     roundHighScore = scoreDelta;
                 }
@@ -114,7 +112,7 @@ public class ScoringFragment extends Fragment {
             mListener.onScore(false);
         }
         //Go back to original score
-        for (User user : users){
+        for (User user : users) {
             user.setScore(savedScoreMap.get(user));
         }
     }

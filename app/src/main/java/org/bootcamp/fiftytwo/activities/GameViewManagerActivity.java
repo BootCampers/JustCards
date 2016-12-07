@@ -84,6 +84,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
@@ -94,7 +95,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
@@ -106,6 +107,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_MUTE;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
+import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG_SCORE;
 import static org.bootcamp.fiftytwo.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -315,16 +317,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         .setIcon(R.drawable.ic_visibility_on_36dp)
                         .setTitle("Show Cards to Everyone")
                         .setMessage("Are you sure you want to show your cards to all players in the game? Once shown, cards cannot be hidden back in this round!")
-                        .setPositiveButton("Yes Show", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                fabShow.setTag(true);
-                                fabShow.setEnabled(false);
-                                fabMenu.close(true);
-                                User self = parseUtils.getCurrentUser();
-                                parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
-                                parseUtils.toggleCardsList(true);
-                            }
+                        .setPositiveButton("Yes Show", v -> {
+                            fabShow.setTag(true);
+                            fabShow.setEnabled(false);
+                            fabMenu.close(true);
+                            User self = parseUtils.getCurrentUser();
+                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
+                            parseUtils.toggleCardsList(true);
                         })
                         .setNegativeButton(android.R.string.no, null)
                         .show();
@@ -345,16 +344,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .setIcon(R.drawable.ic_not_interested_36dp)
                     .setTitle("Mute for current round")
                     .setMessage("Are you sure you want to mute yourself for this round? Once muted, you cannot play in this round any more!")
-                    .setPositiveButton("Yes Mute", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            fabMute.setTag(true);
-                            fabMenu.close(true);
-                            fabMute.setEnabled(false);
-                            User self = parseUtils.getCurrentUser();
-                            parseUtils.saveCurrentUserIsActive(!self.isActive());
-                            parseUtils.mutePlayerForRound(true);
-                        }
+                    .setPositiveButton("Yes Mute", v -> {
+                        fabMute.setTag(true);
+                        fabMenu.close(true);
+                        fabMute.setEnabled(false);
+                        User self = parseUtils.getCurrentUser();
+                        parseUtils.saveCurrentUserIsActive(!self.isActive());
+                        parseUtils.mutePlayerForRound(true);
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -374,18 +370,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_power_36dp)
                 .setTitle("Exit Game")
                 .setMessage("Are you sure you want to exit from game?")
-                .setPositiveButton("Yes Exit", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        parseUtils.removeChannel();
-                        ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(GameViewManagerActivity.this));
-                        if (User.getCurrentUser(GameViewManagerActivity.this).isDealer()) {
-                            ParseDB.deleteGame(gameName);
-                        }
-                        ((FiftyTwoApplication) getApplication()).removeAllObservers();
-                        parseUtils.resetCurrentUser();
-                        finish();
+                .setPositiveButton("Yes Exit", v -> {
+                    parseUtils.removeChannel();
+                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(GameViewManagerActivity.this));
+                    if (User.getCurrentUser(GameViewManagerActivity.this).isDealer()) {
+                        ParseDB.deleteGame(gameName);
                     }
+                    ((FiftyTwoApplication) getApplication()).removeAllObservers();
+                    parseUtils.resetCurrentUser();
+                    finish();
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
@@ -439,7 +432,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @OnClick(R.id.ibHelp)
-    public void showTutorial(View view){
+    public void showTutorial(View view) {
         /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         TutorialFragment tutorialFragment = TutorialFragment.newInstance(0,0);
         fragmentTransaction.add(R.id.flGameContainer, tutorialFragment, "Tutorial");
@@ -649,46 +642,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleMutePlayerForRound(user, toMute);
                 });
                 break;
-            case PARSE_SCORE_UPDATED:
+            case PARSE_SCORES_UPDATED:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<User> users = new Gson().fromJson(json.get(Constants.USER_TAG_SCORE), new TypeToken<List<User>>() {
-                    }.getType());
-                    handleScoresUpdate(from, users);
+                    List<User> players = new Gson().fromJson(json.get(USER_TAG_SCORE), new TypeToken<List<User>>() {}.getType());
+                    handleScoresUpdate(from, players);
                 });
                 break;
             case PARSE_ROUND_WINNERS:
                 runOnUiThread(() -> {
                     User from = fromJson(json);
-                    List<User> users = new Gson().fromJson(json.get(Constants.PARAM_PLAYER), new TypeToken<List<User>>() {
-                    }.getType());
-                    handleRoundWinners(users, from);
+                    List<User> roundWinners = new Gson().fromJson(json.get(PARAM_PLAYERS), new TypeToken<List<User>>() {}.getType());
+                    handleRoundWinners(roundWinners, from);
                 });
                 break;
             case PARSE_RESTART_ROUND:
                 handleRestartPlayerRound();
                 break;
         }
-    }
-
-    private void handleRestartPlayerRound() {
-        fabMute.setEnabled(true);
-        fabMute.setTag(false);
-
-        fabShow.setEnabled(true);
-        fabShow.setTag(false);
-
-        //TODO: needs discussion. Now users can't tap on other player cards to see what they have. Is that ok?
-        for(User user:mPlayers){
-            user.setShowingCards(false);
-            user.setActive(true);
-            //TODO: clear all user cards
-        }
-        //TODO: clear table and sink cards
-    }
-
-    private void doRestartDealerRound(){
-        //TODO
     }
 
     public void addPlayersToView(final List<User> players) {
@@ -927,24 +898,58 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleScoresUpdate(User from, List<User> users) {
+    private void handleScoresUpdate(User from, List<User> players) {
         Log.d(TAG, "handleScoresUpdate: Score update received from: " + from);
-        for (User user : users) {
-            Fragment fragment = getPlayerFragment(this, user);
-            if (fragment != null) {
-                ((PlayerFragment) fragment).scoreChange(user.getScore());
+        if (from != null && from.isDealer() && !isEmpty(players)) {
+            for (User player : players) {
+                if (mPlayers.contains(player)) {
+                    mPlayers.get(mPlayers.indexOf(player)).setScore(player.getScore());
+                }
+
+                if (dealerViewFragment != null) {
+                    List<User> dPlayers = dealerViewFragment.getPlayers();
+                    if (!isEmpty(dPlayers) && dPlayers.contains(player)) {
+                        dPlayers.get(dPlayers.indexOf(player)).setScore(player.getScore());
+                    }
+                }
+
+                Fragment fragment = getPlayerFragment(this, player);
+                if (fragment != null) {
+                    ((PlayerFragment) fragment).scoreChange(player.getScore());
+                }
             }
+            onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), "Scores are updated now.");
         }
     }
 
-    public void handleRoundWinners(final List<User> roundWinners, final User from){
+    public void handleRoundWinners(final List<User> roundWinners, final User from) {
         Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
-        if(!isEmpty(roundWinners) && from != null && from.isDealer()) {
+        if (!isEmpty(roundWinners) && from != null && from.isDealer()) {
             mediaUtils.playClapsTone();
             FragmentManager fm = getSupportFragmentManager();
             RoundWinnersFragment winnerDialog = RoundWinnersFragment.newInstance(roundWinners);
             winnerDialog.show(fm, "winnerDialog");
         }
+    }
+
+    private void handleRestartPlayerRound() {
+        fabMute.setEnabled(true);
+        fabMute.setTag(false);
+
+        fabShow.setEnabled(true);
+        fabShow.setTag(false);
+
+        //TODO: needs discussion. Now users can't tap on other player cards to see what they have. Is that ok?
+        for (User user : mPlayers) {
+            user.setShowingCards(false);
+            user.setActive(true);
+            //TODO: clear all user cards
+        }
+        //TODO: clear table and sink cards
+    }
+
+    private void doRestartDealerRound() {
+        //TODO
     }
 
     public void addCardsToSink(List<Card> cards) {

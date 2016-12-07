@@ -41,7 +41,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 /**
  * Created by baphna on 11/11/2016.
  */
-public class PlayerFragment extends CardsFragment{
+public class PlayerFragment extends CardsFragment {
 
     private int x;
     private int y;
@@ -143,12 +143,13 @@ public class PlayerFragment extends CardsFragment{
     }
 
     public void cardCountChange(int newCount) {
-        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName()+"--" + mPlayer.getDisplayName() + "--cardCountChange--"+String.valueOf(newCount));
+        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + mPlayer.getDisplayName() + "--cardCountChange--" + String.valueOf(newCount));
         tvCardsCount.setText(String.valueOf(newCount));
     }
 
-    public void scoreChange(int newScore){
-        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName()+"--" + mPlayer.getDisplayName() + "--scoreChange--"+String.valueOf(newScore));
+    public void scoreChange(int newScore) {
+        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + mPlayer.getDisplayName() + "--scoreChange--" + String.valueOf(newScore));
+        mPlayer.setScore(newScore);
         tvScore.setText(String.valueOf(newScore));
     }
 }

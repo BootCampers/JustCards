@@ -105,25 +105,21 @@ public class DealerViewFragment extends Fragment implements
     }
 
     @OnClick({R.id.btnRestart})
-    public void score() {
-
+    public void endRound() {
         new LovelyStandardDialog(getActivity())
                 .setTopColorRes(R.color.colorPrimary)
                 .setButtonsColorRes(R.color.colorAccent)
                 .setIcon(R.drawable.ic_repeat_36dp)
-                .setTitle("Restart Round")
-                .setMessage("Set scores to announce round winners and restart game round?")
-                .setPositiveButton("Restart", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        scoringFragment = ScoringFragment.newInstance(mPlayers);
-                        getChildFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
-                                .hide(dealerCardsFragment)
-                                .commit();
-                        mDealListener.onDealerOptionsShowing(true);
-                    }
+                .setTitle("End Round")
+                .setMessage("Score players to declare round winners and end this round? You can deal again to start the next round")
+                .setPositiveButton("End", v -> {
+                    scoringFragment = ScoringFragment.newInstance(mPlayers);
+                    getChildFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.flDealerViewContainer, scoringFragment, Constants.SCORING_OPTIONS_TAG)
+                            .hide(dealerCardsFragment)
+                            .commit();
+                    mDealListener.onDealerOptionsShowing(true);
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

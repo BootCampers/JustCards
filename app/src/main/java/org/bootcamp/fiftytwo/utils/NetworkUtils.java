@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
@@ -31,12 +30,7 @@ public class NetworkUtils {
                     .setTitle("Oops! Network failure!!")
                     .setIcon(R.drawable.ic_network_check_36dp)
                     .setMessage("We are unable to connect to our servers. Please check network connection!")
-                    .setPositiveButton(R.string.msg_okay, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mContext.startActivity(new Intent(Settings.ACTION_SETTINGS));
-                        }
-                    })
+                    .setPositiveButton(R.string.msg_okay, v -> mContext.startActivity(new Intent(Settings.ACTION_SETTINGS)))
                     .show();
 
         }

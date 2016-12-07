@@ -76,7 +76,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="272dp"
-            android:text="@string/msg_restart_round"
+            android:text="@string/msg_end_round"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintLeft_toLeftOf="@+id/flPlayersContainer"

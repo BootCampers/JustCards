@@ -58,7 +58,7 @@
     <string name="msg_congratulations_winner">Congratulations to the Winners of this round!</string>
     <string name="msg_show_dealer_view">Show Dealer side</string>
     <string name="msg_show_player_view">Show Player side</string>
-    <string name="msg_restart_round">Restart Round</string>
+    <string name="msg_end_round">End Round</string>
     <string name="msg_okay">Okay</string>
     <string name="msg_selected_cards_count">Selected %d cards</string>
 

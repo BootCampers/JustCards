@@ -1,8 +1,6 @@
 package org.bootcamp.fiftytwo.fragments;
 
-
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -31,12 +29,7 @@ public class RoundWinnersFragment extends DialogFragment {
     private List<User> winners = new ArrayList<>();
     private Unbinder unbinder;
 
-    @BindView(R.id.rvWinners)
-    RecyclerView rvWinners;
-
-    public RoundWinnersFragment() {
-        // Required empty public constructor
-    }
+    @BindView(R.id.rvWinners) RecyclerView rvWinners;
 
     public static RoundWinnersFragment newInstance(List<User> winners) {
         RoundWinnersFragment fragment = new RoundWinnersFragment();
@@ -58,15 +51,7 @@ public class RoundWinnersFragment extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_round_winners, container, false);
         unbinder = ButterKnife.bind(this, view);
 

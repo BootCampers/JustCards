@@ -81,10 +81,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
                     .setIcon(R.drawable.ic_not_interested_36dp)
                     .setTitle("Game invalid")
                     .setMessage("This game id not found. Either create new game or enter a valid id.")
-                    .setPositiveButton(R.string.msg_okay, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                        }
+                    .setPositiveButton(R.string.msg_okay, v -> {
                     })
                     .show();
         }

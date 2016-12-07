@@ -11,7 +11,6 @@ import com.parse.ParsePush;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.GameTable;
 import org.bootcamp.fiftytwo.models.User;
-import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +24,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.ON_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
@@ -33,7 +33,9 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TAB
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORE_UPDATED;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_RESTART_ROUND;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_ROUND_WINNERS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
@@ -43,6 +45,7 @@ import static org.bootcamp.fiftytwo.utils.Constants.TABLE_PICKED;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_MUTE;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_POSITION;
 import static org.bootcamp.fiftytwo.utils.Constants.TO_SHOW;
+import static org.bootcamp.fiftytwo.utils.Constants.USER_TAG_SCORE;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -259,23 +262,23 @@ public class ParseUtils {
         sendBroadcast(payload);
     }
 
-    public void updateUsersScore(final List<User> users) {
+    public void updateUsersScore(final List<User> players) {
         JsonObject payload = getJson(currentLoggedInUser);
-        payload.add(Constants.USER_TAG_SCORE, new Gson().toJsonTree(users));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORE_UPDATED);
+        payload.add(USER_TAG_SCORE, new Gson().toJsonTree(players));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORES_UPDATED);
         sendBroadcast(payload);
     }
 
     public void declareRoundWinners(List<User> roundWinners) {
         JsonObject payload = getJson(currentLoggedInUser);
-        payload.add(PARAM_PLAYER, new Gson().toJsonTree(roundWinners));
-        payload.addProperty(COMMON_IDENTIFIER, Constants.PARSE_ROUND_WINNERS);
+        payload.add(PARAM_PLAYERS, new Gson().toJsonTree(roundWinners));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_ROUND_WINNERS);
         sendBroadcast(payload);
     }
 
     public void restartRound() {
         JsonObject payload = getJson(currentLoggedInUser);
-        payload.addProperty(COMMON_IDENTIFIER, Constants.PARSE_RESTART_ROUND);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_RESTART_ROUND);
         sendBroadcast(payload);
     }
 }
