@@ -18,7 +18,6 @@
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/msg_score_sheet"
-        android:textColor="@color/white"
         android:textSize="24sp"/>
 
     <Button
@@ -29,8 +28,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:background="@color/colorPrimary"
-        android:text="@string/msg_save"
-        android:textColor="@color/white"/>
+        android:text="@string/msg_save"/>
 
     <ImageButton
         android:id="@+id/ibCancel"

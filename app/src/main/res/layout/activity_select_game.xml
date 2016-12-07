@@ -102,8 +102,6 @@
                     android:inputType="number"
                     android:maxLines="1"
                     android:padding="10dp"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="@android:color/white"
                     android:textSize="20sp"/>
 
                 <Button
@@ -115,8 +113,7 @@
                     android:layout_marginTop="10dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:text="@string/join_game"
-                    android:textColor="@color/white"/>
+                    android:text="@string/join_game"/>
 
             </RelativeLayout>
 
@@ -129,8 +126,7 @@
                 android:layout_marginTop="10dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="@string/create_game"
-                android:textColor="@color/white"/>
+                android:text="@string/create_game"/>
 
         </RelativeLayout>
     </ScrollView>

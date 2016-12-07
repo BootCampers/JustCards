@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginStart="16dp"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@color/white"/>
+            android:textAppearance="?attr/textAppearanceListItem"/>
 
         <TextView
             android:id="@+id/tvContent"
@@ -34,8 +33,7 @@
             android:layout_marginLeft="@dimen/text_margin"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceListItemSmall"
-            android:textColor="@color/white"/>
+            android:textAppearance="?attr/textAppearanceListItemSmall"/>
 
     </LinearLayout>
 

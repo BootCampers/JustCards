@@ -140,7 +140,6 @@
             android:background="@drawable/text_round"
             android:gravity="center"
             android:text="@string/zero"
-            android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="normal"
             tools:text="0"/>

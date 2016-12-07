@@ -25,25 +25,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme">
-        <activity android:name=".activities.RegisterActivity">
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.GameViewManagerActivity"
-            android:label="@string/title_activity_game_view_manager"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name=".activities.SelectCardsActivity"
-            android:label="@string/title_activity_select_cards"
-            android:parentActivityName=".activities.GameViewManagerActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activities.SelectGameActivity"/>
-        <activity android:name=".activities.CreateGameActivity"/>
         <activity
             android:name=".activities.AvatarSelectionActivity"
             android:label="@string/title_activity_avatar_selection"
@@ -53,6 +43,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.bootcamp.fiftytwo.activities.RegisterActivity"/>
         </activity>
+        <activity
+            android:name=".activities.SelectGameActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activities.CreateGameActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activities.SelectCardsActivity"
+            android:label="@string/title_activity_select_cards"
+            android:parentActivityName=".activities.GameViewManagerActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activities.GameViewManagerActivity"
+            android:label="@string/title_activity_game_view_manager"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

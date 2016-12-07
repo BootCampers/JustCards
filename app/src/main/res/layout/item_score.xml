@@ -16,8 +16,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_margin="12dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
         tools:text="Player Name"/>
 
     <ImageButton
@@ -35,8 +34,7 @@
         android:layout_width="0dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
         android:layout_height="wrap_content"
         android:id="@+id/tvScore" />
 

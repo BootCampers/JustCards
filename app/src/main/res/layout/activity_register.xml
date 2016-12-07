@@ -51,8 +51,6 @@
                 android:inputType="textPersonName|textCapWords"
                 android:maxLines="1"
                 android:padding="10dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
                 android:textSize="20sp"/>
 
             <ImageView
@@ -90,8 +88,7 @@
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="5"
-                    android:text="@string/register"
-                    android:textColor="@color/white"/>
+                    android:text="@string/register"/>
 
             </RelativeLayout>
 
@@ -114,7 +111,6 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/network_failure_msg"
-            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"/>
 
