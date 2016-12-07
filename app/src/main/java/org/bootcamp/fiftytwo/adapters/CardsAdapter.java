@@ -106,7 +106,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         holder.ivCard.setOnDragListener(new OnCardsDragListener(cardsListener));
 
         holder.ivCard.setOnClickListener(view -> {
-            card.setViewAllowed(isCardViewable(getContext(), card, getTag()));
+            card.setViewAllowed(isCardViewable(mContext, card, getTag()));
             if (!card.isViewAllowed()) {
                 RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be flipped!");
             } else {
@@ -125,7 +125,13 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         });
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.clear(holder.ivCard);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivCard) public ImageView ivCard;
 
         ViewHolder(View itemView) {

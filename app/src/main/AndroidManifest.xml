@@ -1,48 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.bootcamp.fiftytwo">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="org.bootcamp.fiftytwo">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"/>
 
     <permission
         android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+        android:protectionLevel="signature"/>
 
     <application
         android:name=".application.FiftyTwoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon,android:theme">
         <activity android:name=".activities.RegisterActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.SelectCardsActivity"
             android:label="@string/title_activity_select_cards"
             android:parentActivityName=".activities.GameViewManagerActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.SelectGameActivity" />
-        <activity android:name=".activities.CreateGameActivity" />
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.SelectGameActivity"/>
+        <activity android:name=".activities.CreateGameActivity"/>
         <activity
             android:name=".activities.AvatarSelectionActivity"
             android:label="@string/title_activity_avatar_selection"
@@ -50,48 +51,48 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity" />
+                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity"/>
         </activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572" />
+            android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572"/>
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
-            android:value="@string/gcm_sender_id" />
+            android:value="@string/gcm_sender_id"/>
 
-        <service android:name="com.parse.PushService" />
+        <service android:name="com.parse.PushService"/>
 
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="org.bootcamp.fiftytwo" />
+                <category android:name="org.bootcamp.fiftytwo"/>
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
+                <action android:name="com.parse.push.intent.RECEIVE"/>
+                <action android:name="com.parse.push.intent.DELETE"/>
+                <action android:name="com.parse.push.intent.OPEN"/>
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receivers.ParseReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
+                <action android:name="com.parse.push.intent.RECEIVE"/>
+                <action android:name="com.parse.push.intent.DELETE"/>
+                <action android:name="com.parse.push.intent.OPEN"/>
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activities.TutorialActivity"></activity>
+        <activity android:name=".activities.TutorialActivity"/>
     </application>
 
 </manifest>

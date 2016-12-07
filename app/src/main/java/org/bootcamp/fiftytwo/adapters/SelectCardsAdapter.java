@@ -49,7 +49,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         Card card = mCards.get(position);
 
         holder.ivCard.setImageDrawable(null);
-        Glide.with(holder.ivCard.getContext())
+        Glide.with(getContext())
                 .load(card.getDrawable(getContext()))
                 .bitmapTransform(new RoundedCornersTransformation(getContext(), 20, 0))
                 .fitCenter()
