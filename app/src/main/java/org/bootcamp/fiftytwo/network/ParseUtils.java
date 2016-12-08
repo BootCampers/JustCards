@@ -23,8 +23,10 @@ import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.ON_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CHAT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
@@ -200,6 +202,13 @@ public class ParseUtils {
         JsonObject payload = getJson(currentLoggedInUser);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_SINK);
+        sendBroadcast(payload);
+    }
+
+    public void sendChatMessage(final String message) {
+        JsonObject payload = getJson(currentLoggedInUser);
+        payload.addProperty(PARAM_CHAT, message);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_CHAT_MESSAGE);
         sendBroadcast(payload);
     }
 
