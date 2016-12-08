@@ -63,6 +63,8 @@
     <string name="msg_end_round">End Round</string>
     <string name="msg_okay">Okay</string>
     <string name="msg_selected_cards_count">Selected %d cards</string>
+    <string name="msg_game_id">%s, here's your game number:</string>
+    <string name="msg_enter_game_number">Please enter game number first</string>
     <string name="reselect">Reselect</string>
 
 </resources>

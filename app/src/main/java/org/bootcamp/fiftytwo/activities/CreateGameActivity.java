@@ -54,6 +54,8 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     @BindString(R.string.select_cards) String msgSelectCards;
     @BindString(R.string.start_game) String msgStartGame;
     @BindString(R.string.msg_selected_cards_count) String msgSelectedCardsCount;
+    @BindString(R.string.msg_game_id) String msgGameID;
+    @BindString(R.string.msg_enter_game_number) String msgEnterGameNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
         ParseDB.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
-        tvGameNumberLabel.setText(String.format("%s, here is your Game ID:", getIntent().getStringExtra(DISPLAY_NAME)));
+        tvGameNumberLabel.setText(String.format(msgGameID, getIntent().getStringExtra(DISPLAY_NAME)));
     }
 
     @Override
@@ -101,7 +103,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
             startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
         } else {
             if (TextUtils.isEmpty(tvGameNumber.getText())) {
-                showSnackBar(getApplicationContext(), view, "Please enter game name first");
+                showSnackBar(getApplicationContext(), view, msgEnterGameNumber);
             } else {
                 Intent gameViewManagerIntent = new Intent(this, GameViewManagerActivity.class);
                 gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, tvGameNumber.getText().toString());
@@ -114,7 +116,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     }
 
     @OnClick(R.id.btnReselect)
-    public void selectCards(){
+    public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
     }

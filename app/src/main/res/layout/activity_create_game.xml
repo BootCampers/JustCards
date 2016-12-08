@@ -49,6 +49,16 @@
                 android:padding="8dp">
 
                 <TextView
+                    android:id="@+id/tvGameNumberLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    style="@style/LabelTextStyle"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Here is your game ID:"/>
+
+                <TextView
                     android:id="@+id/tvGameNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -59,16 +69,6 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     tools:text="54321"/>
-
-                <TextView
-                    android:id="@+id/tvGameNumberLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    style="@style/LabelTextStyle"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:text="Here is your game ID:"/>
 
                 <TextView
                     android:id="@+id/gameIDInstr"
