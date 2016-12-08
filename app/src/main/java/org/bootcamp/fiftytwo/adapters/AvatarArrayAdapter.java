@@ -21,7 +21,7 @@ import butterknife.OnClick;
 /**
  * Created by baphna on 11/24/2016.
  */
-public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.ViewHolder>{
+public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.ViewHolder> {
 
     private Context mContext;
     private HashMap<String, Boolean> mAvatars;
@@ -32,8 +32,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         void onSelectedAvatar(String avatarUrl);
     }
 
-    public AvatarArrayAdapter(Context context, HashMap<String, Boolean> avatars,
-                              OnAvatarSelectedListener listener) {
+    public AvatarArrayAdapter(Context context, HashMap<String, Boolean> avatars, OnAvatarSelectedListener listener) {
         this.mContext = context;
         this.mAvatars = avatars;
         mListener = listener;
@@ -49,12 +48,12 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         String url = mAvatarUrls[position];
-        Glide.with(holder.ivCard.getContext())
+        Glide.with(mContext)
                 .load(url)
                 .centerCrop()
-                .into(holder.ivCard);
+                .into(holder.ivAvatar);
 
-        if(mAvatars.get(url)) {
+        if (mAvatars.get(url)) {
             holder.ivSelected.setVisibility(View.VISIBLE);
             holder.flSelected.setSelected(true);
         } else {
@@ -72,15 +71,14 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
     @Override
     public void onViewRecycled(AvatarArrayAdapter.ViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(holder.ivCard);
+        Glide.clear(holder.ivAvatar);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.ivCard) ImageView ivCard;
+        @BindView(R.id.ivAvatar) ImageView ivAvatar;
         @BindView(R.id.ivSelected) ImageView ivSelected;
-        @BindView(R.id.flSelectCard)
-        FrameLayout flSelected;
+        @BindView(R.id.flSelectCard) FrameLayout flSelected;
 
         ViewHolder(View view) {
             super(view);
@@ -88,17 +86,17 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         }
 
         @OnClick(R.id.flSelectCard)
-        void avatarSelected(){
+        void avatarSelected() {
             String selectedUrl = mAvatarUrls[getAdapterPosition()];
             mListener.onSelectedAvatar(selectedUrl);
             boolean isAlreadySelected = mAvatars.get(selectedUrl);
-            if(isAlreadySelected){
+            if (isAlreadySelected) {
                 //make this unselected
                 mAvatars.put(selectedUrl, false);
                 notifyItemChanged(getAdapterPosition());
             } else {
                 //make everything unselected and this as selected
-                for (String url: mAvatars.keySet()) {
+                for (String url : mAvatars.keySet()) {
                     mAvatars.put(url, false);
                 }
                 mAvatars.put(selectedUrl, true);
