@@ -34,7 +34,6 @@ import butterknife.OnClick;
 import static org.bootcamp.fiftytwo.utils.AppUtils.getParcelable;
 import static org.bootcamp.fiftytwo.utils.AppUtils.isEmpty;
 import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
-import static org.bootcamp.fiftytwo.utils.Constants.DISPLAY_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_SELECT_CARDS;
 
@@ -44,7 +43,6 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     private String gameNumberString;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.tvGameNumberLabel) TextView tvGameNumberLabel;
     @BindView(R.id.tvGameNumber) TextView tvGameNumber;
     @BindView(R.id.fabShareGameId) FloatingActionButton fabShareGameId;
     @BindView(R.id.rlSelectedCards) RelativeLayout rlSelectedCards;
@@ -54,7 +52,6 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     @BindString(R.string.select_cards) String msgSelectCards;
     @BindString(R.string.start_game) String msgStartGame;
     @BindString(R.string.msg_selected_cards_count) String msgSelectedCardsCount;
-    @BindString(R.string.msg_game_id) String msgGameID;
     @BindString(R.string.msg_enter_game_number) String msgEnterGameNumber;
 
     @Override
@@ -72,7 +69,6 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
         ParseDB.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
-        tvGameNumberLabel.setText(String.format(msgGameID, getIntent().getStringExtra(DISPLAY_NAME)));
     }
 
     @Override

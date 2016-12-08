@@ -51,7 +51,7 @@
 
     <style name="LabelTextStyleMediumItalic" parent="LabelTextStyle">
         <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:textStyle">bold|italic</item>
     </style>
 
     <style name="LabelTextStyleLarge" parent="LabelTextStyle">

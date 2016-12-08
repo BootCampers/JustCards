@@ -50,32 +50,32 @@
 
                 <TextView
                     android:id="@+id/tvGameNumberLabel"
+                    style="@style/LabelTextStyleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    style="@style/LabelTextStyleMedium"
-                    tools:text="Here is your game ID:"/>
+                    android:text="@string/msg_game_number"/>
 
                 <TextView
                     android:id="@+id/tvGameNumber"
+                    style="@style/LabelTextStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvGameNumberLabel"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    style="@style/LabelTextStyleLarge"
                     tools:text="54321"/>
 
                 <TextView
                     android:id="@+id/gameIDInstr"
+                    style="@style/LabelTextStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvGameNumber"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"
-                    style="@style/LabelTextStyleSmall"/>
+                    android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"/>
 
             </RelativeLayout>
 
@@ -91,12 +91,12 @@
 
                 <TextView
                     android:id="@+id/tvSelectedCards"
+                    style="@style/LabelTextStyleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
-                    style="@style/LabelTextStyleMedium"
                     tools:text="@string/msg_selected_cards_count"/>
 
                 <Button
@@ -122,7 +122,7 @@
                 android:layout_alignBottom="@id/gameIDLayout"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:elevation="8dp"
