@@ -87,10 +87,12 @@ import static org.bootcamp.fiftytwo.utils.Constants.FROM_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.ON_TAG;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CARD_COUNT;
+import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CHAT;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_GAME_NAME;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYER;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_PLAYERS;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
@@ -550,7 +552,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onChat(ChatLog item) {
-        // Do Nothing
+        parseUtils.sendChatMessage(item.getDetails());
     }
 
     @Override
@@ -667,6 +669,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         }
                     }
                     handleGameRules(from, code, selection);
+                });
+                break;
+            case PARSE_CHAT_MESSAGE:
+                runOnUiThread(() -> {
+                    onNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
+                            json.get(PARAM_CHAT).getAsString());
                 });
                 break;
         }

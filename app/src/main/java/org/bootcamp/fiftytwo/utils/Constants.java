@@ -37,6 +37,7 @@ public class Constants {
     public static final String PARAM_GAME_TABLE = "gameTable";
     public static final String PARAM_CURRENT_VIEW_PLAYER = "currentView";
     public static final String PARAM_CARDS = "cards";
+    public static final String PARAM_CHAT = "chat";
     public static final String PARAM_PLAYERS = "players";
     public static final String PARAM_PLAYER = "player";
     public static final String PARAM_USER = "user";
@@ -88,7 +89,9 @@ public class Constants {
     public static final String PARSE_SCORES_UPDATED = "scoresUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
     public static final String PARSE_END_ROUND = "endRound";
+    public static final String PARSE_CHAT_MESSAGE = "chatMessage";
     public static final String PARSE_SELECT_GAME_RULES = "selectGameRules";
+
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

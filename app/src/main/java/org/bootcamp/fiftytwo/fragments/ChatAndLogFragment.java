@@ -81,6 +81,8 @@ public class ChatAndLogFragment extends Fragment {
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 User self = User.getCurrentUser(getActivity());
                 addNewLogEvent(self.getDisplayName(), self.getAvatarUri(), v.getText().toString());
+                ChatLog chatLog = new ChatLog(self.getDisplayName(), self.getAvatarUri(), v.getText().toString());
+                mListener.onChat(chatLog); //send to activity for broadcast
                 etNewMessage.setText("");
                 etNewMessage.clearFocus();
                 handled = true;

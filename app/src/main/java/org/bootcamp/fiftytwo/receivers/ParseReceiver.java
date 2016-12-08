@@ -13,6 +13,7 @@ import org.bootcamp.fiftytwo.models.User;
 
 import static org.bootcamp.fiftytwo.network.ParseUtils.isSelf;
 import static org.bootcamp.fiftytwo.utils.Constants.COMMON_IDENTIFIER;
+import static org.bootcamp.fiftytwo.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
 import static org.bootcamp.fiftytwo.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
@@ -79,6 +80,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_SWAP_CARD_WITHIN_PLAYER:
                 case PARSE_DROP_CARD_TO_SINK:
                 case PARSE_TOGGLE_CARD:
+                case PARSE_CHAT_MESSAGE:
                     // Process only if it's not from self/current user
                     if (!isSelf(from)) {
                         application.notifyObservers(identifier, customData);
