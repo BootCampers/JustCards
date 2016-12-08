@@ -1,49 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimaryOpacity"
+    android:orientation="horizontal"
     android:weightSum="5">
 
     <TextView
         android:id="@+id/tvPlayerName"
-        android:layout_weight="2"
+        style="@style/FragmentTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
         android:layout_margin="12dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:layout_weight="2"
         tools:text="Player Name"/>
 
     <ImageButton
         android:id="@+id/ibReduce"
-        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:layout_weight="1"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_remove_circle"/>
 
     <TextView
-        tools:text="0"
-        android:layout_weight="1"
+        android:id="@+id/tvScore"
+        style="@style/FragmentTextStyle"
         android:layout_width="0dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
         android:layout_height="wrap_content"
-        android:id="@+id/tvScore" />
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        tools:text="0"/>
 
     <ImageButton
         android:id="@+id/ibAdd"
-        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:layout_weight="1"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_add_circle"/>
 

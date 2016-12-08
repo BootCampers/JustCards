@@ -11,46 +11,41 @@
 
     <TextView
         android:id="@+id/tvTitle"
+        style="@style/FragmentTitleTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center"
         android:padding="8dp"
-        android:text="@string/msg_score_sheet"
-        android:textSize="24sp"/>
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:background="@color/colorPrimary"
-        android:text="@string/msg_save"/>
+        android:text="@string/msg_score_sheet"/>
 
     <ImageButton
         android:id="@+id/ibCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorTransparent"
-        android:paddingEnd="8dp"
-        android:paddingRight="8dp"
-        android:paddingStart="8dp"
-        app:srcCompat="@drawable/ic_cancel"
-        android:layout_alignBottom="@+id/tvTitle"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="8dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorTransparent"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_cancel"/>
+
+    <Button
+        android:id="@+id/btnSave"
+        style="@style/FragmentButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="@string/msg_save"/>
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvPlayersScores"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/tvTitle"
         android:layout_above="@id/btnSave"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
-        android:id="@+id/rvPlayersScores"/>
+        android:layout_marginTop="8dp"/>
 
 </RelativeLayout>

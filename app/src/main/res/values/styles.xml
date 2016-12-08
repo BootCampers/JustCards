@@ -58,6 +58,26 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="FragmentTextStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium.Inverse</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="FragmentTitleTextStyle">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="FragmentTitleTextStyleNoBackground">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="FragmentButtonStyle">
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
     <style name="SpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/colorTransparent</item>

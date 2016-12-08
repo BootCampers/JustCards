@@ -45,6 +45,7 @@ public class ScoringFragment extends Fragment {
 
     public interface OnScoreFragmentListener {
         void onScore(boolean saveClicked);
+
         void roundWinners(List<User> roundWinners);
     }
 

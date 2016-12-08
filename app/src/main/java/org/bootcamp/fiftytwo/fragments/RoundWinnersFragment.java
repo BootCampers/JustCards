@@ -1,12 +1,15 @@
 package org.bootcamp.fiftytwo.fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -33,8 +36,7 @@ public class RoundWinnersFragment extends DialogFragment {
     private Unbinder unbinder;
 
     @BindView(R.id.rvWinners) RecyclerView rvWinners;
-    @BindView(R.id.ivFireworks)
-    ImageView ivFireworks;
+    @BindView(R.id.ivFireworks) ImageView ivFireworks;
 
     public static RoundWinnersFragment newInstance(List<User> winners) {
         RoundWinnersFragment fragment = new RoundWinnersFragment();
@@ -71,6 +73,19 @@ public class RoundWinnersFragment extends DialogFragment {
                 .into(ivFireworks);
 
         return view;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+
+        // request a window without the title
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
+
+        return dialog;
     }
 
     @Override

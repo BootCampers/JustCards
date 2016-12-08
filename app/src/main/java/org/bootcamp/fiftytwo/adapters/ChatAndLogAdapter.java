@@ -70,8 +70,7 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
 
         final View mView;
         ChatLog mItem;
-        @BindView(R.id.ivAvatar)
-        CircularImageView ivAvatar;
+        @BindView(R.id.ivAvatar) CircularImageView ivAvatar;
         @BindView(R.id.tvContent) TextView tvContent;
         @BindView(R.id.tvTitle) TextView tvTitle;
 

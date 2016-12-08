@@ -25,12 +25,11 @@ import butterknife.ButterKnife;
  */
 public class RoundWinnersAdapter extends RecyclerView.Adapter<RoundWinnersAdapter.ViewHolder> {
 
-    List<User> winners = new ArrayList<>();
+    private List<User> winners = new ArrayList<>();
 
     public RoundWinnersAdapter(List<User> winners) {
         this.winners = winners;
     }
-
 
     @Override
     public RoundWinnersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,11 +40,13 @@ public class RoundWinnersAdapter extends RecyclerView.Adapter<RoundWinnersAdapte
     @Override
     public void onBindViewHolder(RoundWinnersAdapter.ViewHolder holder, int position) {
         User user = winners.get(position);
+
         holder.tvPlayerName.setText(user.getDisplayName());
         Glide.with(holder.ivPlayerAvatar.getContext())
                 .load(user.getAvatarUri())
                 .error(R.drawable.ic_face)
                 .into(holder.ivPlayerAvatar);
+
         ColorGenerator generator = ColorGenerator.MATERIAL;
         int color = generator.getColor(user.getDisplayName());
 
@@ -61,10 +62,8 @@ public class RoundWinnersAdapter extends RecyclerView.Adapter<RoundWinnersAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.ivPlayerAvatar)
-        CircularImageView ivPlayerAvatar;
-        @BindView(R.id.tvPlayerName)
-        TextView tvPlayerName;
+        @BindView(R.id.ivPlayerAvatar) CircularImageView ivPlayerAvatar;
+        @BindView(R.id.tvPlayerName) TextView tvPlayerName;
 
         public ViewHolder(View itemView) {
             super(itemView);

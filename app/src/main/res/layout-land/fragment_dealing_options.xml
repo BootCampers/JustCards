@@ -11,70 +11,84 @@
 
     <TextView
         android:id="@+id/tvTitle"
+        style="@style/FragmentTitleTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center"
         android:padding="8dp"
-        android:text="@string/dealing_options"
-        android:textSize="24sp"/>
+        android:text="@string/dealing_options"/>
+
+    <ImageButton
+        android:id="@+id/ibCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorTransparent"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_cancel"/>
 
     <TextView
         android:id="@+id/tvMsgCardsPerPlayer"
+        style="@style/FragmentTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ibReduce"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:gravity="center"
-        android:text="@string/card_for_each_player"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"/>
+        android:layout_below="@+id/tvTitle"
+        android:layout_marginTop="16dp"
+        android:paddingEnd="@dimen/deal_options_item_padding_right"
+        android:paddingLeft="0dp"
+        android:paddingRight="@dimen/deal_options_item_padding_right"
+        android:paddingStart="0dp"
+        android:text="@string/card_for_each_player"/>
+
+    <ImageButton
+        android:id="@+id/ibReduce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvMsgCardsPerPlayer"
+        android:layout_toEndOf="@id/tvMsgCardsPerPlayer"
+        android:layout_toRightOf="@id/tvMsgCardsPerPlayer"
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_remove_circle"/>
+
+    <TextView
+        android:id="@+id/tvCardsToDeal"
+        style="@style/FragmentTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvMsgCardsPerPlayer"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_toEndOf="@+id/ibReduce"
+        android:layout_toRightOf="@+id/ibReduce"
+        tools:text="0"/>
 
     <ImageButton
         android:id="@+id/ibAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvMsgCardsPerPlayer"
         android:layout_below="@+id/tvTitle"
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp"
-        android:layout_marginTop="27dp"
         android:layout_toEndOf="@+id/tvCardsToDeal"
         android:layout_toRightOf="@+id/tvCardsToDeal"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_add_circle"/>
 
     <TextView
-        android:id="@+id/tvCardsToDeal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/ibAdd"
-        android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp"
-        android:layout_toEndOf="@+id/ibReduce"
-        android:layout_toRightOf="@+id/ibReduce"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
-        tools:text="0"/>
-
-    <ImageButton
-        android:id="@+id/ibReduce"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tvCardsToDeal"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorTransparent"
-        app:srcCompat="@drawable/ic_remove_circle"/>
-
-    <TextView
         android:id="@+id/tvMsgRemainingCards"
+        style="@style/FragmentTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvMsgCardsPerPlayer"
-        android:layout_marginTop="13dp"
-        android:text="@string/remaining_cards_after_dealing"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"/>
+        android:layout_marginTop="@dimen/deal_options_items_vertical_spacing"
+        android:text="@string/remaining_cards_after_dealing"/>
 
     <Spinner
         android:id="@+id/spnrRemainingCards"
@@ -86,85 +100,73 @@
 
     <TextView
         android:id="@+id/tvMsgShuffle"
+        style="@style/FragmentTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvMsgRemainingCards"
-        android:layout_marginTop="13dp"
-        android:text="@string/shuffle_before_dealing"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"/>
+        android:layout_marginTop="@dimen/deal_options_items_vertical_spacing"
+        android:text="@string/shuffle_before_dealing"/>
 
     <Switch
         android:id="@+id/switchShuffle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvMsgShuffle"
-        android:layout_toEndOf="@+id/ibReduce"
-        android:layout_toRightOf="@+id/ibReduce"
+        android:layout_alignLeft="@+id/ibReduce"
+        android:layout_alignStart="@+id/ibReduce"
         android:checked="true"/>
 
     <TextView
         android:id="@+id/tvDealToSelf"
+        style="@style/FragmentTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvMsgShuffle"
-        android:layout_marginTop="13dp"
-        android:text="@string/deal_to_self"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"/>
+        android:layout_marginTop="@dimen/deal_options_items_vertical_spacing"
+        android:text="@string/deal_to_self"/>
 
     <Switch
         android:id="@+id/switchDealSelf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvDealToSelf"
-        android:layout_toEndOf="@+id/ibReduce"
-        android:layout_toRightOf="@+id/ibReduce"
+        android:layout_alignLeft="@+id/ibReduce"
+        android:layout_alignStart="@+id/ibReduce"
         android:checked="true"/>
 
     <TextView
         android:id="@+id/tvRuleViewTableCard"
+        style="@style/FragmentTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvDealToSelf"
-        android:layout_marginTop="13dp"
-        android:text="@string/rule_view_table_card"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"/>
+        android:layout_marginTop="@dimen/deal_options_items_vertical_spacing"
+        android:text="@string/rule_view_table_card"/>
 
     <Switch
         android:id="@+id/switchRuleViewTableCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvRuleViewTableCard"
-        android:layout_toEndOf="@+id/ibReduce"
-        android:layout_toRightOf="@+id/ibReduce"
+        android:layout_alignLeft="@+id/ibReduce"
+        android:layout_alignStart="@+id/ibReduce"
         android:checked="true"/>
 
     <Button
         android:id="@+id/btnDealNow"
+        style="@style/FragmentButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_below="@id/tvRuleViewTableCard"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:background="@color/colorPrimary"
+        android:layout_marginTop="@dimen/deal_options_items_vertical_spacing"
         android:text="@string/deal_now"/>
-
-    <ImageButton
-        android:id="@+id/ibCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ibAdd"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/colorTransparent"
-        android:paddingEnd="8dp"
-        android:paddingRight="8dp"
-        android:paddingStart="8dp"
-        app:srcCompat="@drawable/ic_cancel"/>
 
 </RelativeLayout>

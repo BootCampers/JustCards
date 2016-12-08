@@ -19,8 +19,8 @@ import butterknife.OnClick;
 /**
  * Created by baphna on 11/26/2016.
  */
-
 public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> {
+
     private final List<User> users;
 
     public ScoreAdapter(List<User> users) {
@@ -30,7 +30,8 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_score, parent, false);
-        return new ViewHolder(view);    }
+        return new ViewHolder(view);
+    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -45,14 +46,10 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ibAdd)
-        ImageButton ibAdd;
-        @BindView(R.id.ibReduce)
-        ImageButton ibReduce;
-        @BindView(R.id.tvPlayerName)
-        TextView tvPlayerName;
-        @BindView(R.id.tvScore)
-        TextView tvScore;
+        @BindView(R.id.ibAdd) ImageButton ibAdd;
+        @BindView(R.id.ibReduce) ImageButton ibReduce;
+        @BindView(R.id.tvPlayerName) TextView tvPlayerName;
+        @BindView(R.id.tvScore) TextView tvScore;
 
         int currentScore = 0;
 
@@ -62,7 +59,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         }
 
         @OnClick(R.id.ibAdd)
-        public synchronized void increaseScore(View view) {
+        synchronized void increaseScore() {
             currentScore = Integer.parseInt(tvScore.getText().toString());
             currentScore++;
             tvScore.setText(String.valueOf(currentScore));
@@ -70,7 +67,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
         }
 
         @OnClick(R.id.ibReduce)
-        public synchronized void decreaseScore(View view) {
+        synchronized void decreaseScore() {
             currentScore = Integer.parseInt(tvScore.getText().toString());
             currentScore--;
             tvScore.setText(String.valueOf(currentScore));
