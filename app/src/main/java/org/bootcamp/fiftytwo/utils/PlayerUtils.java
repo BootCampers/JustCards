@@ -15,27 +15,36 @@ public class PlayerUtils {
 
     private static String[] playerNames = {
             "Sid",
-            "Gretchen",
+            "Audrey",
             "Tiffany",
-            "Mitchel",
-            "Kiley",
-            "Mackenzie",
-            "Jeffie",
+            "Ferris",
+            "Nathan",
+            "Don",
+            "Joker",
+            "Michelle",
+            "Bob",
             "Romano",
-            "Leonardo",
-            "Jared"};
+            "Ellie",
+            "Joe",
+            "Terri",
+            "Steve"};
 
     public static String[] playerAvatars = {
-            "http://i.imgur.com/GkyKh.jpg",
-            "http://i.imgur.com/4M8vzoD.png",
-            "http://i.imgur.com/Fankh2h.jpg",
-            "http://i.imgur.com/i7zmanJ.jpg",
-            "http://i.imgur.com/jrmh8XL.jpg",
-            "http://i.imgur.com/VCY27Er.jpg",
-            "http://i.imgur.com/UMUY9Yn.jpg",
-            "http://i.imgur.com/9OHzici.jpg?1",
-            "http://i.imgur.com/RZ0jFNp.gif",
-            "http://i.imgur.com/ITwmNm3.jpg"};
+            "http://i.imgur.com/IA4R3xt.jpg", // Now you see me
+            "http://i.imgur.com/Ff4sFSI.jpg", // Audrey Hepburn
+            "http://i.imgur.com/EZgJK05.jpg", // Golden Gate Bridge
+            "http://i.imgur.com/vwqqqAW.png", // Ferris Bueller
+            "http://i.imgur.com/DbbwaZJ.jpg", // Nathan
+            "http://i.imgur.com/LngWF3K.jpg", // Godfather
+            "http://i.imgur.com/VCY27Er.jpg", // Joker
+            "http://i.imgur.com/8iASC56.jpg", // Afghan Girl
+            "http://i.imgur.com/G0cx2jC.jpg", // Superman
+            "http://i.imgur.com/UMUY9Yn.jpg", // Steve Jobs
+            "http://i.imgur.com/9OHzici.jpg", // Ellie Kemper
+            "http://i.imgur.com/EZgJK05.jpg", // Golden Gate Bridge
+            "http://i.imgur.com/GkyKh.jpg",   // Avatar
+            "http://i.imgur.com/jrmh8XL.jpg"  // Cartoon Puppy
+    };
 
     public static List<User> getPlayers(int count) {
         List<User> players = new ArrayList<>();
