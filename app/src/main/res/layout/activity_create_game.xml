@@ -53,9 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    style="@style/LabelTextStyle"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    style="@style/LabelTextStyleMedium"
                     tools:text="Here is your game ID:"/>
 
                 <TextView
@@ -65,9 +63,7 @@
                     android:layout_below="@+id/tvGameNumberLabel"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
-                    style="@style/LabelTextStyle"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
+                    style="@style/LabelTextStyleLarge"
                     tools:text="54321"/>
 
                 <TextView
@@ -79,8 +75,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center_horizontal"
                     android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"
-                    style="@style/LabelTextStyle"
-                    android:textSize="15sp"/>
+                    style="@style/LabelTextStyleSmall"/>
 
             </RelativeLayout>
 
@@ -101,13 +96,11 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
-                    style="@style/LabelTextStyle"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    style="@style/LabelTextStyleMedium"
                     tools:text="@string/msg_selected_cards_count"/>
 
                 <Button
-                    android:id="@+id/btnReselect"
+                    android:id="@+id/btnReselectCards"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tvSelectedCards"
@@ -122,9 +115,8 @@
 
             </RelativeLayout>
 
-
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/btnShareId"
+                android:id="@+id/fabShareGameId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/gameIDLayout"
@@ -139,7 +131,7 @@
                 tools:targetApi="lollipop"/>
 
             <Button
-                android:id="@+id/btnGameOptions"
+                android:id="@+id/btnCreateGame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rlSelectedCards"

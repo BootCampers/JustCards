@@ -38,6 +38,24 @@
 
     <style name="LabelTextStyle">
         <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LabelTextStyleSmall" parent="LabelTextStyle">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="LabelTextStyleMedium" parent="LabelTextStyle">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="LabelTextStyleMediumItalic" parent="LabelTextStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="LabelTextStyleLarge" parent="LabelTextStyle">
+        <item name="android:textSize">24sp</item>
     </style>
 
 </resources>

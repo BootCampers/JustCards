@@ -56,17 +56,17 @@
 
                 <TextView
                     android:id="@+id/tvWelcome"
+                    style="@style/LabelTextStyleMediumItalic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
                     android:layout_toEndOf="@+id/ivAvatar"
-                    android:layout_toRightOf="@+id/ivAvatar"
-                    style="@style/LabelTextStyle"
-                    android:textSize="20sp"
-                    android:textStyle="bold|italic"/>
+                    android:layout_toRightOf="@+id/ivAvatar"/>
 
                 <TextView
+                    style="@style/LabelTextStyleMediumItalic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvWelcome"
@@ -75,10 +75,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@+id/ivAvatar"
                     android:layout_toRightOf="@+id/ivAvatar"
-                    android:text="@string/what_would_you_like_to_do"
-                    style="@style/LabelTextStyle"
-                    android:textSize="20sp"
-                    android:textStyle="bold|italic"/>
+                    android:text="@string/what_would_you_like_to_do"/>
 
             </RelativeLayout>
 
@@ -88,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/welcomeLayout"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/primary_translucent_background"
                 android:padding="20dp">
 
@@ -117,17 +114,29 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/tvOr"
+                style="@style/LabelTextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/joinGameSection"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/or"/>
+
             <Button
                 android:id="@+id/btnCreateGame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/joinGameSection"
+                android:layout_below="@id/tvOr"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="@string/create_game"/>
 
         </RelativeLayout>
+
     </ScrollView>
+
 </RelativeLayout>

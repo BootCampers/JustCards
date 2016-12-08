@@ -43,13 +43,13 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     private List<Card> mCards = new ArrayList<>();
     private String gameNumberString;
 
-    @BindView(R.id.tvGameNumber) TextView tvGameNumber;
-    @BindView(R.id.tvGameNumberLabel) TextView tvGameNumberLabel;
-    @BindView(R.id.btnGameOptions) Button btnGameOptions;
-    @BindView(R.id.btnShareId) FloatingActionButton btnShareId;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.tvGameNumberLabel) TextView tvGameNumberLabel;
+    @BindView(R.id.tvGameNumber) TextView tvGameNumber;
+    @BindView(R.id.fabShareGameId) FloatingActionButton fabShareGameId;
     @BindView(R.id.rlSelectedCards) RelativeLayout rlSelectedCards;
     @BindView(R.id.tvSelectedCards) TextView tvSelectedCards;
+    @BindView(R.id.btnCreateGame) Button btnCreateGame;
 
     @BindString(R.string.select_cards) String msgSelectCards;
     @BindString(R.string.start_game) String msgStartGame;
@@ -78,10 +78,10 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtils.animateCircularReveal(btnShareId);
+        AppUtils.animateCircularReveal(fabShareGameId);
     }
 
-    @OnClick(R.id.btnShareId)
+    @OnClick(R.id.fabShareGameId)
     public void shareGameId(View view) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -96,7 +96,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         }
     }
 
-    @OnClick(R.id.btnGameOptions)
+    @OnClick(R.id.btnCreateGame)
     public void startGame(View view) {
         if (mCards == null || mCards.size() == 0) {
             Intent intent = new Intent(this, SelectCardsActivity.class);
@@ -115,7 +115,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         }
     }
 
-    @OnClick(R.id.btnReselect)
+    @OnClick(R.id.btnReselectCards)
     public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
@@ -131,7 +131,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         }
 
         //Change select cards to start game
-        btnGameOptions.setText(isEmpty(mCards) ? msgSelectCards : msgStartGame);
+        btnCreateGame.setText(isEmpty(mCards) ? msgSelectCards : msgStartGame);
     }
 
     @Override

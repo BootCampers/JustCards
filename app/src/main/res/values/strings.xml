@@ -21,7 +21,7 @@
     <string name="title_activity_select_cards">Select Cards</string>
     <string name="register">Register</string>
     <string name="prompt_username">Username</string>
-    <string name="create_game">Create Game</string>
+    <string name="create_game">Start New Game</string>
     <string name="enter_game_id">Enter Game ID:</string>
     <string name="join_game">Join Game</string>
     <string name="game_number">Game Number:  </string>
@@ -63,8 +63,9 @@
     <string name="msg_end_round">End Round</string>
     <string name="msg_okay">Okay</string>
     <string name="msg_selected_cards_count">Selected %d cards</string>
-    <string name="msg_game_id">%s, here's your game number:</string>
+    <string name="msg_game_id">"%s, here's your game number:"</string>
     <string name="msg_enter_game_number">Please enter game number first</string>
     <string name="reselect">Reselect</string>
+    <string name="or">OR</string>
 
 </resources>
