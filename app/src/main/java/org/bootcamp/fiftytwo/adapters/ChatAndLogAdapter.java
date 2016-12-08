@@ -4,14 +4,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.ChatAndLogFragment;
 import org.bootcamp.fiftytwo.models.ChatLog;
+import org.bootcamp.fiftytwo.utils.Constants;
 
 import java.util.List;
 
@@ -50,6 +52,13 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
                 .centerCrop()
                 .into(holder.ivAvatar);
 
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getColor(mValues.get(position).getFrom());
+
+        // Set Border
+        holder.ivAvatar.setBorderColor(color);
+        holder.ivAvatar.setBorderWidth(Constants.CIRCULAR_BORDER_WIDTH);
+
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
                 mListener.onChat(holder.mItem);
@@ -61,7 +70,8 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
 
         final View mView;
         ChatLog mItem;
-        @BindView(R.id.ivAvatar) ImageView ivAvatar;
+        @BindView(R.id.ivAvatar)
+        CircularImageView ivAvatar;
         @BindView(R.id.tvContent) TextView tvContent;
         @BindView(R.id.tvTitle) TextView tvTitle;
 
