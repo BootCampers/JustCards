@@ -1,7 +1,6 @@
 package org.bootcamp.fiftytwo.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -24,9 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 
+import static org.bootcamp.fiftytwo.utils.AppUtils.getSpinnerAdapter;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_CARD_COUNT;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_IS_SELF_ELIGIBLE;
 import static org.bootcamp.fiftytwo.utils.Constants.ARG_PLAYER_COUNT;
@@ -96,12 +94,15 @@ public class DealingOptionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dealing_options, container, false);
         unbinder = ButterKnife.bind(this, view);
+
         tvCardsToDeal.setText(String.valueOf(currentDealingCount));
         if (!isSelfEligible) {
             switchDealSelf.setChecked(false);
             switchDealSelf.setEnabled(false);
             switchDealSelf.setClickable(false);
         }
+        spnrRemainingCards.setAdapter(getSpinnerAdapter(getContext(), R.array.remaining_cards_array));
+
         return view;
     }
 
@@ -143,11 +144,6 @@ public class DealingOptionsFragment extends Fragment {
             currentDealingCount--;
             tvCardsToDeal.setText(String.valueOf(currentDealingCount));
         }
-    }
-
-    @OnItemSelected(R.id.spnrRemainingCards)
-    public void onSpinner(AdapterView<?> parent) {
-        ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
     }
 
     @OnCheckedChanged(R.id.switchDealSelf)

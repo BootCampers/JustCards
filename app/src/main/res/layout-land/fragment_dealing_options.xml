@@ -82,8 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/ibReduce"
         android:layout_alignStart="@+id/ibReduce"
-        android:layout_alignTop="@+id/tvMsgRemainingCards"
-        android:entries="@array/remaining_cards_array"/>
+        android:layout_alignTop="@+id/tvMsgRemainingCards"/>
 
     <TextView
         android:id="@+id/tvMsgShuffle"

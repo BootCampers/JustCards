@@ -11,6 +11,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -57,11 +58,13 @@ public class AppUtils {
     }
 
     public static Type getCardsType() {
-        return new TypeToken<List<Card>>() {}.getType();
+        return new TypeToken<List<Card>>() {
+        }.getType();
     }
 
     public static Type getUsersType() {
-        return new TypeToken<List<User>>() {}.getType();
+        return new TypeToken<List<User>>() {
+        }.getType();
     }
 
     public static void loadRoundedImage(final Context context, final ImageView view, final Object uri) {
@@ -79,7 +82,7 @@ public class AppUtils {
                 });
     }
 
-    public static void showSnackBar(Context context, View view, String msg){
+    public static void showSnackBar(Context context, View view, String msg) {
         Snackbar snackbar = Snackbar.make(view, msg, Snackbar.LENGTH_LONG);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
         snackbar.show();
@@ -104,6 +107,12 @@ public class AppUtils {
                 anim.start();
             }
         }, Constants.FAB_ANIMATION_TIME);
+    }
+
+    public static ArrayAdapter getSpinnerAdapter(final Context context, final int resource) {
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(context, resource, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        return adapter;
     }
 
 }
