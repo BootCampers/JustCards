@@ -12,7 +12,7 @@ import android.view.View;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.AvatarArrayAdapter;
-import org.bootcamp.fiftytwo.utils.AppUtils;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 
@@ -64,7 +64,7 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtils.animateCircularReveal(fab);
+        AnimationUtils.animateCircularReveal(fab);
     }
 
     @Override

@@ -17,7 +17,7 @@ import android.widget.TextView;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.network.ParseDB;
-import org.bootcamp.fiftytwo.utils.AppUtils;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -74,7 +74,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtils.animateCircularReveal(fabShareGameId);
+        AnimationUtils.animateCircularReveal(fabShareGameId);
     }
 
     @OnClick(R.id.fabShareGameId)

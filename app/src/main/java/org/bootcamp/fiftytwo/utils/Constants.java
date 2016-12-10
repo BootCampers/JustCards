@@ -105,6 +105,5 @@ public class Constants {
     public static final String LAYOUT_TYPE_SCROLL_ZOOM = "scrollZoom";
 
     /** View Properties here */
-    public static final long FAB_ANIMATION_TIME = 300;
     public static final float CIRCULAR_BORDER_WIDTH = 6f;
 }

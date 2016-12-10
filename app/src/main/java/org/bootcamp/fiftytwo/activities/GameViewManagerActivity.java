@@ -55,7 +55,7 @@ import org.bootcamp.fiftytwo.models.GameRules;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseDB;
 import org.bootcamp.fiftytwo.network.ParseUtils;
-import org.bootcamp.fiftytwo.utils.AppUtils;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
@@ -273,7 +273,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtils.animateCircularReveal(fabMenu);
+        AnimationUtils.animateCircularReveal(fabMenu);
     }
 
     @OnClick(R.id.fabSwap)

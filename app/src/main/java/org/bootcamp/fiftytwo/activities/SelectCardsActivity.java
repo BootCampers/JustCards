@@ -10,7 +10,7 @@ import android.view.View;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.fragments.SelectCardsFragment;
 import org.bootcamp.fiftytwo.models.Card;
-import org.bootcamp.fiftytwo.utils.AppUtils;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.parceler.Parcels;
 
@@ -63,6 +63,6 @@ public class SelectCardsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AppUtils.animateCircularReveal(fabSaveSelection);
+        AnimationUtils.animateCircularReveal(fabSaveSelection);
     }
 }
