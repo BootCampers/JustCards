@@ -68,6 +68,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (User.getCurrentUser() != null) {
             startWithCurrentUser();
+        } else {
+            loginToParse();
         }
 
         if (isNetworkAvailable(this)) {
@@ -102,7 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "Logged in", Toast.LENGTH_SHORT)
                                     .show();
                             Log.d(Constants.TAG, "User logged in through Facebook!");
-                            getUserDetailsFromFB();
                         }
                     }
                 });
@@ -168,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnRegister)
     public void register(final View view) {
-        loginToParse();
+
         String username = etUserName.getText().toString().replaceAll("\\s+", "");
         if (username.isEmpty()) {
             showSnackBar(getApplicationContext(), view, "Username must have a value!");
