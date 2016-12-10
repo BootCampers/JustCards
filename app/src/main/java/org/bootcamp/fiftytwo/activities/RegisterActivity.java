@@ -56,28 +56,41 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-        ButterKnife.bind(this);
-
-        setSupportActionBar(toolbar);
 
         if (User.getCurrentUser() != null) {
             startWithCurrentUser();
         } else {
             loginToParse();
         }
+    }
 
-        if (isNetworkAvailable(this)) {
-            notifyNetworkFailure(false);
-            User user = User.get(this);
-            if (null != user) {
-                startSelectGame(user);
+    private void loginToParse() {
+        ParseAnonymousUtils.logIn((user, e) -> {
+            if (e != null) {
+                Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
             } else {
+                startWithCurrentUser();
+            }
+        });
+    }
+
+    private void startWithCurrentUser() {
+        User user = User.get(this);
+        if (null != user) {
+            startSelectGame(user);
+            overridePendingTransition(0, 0);
+        } else {
+            setContentView(R.layout.activity_register);
+            ButterKnife.bind(this);
+            setSupportActionBar(toolbar);
+
+            if (isNetworkAvailable(this)) {
+                notifyNetworkFailure(false);
                 userAvatarURI = PlayerUtils.getDefaultAvatar();
                 loadRoundedImage(this, ivAvatar, userAvatarURI);
+            } else {
+                notifyNetworkFailure(true);
             }
-        } else {
-            notifyNetworkFailure(true);
         }
     }
 
@@ -169,28 +182,14 @@ public class RegisterActivity extends AppCompatActivity {
         startSelectGame(user);
     }
 
-    private void startSelectGame(User user) {
+    private void startSelectGame(final User user) {
         Intent selectGameIntent = new Intent(this, SelectGameActivity.class);
         selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
         finish();
         startActivity(selectGameIntent);
     }
 
-    private void loginToParse() {
-        ParseAnonymousUtils.logIn((user, e) -> {
-            if (e != null) {
-                Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
-            } else {
-                startWithCurrentUser();
-            }
-        });
-    }
-
-    private void startWithCurrentUser() {
-        // Do Nothing
-    }
-
-    private void notifyNetworkFailure(boolean networkFailure) {
+    private void notifyNetworkFailure(final boolean networkFailure) {
         networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
         fabBrowseAvatar.setEnabled(!networkFailure);
         btnRegister.setEnabled(!networkFailure);
