@@ -68,4 +68,7 @@
     <string name="reselect">Reselect</string>
     <string name="or">OR</string>
 
+    <string name="facebook_app_id">646487625523989</string>
+    <string name="msg_log_in_with_facebook">Log in with Facebook</string>
+
 </resources>

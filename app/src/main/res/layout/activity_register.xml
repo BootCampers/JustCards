@@ -70,6 +70,7 @@
                 android:layout_alignRight="@id/ivAvatar"
                 app:srcCompat="@drawable/ic_action_edit"/>
 
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,6 +85,27 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/register"/>
+
+                <TextView
+                    android:id="@+id/tvOr"
+                    style="@style/LabelTextStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/btnRegister"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/or"/>
+
+
+                <Button
+                    android:background="@color/com_facebook_blue"
+                    android:text="@string/msg_log_in_with_facebook"
+                    android:id="@+id/btnFbLogin"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/tvOr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </RelativeLayout>
 

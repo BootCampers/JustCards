@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.interceptors.ParseLogInterceptor;
 
@@ -44,6 +45,9 @@ public class FiftyTwoApplication extends Application implements Observable {
                 .addNetworkInterceptor(new ParseLogInterceptor())
                 .server(APPLICATION_SERVER)
                 .build());
+
+        // ParseFacebookUtils should initialize the Facebook SDK for you
+        ParseFacebookUtils.initialize(this);
     }
 
     @Override
