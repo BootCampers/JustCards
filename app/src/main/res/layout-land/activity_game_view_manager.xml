@@ -6,7 +6,7 @@
     android:id="@+id/clGameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
+    android:background="@drawable/ic_game_background"
     android:fitsSystemWindows="true"
     tools:context="org.bootcamp.fiftytwo.activities.GameViewManagerActivity">
 
@@ -30,7 +30,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!-- TODO make log view a drawer instead? -->
     <FrameLayout
         android:id="@+id/flLogContainer"
         android:layout_width="200dp"

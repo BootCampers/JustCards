@@ -117,7 +117,7 @@ public class ParseDB {
 
                 // TODO: This custom data generation is temporary and for testing purposes only
                 if ((isEmpty(players) || players.size() == 1) && User.getCurrentUser(context).isDealer()) {
-                    List<User> dummyPlayers = PlayerUtils.getPlayers(2);
+                    List<User> dummyPlayers = PlayerUtils.getPlayers(4);
                     for (User dummyPlayer : dummyPlayers) {
                         Game.save(gameName, dummyPlayer);
                     }

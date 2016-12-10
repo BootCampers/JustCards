@@ -286,6 +286,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(
+                        isShowingPlayerFragment ? R.anim.slide_in_left : R.anim.slide_in_right,
+                        isShowingPlayerFragment ? R.anim.slide_out_right : R.anim.slide_out_left)
                 .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
                 .show(isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
                 .commit();
@@ -672,10 +675,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 });
                 break;
             case PARSE_CHAT_MESSAGE:
-                runOnUiThread(() -> {
-                    onNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
-                            json.get(PARAM_CHAT).getAsString());
-                });
+                runOnUiThread(() -> onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), json.get(PARAM_CHAT).getAsString()));
                 break;
         }
     }
