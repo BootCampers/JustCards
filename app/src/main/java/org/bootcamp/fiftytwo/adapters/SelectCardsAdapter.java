@@ -53,6 +53,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
                 .load(card.getDrawable(getContext()))
                 .bitmapTransform(new RoundedCornersTransformation(getContext(), 20, 0))
                 .fitCenter()
+                .crossFade()
                 .into(holder.ivCard);
 
         if(card.isSelected()) {

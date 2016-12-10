@@ -1,8 +1,14 @@
 package org.bootcamp.fiftytwo.utils;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+
+import org.bootcamp.fiftytwo.R;
 
 /**
  * Author: agoenka
@@ -12,9 +18,14 @@ import android.view.ViewAnimationUtils;
 public class AnimationUtils {
 
     private static final long FAB_ANIMATION_TIME = 300;
+    private static final int CAMERA_DISTANCE = 8000;
 
     private AnimationUtils() {
         //no instance
+    }
+
+    public interface FlipLoaderListener {
+        void onFlip();
     }
 
     public static void animateCircularReveal(final View view) {
@@ -32,6 +43,33 @@ public class AnimationUtils {
                 anim.start();
             }
         }, FAB_ANIMATION_TIME);
+    }
+
+    private static void changeCameraDistance(final Context context, final View view) {
+        float scale = context.getResources().getDisplayMetrics().density * CAMERA_DISTANCE;
+        view.setCameraDistance(scale);
+    }
+
+    public static void animateFlip(final Context context, final View target, final FlipLoaderListener listener) {
+        changeCameraDistance(context, target);
+
+        AnimatorSet outAnimator = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_out_animation);
+        AnimatorSet inAnimator = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_in_animation);
+        outAnimator.setTarget(target);
+        inAnimator.setTarget(target);
+
+        inAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (listener != null) {
+                    listener.onFlip();
+                }
+            }
+        });
+
+        AnimatorSet combinedAnimator = new AnimatorSet();
+        combinedAnimator.playSequentially(outAnimator, inAnimator);
+        combinedAnimator.start();
     }
 
 }

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.adapters.CardsAdapter;
 import org.bootcamp.fiftytwo.models.Card;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.views.CenterScrollListener;
 import org.bootcamp.fiftytwo.views.CircleLayoutManager;
@@ -171,10 +172,13 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
             ImageView ivCard = ((CardsAdapter.ViewHolder) holder).ivCard;
             Card holderCard = mAdapter.getCards().get(position);
             if (card.equals(holderCard)) {
-                Glide.with(mAdapter.getContext())
-                        .load(card.isShowingFront() ? holderCard.getDrawable(mAdapter.getContext()) : holderCard.getDrawableBack())
-                        .into(ivCard);
-                holderCard.setShowingFront(card.isShowingFront());
+                AnimationUtils.animateFlip(mAdapter.getContext(), ivCard, () -> {
+                    Glide.with(mAdapter.getContext())
+                            .load(card.isShowingFront() ? holderCard.getDrawable(mAdapter.getContext()) : holderCard.getDrawableBack())
+                            .crossFade()
+                            .into(ivCard);
+                    holderCard.setShowingFront(card.isShowingFront());
+                });
             } else {
                 Log.d(TAG, "Problem found in toggleCard: " + "Received: " + card + ", but Found: " + holderCard);
             }

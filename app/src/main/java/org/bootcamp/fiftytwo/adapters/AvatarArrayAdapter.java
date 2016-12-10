@@ -51,6 +51,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         Glide.with(mContext)
                 .load(url)
                 .centerCrop()
+                .crossFade()
                 .into(holder.ivAvatar);
 
         if (mAvatars.get(url)) {

@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.Card;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.RuleUtils;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
 
@@ -91,6 +92,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
         Glide.with(mContext)
                 .load(card.isShowingFront() ? card.getDrawable(mContext) : card.getDrawableBack())
+                .crossFade()
                 .into(holder.ivCard);
 
         holder.ivCard.setTag(position); //Needed for drag and drop
@@ -110,17 +112,20 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             if (!card.isViewAllowed()) {
                 RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be flipped!");
             } else {
-                Glide.with(mContext)
-                        .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
-                        .into(holder.ivCard);
-                card.setShowingFront(!card.isShowingFront());
-                if (card.isShowingFront()) {
-                    User self = User.getCurrentUser(mContext);
-                    cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(), "Looking at cards in the " + tag + " section");
-                }
-                if (isToggleCardBroadcastRequired(getTag())) {
-                    cardsListener.toggleCard(card, (int) holder.ivCard.getTag(), getTag());
-                }
+                AnimationUtils.animateFlip(mContext, holder.ivCard, () -> {
+                    Glide.with(mContext)
+                            .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
+                            .into(holder.ivCard);
+
+                    card.setShowingFront(!card.isShowingFront());
+                    if (card.isShowingFront()) {
+                        User self = User.getCurrentUser(mContext);
+                        cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(), "Looking at cards in the " + tag + " section");
+                    }
+                    if (isToggleCardBroadcastRequired(getTag())) {
+                        cardsListener.toggleCard(card, (int) holder.ivCard.getTag(), getTag());
+                    }
+                });
             }
         });
     }
