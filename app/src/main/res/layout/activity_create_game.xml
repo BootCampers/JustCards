@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/accent_translucent_background"
-                android:padding="8dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tvGameNumberLabel"
@@ -53,6 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
+                    android:paddingBottom="@dimen/text_margin"
                     android:text="@string/msg_game_number"/>
 
                 <TextView
@@ -61,20 +62,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvGameNumberLabel"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
+                    android:layout_alignLeft="@id/tvGameNumberLabel"
+                    android:layout_alignStart="@id/tvGameNumberLabel"
+                    android:paddingBottom="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
                     tools:text="54321"/>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fabShareGameId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvGameNumberLabel"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:layout_toEndOf="@id/tvGameNumber"
+                    android:layout_toRightOf="@id/tvGameNumber"
+                    android:elevation="12dp"
+                    app:fabSize="normal"
+                    app:srcCompat="@drawable/ic_share"
+                    tools:targetApi="lollipop"/>
 
                 <TextView
                     android:id="@+id/gameIDInstr"
                     style="@style/LabelTextStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvGameNumber"
+                    android:layout_below="@+id/fabShareGameId"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/share_this_game_id_with_whom_you_would_like_to_play"/>
+                    android:text="@string/share_game_number"/>
 
             </RelativeLayout>
 
@@ -85,17 +105,20 @@
                 android:layout_below="@id/gameIDLayout"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/accent_translucent_background"
+                android:gravity="center"
                 android:padding="8dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/tvSelectedCards"
                     style="@style/LabelTextStyleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingRight="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
                     tools:text="@string/msg_selected_cards_count"/>
 
                 <Button
@@ -104,30 +127,15 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tvSelectedCards"
                     android:layout_toRightOf="@id/tvSelectedCards"
-                    android:paddingEnd="8dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingStart="8dp"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingLeft="@dimen/text_margin"
+                    android:paddingRight="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:text="@string/reselect"/>
 
             </RelativeLayout>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabShareGameId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/gameIDLayout"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:elevation="8dp"
-                app:fabSize="mini"
-                app:srcCompat="@drawable/ic_share"
-                tools:targetApi="lollipop"/>
 
             <Button
                 android:id="@+id/btnCreateGame"

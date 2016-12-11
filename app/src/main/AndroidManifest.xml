@@ -46,17 +46,31 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.CreateGameActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/new_game"
+            android:parentActivityName=".activities.SelectGameActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.bootcamp.fiftytwo.activities.SelectGameActivity"/>
+        </activity>
         <activity
             android:name=".activities.SelectCardsActivity"
             android:label="@string/title_activity_select_cards"
-            android:parentActivityName=".activities.GameViewManagerActivity"
+            android:parentActivityName=".activities.CreateGameActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.bootcamp.fiftytwo.activities.CreateGameActivity"/>
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:parentActivityName=".activities.SelectGameActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.bootcamp.fiftytwo.activities.SelectGameActivity"/>
+        </activity>
 
         <activity android:name=".activities.TutorialActivity"/>
 

@@ -29,22 +29,31 @@ import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 
 public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnGameExistsListener {
 
+    private User user = null;
+
     @BindView(R.id.btnJoinGame) Button btnJoinGame;
     @BindView(R.id.btnCreateGame) Button btnCreateGame;
     @BindView(R.id.etGameName) EditText etGameName;
     @BindView(R.id.tvWelcome) TextView tvWelcome;
     @BindView(R.id.ivAvatar) ImageView ivAvatar;
-    User user = null;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_game);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
-        user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
+        setSupportActionBar(toolbar);
+
+        if (getIntent() != null) {
+            user = Parcels.unwrap(getIntent().getParcelableExtra(PARAM_USER));
+        }
+        if (user == null) {
+            user = User.get(this);
+        }
+
+        assert user != null;
         tvWelcome.setText("Welcome " + user.getDisplayName() + "!");
         loadRoundedImage(this, ivAvatar, user.getAvatarUri());
     }

@@ -61,6 +61,9 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         initializeWidgets();
     }
 
