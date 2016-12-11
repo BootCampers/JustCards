@@ -8,7 +8,7 @@
     <color name="colorAccent">#FF5722</color>
     <color name="colorAccentLight">#ff7043</color>
     <color name="colorAccentTranslucent">#22FF5722</color>
-    <color name="colorTextPrimary">#FFFFFF</color>
+    <color name="colorTextPrimary">#FFFFFFFE</color>
     <color name="colorTextSecondary">#757575</color>
     <color name="colorRipple">@color/white</color>
     <color name="shadow">#696969</color>

@@ -107,7 +107,7 @@
                 android:background="@drawable/accent_translucent_background"
                 android:gravity="center"
                 android:padding="8dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvSelectedCards"

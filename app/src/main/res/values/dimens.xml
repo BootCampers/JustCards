@@ -13,4 +13,5 @@
     <dimen name="deal_options_item_padding_right">140dp</dimen>
     <dimen name="deal_options_items_vertical_spacing">13dp</dimen>
     <dimen name="help_right_margin">96dp</dimen>
+    <dimen name="button_corner_radius">8dp</dimen>
 </resources>

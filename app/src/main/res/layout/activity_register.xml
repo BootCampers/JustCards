@@ -43,19 +43,18 @@
 
             <EditText
                 android:id="@+id/etUserName"
+                style="@style/EditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/foggy_textbox"
                 android:hint="@string/prompt_username"
                 android:inputType="textPersonName|textCapWords"
                 android:maxLines="1"
-                android:padding="10dp"
-                android:textSize="20sp"/>
+                android:padding="10dp"/>
 
             <ImageView
                 android:id="@+id/ivAvatar"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_below="@+id/etUserName"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
@@ -70,14 +69,11 @@
                 android:layout_alignRight="@id/ivAvatar"
                 app:srcCompat="@drawable/ic_action_edit"/>
 
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ivAvatar"
-                android:layout_marginTop="20dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:layout_marginTop="20dp">
 
                 <Button
                     android:id="@+id/btnRegister"
@@ -88,7 +84,7 @@
 
                 <TextView
                     android:id="@+id/tvOr"
-                    style="@style/LabelTextStyleSmall"
+                    style="@style/LabelTextStyleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btnRegister"
@@ -97,15 +93,14 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/or"/>
 
-
                 <Button
-                    android:background="@color/com_facebook_blue"
-                    android:text="@string/msg_log_in_with_facebook"
                     android:id="@+id/btnFbLogin"
-                    android:layout_centerHorizontal="true"
+                    style="@style/FaceBookButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/tvOr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/msg_log_in_with_facebook"/>
 
             </RelativeLayout>
 
@@ -124,12 +119,11 @@
         android:visibility="gone">
 
         <TextView
+            style="@style/TextStyleMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/network_failure_msg"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:text="@string/network_failure_msg"/>
 
     </RelativeLayout>
 
