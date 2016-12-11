@@ -47,6 +47,14 @@
         <item name="android:background">@drawable/facebook_login_button</item>
     </style>
 
+    <style name="TextStyleSmall">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ChatTextStyle" parent="TextStyleSmall">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextStyleMedium">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
@@ -88,6 +96,18 @@
     <style name="FragmentTitleTextStyleNoBackground">
         <item name="android:gravity">center</item>
         <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="RoundTextStyle" parent="TextStyleSmall">
+        <item name="android:background">@drawable/text_round</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="RoundFloatingTextStyle" parent="TextStyleSmall">
+        <item name="android:background">@drawable/text_rounded</item>
+        <item name="android:gravity">end|center_vertical</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="EditTextStyle">

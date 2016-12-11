@@ -21,25 +21,19 @@
 
             <TextView
                 android:id="@+id/tvCardsCount"
+                style="@style/RoundFloatingTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_rounded"
-                android:gravity="end|center_vertical"
                 android:text="@string/zero"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="0"/>
 
             <TextView
                 android:id="@+id/tvScore"
+                style="@style/RoundFloatingTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/text_rounded"
-                android:gravity="end|center_vertical"
                 android:paddingTop="15dp"
                 android:text="@string/zero"
-                android:textSize="14sp"
-                android:textStyle="bold"
                 tools:text="0"/>
 
         </FrameLayout>
@@ -55,12 +49,11 @@
 
     <TextView
         android:id="@+id/tvUserName"
+        style="@style/TextStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="14sp"
         tools:text="Name"/>
 
     <include layout="@layout/fragment_cards_list"/>

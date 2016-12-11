@@ -90,15 +90,14 @@
 
                 <EditText
                     android:id="@+id/etGameName"
+                    style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/foggy_textbox"
                     android:hint="@string/enter_game_id"
                     android:inputType="number"
                     android:maxLines="1"
-                    android:padding="10dp"
-                    android:textSize="20sp"/>
+                    android:padding="10dp"/>
 
                 <Button
                     android:id="@+id/btnJoinGame"
@@ -115,7 +114,7 @@
 
             <TextView
                 android:id="@+id/tvOr"
-                style="@style/LabelTextStyleSmall"
+                style="@style/LabelTextStyleMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/joinGameSection"
