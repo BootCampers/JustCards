@@ -43,9 +43,9 @@
         android:id="@+id/ibHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start|top"
-        android:layout_marginLeft="@dimen/common_margin"
-        android:layout_marginStart="@dimen/common_margin"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="@dimen/help_right_margin"
+        android:layout_marginRight="@dimen/help_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_help_outline"/>
