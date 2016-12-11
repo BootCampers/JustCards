@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -109,6 +110,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
                 gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
                 gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); // go to dealer view by default
                 startActivity(gameViewManagerIntent);
+                AnimationUtils.enterVineTransition(this);
                 finish();
             }
         }
@@ -141,5 +143,21 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
             ParseDB.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            AnimationUtils.exitVineTransition(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AnimationUtils.exitVineTransition(this);
     }
 }

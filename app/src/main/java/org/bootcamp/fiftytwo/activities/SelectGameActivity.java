@@ -71,7 +71,6 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
             String gameName = etGameName.getText().toString();
             ParseDB.checkGameExists(gameName, this);
         }
-        /*startActivity(new Intent(SelectGameActivity.this, TutorialActivity.class));*/
     }
 
     @OnClick(R.id.btnCreateGame)
@@ -79,6 +78,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
         Intent intent = new Intent(this, CreateGameActivity.class);
         intent.putExtra(DISPLAY_NAME, user.getDisplayName());
         startActivity(intent);
+        AnimationUtils.enterVineTransition(this);
     }
 
     @Override
@@ -88,6 +88,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
+            AnimationUtils.enterVineTransition(this);
         } else {
             new LovelyStandardDialog(this)
                     .setTopColorRes(R.color.colorPrimary)

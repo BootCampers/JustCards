@@ -22,6 +22,7 @@ import com.parse.ParseFacebookUtils;
 
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
@@ -144,6 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
                         User user = new User(pictureUrl, profileName, User.getCurrentUser().getObjectId());
                         user.save(RegisterActivity.this);
                         startSelectGame(user);
+                        AnimationUtils.enterVineTransition(this);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -180,6 +182,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.save(this);
 
         startSelectGame(user);
+        AnimationUtils.enterVineTransition(this);
     }
 
     private void startSelectGame(final User user) {

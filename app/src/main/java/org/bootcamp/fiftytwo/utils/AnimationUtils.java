@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -74,6 +75,14 @@ public class AnimationUtils {
         AnimatorSet combinedAnimator = new AnimatorSet();
         combinedAnimator.playSequentially(outAnimator, inAnimator);
         combinedAnimator.start();
+    }
+
+    public static void enterVineTransition(final Activity context) {
+        context.overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+    }
+
+    public static void exitVineTransition(final Activity context) {
+        context.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
 }

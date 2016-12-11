@@ -395,6 +395,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     ((FiftyTwoApplication) getApplication()).removeAllObservers();
                     parseUtils.resetCurrentUser();
                     finish();
+                    AnimationUtils.exitVineTransition(this);
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
