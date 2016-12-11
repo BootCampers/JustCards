@@ -15,6 +15,7 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import org.bootcamp.fiftytwo.R;
 import org.bootcamp.fiftytwo.models.User;
 import org.bootcamp.fiftytwo.network.ParseDB;
+import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.parceler.Parcels;
 
@@ -31,12 +32,13 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
 
     private User user = null;
 
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.tvWelcome) TextView tvWelcome;
+    @BindView(R.id.tvAskUser) TextView tvAskUser;
+    @BindView(R.id.ivAvatar) ImageView ivAvatar;
+    @BindView(R.id.etGameName) EditText etGameName;
     @BindView(R.id.btnJoinGame) Button btnJoinGame;
     @BindView(R.id.btnCreateGame) Button btnCreateGame;
-    @BindView(R.id.etGameName) EditText etGameName;
-    @BindView(R.id.tvWelcome) TextView tvWelcome;
-    @BindView(R.id.ivAvatar) ImageView ivAvatar;
-    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,9 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
         assert user != null;
         tvWelcome.setText("Welcome " + user.getDisplayName() + "!");
         loadRoundedImage(this, ivAvatar, user.getAvatarUri());
+        AnimationUtils.animateCircularReveal(tvWelcome, 500);
+        AnimationUtils.animateCircularReveal(tvAskUser, 500);
+        etGameName.clearFocus();
     }
 
     @OnClick(R.id.btnJoinGame)

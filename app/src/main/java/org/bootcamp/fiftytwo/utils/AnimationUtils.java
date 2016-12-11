@@ -29,6 +29,10 @@ public class AnimationUtils {
     }
 
     public static void animateCircularReveal(final View view) {
+        animateCircularReveal(view, FAB_ANIMATION_TIME);
+    }
+
+    public static void animateCircularReveal(final View view, final long animationTime) {
         view.postDelayed(() -> {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 // get the center for the clipping circle
@@ -42,7 +46,7 @@ public class AnimationUtils {
                 view.setVisibility(View.VISIBLE);
                 anim.start();
             }
-        }, FAB_ANIMATION_TIME);
+        }, animationTime);
     }
 
     private static void changeCameraDistance(final Context context, final View view) {
