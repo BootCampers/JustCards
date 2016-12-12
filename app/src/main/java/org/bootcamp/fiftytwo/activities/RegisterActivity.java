@@ -26,7 +26,6 @@ import org.bootcamp.fiftytwo.utils.AnimationUtils;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.PlayerUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ import static org.bootcamp.fiftytwo.utils.AppUtils.showSnackBar;
 import static org.bootcamp.fiftytwo.utils.Constants.PARAM_USER;
 import static org.bootcamp.fiftytwo.utils.Constants.REQ_CODE_PICK_IMAGE;
 import static org.bootcamp.fiftytwo.utils.Constants.SELECTED_AVATAR;
+import static org.bootcamp.fiftytwo.utils.Constants.TAG;
 import static org.bootcamp.fiftytwo.utils.NetworkUtils.isNetworkAvailable;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -70,14 +70,19 @@ public class RegisterActivity extends AppCompatActivity {
             if (e != null) {
                 Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
             } else {
+                Log.d("DEBUG", "Anonymous loginToParse succeeded");
                 startWithCurrentUser();
             }
         });
     }
 
     private void startWithCurrentUser() {
+        Log.d(TAG, "startWithCurrentUser: Parse User ID: " + User.getCurrentUser().getObjectId());
         User user = User.get(this);
         if (null != user) {
+            Log.d(TAG, "startWithCurrentUser: Saved User: " + user);
+            user.setUserId(User.getCurrentUser().getObjectId());
+            user.save(this);
             startSelectGame(user);
             overridePendingTransition(0, 0);
         } else {
@@ -99,17 +104,14 @@ public class RegisterActivity extends AppCompatActivity {
     public void fbLogin(View view) {
         ArrayList<String> permissions = new ArrayList<>();
         permissions.add("email");
-        ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions,
-                (user, err) -> {
+        ParseFacebookUtils.linkWithReadPermissionsInBackground(User.getCurrentUser(), this, permissions,
+                (err) -> {
                     if (err != null) {
-                        Log.d(Constants.TAG, "Uh oh. Error occurred" + err.toString());
-                    } else if (user == null) {
-                        Log.d(Constants.TAG, "Uh oh. The user cancelled the Facebook login.");
-                    } else if (user.isNew()) {
-                        Log.d(Constants.TAG, "User signed up and logged in through Facebook!");
+                        Log.d(Constants.TAG, "Uh oh. Error occurred: " + err.getMessage());
+                        // TODO: Fix Issue of 'this auth is already used'
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
-                        Log.d(Constants.TAG, "User logged in through Facebook!");
+                        Toast.makeText(RegisterActivity.this, "Logged in with facebook account!", Toast.LENGTH_SHORT).show();
+                        Log.d(Constants.TAG, "Linked user's facebook login with parse!");
                     }
                 });
     }
@@ -122,8 +124,8 @@ public class RegisterActivity extends AppCompatActivity {
         AnimationUtils.enterVineTransition(this);
     }
 
+    // Suggested by https://disqus.com/by/dominiquecanlas/
     private void getUserDetailsFromFB() {
-        // Suggested by https://disqus.com/by/dominiquecanlas/
         Bundle parameters = new Bundle();
         parameters.putString("fields", "email,name,picture.type(large)");
         new GraphRequest(
@@ -134,16 +136,18 @@ public class RegisterActivity extends AppCompatActivity {
                 response -> {
                     /* handle the result */
                     try {
+                        Log.d(TAG, "getUserDetailsFromFB: response from facebook: " + response);
+
                         String profileName = response.getJSONObject().getString("name");
+                        String profilePictureUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
+
                         Log.d(Constants.TAG, "Facebook profileName is:" + profileName);
+                        Log.d(Constants.TAG, "Facebook image is: " + profilePictureUrl);
+                        Log.d(TAG, "getUserDetailsFromFB: is facebook profile linked: " + ParseFacebookUtils.isLinked(User.getCurrentUser()));
 
-                        JSONObject picture = response.getJSONObject().getJSONObject("picture");
-                        JSONObject data = picture.getJSONObject("data");
-                        // Returns a large profile picture
-                        String pictureUrl = data.getString("url");
-                        Log.d(Constants.TAG, "Facebook image is: " + pictureUrl);
+                        User user = new User(profilePictureUrl, profileName, User.getCurrentUser().getObjectId());
+                        Log.d(TAG, "getUserDetailsFromFB: Retrieved User: " + user);
 
-                        User user = new User(pictureUrl, profileName, User.getCurrentUser().getObjectId());
                         user.save(this);
                         startSelectGame(user);
                         AnimationUtils.enterVineTransition(this);
