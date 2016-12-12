@@ -1,0 +1,51 @@
+Ankit: Hi I am Ankit
+Amit: Hi I am Amit
+
+Ankit: We are the developers of 52 cards game. It's a simply yet powerful app which can be played with friends and family - anytime, anywhere. We provide a platform for them to play any game they like.
+
+Amit: Idea is synonym to users having physical 52 playing cards deck with them and they choose to play anwhere they like - train station, get together parties, coffee shop, etc. We don't enforce game rules except those set by the dealer of the game who is also the one who starts the game.
+
+Ankit: Let's get started. Device on right is mine and one on the left is Amit's. I am going use enter desired username, select a nice avatar for myself and register.
+
+Amit: I am going to login with my facebook account. Note that we are never going to post anything on user's wall nor share any information. This is just to get profile name and avatar from facebook to be used for the game.
+
+Ankit: I will start the game here. App generates a unique game id for me which I will can share with others for to join. Then I will select the cards - note default 52 cards are already selected for me with the option to select jokers and more decks for the game. I will go with default 52 cards for now and hit start game. Now I am going to share the game id with Amit by clicking on this i icon on top.
+
+Amit: I will enter this game id and join the game.
+
+Ankit: Wow. looks like Amit joined the game and here is his avatar with score and number of cards in his hands indicator. I can move this around and place it anywhere I like.
+
+Amit: At this point game finds all the previously joined players and looks like we are all set to start the game.
+
+Ankit: Hitting the deal button and app calculates how many maximum cards each player can get when I distribute along with other options. I can choose to decrease and increase, ....bla bla..(talk about all options present there..gonna take time)..Let's go with the defaults..
+
+Amit: Wow..magic..I got cards in my hand with this nice circular view and cards on table with nice animation here. Let's peek through my cards. (Click on some cards at my hand)..That's nice..now let's peek through the cards on the table..OOps..I guess that' not allowed by the dealer..
+
+Ankit: Let's move over to players view to start playing. I will check this chat and log view to make sure everything everything is right till now. Send a welcome message.
+
+Amit: (Clicking on few cards at hand and moving 1 to trash and 1 to table) I don't need this card so I'll move it to trash. Observe the count increases on everyone's screen here. Now this cards let's move it to the table. Observe that in real time it get's updated on everyone's screen.
+
+Ankit: hmmm...Amit put a card on the table, I am interested in this..let's pick that up. (Picking card from table).
+
+Amit: I need to step out so I am going to mute myself from the game and then show my cards to everyone. (Read that it's one time operation for each round and acknolwlege) 
+
+Ankit: Amit is showing up his cards. Let's check them out (Clicking on Amit's cards).  Now let's get to dealer view and end the game. now Score everyone and announce Ankit and XX as the winner.
+
+Amit: Great. Claps for winners. App plays claps tone and fireworks.
+
+Ankit: Now for the next round notice that all the players are back in the game and they don't need to create or enter a game id. With the same game id they can play multiple rounds and each round they can have seperate rules.
+
+Amit: I really need to leave now. So I hit this fab and select to exit.
+
+Ankit: Notice that as Amit leaves, his icon automatically disappears. 
+
+Amit: That's all for the today's demo. It's important to note that we desinged the app generic enough to be modified to support any kind of cards game user desires and not any specific game like poker or blakc jack, etc. Also any cards can be used in future like UNO cards or WWE flash cards, math cards, etc. We are planning to have the app publish in app store very soon and also have companion ios and daydream VR app and oculus app so that users can enjoy the experience they desire and play the game.
+
+Ankit: Last but not the least thank you entiere codepath team and Nathan for giving us opportunity to learn so much and provide this wonderful platform.
+
+Amit: thank you.
+
+
+
+
+
