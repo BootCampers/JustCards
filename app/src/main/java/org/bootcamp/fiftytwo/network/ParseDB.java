@@ -63,14 +63,13 @@ public class ParseDB {
             if (e1 == null) {
                 Log.e(Constants.TAG, "Success delete ");
             } else {
+                // TODO Known Error: java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
                 Log.e(Constants.TAG, "Delete error " + e1.getMessage());
             }
         });
     }
 
     /**
-     * TODO: Needs discussion
-     * TODO: fix Delete error java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
      * Existing players can continue to play the game even after dealer leaves. No one else can join.
      *
      * @param gameName the game number that needs to be deleted
@@ -165,6 +164,13 @@ public class ParseDB {
                     deleteGameTables(gameName, e1 -> {
                         if (e1 == null) {
                             runnable.run();
+                            Log.d(TAG, "deleteGameTables: Success");
+                        } else if (e1.getCode() == ParseException.OTHER_CAUSE && e1.getCause() instanceof ClassCastException) {
+                            // TODO Known Error: java.lang.ClassCastException: okhttp3.RequestBody$2 cannot be cast to com.parse.ParseOkHttpClient$ParseOkHttpRequestBody
+                            Log.e(TAG, "deleteGameTables: Known Parse Error.", e1.getCause());
+                            runnable.run();
+                        } else {
+                            Log.e(TAG, "deleteGameTables: Unknown Parse Error Occurred", e1.getCause());
                         }
                     });
                 }
@@ -178,10 +184,12 @@ public class ParseDB {
                 Log.d(Constants.TAG, "GameTable Found list : " + itemList.size());
                 if (itemList.size() == 0) {
                     Log.e(TAG, "fetchAllTableCards: No game tables found in database.");
-                } else if (itemList.size() > 1) {
-                    Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
                 } else {
-                    String cardsString = itemList.get(0).getCards();
+                    if (itemList.size() > 1) {
+                        Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
+                    }
+                    int index = itemList.size() - 1;
+                    String cardsString = itemList.get(index).getCards();
                     List<Card> cards = new Gson().fromJson(cardsString, getCardsType());
                     if (cards == null) {
                         Log.e(TAG, "getGameTableCards: received cards from game table are null");
