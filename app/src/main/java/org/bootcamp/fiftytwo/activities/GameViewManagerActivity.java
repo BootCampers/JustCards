@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -60,6 +61,7 @@ import org.bootcamp.fiftytwo.utils.CardUtil;
 import org.bootcamp.fiftytwo.utils.Constants;
 import org.bootcamp.fiftytwo.utils.MediaUtils;
 import org.bootcamp.fiftytwo.views.OnCardsDragListener;
+import org.bootcamp.fiftytwo.views.OnTouchMoveListener;
 import org.bootcamp.fiftytwo.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
@@ -150,6 +152,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private ChatAndLogFragment chatAndLogFragment;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.clGameLayout) ViewGroup container;
+    @BindView(R.id.llSink) ViewGroup llSink;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
     @BindView(R.id.ibHelp) ImageButton ibHelp;
@@ -268,7 +272,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             public void toggleCard(Card card, int position, String onTag) {
             }
         }));
-
+        llSink.setOnTouchListener(new OnTouchMoveListener(container));
     }
 
     @Override
@@ -688,7 +692,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             dealerViewFragment.addPlayers(players);
         }
 
-        PlayerViewHelper.addPlayers(this, R.id.clGameLayout, players);
+        PlayerViewHelper.addPlayers(this, container.getId(), players);
         for (User player : players) {
             if (player.equals(User.getCurrentUser(this))) {
                 togglePlayerView(player);
