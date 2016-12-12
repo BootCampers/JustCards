@@ -144,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.d(Constants.TAG, "Facebook image is: " + pictureUrl);
 
                         User user = new User(pictureUrl, profileName, User.getCurrentUser().getObjectId());
-                        user.save(RegisterActivity.this);
+                        user.save(this);
                         startSelectGame(user);
                         AnimationUtils.enterVineTransition(this);
                     } catch (JSONException e) {
