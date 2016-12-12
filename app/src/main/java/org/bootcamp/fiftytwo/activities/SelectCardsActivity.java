@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.bootcamp.fiftytwo.R;
@@ -58,11 +59,28 @@ public class SelectCardsActivity extends AppCompatActivity {
         data.putExtra(PARAM_CARDS, Parcels.wrap(cards));
         setResult(RESULT_OK, data);
         finish();
+        AnimationUtils.exitVineTransition(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         AnimationUtils.animateCircularReveal(fabSaveSelection);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            AnimationUtils.exitVineTransition(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AnimationUtils.exitVineTransition(this);
     }
 }

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.bootcamp.fiftytwo.R;
@@ -59,6 +60,7 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
         intent.putExtra(Constants.SELECTED_AVATAR, selectedAvatarUrl);
         setResult(RESULT_OK, intent);
         finish();
+        AnimationUtils.exitVineTransition(this);
     }
 
     @Override
@@ -70,5 +72,21 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
     @Override
     public void onSelectedAvatar(String avatarUrl) {
         selectedAvatarUrl = avatarUrl;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            AnimationUtils.exitVineTransition(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AnimationUtils.exitVineTransition(this);
     }
 }

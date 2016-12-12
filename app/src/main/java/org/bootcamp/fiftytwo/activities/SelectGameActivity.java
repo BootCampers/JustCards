@@ -88,7 +88,7 @@ public class SelectGameActivity extends AppCompatActivity implements ParseDB.OnG
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
-            AnimationUtils.enterVineTransition(this);
+            AnimationUtils.enterZoomTransition(this);
         } else {
             new LovelyStandardDialog(this)
                     .setTopColorRes(R.color.colorPrimary)

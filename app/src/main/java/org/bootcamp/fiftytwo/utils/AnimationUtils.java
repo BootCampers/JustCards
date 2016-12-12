@@ -85,4 +85,12 @@ public class AnimationUtils {
         context.overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
+    public static void enterZoomTransition(final Activity context) {
+        context.overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+    }
+
+    public static void exitZoomTransition(final Activity context) {
+        context.overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+    }
+
 }

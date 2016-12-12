@@ -92,7 +92,6 @@ public class Constants {
     public static final String PARSE_CHAT_MESSAGE = "chatMessage";
     public static final String PARSE_SELECT_GAME_RULES = "selectGameRules";
 
-
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";
     public static final String DO_REMAINING_CARDS = "remainingCards";

@@ -101,6 +101,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         if (mCards == null || mCards.size() == 0) {
             Intent intent = new Intent(this, SelectCardsActivity.class);
             startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
+            AnimationUtils.enterVineTransition(this);
         } else {
             if (TextUtils.isEmpty(tvGameNumber.getText())) {
                 showSnackBar(getApplicationContext(), view, msgEnterGameNumber);
@@ -110,7 +111,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
                 gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
                 gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); // go to dealer view by default
                 startActivity(gameViewManagerIntent);
-                AnimationUtils.enterVineTransition(this);
+                AnimationUtils.enterZoomTransition(this);
                 finish();
             }
         }
@@ -120,6 +121,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
+        AnimationUtils.enterVineTransition(this);
     }
 
     @Override

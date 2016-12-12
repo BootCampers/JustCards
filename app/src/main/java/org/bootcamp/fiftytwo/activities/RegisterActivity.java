@@ -119,6 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void browse() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE, null);
+        AnimationUtils.enterVineTransition(this);
     }
 
     private void getUserDetailsFromFB() {
