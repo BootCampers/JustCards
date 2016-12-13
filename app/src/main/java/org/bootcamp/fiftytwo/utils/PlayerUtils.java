@@ -22,7 +22,6 @@ public class PlayerUtils {
             "Don",
             "Joker",
             "Michelle",
-            "Ankit",
             "Romano",
             "Steve",
             "Ellie",
@@ -39,7 +38,6 @@ public class PlayerUtils {
             "http://i.imgur.com/LngWF3K.jpg", // Godfather
             "http://i.imgur.com/VCY27Er.jpg", // Joker
             "http://i.imgur.com/8iASC56.jpg", // Afghan Girl
-            "http://i.imgur.com/xxZyhdy.jpg", // Ankit
             "http://i.imgur.com/G0cx2jC.jpg", // Superman
             "http://i.imgur.com/UMUY9Yn.jpg", // Steve Jobs
             "http://i.imgur.com/9OHzici.jpg", // Ellie Kemper

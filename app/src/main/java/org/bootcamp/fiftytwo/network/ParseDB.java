@@ -115,7 +115,7 @@ public class ParseDB {
 
                 // TODO: This custom data generation is temporary and for testing purposes only
                 if ((isEmpty(players) || players.size() == 1) && User.getCurrentUser(context).isDealer()) {
-                    List<User> dummyPlayers = PlayerUtils.getPlayers(4);
+                    List<User> dummyPlayers = PlayerUtils.getPlayers(2);
                     for (User dummyPlayer : dummyPlayers) {
                         Game.save(gameName, dummyPlayer);
                     }
@@ -179,10 +179,12 @@ public class ParseDB {
                 Log.d(Constants.TAG, "GameTable Found list : " + itemList.size());
                 if (itemList.size() == 0) {
                     Log.e(TAG, "fetchAllTableCards: No game tables found in database.");
-                } else if (itemList.size() > 1) {
-                    Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
                 } else {
-                    String cardsString = itemList.get(0).getCards();
+                    if (itemList.size() > 1) {
+                        Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
+                    }
+                    int index = itemList.size() - 1;
+                    String cardsString = itemList.get(index).getCards();
                     List<Card> cards = new Gson().fromJson(cardsString, getCardsType());
                     if (cards == null) {
                         Log.e(TAG, "getGameTableCards: received cards from game table are null");
