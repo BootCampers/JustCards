@@ -120,7 +120,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
                     card.setShowingFront(!card.isShowingFront());
                     if (card.isShowingFront()) {
                         User self = User.getCurrentUser(mContext);
-                        cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(), "Looking at cards in the " + tag + " section");
+                        cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(),
+                                self.getDisplayName() + " flipped " + card.getName().toLowerCase().replace("_", " ") +" on " + tag.toLowerCase().replace("_", " "));
                     }
                     if (isToggleCardBroadcastRequired(getTag())) {
                         cardsListener.toggleCard(card, (int) holder.ivCard.getTag(), getTag());

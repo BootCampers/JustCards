@@ -849,6 +849,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Fragment fragment = null;
             if (onTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
                 fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+                chatAndLogFragment.addNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
+                        from.getDisplayName() + " flipped " + card.getName().toLowerCase().replace("_", " ") +" on table");
             } else if (onTag.equalsIgnoreCase(PLAYER_TAG)) {
                 fragment = getPlayerFragment(this, from);
             }
