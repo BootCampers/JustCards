@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="org.bootcamp.fiftytwo">
+          package="org.justcards.android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -9,14 +9,14 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="org.justcards.android.permission.C2D_MESSAGE"/>
 
     <permission
-        android:name="org.bootcamp.fiftytwo.permission.C2D_MESSAGE"
+        android:name="org.justcards.android.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
     <application
-        android:name=".application.FiftyTwoApplication"
+        android:name=".application.JustCardsAndroidApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,7 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.RegisterActivity"/>
+                android:value="org.justcards.android.activities.RegisterActivity"/>
         </activity>
         <activity
             android:name=".activities.SelectGameActivity"
@@ -51,7 +51,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.SelectGameActivity"/>
+                android:value="org.justcards.android.activities.SelectGameActivity"/>
         </activity>
         <activity
             android:name=".activities.SelectCardsActivity"
@@ -60,7 +60,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.CreateGameActivity"/>
+                android:value="org.justcards.android.activities.CreateGameActivity"/>
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
@@ -69,7 +69,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.bootcamp.fiftytwo.activities.SelectGameActivity"/>
+                android:value="org.justcards.android.activities.SelectGameActivity"/>
         </activity>
 
         <activity android:name=".activities.TutorialActivity"/>
@@ -88,7 +88,7 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="org.bootcamp.fiftytwo"/>
+                <category android:name="org.justcards.android"/>
             </intent-filter>
         </receiver>
 

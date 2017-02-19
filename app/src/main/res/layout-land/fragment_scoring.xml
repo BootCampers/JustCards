@@ -7,7 +7,7 @@
     android:layout_margin="36dp"
     android:background="@color/colorPrimaryOpacity"
     android:padding="16dp"
-    tools:context="org.bootcamp.fiftytwo.fragments.ScoringFragment">
+    tools:context=".fragments.ScoringFragment">
 
     <TextView
         android:id="@+id/tvTitle"

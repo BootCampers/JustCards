@@ -7,5 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.bootcamp.fiftytwo.activities.AvatarSelectionActivity"
+    tools:context=".activities.AvatarSelectionActivity"
     tools:showIn="@layout/activity_avatar_selection"/>

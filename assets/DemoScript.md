@@ -7,15 +7,15 @@ Amit: Hello, I am Amit! I am part of the Codepath 2016 remote class as well!
 Ankit: Together, we thank you for giving us the opportunity to present the app we've been building for the last few weeks.
 
 Amit: There are a lot of places, and moments, we want to spend time playing cards with our friends and family, like flights, trains, airports, coffee shops, college campus, the list doesn't end.
-But often, we don't get to play, limited by the constraints of physical space, deck of cards and a number of other reasons. 52 comes to the rescue.
+But often, we don't get to play, limited by the constraints of physical space, deck of cards and a number of other reasons. JustCards comes to the rescue.
 
-Ankit: We're proud to present to you **'52'**. 52 is a simple yet powerful app which can be used to play card games with friends and family.
+Ankit: We're proud to present to you **'JustCards'**. JustCards is a simple yet powerful app which can be used to play card games with friends and family.
 The app gives you a platform, works as a facilitator, and helps you play any cards game you like - **anytime, anywhere**.
 
 Amit: The idea of the app is quite simple. It helps you create a game session and invite others to join.
 You choose the virtual cards to play with, so that you won't need the physical cards any more.
-You and the group decide the game to play for the round. 52 helps you set up a few rules, but doesn't limit with rules of a particular game.
-Once in the game, 52 helps with
+You and the group decide the game to play for the round. JustCards helps you set up a few rules, but doesn't limit with rules of a particular game.
+Once in the game, JustCards helps with
    * dealing cards,
    * seeing and exchanging them,
    * showing them to other players,
@@ -25,13 +25,13 @@ Once in the game, 52 helps with
 
 Ankit: Let's see the app in action.
 Device on right is mine and on the left is Amit's.
-I am going to register to 52 with my facebook account, 52 will use my facebook profile name and image throughout the game.
+I am going to register to JustCards with my facebook account, JustCards will use my facebook profile name and image throughout the game.
 
 Amit: I am **NOT** going to use facebook login, will enter my username, select a fun avatar from the app and register.
 
 Ankit: I am ready to start a new game!
-* 52 will generate a unique game number for this session. I will share with game number to invite others.
-* Now, I will select the cards to play with. 52 selects the default deck already. I can select/de-select them, add jokers or more decks as necessary. For now, Let's go with the default 52 cards and start the game.
+* JustCards will generate a unique game number for this session. I will share with game number to invite others.
+* Now, I will select the cards to play with. JustCards selects the default deck already. I can select/de-select them, add jokers or more decks as necessary. For now, Let's go with the default JustCards cards and start the game.
 * Yay! I am in the game.
 * I am going to share this game number with Amit by clicking on the share icon at the top right corner.
 
@@ -50,7 +50,7 @@ Ankit: I am going to deal cards now.
 * I am choosing to shuffle the cards before dealing
 * I am also playing in this round, so I choose to deal to myself as well
 * As a rule, I am not going to let players to see cards on the table.
-* All options done, now deal!!! 52 is syncing cards across devices now.
+* All options done, now deal!!! JustCards is syncing cards across devices now.
 
 Amit:
 * Wow! I got my cards and see them at the bottom in a nice circular stack.
@@ -71,8 +71,8 @@ Amit:
 Ankit: Amit, you put a card on the table, I need it. I'll pick it up.
 
 Amit:
-* Ankit, I need to call pass for this round. 52 is asking me to confirm, since I won't be able to play in this round anymore.
-* I muted myself. Now I want to show my cards to everyone. 52 is again asking me to confirm.
+* Ankit, I need to call pass for this round. JustCards is asking me to confirm, since I won't be able to play in this round anymore.
+* I muted myself. Now I want to show my cards to everyone. JustCards is again asking me to confirm.
 
 Ankit:
 * Amit is showing his cards. Let's flip them.
@@ -97,7 +97,7 @@ Amit:
 
 Ankit:
 * We plan to publish the app in Google Play Store
-* We also plan to build 52 app across platforms such as IOS, Daydream VR, Oculus Rift so that the players can have a fun and wholesome experience!
+* We also plan to build JustCards app across platforms such as IOS, Daydream VR, Oculus Rift so that the players can have a fun and wholesome experience!
 * We aim to support different types of cards, such as UNO cards, WWE flash cards etc.
 * We plan to build sophisticated game rules support to provide a smooth user experience.
 

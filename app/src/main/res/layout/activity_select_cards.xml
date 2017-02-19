@@ -6,7 +6,7 @@
     android:id="@+id/activity_select_cards"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="org.bootcamp.fiftytwo.activities.SelectCardsActivity">
+    tools:context=".activities.SelectCardsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

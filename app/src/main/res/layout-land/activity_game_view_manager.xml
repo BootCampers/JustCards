@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_game_background"
     android:fitsSystemWindows="true"
-    tools:context="org.bootcamp.fiftytwo.activities.GameViewManagerActivity">
+    tools:context=".activities.GameViewManagerActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

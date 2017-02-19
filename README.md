@@ -1,6 +1,6 @@
-# *52*
+# *JustCards*
 
-**52** is an android app that allows a user to play card games on their android phone without needing physical cards. The game can be played by one user or a group of users. Any card game can be played in the app. Users can collaborate with other players, manage player positions, shuffle cards, show and hide cards.
+**JustCards** is an android app that allows a user to play card games on their android phone without needing physical cards. The game can be played by one user or a group of users. Any card game can be played in the app. Users can collaborate with other players, manage player positions, shuffle cards, show and hide cards.
 
 ## User Stories
 

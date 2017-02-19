@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "853701705378",
+    "firebase_url": "https://justcards-3c37c.firebaseio.com",
+    "project_id": "justcards-3c37c",
+    "storage_bucket": "justcards-3c37c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853701705378:android:7fbb083e4fde6bab",
+        "android_client_info": {
+          "package_name": "org.justcards.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853701705378-boisqnvqsjh07k2fb8t2juuntfkce0ac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXKkGkCcg3OZ4rJZA3mVcW3KO00JUVbt8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -18,14 +18,14 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvChatLog"
-        android:name="org.bootcamp.fiftytwo.fragments.ChatAndLogFragment"
+        android:name="org.justcards.android.fragments.ChatAndLogFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/etChatMsg"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="org.bootcamp.fiftytwo.fragments.ChatAndLogFragment"
+        tools:context=".fragments.ChatAndLogFragment"
         tools:listitem="@layout/item_chat_log"/>
 
 </RelativeLayout>
