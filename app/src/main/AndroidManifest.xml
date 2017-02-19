@@ -78,6 +78,22 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"/>
+        
+        <service android:name=".services.RegistrationService" android:exported="false"/>
+
+        <service
+            android:name=".services.firebase.InstanceIDListenerService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".services.firebase.FCMMessageReceiverService" android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <service android:name="com.parse.PushService"/>
 
@@ -115,6 +131,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572"/>
+
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
             android:value="@string/gcm_sender_id"/>

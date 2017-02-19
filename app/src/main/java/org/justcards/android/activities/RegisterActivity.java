@@ -17,15 +17,18 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
 
+import org.json.JSONException;
 import org.justcards.android.R;
 import org.justcards.android.models.User;
+import org.justcards.android.services.RegistrationService;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
-import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ import butterknife.OnClick;
 import static org.justcards.android.utils.AppUtils.loadRoundedImage;
 import static org.justcards.android.utils.AppUtils.showSnackBar;
 import static org.justcards.android.utils.Constants.PARAM_USER;
+import static org.justcards.android.utils.Constants.PLAY_SERVICES_RESOLUTION_REQUEST;
 import static org.justcards.android.utils.Constants.REQ_CODE_PICK_IMAGE;
 import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
 import static org.justcards.android.utils.Constants.TAG;
@@ -58,11 +62,36 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(checkPlayServices()) {
+            Intent intent = new Intent(this, RegistrationService.class);
+            startService(intent);
+        }
+
         if (User.getCurrentUser() != null) {
             startWithCurrentUser();
         } else {
             loginToParse();
         }
+    }
+
+    /**
+     * Check device to ensure it has Google Play Services APK.
+     * If it doesn't, display a dialog that allows users to download the APK from the Google Play Store
+     * Or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if(apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device does not have play services enabled.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private void loginToParse() {

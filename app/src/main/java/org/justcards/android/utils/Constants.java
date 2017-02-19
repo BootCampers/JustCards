@@ -27,8 +27,11 @@ public class Constants {
     public static final String SCORE = "score";
     public static final String RULE_PREFS = "rulePrefs";
     public static final String RULE_VIEW_TABLE_CARD = "ruleViewTableCard";
+    public static final String FCM_TOKEN = "FCMToken";
+    public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
 
     /** Request Codes Here */
+    public static final int PLAY_SERVICES_RESOLUTION_REQUEST = 900;
     public static final int REQ_CODE_SELECT_CARDS = 1;
     public static final int REQ_CODE_PICK_IMAGE = 2;
 

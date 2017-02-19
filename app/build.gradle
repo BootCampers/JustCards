@@ -53,6 +53,7 @@ ext {
     butterknifeVersion = '8.5.1'
     parcelerVersion = '1.1.6'
     retrofitVersion = '2.1.0'
+    firebaseVersion = '10.2.0'
 }
 
 dependencies {
@@ -70,7 +71,8 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
         transitive = true;
     }
-    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile "com.google.android.gms:play-services-base:${firebaseVersion}"
+    compile "com.google.firebase:firebase-messaging:${firebaseVersion}"
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     compile "org.parceler:parceler-api:${parcelerVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
