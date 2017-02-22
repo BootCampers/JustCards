@@ -2,6 +2,7 @@ package org.justcards.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +18,21 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
 
@@ -46,8 +60,10 @@ import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
 import static org.justcards.android.utils.Constants.TAG;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements
+        GoogleApiClient.OnConnectionFailedListener{
 
+    private static final int RC_SIGN_IN = 9001;
     private String userAvatarURI = "";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -55,8 +71,15 @@ public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.ivAvatar) ImageView ivAvatar;
     @BindView(R.id.fabBrowseAvatar) FloatingActionButton fabBrowseAvatar;
     @BindView(R.id.btnRegister) Button btnRegister;
+    @BindView(R.id.btnGoogleSignin) SignInButton btnGoogleSignin;
     @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
+
+    private GoogleApiClient mGoogleApiClient;
+
+    // Firebase instance variables
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +95,19 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             loginToParse();
         }
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     /**
@@ -190,15 +226,23 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == REQ_CODE_PICK_IMAGE) {
-                userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
-                Log.d(Constants.TAG, userAvatarURI);
-                loadRoundedImage(this, ivAvatar, userAvatarURI);
+        if (requestCode == REQ_CODE_PICK_IMAGE) {
+            userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
+            Log.d(Constants.TAG, userAvatarURI);
+            loadRoundedImage(this, ivAvatar, userAvatarURI);
+        } else if (requestCode == RC_SIGN_IN /*Google sign in*/) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign-In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
             } else {
-                ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
-                getUserDetailsFromFB();
+                // Google Sign-In failed
+                Toast.makeText(getApplicationContext(), "Google Sign-In failed.", Toast.LENGTH_LONG).show();
             }
+        } else {
+            ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
+            getUserDetailsFromFB();
         }
     }
 
@@ -216,7 +260,6 @@ public class RegisterActivity extends AppCompatActivity {
         user.save(this);
 
         startSelectGame(user);
-        AnimationUtils.enterVineTransition(this);
     }
 
     private void startSelectGame(final User user) {
@@ -224,11 +267,59 @@ public class RegisterActivity extends AppCompatActivity {
         selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
         finish();
         startActivity(selectGameIntent);
+        AnimationUtils.enterVineTransition(this);
     }
 
     private void notifyNetworkFailure(final boolean networkFailure) {
         networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
         fabBrowseAvatar.setEnabled(!networkFailure);
         btnRegister.setEnabled(!networkFailure);
+    }
+
+    @OnClick(R.id.btnGoogleSignin)
+    public void signInWithGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            //Login success
+                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                            if (mFirebaseUser.getPhotoUrl() != null) {
+                                User user = new User(mFirebaseUser.getPhotoUrl().toString(),
+                                        mFirebaseUser.getDisplayName(),
+                                        mFirebaseUser.getUid());
+                                user.save(getApplicationContext());
+                                startSelectGame(user);
+                            } else {
+                                //TODO: Give a random image to the user and start game
+                            }
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }

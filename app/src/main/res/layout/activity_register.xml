@@ -102,6 +102,14 @@
                     android:layout_centerHorizontal="true"
                     android:text="@string/msg_log_in_with_facebook"/>
 
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/btnGoogleSignin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/btnFbLogin"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="visible"/>
+
             </RelativeLayout>
 
         </RelativeLayout>

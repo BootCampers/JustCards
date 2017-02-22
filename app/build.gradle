@@ -73,6 +73,7 @@ dependencies {
     }
     compile "com.google.android.gms:play-services-base:${firebaseVersion}"
     compile "com.google.firebase:firebase-messaging:${firebaseVersion}"
+    compile "com.google.firebase:firebase-auth:${firebaseVersion}"
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     compile "org.parceler:parceler-api:${parcelerVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
@@ -94,6 +95,9 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
     annotationProcessor "org.parceler:parceler:${parcelerVersion}"
     provided  'javax.annotation:jsr250-api:1.0'
+
+    // Google
+    compile "com.google.android.gms:play-services-auth:${firebaseVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'
