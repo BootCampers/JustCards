@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import org.justcards.android.R;
 import org.justcards.android.models.Card;
-import org.justcards.android.network.ParseDB;
+import org.justcards.android.network.FirebaseDB;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcels;
@@ -38,7 +38,7 @@ import static org.justcards.android.utils.AppUtils.showSnackBar;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
 import static org.justcards.android.utils.Constants.REQ_CODE_SELECT_CARDS;
 
-public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnGameExistsListener {
+public class CreateGameActivity extends AppCompatActivity implements FirebaseDB.OnGameExistsListener {
 
     private List<Card> mCards = new ArrayList<>();
     private String gameNumberString;
@@ -71,7 +71,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
     private void initializeWidgets() {
         int gameNumber = new Random().nextInt(99999);
         gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-        ParseDB.checkGameExists(gameNumberString, this);
+        FirebaseDB.checkGameExists(gameNumberString, this);
         tvGameNumber.setText(gameNumberString);
     }
 
@@ -142,7 +142,7 @@ public class CreateGameActivity extends AppCompatActivity implements ParseDB.OnG
         if (result) {
             int gameNumber = new Random().nextInt(99999);
             String gameNumberString = String.format(Locale.getDefault(), "%05d", gameNumber);
-            ParseDB.checkGameExists(gameNumberString, this);
+            FirebaseDB.checkGameExists(gameNumberString, this);
             tvGameNumber.setText(gameNumberString);
         }
     }

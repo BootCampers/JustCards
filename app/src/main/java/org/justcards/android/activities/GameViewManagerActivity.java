@@ -54,6 +54,7 @@ import org.justcards.android.models.ChatLog;
 import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
 import org.justcards.android.models.User;
+import org.justcards.android.network.FirebaseDB;
 import org.justcards.android.network.ParseDB;
 import org.justcards.android.network.ParseUtils;
 import org.justcards.android.utils.AnimationUtils;
@@ -203,7 +204,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             parseUtils.saveCurrentUserIsDealer(!isCurrentViewPlayer);
 
             //Get previously joined players
-            ParseDB.findUsers(this, gameName, this::addPlayersToView);
+            FirebaseDB.findUsers(this, gameName, this::addPlayersToView);
             parseUtils.joinChannel();
 
             // Add myself to game
