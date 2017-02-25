@@ -10,7 +10,7 @@ import com.parse.ParseUser;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -29,6 +29,7 @@ import static org.justcards.android.utils.PlayerUtils.getDefaultAvatar;
 @Parcel(analyze = User.class)
 public class User {
 
+    //DO NOT CHANGE ANY VARIABLE NAME
     private String userId; //match this with userId of Parse to keep them unique
     private String displayName;
     private String avatarUri;
@@ -36,7 +37,7 @@ public class User {
     private boolean isShowingCards;
     private boolean isActive = true;
     private int score;
-    private List<Card> cards = new ArrayList<>();
+    private HashMap<String, Card> cards = new HashMap<>();
 
     public User() {}
 
@@ -122,7 +123,7 @@ public class User {
     private void resetForRound() {
         isShowingCards = false;
         isActive = true;
-        cards = new ArrayList<>();
+        cards = new HashMap<>();
     }
 
     public static void resetForRound(final List<User> users) {
@@ -181,7 +182,7 @@ public class User {
         this.score = score;
     }
 
-    public List<Card> getCards() {
+    public HashMap<String, Card> getCards() {
         return cards;
     }
 

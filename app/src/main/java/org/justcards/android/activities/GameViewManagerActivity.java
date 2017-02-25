@@ -56,8 +56,8 @@ import org.justcards.android.interfaces.Observable;
 import org.justcards.android.interfaces.Observer;
 import org.justcards.android.models.Card;
 import org.justcards.android.models.ChatLog;
-import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
+import org.justcards.android.models.GameTable;
 import org.justcards.android.models.User;
 import org.justcards.android.network.FirebaseDB;
 import org.justcards.android.network.ParseDB;
@@ -81,11 +81,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.justcards.android.models.GameRules.getRuleDescription;
-import static org.justcards.android.models.User.fromJson;
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.resetForRound;
 import static org.justcards.android.network.ParseUtils.isSelf;
-import static org.justcards.android.utils.AppUtils.getCardsType;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.getUsersType;
 import static org.justcards.android.utils.AppUtils.getVectorCompat;
@@ -96,28 +94,18 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
-import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
 import static org.justcards.android.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
-import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
-import static org.justcards.android.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
-import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
-import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.justcards.android.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
-import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.PLAYER_TAG;
 import static org.justcards.android.utils.Constants.POSITION;
 import static org.justcards.android.utils.Constants.RULE_CODE;
@@ -126,10 +114,7 @@ import static org.justcards.android.utils.Constants.RULE_VIEW_TABLE_CARD;
 import static org.justcards.android.utils.Constants.SINK_TAG;
 import static org.justcards.android.utils.Constants.TABLE_PICKED;
 import static org.justcards.android.utils.Constants.TABLE_TAG;
-import static org.justcards.android.utils.Constants.TO_MUTE;
 import static org.justcards.android.utils.Constants.TO_POSITION;
-import static org.justcards.android.utils.Constants.TO_SHOW;
-import static org.justcards.android.utils.Constants.USER_TAG_SCORE;
 import static org.justcards.android.views.PlayerViewHelper.getPlayerFragment;
 
 public class GameViewManagerActivity extends AppCompatActivity implements
@@ -145,19 +130,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> mCards;
-    private String gameName;
+    private String mGameName;
     private List<Card> sinkCards = new ArrayList<>();
     private ParseUtils parseUtils;
-    private MediaUtils mediaUtils;
+    private MediaUtils mMediaUtils;
     private Gson gson = new Gson();
 
-    private boolean isCurrentViewPlayer = true;
-    private boolean isShowingPlayerFragment = true; //false is showing dealer fragment
-    private boolean isShowingChat = false;
+    private boolean mIsCurrentViewPlayer = true;
+    private boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
+    private boolean mIsShowingChat = false;
 
-    private PlayerViewFragment playerViewFragment;
-    private DealerViewFragment dealerViewFragment;
-    private ChatAndLogFragment chatAndLogFragment;
+    private PlayerViewFragment mPlayerViewFragment;
+    private DealerViewFragment mDealerViewFragment;
+    private ChatAndLogFragment mChatAndLogFragment;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.clGameLayout) ViewGroup container;
@@ -179,7 +164,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
     //Firebase
-    DatabaseReference gameDatabaseReference;
+    DatabaseReference usersDatabaseReference, tableDatabaseReference, sinkDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +178,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         setSupportActionBar(toolbar);
 
-        mediaUtils = new MediaUtils(this);
+        mMediaUtils = new MediaUtils(this);
         initGameParams();
         initFragments();
         initViews();
@@ -204,41 +189,43 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void initGameParams() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            gameName = bundle.getString(PARAM_GAME_NAME);
+            mGameName = bundle.getString(PARAM_GAME_NAME);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
-            Toast.makeText(getApplicationContext(), "Joining Game: " + gameName, Toast.LENGTH_SHORT).show();
+            mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
+            Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
 
-            gameDatabaseReference = FirebaseDatabase.getInstance().getReference(gameName);
+            usersDatabaseReference = FirebaseDatabase.getInstance().getReference(mGameName);
+            tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
+            sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
 
             // Add myself to game
             User currentUser = User.getCurrentUser(this);
-            String uId = gameDatabaseReference.push().getKey();
-            if(isCurrentViewPlayer == false){
+            String uId = usersDatabaseReference.push().getKey();
+            if(mIsCurrentViewPlayer == false){
                 currentUser.setDealer(true);
             } else {
                 currentUser.setDealer(false);
             }
             currentUser.setUserId(uId);
             currentUser.save(getApplicationContext());
-            gameDatabaseReference.child(uId).setValue(currentUser);
+            usersDatabaseReference.child(uId).setValue(currentUser);
 
             //***   DUmmy code for testing ****///
                 List<User> dummyPlayers = PlayerUtils.getPlayers(2);
                 for (User dummyPlayer : dummyPlayers) {
-                    Game.save(gameName, dummyPlayer);
-                    String dummyUserId = gameDatabaseReference.push().getKey();
+                    //Game.save(mGameName, dummyPlayer);
+                    String dummyUserId = usersDatabaseReference.push().getKey();
                     dummyPlayer.setUserId(dummyUserId);
-                    gameDatabaseReference.child(dummyUserId).setValue(dummyPlayer);
+                    usersDatabaseReference.child(dummyUserId).setValue(dummyPlayer);
                 }
             //***   DUmmy code for testing ****///
 
             //Join channel for updates
-            parseUtils = new ParseUtils(this, gameName);
-            parseUtils.saveCurrentUserIsDealer(!isCurrentViewPlayer);
+            parseUtils = new ParseUtils(this, mGameName);
+            parseUtils.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
 
             //Get previously joined players
-            gameDatabaseReference.addChildEventListener(new ChildEventListener() {
+            usersDatabaseReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
                     User user = dataSnapshot.getValue(User.class);
@@ -248,22 +235,26 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
-                    User user = dataSnapshot.getValue(User.class);
-                    Log.d(TAG,"onChildChanged " + user.getDisplayName() + " " + dataSnapshot.getKey());
-                    for(User player : mPlayers){
-                        if(player.getUserId().equals(user.getUserId()) /*userid is not gonna change*/){
+                    User userNewData = dataSnapshot.getValue(User.class);
+                    Log.d(TAG,"onChildChanged " + userNewData.getDisplayName() + " " + dataSnapshot.getKey());
+                    for(User userOldData : mPlayers){
+                        if(userOldData.getUserId().equals(userNewData.getUserId()) /*userid is not gonna change*/){
                             //figure out what changed
-                            if(user.isActive() != player.isActive()){
+                            if(userNewData.isActive() != userOldData.isActive()){
                                 Log.d(TAG,"is active changed");
-                                handleMutePlayerForRound(user, user.isActive());
+                                handleMutePlayerForRound(userNewData, userNewData.isActive());
                             }
-                            if(user.getScore() != player.getScore()) {
+                            if(userNewData.getScore() != userOldData.getScore()) {
                                 Log.d(TAG,"Score changed");
-                                handleScoresUpdate(user, getList(user));
+                                handleScoresUpdate(userNewData, getList(userNewData));
                             }
-                            if(user.isShowingCards() != player.isShowingCards()){
+                            if(userNewData.isShowingCards() != userOldData.isShowingCards()){
                                 Log.d(TAG,"isShowingCards changed");
-                                toggleCardsListForPlayerView(user, user.isShowingCards());
+                                toggleCardsListForPlayerView(userNewData, userNewData.isShowingCards());
+                            }
+
+                            if(!userNewData.getCards().equals(userOldData.getCards())){
+                                Log.d(TAG,"Cards in hand changed");
                             }
                         }
                     }
@@ -288,36 +279,63 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }
             });
 
-            parseUtils.joinChannel();
+            tableDatabaseReference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+           // parseUtils.joinChannel();
         }
     }
 
     private void initFragments() {
         // Instantiating all the child fragments for game view
-        playerViewFragment = PlayerViewFragment.newInstance(null, null);
-        dealerViewFragment = DealerViewFragment.newInstance(mCards, null);
-        chatAndLogFragment = ChatAndLogFragment.newInstance(1);
+        mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
+        mDealerViewFragment = DealerViewFragment.newInstance(mCards, null);
+        mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
 
         // Controlling the fragments for display based on player's role
-        if (isCurrentViewPlayer) {
+        if (mIsCurrentViewPlayer) {
             fabSwap.setVisibility(View.GONE);
             fabSwap.setLabelText(msgDealerSide);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.flGameContainer, playerViewFragment)
+                    .add(R.id.flGameContainer, mPlayerViewFragment)
                     .commit();
         } else {
             fabSwap.setLabelText(msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.flGameContainer, playerViewFragment)
-                    .add(R.id.flGameContainer, dealerViewFragment)
-                    .hide(playerViewFragment)
+                    .add(R.id.flGameContainer, mPlayerViewFragment)
+                    .add(R.id.flGameContainer, mDealerViewFragment)
+                    .hide(mPlayerViewFragment)
                     .commit();
         }
 
         // Set the current view state (player vs dealer)
-        isShowingPlayerFragment = isCurrentViewPlayer;
+        mIsShowingPlayerFragment = mIsCurrentViewPlayer;
     }
 
     private void initViews() {
@@ -365,7 +383,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.fabSwap)
     public void switchView() {
         fabMenu.close(true);
-        if (isCurrentViewPlayer || isShowingPlayerFragment) {
+        if (mIsCurrentViewPlayer || mIsShowingPlayerFragment) {
             fabSwap.setLabelText(msgPlayerSide);
         } else {
             fabSwap.setLabelText(msgDealerSide);
@@ -373,12 +391,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(
-                        isShowingPlayerFragment ? R.anim.slide_in_left : R.anim.slide_in_right,
-                        isShowingPlayerFragment ? R.anim.slide_out_right : R.anim.slide_out_left)
-                .hide(isShowingPlayerFragment ? playerViewFragment : dealerViewFragment)
-                .show(isShowingPlayerFragment ? dealerViewFragment : playerViewFragment)
+                        mIsShowingPlayerFragment ? R.anim.slide_in_left : R.anim.slide_in_right,
+                        mIsShowingPlayerFragment ? R.anim.slide_out_right : R.anim.slide_out_left)
+                .hide(mIsShowingPlayerFragment ? mPlayerViewFragment : mDealerViewFragment)
+                .show(mIsShowingPlayerFragment ? mDealerViewFragment : mPlayerViewFragment)
                 .commit();
-        this.isShowingPlayerFragment ^= true;
+        this.mIsShowingPlayerFragment ^= true;
         toggleSelfPlayerView();
     }
 
@@ -393,7 +411,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Fragment playerFragment = getPlayerFragment(this, player);
         if (playerFragment != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            if (isShowingPlayerFragment) {
+            if (mIsShowingPlayerFragment) {
                 transaction.hide(playerFragment);
             } else {
                 transaction.show(playerFragment);
@@ -406,8 +424,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onShow(View view) {
         if (fabShow.getTag() == null || !((boolean) fabShow.getTag())) {
             boolean hasCards = true;
-            if (playerViewFragment != null) {
-                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+            if (mPlayerViewFragment != null) {
+                Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
                     hasCards = ((CardsFragment) fragment).getCards().size() > 0;
                 }
@@ -423,9 +441,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                             fabShow.setTag(true);
                             fabShow.setEnabled(false);
                             fabMenu.close(true);
-                            User self = parseUtils.getCurrentUser();
-                            parseUtils.saveCurrentUserIsShowingCards(!self.isShowingCards());
-                            parseUtils.toggleCardsList(true);
+
+                            User currentUser = User.getCurrentUser(this);
+                            usersDatabaseReference.child(currentUser.getUserId()).child("showingCards").setValue(!currentUser.isShowingCards());
                         })
                         .setNegativeButton(android.R.string.no, null)
                         .show();
@@ -450,9 +468,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                         fabMute.setTag(true);
                         fabMenu.close(true);
                         fabMute.setEnabled(false);
-                        User self = parseUtils.getCurrentUser();
-                        parseUtils.saveCurrentUserIsActive(!self.isActive());
-                        parseUtils.mutePlayerForRound(true);
+
+                        User currentUser = User.getCurrentUser(this);
+                        usersDatabaseReference.child(currentUser.getUserId()).child("active").setValue(!currentUser.isActive());
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -474,9 +492,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes Exit", v -> {
                     parseUtils.removeChannel();
-                    FirebaseDB.deleteGamesForUser(gameName, getCurrentUser(GameViewManagerActivity.this));
+                    FirebaseDB.deleteGamesForUser(mGameName, getCurrentUser(GameViewManagerActivity.this));
                     if (getCurrentUser(GameViewManagerActivity.this).isDealer()) {
-                        FirebaseDB.deleteGame(gameName);
+                        FirebaseDB.deleteGame(mGameName);
                     }
                     ((JustCardsAndroidApplication) getApplication()).removeAllObservers();
                     parseUtils.resetCurrentUser();
@@ -492,11 +510,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         PopupWindow popup = new PopupWindow(GameViewManagerActivity.this);
         View layout = getLayoutInflater().inflate(R.layout.popup_gameid, null);
         Button btnGameId = (Button) layout.findViewById(R.id.btnGameId);
-        btnGameId.setText("Game id " + gameName + " ");
+        btnGameId.setText("Game id " + mGameName + " ");
         btnGameId.setOnClickListener(view1 -> {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + gameName);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + mGameName);
             sendIntent.setType("text/plain");
             PackageManager manager = getPackageManager();
             List<ResolveInfo> info = manager.queryIntentActivities(sendIntent, 0);
@@ -522,14 +540,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.ibComment)
     public void toggleChatAndLogView(View v) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (!isShowingChat) {
-            fragmentTransaction.replace(R.id.flLogContainer, chatAndLogFragment, FRAGMENT_CHAT_TAG);
+        if (!mIsShowingChat) {
+            fragmentTransaction.replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG);
             ibComment.setImageResource(R.drawable.ic_cancel);
-            isShowingChat = true;
+            mIsShowingChat = true;
         } else {
-            fragmentTransaction.remove(chatAndLogFragment);
+            fragmentTransaction.remove(mChatAndLogFragment);
             ibComment.setImageResource(R.drawable.ic_comment);
-            isShowingChat = false;
+            mIsShowingChat = false;
         }
         fragmentTransaction.commit();
     }
@@ -569,9 +587,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (fragment != null && !isEmpty(cards)) {
             boolean result = ((CardsFragment) fragment).stackCards(cards);
             if (result) {
-                for (Card card : cards) {
-                    parseUtils.dealCards(player, card);
+                for(Card card : cards) {
+                    usersDatabaseReference.child(player.getUserId()).child("cards").push().setValue(card);
                 }
+
                 User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to everyone");
             }
@@ -583,13 +602,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
+            GameTable.save(mGameName, cards, toSink);//save to firebase db
             if (!toSink) {
-                parseUtils.dealCardsToTable(cards);
                 User self = getCurrentUser(this);
-                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the table");
+                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Table");
                 return true;
             } else {
-                parseUtils.dealCardsToSink(cards);
+                User self = getCurrentUser(this);
+                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Sink");
                 return true;
             }
         }
@@ -632,7 +652,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onNewLogEvent(String whoPosted, String fromAvatar, String details) {
         Log.d(Constants.TAG, GameViewManagerActivity.class.getSimpleName() + "--" + details + "--" + whoPosted);
-        chatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
+        mChatAndLogFragment.addNewLogEvent(whoPosted, fromAvatar, details);
     }
 
     @Override
@@ -658,36 +678,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Log.d(TAG, "onUpdate: " + event);
 
         switch (event) {
-            case PARSE_NEW_PLAYER_ADDED:
-                mediaUtils.playTingTone();
-                runOnUiThread(() -> addPlayersToView(getList(from)));
-                break;
-            case PARSE_PLAYER_LEFT:
-                mediaUtils.playTingTone();
-                runOnUiThread(() -> removePlayersFromView(getList(from)));
-                break;
-            case PARSE_DEAL_CARDS:
-                runOnUiThread(() -> {
-                    User to = fromJson(json.get(PARAM_PLAYER).getAsJsonObject());
-                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
-                    handleDeal(card, from, to);
-                });
-                break;
-            case PARSE_DEAL_CARDS_TO_TABLE:
-                mediaUtils.playGlassBreakingTone();
-                runOnUiThread(() -> {
-                    int cardCount = json.get(PARAM_CARD_COUNT).getAsInt();
-                    List<Card> cards = gson.fromJson(json.get(PARAM_CARDS), getCardsType());
-                    handleDealTable(from, cards, cardCount);
-                });
-                break;
-            case PARSE_DEAL_CARDS_TO_SINK:
-                mediaUtils.playGlassBreakingTone();
-                runOnUiThread(() -> {
-                    List<Card> cards = gson.fromJson(json.get(PARAM_CARDS), getCardsType());
-                    handleDealSink(from, cards);
-                });
-                break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 runOnUiThread(() -> {
                     Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
@@ -721,24 +711,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     handleToggleCard(from, card, position, onTag);
                 });
                 break;
-            case PARSE_TOGGLE_CARDS_LIST:
-                runOnUiThread(() -> {
-                    boolean toShow = json.get(TO_SHOW).getAsBoolean();
-                    toggleCardsListForPlayerView(from, toShow);
-                });
-                break;
-            case PARSE_MUTE_PLAYER_FOR_ROUND:
-                runOnUiThread(() -> {
-                    boolean toMute = json.get(TO_MUTE).getAsBoolean();
-                    handleMutePlayerForRound(from, toMute);
-                });
-                break;
-            case PARSE_SCORES_UPDATED:
-                runOnUiThread(() -> {
-                    List<User> players = gson.fromJson(json.get(USER_TAG_SCORE), getUsersType());
-                    handleScoresUpdate(from, players);
-                });
-                break;
             case PARSE_ROUND_WINNERS:
                 runOnUiThread(() -> {
                     List<User> roundWinners = gson.fromJson(json.get(PARAM_PLAYERS), getUsersType());
@@ -769,8 +741,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void addPlayersToView(final List<User> players) {
         mPlayers.addAll(players);
-        if (dealerViewFragment != null) {
-            dealerViewFragment.addPlayers(players);
+        if (mDealerViewFragment != null) {
+            mDealerViewFragment.addPlayers(players);
         }
 
         PlayerViewHelper.addPlayers(this, container.getId(), players);
@@ -786,8 +758,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void removePlayersFromView(final List<User> players) {
         for (User player : players) {
             mPlayers.remove(player);
-            if (dealerViewFragment != null) {
-                dealerViewFragment.removePlayer(player);
+            if (mDealerViewFragment != null) {
+                mDealerViewFragment.removePlayer(player);
             }
             Fragment playerFragment = getPlayerFragment(this, player);
             if (playerFragment != null) {
@@ -802,14 +774,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void handleDeal(final Card card, final User from, final User to) {
         if (card != null && from != null && from.isDealer() && to != null) {
             card.setShowingFront(false);
-            if (isCurrentViewPlayer) {
+            if (mIsCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);
                 if (playerFragment != null) {
                     ((CardsFragment) playerFragment).stackCards(getList(card));
                 }
             }
-            if (parseUtils.getCurrentUser().equals(to) && playerViewFragment != null) {
-                Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+            if (parseUtils.getCurrentUser().equals(to) && mPlayerViewFragment != null) {
+                Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).stackCards(getList(card));
                 }
@@ -823,7 +795,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void handleDealTable(final User from, final List<Card> cards, final int cardCount) {
         if (from != null && from.isDealer() && cardCount > 0) {
             if (isEmpty(cards)) {
-                ParseDB.getGameTableCards(gameName, cardCount, this::handleDealTable);
+                ParseDB.getGameTableCards(mGameName, cardCount, this::handleDealTable);
             } else {
                 handleDealTable(cards);
             }
@@ -832,11 +804,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleDealTable(final List<Card> cards) {
         CardUtil.setShowingFront(cards);
-        Fragment fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+        Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
         if (fragment != null) {
             boolean stacked = ((CardsFragment) fragment).stackCards(cards);
-            if (stacked && parseUtils.getCurrentUser().isDealer() && dealerViewFragment != null) {
-                dealerViewFragment.drawDealerCards(cards);
+            if (stacked && parseUtils.getCurrentUser().isDealer() && mDealerViewFragment != null) {
+                mDealerViewFragment.drawDealerCards(cards);
             }
         }
     }
@@ -845,8 +817,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (from != null && from.isDealer() && !isEmpty(cards)) {
             CardUtil.setShowingFront(cards);
             addCardsToSink(cards);
-            if (parseUtils.getCurrentUser().isDealer() && dealerViewFragment != null) {
-                dealerViewFragment.drawDealerCards(cards);
+            if (parseUtils.getCurrentUser().isDealer() && mDealerViewFragment != null) {
+                mDealerViewFragment.drawDealerCards(cards);
             }
         }
     }
@@ -861,8 +833,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (card != null && from != null) {
             Fragment playerFragment = getPlayerFragment(this, from);
             Fragment tableFragment = null;
-            if (playerViewFragment != null) {
-                tableFragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            if (mPlayerViewFragment != null) {
+                tableFragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             }
             if (playerFragment != null && tableFragment != null) {
                 Fragment source = pickedFromTable ? tableFragment : playerFragment;
@@ -905,8 +877,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Fragment fragment = null;
             if (PLAYER_TAG.equalsIgnoreCase(fromTag)) {
                 fragment = getPlayerFragment(this, from);
-            } else if (TABLE_TAG.equalsIgnoreCase(fromTag) && playerViewFragment != null) {
-                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+            } else if (TABLE_TAG.equalsIgnoreCase(fromTag) && mPlayerViewFragment != null) {
+                fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
             }
 
             if (fragment != null) {
@@ -928,9 +900,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         if (from != null && card != null && !TextUtils.isEmpty(onTag)) {
             Fragment fragment = null;
-            if (onTag.equalsIgnoreCase(TABLE_TAG) && playerViewFragment != null) {
-                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
-                chatAndLogFragment.addNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
+            if (onTag.equalsIgnoreCase(TABLE_TAG) && mPlayerViewFragment != null) {
+                fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+                mChatAndLogFragment.addNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
                         from.getDisplayName() + " flipped " + card.getName().toLowerCase().replace("_", " ") +" on table");
             } else if (onTag.equalsIgnoreCase(PLAYER_TAG)) {
                 fragment = getPlayerFragment(this, from);
@@ -954,8 +926,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 mPlayers.get(mPlayers.indexOf(player)).setShowingCards(toShow);
             }
 
-            if (dealerViewFragment != null) {
-                List<User> players = dealerViewFragment.getPlayers();
+            if (mDealerViewFragment != null) {
+                List<User> players = mDealerViewFragment.getPlayers();
                 if (!isEmpty(players) && players.contains(player)) {
                     players.get(players.indexOf(player)).setShowingCards(toShow);
                 }
@@ -985,8 +957,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 mPlayers.get(mPlayers.indexOf(player)).setActive(!toMute);
             }
 
-            if (dealerViewFragment != null) {
-                List<User> players = dealerViewFragment.getPlayers();
+            if (mDealerViewFragment != null) {
+                List<User> players = mDealerViewFragment.getPlayers();
                 if (!isEmpty(players) && players.contains(player)) {
                     players.get(players.indexOf(player)).setActive(!toMute);
                 }
@@ -1007,14 +979,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private void handleScoresUpdate(final User from, final List<User> players) {
         Log.d(TAG, "handleScoresUpdate: Score update received from: " + from);
-        if (from != null && from.isDealer() && !isEmpty(players)) {
+        if (from != null && !isEmpty(players)) {
             for (User player : players) {
                 if (mPlayers.contains(player)) {
                     mPlayers.get(mPlayers.indexOf(player)).setScore(player.getScore());
                 }
 
-                if (dealerViewFragment != null) {
-                    List<User> dPlayers = dealerViewFragment.getPlayers();
+                if (mDealerViewFragment != null) {
+                    List<User> dPlayers = mDealerViewFragment.getPlayers();
                     if (!isEmpty(dPlayers) && dPlayers.contains(player)) {
                         dPlayers.get(dPlayers.indexOf(player)).setScore(player.getScore());
                     }
@@ -1036,7 +1008,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void handleRoundWinners(final List<User> roundWinners, final User from) {
         Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
         if (!isEmpty(roundWinners) && from != null && from.isDealer()) {
-            mediaUtils.playClapsTone();
+            mMediaUtils.playClapsTone();
             FragmentManager fm = getSupportFragmentManager();
             RoundWinnersFragment winnerDialog = RoundWinnersFragment.newInstance(roundWinners);
             winnerDialog.show(fm, "winnerDialog");
@@ -1055,8 +1027,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             // Reset player statuses in game manager and dealer view fragment
             resetForRound(mPlayers);
-            if (dealerViewFragment != null) {
-                List<User> players = dealerViewFragment.getPlayers();
+            if (mDealerViewFragment != null) {
+                List<User> players = mDealerViewFragment.getPlayers();
                 resetForRound(players);
             }
 
@@ -1065,23 +1037,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             // Clear leftover cards from player's hand and table
             Fragment fragment;
-            if (playerViewFragment != null) {
-                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
+            if (mPlayerViewFragment != null) {
+                fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(PLAYER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
                 }
-                fragment = playerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+                fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
                 }
             }
 
             // Clear leftover cards from dealer's stack and re-stack with selected cards for the game
-            if (dealerViewFragment != null) {
-                fragment = dealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
+            if (mDealerViewFragment != null) {
+                fragment = mDealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
-                    dealerViewFragment.setCards(mCards);
+                    mDealerViewFragment.setCards(mCards);
                     ((CardsFragment) fragment).stackCards(mCards);
                 }
             }

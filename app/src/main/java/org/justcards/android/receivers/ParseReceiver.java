@@ -74,7 +74,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_ROUND_WINNERS:
                 case PARSE_END_ROUND:
                 case PARSE_SELECT_GAME_RULES:
-                    application.notifyObservers(identifier, customData);
+                    //application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 case PARSE_SWAP_CARD_WITHIN_PLAYER:
@@ -83,7 +83,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_CHAT_MESSAGE:
                     // Process only if it's not from self/current user
                     if (!isSelf(from)) {
-                        application.notifyObservers(identifier, customData);
+                      //  application.notifyObservers(identifier, customData);
                     }
                     break;
                 default:

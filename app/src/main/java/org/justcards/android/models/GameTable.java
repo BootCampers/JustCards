@@ -1,8 +1,7 @@
 package org.justcards.android.models;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -10,47 +9,49 @@ import org.justcards.android.utils.Constants;
 
 import java.util.List;
 
-import static org.justcards.android.utils.Constants.TAG;
-
 /**
  * Created by baphna on 12/2/2016.
  */
 @ParseClassName("GameTable")
-public class GameTable extends ParseObject {
+public class GameTable extends ParseObject{
+
+    private static DatabaseReference tableDatabaseReference, sinkDatabaseReference;
+
+    private String gameName;
+    private List<Card> cards;
 
     public GameTable() {
         super();
     }
 
-    private void setGameName(String gameName) {
-        put(Constants.PARAM_GAME_NAME, gameName);
+    public String getGameName() {
+        return gameName;
     }
 
-    private void addCards(List<Card> cards) {
-        String json = new Gson().toJson(cards);
-        put(Constants.PARAM_GAME_TABLE, json);
-        Log.d(TAG, "GameTable saving cards: " + json);
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
-    public static void save(String gameName, List<Card> cards) {
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
+    }
+
+    public static void save(String gameName, List<Card> cards, boolean toSink) {
         GameTable gameTable = new GameTable();
         gameTable.setGameName(gameName);
-        gameTable.addCards(cards);
-        gameTable.saveInBackground(e -> {
-            if (e == null) {
-                Log.d(TAG, "GameTable save Passed");
-            } else {
-                Log.d(TAG, "GameTable save Null " + e.getMessage());
-            }
-        });
+        gameTable.setCards(cards);
+
+        if(toSink == false) {
+            tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + gameName);
+            tableDatabaseReference.setValue(gameTable);
+        } else {
+            sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.SINK_TAG + "_" + gameName);
+            sinkDatabaseReference.setValue(gameTable);
+        }
     }
 
-    public String getCards() {
-        return getString(Constants.PARAM_GAME_TABLE);
-    }
-
-    @Override
-    public String toString() {
-        return getCards();
-    }
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
 import static org.justcards.android.network.ParseUtils.isSelf;
-import static org.justcards.android.utils.AppUtils.getCardsType;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.isEmpty;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
@@ -184,7 +182,7 @@ public class ParseDB {
                         Log.e(TAG, "fetchAllTableCards: More than one game tables found for this game: " + itemList.size());
                     }
                     int index = itemList.size() - 1;
-                    String cardsString = itemList.get(index).getCards();
+                    /*String cardsString = itemList.get(index).getCards();
                     List<Card> cards = new Gson().fromJson(cardsString, getCardsType());
                     if (cards == null) {
                         Log.e(TAG, "getGameTableCards: received cards from game table are null");
@@ -195,7 +193,7 @@ public class ParseDB {
                                 + itemList.size());
                     } else {
                         callback.call(cards);
-                    }
+                    }*/
                 }
             } else {
                 Log.e(Constants.TAG, "Error: " + e.getMessage());

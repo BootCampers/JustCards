@@ -5,14 +5,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.parse.ParseCloud;
 import com.parse.ParsePush;
 
 import org.justcards.android.models.Card;
-import org.justcards.android.models.GameTable;
 import org.justcards.android.models.User;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
@@ -22,14 +19,9 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
-import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
-import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -45,7 +37,6 @@ import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.POSITION;
 import static org.justcards.android.utils.Constants.RULE_CODE;
 import static org.justcards.android.utils.Constants.RULE_SELECTION;
-import static org.justcards.android.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.justcards.android.utils.Constants.TABLE_PICKED;
 import static org.justcards.android.utils.Constants.TO_MUTE;
 import static org.justcards.android.utils.Constants.TO_POSITION;
@@ -139,7 +130,7 @@ public class ParseUtils {
     }
 
     private void sendBroadcast(final JsonObject payload) {
-        if (isNetworkAvailable(context)) {
+        /*if (isNetworkAvailable(context)) {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
@@ -150,7 +141,7 @@ public class ParseUtils {
                     Log.e(TAG, "sendBroadcast: Failed: Message: " + e.getMessage() + ": Object: " + object);
                 }
             });
-        }
+        }*/
         //TODO: retry this operation if it's network failure..
     }
 
@@ -166,42 +157,6 @@ public class ParseUtils {
         } else {
             payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
         }
-        sendBroadcast(payload);
-    }
-
-    /**
-     * Dealer dealing cards to a particular user
-     *
-     * @param toUser to whom this is sent
-     * @param card   which card
-     */
-    public void dealCards(final User toUser, final Card card) {
-        JsonObject payload = getJson(currentLoggedInUser);
-        payload.add(PARAM_PLAYER, getJson(toUser));
-        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
-        sendBroadcast(payload);
-    }
-
-    /**
-     * Dealer moving cards to table
-     *
-     * @param cards which cards
-     */
-    public void dealCardsToTable(final List<Card> cards) {
-        ParseDB.deleteGameTables(gameName, () -> {
-            GameTable.save(gameName, cards);
-            JsonObject payload = getJson(currentLoggedInUser);
-            payload.addProperty(PARAM_CARD_COUNT, cards.size());
-            payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
-            sendBroadcast(payload);
-        });
-    }
-
-    public void dealCardsToSink(final List<Card> cards) {
-        JsonObject payload = getJson(currentLoggedInUser);
-        payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_SINK);
         sendBroadcast(payload);
     }
 

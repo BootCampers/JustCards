@@ -60,9 +60,10 @@ public class FirebaseDB {
      * @param gameName the game number that needs to be deleted
      */
     public static void deleteGame(final String gameName) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(gameName);
-        myRef.removeValue();
+        FirebaseDatabase.getInstance().getReference(gameName).removeValue(); //remove users table
+        //TODO: do this at round end
+        //FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + gameName).removeValue(); //remove table
+        //FirebaseDatabase.getInstance().getReference(Constants.SINK_TAG + "_" + gameName).removeValue(); //remove sink
     }
 
     /**
