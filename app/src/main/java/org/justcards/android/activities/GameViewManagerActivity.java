@@ -27,6 +27,11 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -61,6 +66,7 @@ import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
+import org.justcards.android.utils.PlayerUtils;
 import org.justcards.android.views.OnCardsDragListener;
 import org.justcards.android.views.OnTouchMoveListener;
 import org.justcards.android.views.PlayerViewHelper;
@@ -76,6 +82,7 @@ import butterknife.OnClick;
 
 import static org.justcards.android.models.GameRules.getRuleDescription;
 import static org.justcards.android.models.User.fromJson;
+import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.resetForRound;
 import static org.justcards.android.network.ParseUtils.isSelf;
 import static org.justcards.android.utils.AppUtils.getCardsType;
@@ -171,6 +178,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
+    //Firebase
+    DatabaseReference gameDatabaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -199,16 +209,86 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             isCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             Toast.makeText(getApplicationContext(), "Joining Game: " + gameName, Toast.LENGTH_SHORT).show();
 
+            gameDatabaseReference = FirebaseDatabase.getInstance().getReference(gameName);
+
+            // Add myself to game
+            User currentUser = User.getCurrentUser(this);
+            String uId = gameDatabaseReference.push().getKey();
+            if(isCurrentViewPlayer == false){
+                currentUser.setDealer(true);
+            } else {
+                currentUser.setDealer(false);
+            }
+            currentUser.setUserId(uId);
+            currentUser.save(getApplicationContext());
+            gameDatabaseReference.child(uId).setValue(currentUser);
+
+            //***   DUmmy code for testing ****///
+                List<User> dummyPlayers = PlayerUtils.getPlayers(2);
+                for (User dummyPlayer : dummyPlayers) {
+                    Game.save(gameName, dummyPlayer);
+                    String dummyUserId = gameDatabaseReference.push().getKey();
+                    dummyPlayer.setUserId(dummyUserId);
+                    gameDatabaseReference.child(dummyUserId).setValue(dummyPlayer);
+                }
+            //***   DUmmy code for testing ****///
+
             //Join channel for updates
             parseUtils = new ParseUtils(this, gameName);
             parseUtils.saveCurrentUserIsDealer(!isCurrentViewPlayer);
 
             //Get previously joined players
-            FirebaseDB.findUsers(this, gameName, this::addPlayersToView);
-            parseUtils.joinChannel();
+            gameDatabaseReference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Log.d(TAG,"onChildAdded " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                    addPlayersToView(getList(user));
+                }
 
-            // Add myself to game
-            Game.save(gameName, User.getCurrentUser(this));
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Log.d(TAG,"onChildChanged " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                    for(User player : mPlayers){
+                        if(player.getUserId().equals(user.getUserId()) /*userid is not gonna change*/){
+                            //figure out what changed
+                            if(user.isActive() != player.isActive()){
+                                Log.d(TAG,"is active changed");
+                                handleMutePlayerForRound(user, user.isActive());
+                            }
+                            if(user.getScore() != player.getScore()) {
+                                Log.d(TAG,"Score changed");
+                                handleScoresUpdate(user, getList(user));
+                            }
+                            if(user.isShowingCards() != player.isShowingCards()){
+                                Log.d(TAG,"isShowingCards changed");
+                                toggleCardsListForPlayerView(user, user.isShowingCards());
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Log.d(TAG,"onChildRemoved " + user.getDisplayName() + "--" + dataSnapshot.getKey());
+                    removePlayersFromView(getList(user));
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String previousKey) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Log.d(TAG,"onChildMoved " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            parseUtils.joinChannel();
         }
     }
 
@@ -306,7 +386,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
      * Hide self view if it's in player fragment. Show in dealer.
      */
     private void toggleSelfPlayerView() {
-        togglePlayerView(User.getCurrentUser(this));
+        togglePlayerView(getCurrentUser(this));
     }
 
     private void togglePlayerView(User player) {
@@ -394,9 +474,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes Exit", v -> {
                     parseUtils.removeChannel();
-                    ParseDB.deleteGamesForUser(gameName, User.getCurrentUser(GameViewManagerActivity.this));
-                    if (User.getCurrentUser(GameViewManagerActivity.this).isDealer()) {
-                        ParseDB.deleteGame(gameName);
+                    FirebaseDB.deleteGamesForUser(gameName, getCurrentUser(GameViewManagerActivity.this));
+                    if (getCurrentUser(GameViewManagerActivity.this).isDealer()) {
+                        FirebaseDB.deleteGame(gameName);
                     }
                     ((JustCardsAndroidApplication) getApplication()).removeAllObservers();
                     parseUtils.resetCurrentUser();
@@ -492,7 +572,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 for (Card card : cards) {
                     parseUtils.dealCards(player, card);
                 }
-                User self = User.getCurrentUser(this);
+                User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to everyone");
             }
             return result;
@@ -505,7 +585,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (!isEmpty(cards)) {
             if (!toSink) {
                 parseUtils.dealCardsToTable(cards);
-                User self = User.getCurrentUser(this);
+                User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the table");
                 return true;
             } else {
@@ -695,7 +775,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         PlayerViewHelper.addPlayers(this, container.getId(), players);
         for (User player : players) {
-            if (player.equals(User.getCurrentUser(this))) {
+            if (player.equals(getCurrentUser(this))) {
                 togglePlayerView(player);
             }
             toggleCardsListForPlayerView(player, false);
