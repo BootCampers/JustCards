@@ -20,18 +20,14 @@ import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
-import static org.justcards.android.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
-import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
-import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.justcards.android.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.TAG;
 
-public class ParseReceiver extends BroadcastReceiver {
+public class MessageReceiver extends BroadcastReceiver {
 
     private static final String intentAction = "org.justcards.push.intent.RECEIVE";
     private JustCardsAndroidApplication application;
@@ -60,18 +56,18 @@ public class ParseReceiver extends BroadcastReceiver {
             Log.d(TAG, identifier + "--" + customData.toString());
 
             switch (identifier) {
-                case PARSE_NEW_PLAYER_ADDED:
-                case PARSE_PLAYER_LEFT:
+                /*case PARSE_NEW_PLAYER_ADDED:
+                case PARSE_PLAYER_LEFT:*/
                 case PARSE_DEAL_CARDS:
                 case PARSE_DEAL_CARDS_TO_TABLE:
                 case PARSE_DEAL_CARDS_TO_SINK:
                 case PARSE_TOGGLE_CARDS_LIST:
-                case PARSE_MUTE_PLAYER_FOR_ROUND:
-                case PARSE_SCORES_UPDATED:
+                /*case PARSE_MUTE_PLAYER_FOR_ROUND:
+                case PARSE_SCORES_UPDATED:*/
                 case PARSE_ROUND_WINNERS:
                 case PARSE_END_ROUND:
                 case PARSE_SELECT_GAME_RULES:
-                    //application.notifyObservers(identifier, customData);
+                    application.notifyObservers(identifier, customData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 case PARSE_SWAP_CARD_WITHIN_PLAYER:
@@ -80,7 +76,7 @@ public class ParseReceiver extends BroadcastReceiver {
                 case PARSE_CHAT_MESSAGE:
                     // Process only if it's not from self/current user
                     if (!isSelf(from)) {
-                      //  application.notifyObservers(identifier, customData);
+                        application.notifyObservers(identifier, customData);
                     }
                     break;
                 default:

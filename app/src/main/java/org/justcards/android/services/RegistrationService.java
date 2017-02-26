@@ -39,7 +39,7 @@ public class RegistrationService extends IntentService {
         try {
             // Request token that will be used by the server to send Push Notifications
             String token = instanceID.getToken();
-            Log.d(TAG, "FCM Registration Toke: " + token);
+            Log.d(TAG, "FCM Registration Token: " + token);
 
             // Save Token
             sharedPreferences.edit().putString(FCM_TOKEN, token).apply();
@@ -47,8 +47,6 @@ public class RegistrationService extends IntentService {
             sendRegistrationToServer(token);
         } catch (Exception e) {
             Log.e(TAG, "Failed to complete token refresh", e);
-            e.printStackTrace();
-
             // If an exception occurs while fetching the new token or updating registration data on a third party server
             // This ensures that update will be attempted at a later time
             sharedPreferences.edit().putBoolean(SENT_TOKEN_TO_SERVER, false).apply();
@@ -58,9 +56,11 @@ public class RegistrationService extends IntentService {
     private void sendRegistrationToServer(final String token) {
         // Send Network Request
         // Add custom implementation, as needed.
+        // There is no custom backend as of yet to manage user registration information
+        // Hence no network request as of now.
         Log.d(TAG, "Token ID to send to server: " + token);
 
-        // If registration sent was successful, store a boolean that indicates whether the generated token has been sent to the server
+        // If registration was successful, store a boolean that indicates whether the generated token has been sent to the server
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putBoolean(SENT_TOKEN_TO_SERVER, true)
