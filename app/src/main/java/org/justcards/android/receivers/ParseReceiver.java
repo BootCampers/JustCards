@@ -31,12 +31,9 @@ import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.TAG;
 
-/**
- * Created by baphna on 11/18/2016.
- */
 public class ParseReceiver extends BroadcastReceiver {
 
-    private static final String intentAction = "com.parse.push.intent.RECEIVE";
+    private static final String intentAction = "org.justcards.push.intent.RECEIVE";
     private JustCardsAndroidApplication application;
 
     @Override

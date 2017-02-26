@@ -95,6 +95,16 @@
             </intent-filter>
         </service>
 
+        <receiver
+            android:name=".receivers.ParseReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.justcards.push.intent.RECEIVE"/>
+                <action android:name="org.justcards.push.intent.DELETE"/>
+                <action android:name="org.justcards.push.intent.OPEN"/>
+            </intent-filter>
+        </receiver>
+
         <service android:name="com.parse.PushService"/>
 
         <receiver
@@ -110,16 +120,6 @@
 
         <receiver
             android:name="com.parse.ParsePushBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE"/>
-                <action android:name="com.parse.push.intent.DELETE"/>
-                <action android:name="com.parse.push.intent.OPEN"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".receivers.ParseReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE"/>
