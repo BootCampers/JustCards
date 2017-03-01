@@ -49,7 +49,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.1.1'  // variable that can be referenced to keep support libs consistent
+    supportLibVersion = '25.2.0'  // variable that can be referenced to keep support libs consistent
     butterknifeVersion = '8.5.1'
     parcelerVersion = '1.1.6'
     retrofitVersion = '2.1.0'

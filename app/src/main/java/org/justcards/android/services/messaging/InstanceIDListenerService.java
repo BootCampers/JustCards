@@ -1,10 +1,8 @@
-package org.justcards.android.services.firebase;
+package org.justcards.android.services.messaging;
 
 import android.content.Intent;
 
 import com.google.firebase.iid.FirebaseInstanceIdService;
-
-import org.justcards.android.services.RegistrationService;
 
 /**
  * Author: agoenka
@@ -13,6 +11,12 @@ import org.justcards.android.services.RegistrationService;
  */
 public class InstanceIDListenerService extends FirebaseInstanceIdService {
 
+    /**
+     * Called if InstanceID token is updated.
+     * This may occur if the security of the previous token had been compromised.
+     * Note that this is called when the InstanceID token is initially generated,
+     * So this is where you would retrieve the token.
+     */
     @Override
     public void onTokenRefresh() {
         // Fetch updated Instance ID token and notify changes

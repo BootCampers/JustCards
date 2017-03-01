@@ -1,4 +1,4 @@
-package org.justcards.android.services;
+package org.justcards.android.services.messaging;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import static org.justcards.android.utils.Constants.SENT_TOKEN_TO_SERVER;
  */
 public class RegistrationService extends IntentService {
 
-    private static final String TAG = "RegistrationService";
+    private static final String TAG = RegistrationService.class.getSimpleName();
 
     public RegistrationService() {
         super(TAG);

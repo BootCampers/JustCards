@@ -201,7 +201,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             // Add myself to game
             User currentUser = User.getCurrentUser(this);
             String uId = usersDatabaseReference.push().getKey();
-            if(mIsCurrentViewPlayer == false){
+            if(!mIsCurrentViewPlayer){
                 currentUser.setDealer(true);
             } else {
                 currentUser.setDealer(false);
@@ -210,15 +210,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             currentUser.save(getApplicationContext());
             usersDatabaseReference.child(uId).setValue(currentUser);
 
-            //***   DUmmy code for testing ****///
-                List<User> dummyPlayers = PlayerUtils.getPlayers(2);
-                for (User dummyPlayer : dummyPlayers) {
-                    //Game.save(mGameName, dummyPlayer);
-                    String dummyUserId = usersDatabaseReference.push().getKey();
-                    dummyPlayer.setUserId(dummyUserId);
-                    usersDatabaseReference.child(dummyUserId).setValue(dummyPlayer);
-                }
-            //***   DUmmy code for testing ****///
+            //***   Dummy code for testing ****///
+            List<User> dummyPlayers = PlayerUtils.getPlayers(2);
+            for (User dummyPlayer : dummyPlayers) {
+                //Game.save(mGameName, dummyPlayer);
+                String dummyUserId = usersDatabaseReference.push().getKey();
+                dummyPlayer.setUserId(dummyUserId);
+                usersDatabaseReference.child(dummyUserId).setValue(dummyPlayer);
+            }
+            //***   Dummy code for testing ****///
 
             //Join channel for updates
             parseUtils = new ParseUtils(this, mGameName);

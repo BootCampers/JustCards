@@ -16,23 +16,22 @@ import org.justcards.android.R;
  */
 public class NetworkUtils {
 
-    public static boolean isNetworkAvailable(final Context mContext) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static boolean isNetworkAvailable(final Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         boolean result =  activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
 
         if(!result){
             Log.e(Constants.TAG, "No network");
 
-            new LovelyStandardDialog(mContext)
+            new LovelyStandardDialog(context)
                     .setTopColorRes(R.color.red)
                     .setButtonsColorRes(R.color.colorAccent)
                     .setTitle("Oops! Network failure!!")
                     .setIcon(R.drawable.ic_network_check_36dp)
                     .setMessage("We are unable to connect to our servers. Please check network connection!")
-                    .setPositiveButton(R.string.msg_okay, v -> mContext.startActivity(new Intent(Settings.ACTION_SETTINGS)))
+                    .setPositiveButton(R.string.msg_okay, v -> context.startActivity(new Intent(Settings.ACTION_SETTINGS)))
                     .show();
-
         }
 
         return result;

@@ -39,7 +39,7 @@ import com.parse.ParseFacebookUtils;
 import org.json.JSONException;
 import org.justcards.android.R;
 import org.justcards.android.models.User;
-import org.justcards.android.services.RegistrationService;
+import org.justcards.android.services.messaging.RegistrationService;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
