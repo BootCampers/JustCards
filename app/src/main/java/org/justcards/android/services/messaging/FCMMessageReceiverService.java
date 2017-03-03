@@ -67,6 +67,18 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
         broadCastLocally(intent);
     }
 
+    @Override
+    public void onMessageSent(String s) {
+        Log.d(TAG, "onMessageSent: " + s);
+        super.onMessageSent(s);
+    }
+
+    @Override
+    public void onSendError(String s, Exception e) {
+        Log.e(TAG, "onSendError: " + s, e);
+        super.onSendError(s, e);
+    }
+
     private void broadCastLocally(final Intent intent) {
         MessageReceiver messageReceiver = new MessageReceiver();
         IntentFilter intentFilter = new IntentFilter(ACTION);
