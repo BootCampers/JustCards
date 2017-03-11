@@ -10,7 +10,10 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.justcards.android.receivers.MessageReceiver;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import static android.text.TextUtils.isEmpty;
 
 /**
  * Author: agoenka
@@ -58,13 +61,19 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
             Log.d(TAG, "Message notification title: " + notification.getTitle() + ". Message notification body: " + notification.getBody());
         }
 
-        // Construct an Intent tying it to the ACTION on the application namespace
-        Intent intent = new Intent(ACTION);
-        intent.putExtra("from", from);
-        intent.putExtra("gameData", data.get("gameData"));
+        if (!isEmpty(from) && from.startsWith("/topics/")) {
+            String gameName = from.replace("/topics/", "");
 
-        // Broadcast the received intent to be handled by the application
-        broadCastLocally(intent);
+            // Construct an Intent tying it to the ACTION on the application namespace
+            Intent intent = new Intent(ACTION);
+            intent.putExtra("from", from); // From is usually the topic name. e.g. '/topics/199'
+            intent.putExtra("to", to); // To is usually null
+            intent.putExtra("gameName", gameName);
+            intent.putExtra("gameData", (HashMap) data); // Game Data is usually the game data saved in payload in the upstream message
+
+            // Broadcast the received intent to be handled by the application
+            broadCastLocally(intent);
+        }
     }
 
     @Override

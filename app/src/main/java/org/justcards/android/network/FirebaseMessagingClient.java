@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.JsonObject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -17,6 +18,10 @@ import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
+import static org.justcards.android.models.User.getJson;
+import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
+import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
+import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -60,18 +65,22 @@ public class FirebaseMessagingClient {
         // https://firebase.google.com/docs/cloud-messaging/android/device-group
 
         try {
-            String payload = "{\n" +
-                    "  \"to\": \"/topics/" + mGameName + "\",\n" +
-                    "  \"data\": {\n" +
-                    "    \"message\": \"This is a Firebase Cloud Messaging Topic Message!\",\n" +
-                    "   }\n" +
-                    "}";
+            JsonObject payload = getJson(mCurrentUser);
+            if (joining) {
+                payload.addProperty(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
+            } else {
+                payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
+            }
+
+            JsonObject json = new JsonObject();
+            json.addProperty("to", "/topics/" + mGameName);
+            json.add("data", payload);
 
             String contentType = "application/json";
 
             AsyncHttpClient client = new AsyncHttpClient();
             client.addHeader(HeaderConstants.AUTHORIZATION, API_KEY);
-            HttpEntity entity = new StringEntity(payload);
+            HttpEntity entity = new StringEntity(json.toString());
 
             client.post(mContext, API_URL, entity, contentType, new JsonHttpResponseHandler() {
                 @Override
@@ -89,14 +98,6 @@ public class FirebaseMessagingClient {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-        /*JsonObject payload = getJson(mCurrentUser);
-        if (joining) {
-            payload.addProperty(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
-        } else {
-            payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
-        }
-        sendBroadcast(payload);*/
     }
 
     /*private void sendBroadcast(final JsonObject payload) {

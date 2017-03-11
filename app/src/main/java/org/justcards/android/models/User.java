@@ -12,6 +12,7 @@ import org.parceler.Parcel;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 import static org.justcards.android.utils.AppUtils.isEmpty;
@@ -64,6 +65,18 @@ public class User {
         boolean isActive = json.get(IS_ACTIVE).getAsBoolean();
         int score = json.get(SCORE).getAsInt();
         Log.d(TAG, "fromJson--" + userId + "--" + displayName + "--" + avatarUri);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
+    }
+
+    public static User fromMap(Map<?, String> map) {
+        String userId = map.get(USER_ID);
+        String displayName = map.get(DISPLAY_NAME);
+        String avatarUri = map.get(USER_AVATAR_URI);
+        boolean isDealer = Boolean.valueOf(map.get(IS_DEALER));
+        boolean isShowingCards = Boolean.valueOf(map.get(IS_SHOWING_CARDS));
+        boolean isActive = Boolean.valueOf(map.get(IS_ACTIVE));
+        int score = Integer.valueOf(map.get(SCORE));
+        Log.d(TAG, "fromMap -- " + userId + " -- " + displayName + " -- " + avatarUri);
         return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 

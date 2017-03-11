@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import org.justcards.android.application.JustCardsAndroidApplication;
 import org.justcards.android.models.User;
+
+import java.util.HashMap;
 
 import static org.justcards.android.network.ParseUtils.isSelf;
 import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
@@ -43,17 +42,17 @@ public class MessageReceiver extends BroadcastReceiver {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void processBroadcast(Intent intent) {
         String action = intent.getAction();
 
         if (action.equals(intentAction)) {
-            JsonParser parser = new JsonParser();
-            JsonObject data = (JsonObject) parser.parse(intent.getExtras().getString("com.parse.Data"));
-            JsonObject customData = (JsonObject) parser.parse(data.get("customData").getAsString());
+            String gameName = intent.getStringExtra("gameName");
+            HashMap<String, String> gameData = (HashMap<String, String>) intent.getSerializableExtra("gameData");
+            String identifier = gameData.get(COMMON_IDENTIFIER);
 
-            String identifier = customData.get(COMMON_IDENTIFIER).getAsString();
-            User from = User.fromJson(customData);
-            Log.d(TAG, identifier + "--" + customData.toString());
+            User from = User.fromMap(gameData);
+            Log.d(TAG, identifier + "--" + gameData.toString());
 
             switch (identifier) {
                 /*case PARSE_NEW_PLAYER_ADDED:
@@ -67,7 +66,7 @@ public class MessageReceiver extends BroadcastReceiver {
                 case PARSE_ROUND_WINNERS:
                 case PARSE_END_ROUND:
                 case PARSE_SELECT_GAME_RULES:
-                    application.notifyObservers(identifier, customData);
+                    application.notifyObservers(identifier, gameData);
                     break;
                 case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 case PARSE_SWAP_CARD_WITHIN_PLAYER:
@@ -76,7 +75,7 @@ public class MessageReceiver extends BroadcastReceiver {
                 case PARSE_CHAT_MESSAGE:
                     // Process only if it's not from self/current user
                     if (!isSelf(from)) {
-                        application.notifyObservers(identifier, customData);
+                        application.notifyObservers(identifier, gameData);
                     }
                     break;
                 default:
