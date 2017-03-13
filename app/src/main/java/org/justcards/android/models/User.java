@@ -56,18 +56,6 @@ public class User {
         this.score = score;
     }
 
-    public static User fromJson(JsonObject json) {
-        String userId = json.get(USER_ID).getAsString();
-        String displayName = json.get(DISPLAY_NAME).getAsString();
-        String avatarUri = json.get(USER_AVATAR_URI).getAsString();
-        boolean isDealer = json.get(IS_DEALER).getAsBoolean();
-        boolean isShowingCards = json.get(IS_SHOWING_CARDS).getAsBoolean();
-        boolean isActive = json.get(IS_ACTIVE).getAsBoolean();
-        int score = json.get(SCORE).getAsInt();
-        Log.d(TAG, "fromJson--" + userId + "--" + displayName + "--" + avatarUri);
-        return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
-    }
-
     public static User fromMap(Map<?, String> map) {
         String userId = map.get(USER_ID);
         String displayName = map.get(DISPLAY_NAME);
@@ -106,6 +94,10 @@ public class User {
 
     public static ParseUser getCurrentUser() {
         return ParseUser.getCurrentUser();
+    }
+
+    public static boolean isSelf(final User user) {
+        return user.getUserId().equalsIgnoreCase(getCurrentUser().getObjectId());
     }
 
     public static User get(final Context context) {

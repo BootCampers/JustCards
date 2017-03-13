@@ -45,7 +45,7 @@ public class GameTable extends ParseObject{
         gameTable.setGameName(gameName);
         gameTable.setCards(cards);
 
-        if(toSink == false) {
+        if(!toSink) {
             tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + gameName);
             tableDatabaseReference.setValue(gameTable);
         } else {

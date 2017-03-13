@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
 import static org.justcards.android.utils.Constants.FROM;
+import static org.justcards.android.utils.Constants.FROM_ADDRESS_PREFIX;
 import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
 import static org.justcards.android.utils.Constants.TO;
@@ -28,7 +29,6 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
 
     public static final String TAG = FCMMessageReceiverService.class.getSimpleName();
     public static final String ACTION = "org.justcards.push.intent.RECEIVE";
-    private static final String FROM_ADDRESS_PREFIX = "/topics/";
 
     /**
      * There are two types of messages data messages and notification messages.

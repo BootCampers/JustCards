@@ -103,7 +103,7 @@
                     android:text="@string/msg_log_in_with_facebook"/>
 
                 <com.google.android.gms.common.SignInButton
-                    android:id="@+id/btnGoogleSignin"
+                    android:id="@+id/btnGoogleSignIn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btnFbLogin"

@@ -26,10 +26,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -71,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity implements
     @BindView(R.id.ivAvatar) ImageView ivAvatar;
     @BindView(R.id.fabBrowseAvatar) FloatingActionButton fabBrowseAvatar;
     @BindView(R.id.btnRegister) Button btnRegister;
-    @BindView(R.id.btnGoogleSignin) SignInButton btnGoogleSignin;
+    @BindView(R.id.btnGoogleSignIn) SignInButton btnGoogleSignIn;
     @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
 
@@ -276,40 +273,37 @@ public class RegisterActivity extends AppCompatActivity implements
         btnRegister.setEnabled(!networkFailure);
     }
 
-    @OnClick(R.id.btnGoogleSignin)
+    @OnClick(R.id.btnGoogleSignIn)
     public void signInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                .addOnCompleteListener(this, task -> {
+                    Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "signInWithCredential", task.getException());
+                        Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        //Login success
+                        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                        if (mFirebaseUser.getPhotoUrl() != null) {
+                            User user = new User(mFirebaseUser.getPhotoUrl().toString(),
+                                    mFirebaseUser.getDisplayName(),
+                                    mFirebaseUser.getUid());
+                            user.save(getApplicationContext());
+                            startSelectGame(user);
                         } else {
-                            //Login success
-                            mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                            if (mFirebaseUser.getPhotoUrl() != null) {
-                                User user = new User(mFirebaseUser.getPhotoUrl().toString(),
-                                        mFirebaseUser.getDisplayName(),
-                                        mFirebaseUser.getUid());
-                                user.save(getApplicationContext());
-                                startSelectGame(user);
-                            } else {
-                                //TODO: Give a random image to the user and start game
-                            }
+                            //TODO: Give a random image to the user and start game
                         }
                     }
                 });

@@ -63,11 +63,13 @@ public class Constants {
     public static final String ARG_TO_PAGE = "toPage";
     public static final String FROM = "from";
     public static final String TO = "to";
+    public static final String DATA = "data";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
      * User PARSE_<> naming convention for all identifiers
      */
+    public static final String FROM_ADDRESS_PREFIX = "/topics/";
     public static final String COMMON_IDENTIFIER = "commonIdentifier";
     public static final String SERVER_FUNCTION_NAME = "pushToChannel";
     public static final String TABLE_PICKED = "pickedFromTable";

@@ -59,11 +59,9 @@ public class Game extends ParseObject {
 
     public void removePlayer(User player) {
         List<User> players = getList(Constants.PARAMS_PLAYER_GAME);
-        for (User user : players) {
-            if (user.getUserId().equals(player.getUserId())) {
-                players.remove(user);
-            }
-        }
+        players.stream()
+                .filter(user -> user.getUserId().equals(player.getUserId()))
+                .forEach(players::remove);
     }
 
     public static void saveName(final String gameName, final Context context) {

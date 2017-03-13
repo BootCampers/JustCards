@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static io.fabric.sdk.android.Fabric.TAG;
-import static org.justcards.android.network.ParseUtils.isSelf;
+import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.isEmpty;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
@@ -75,9 +75,7 @@ public class ParseDB {
         findGame(gameName, (itemList, e) -> {
             if (e == null) {
                 Log.d(Constants.TAG, "deleteGame Found list : " + itemList.size());
-                for (Game game : itemList) {
-                    deleteGame(game);
-                }
+                itemList.forEach(ParseDB::deleteGame);
             } else {
                 Log.e(Constants.TAG, "deleteGame Error: " + e.getMessage());
             }
@@ -120,11 +118,9 @@ public class ParseDB {
                     players.addAll(dummyPlayers);
                 }
 
-                for (User player : players) {
-                    if (!isSelf(player)) {
-                        callback.call(getList(player));
-                    }
-                }
+                players.stream()
+                        .filter(player -> !isSelf(player))
+                        .forEach(player -> callback.call(getList(player)));
             } else {
                 Log.e(Constants.TAG, "Error: " + e.getMessage());
             }

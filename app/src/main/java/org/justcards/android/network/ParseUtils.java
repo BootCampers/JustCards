@@ -5,14 +5,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.parse.ParseCloud;
 import com.parse.ParsePush;
 
 import org.justcards.android.models.Card;
 import org.justcards.android.models.User;
 
+import java.util.HashMap;
 import java.util.List;
 
-import static io.fabric.sdk.android.Fabric.TAG;
 import static org.justcards.android.models.User.getJson;
 import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
 import static org.justcards.android.utils.Constants.FROM_POSITION;
@@ -37,7 +38,9 @@ import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.POSITION;
 import static org.justcards.android.utils.Constants.RULE_CODE;
 import static org.justcards.android.utils.Constants.RULE_SELECTION;
+import static org.justcards.android.utils.Constants.SERVER_FUNCTION_NAME;
 import static org.justcards.android.utils.Constants.TABLE_PICKED;
+import static org.justcards.android.utils.Constants.TAG;
 import static org.justcards.android.utils.Constants.TO_MUTE;
 import static org.justcards.android.utils.Constants.TO_POSITION;
 import static org.justcards.android.utils.Constants.TO_SHOW;
@@ -49,6 +52,9 @@ import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
  *
  * @link {https://github.com/rogerhu/parse-server-push-marker-example/blob/master/cloud/main.js}
  */
+
+@SuppressWarnings("unused")
+@Deprecated
 public class ParseUtils {
 
     private Context context;
@@ -59,10 +65,6 @@ public class ParseUtils {
         this.gameName = gameName;
         this.context = context;
         currentLoggedInUser = User.getCurrentUser(context);
-    }
-
-    public static boolean isSelf(final User user) {
-        return user.getUserId().equalsIgnoreCase(User.getCurrentUser().getObjectId());
     }
 
     public User getCurrentUser() {
@@ -130,7 +132,7 @@ public class ParseUtils {
     }
 
     private void sendBroadcast(final JsonObject payload) {
-        /*if (isNetworkAvailable(context)) {
+        if (isNetworkAvailable(context)) {
             HashMap<String, String> data = new HashMap<>();
             data.put("customData", payload.toString());
             data.put("channel", gameName);
@@ -141,7 +143,7 @@ public class ParseUtils {
                     Log.e(TAG, "sendBroadcast: Failed: Message: " + e.getMessage() + ": Object: " + object);
                 }
             });
-        }*/
+        }
         //TODO: retry this operation if it's network failure..
     }
 

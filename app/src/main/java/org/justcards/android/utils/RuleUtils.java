@@ -10,7 +10,7 @@ import org.justcards.android.models.Card;
 import org.justcards.android.models.GameRules;
 import org.justcards.android.models.User;
 
-import static org.justcards.android.network.ParseUtils.isSelf;
+import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.utils.Constants.DEALER_TAG;
 import static org.justcards.android.utils.Constants.PLAYER_TAG;
 import static org.justcards.android.utils.Constants.SINK_TAG;

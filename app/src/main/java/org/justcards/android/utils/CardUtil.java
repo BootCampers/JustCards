@@ -52,11 +52,9 @@ public class CardUtil {
     }
 
     public static List<Card> selectDefaults(final List<Card> deck) {
-        for (Card card : deck) {
-            if (!card.isJoker()) {
-                card.setSelected(true);
-            }
-        }
+        deck.stream()
+                .filter(card -> !card.isJoker())
+                .forEach(card -> card.setSelected(true));
         return deck;
     }
 

@@ -11,7 +11,7 @@ import org.justcards.android.models.User;
 
 import java.util.HashMap;
 
-import static org.justcards.android.network.ParseUtils.isSelf;
+import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
 import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;

@@ -4,14 +4,17 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
+import org.justcards.android.models.Card;
 import org.justcards.android.models.User;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
@@ -20,8 +23,36 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 
 import static org.justcards.android.models.User.getJson;
 import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
+import static org.justcards.android.utils.Constants.DATA;
+import static org.justcards.android.utils.Constants.FROM_ADDRESS_PREFIX;
+import static org.justcards.android.utils.Constants.FROM_POSITION;
+import static org.justcards.android.utils.Constants.FROM_TAG;
+import static org.justcards.android.utils.Constants.ON_TAG;
+import static org.justcards.android.utils.Constants.PARAM_CARDS;
+import static org.justcards.android.utils.Constants.PARAM_CHAT;
+import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
+import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
+import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
+import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
+import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
+import static org.justcards.android.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
+import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
+import static org.justcards.android.utils.Constants.PARSE_SCORES_UPDATED;
+import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
+import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
+import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
+import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
+import static org.justcards.android.utils.Constants.POSITION;
+import static org.justcards.android.utils.Constants.RULE_CODE;
+import static org.justcards.android.utils.Constants.RULE_SELECTION;
+import static org.justcards.android.utils.Constants.TABLE_PICKED;
+import static org.justcards.android.utils.Constants.TO;
+import static org.justcards.android.utils.Constants.TO_MUTE;
+import static org.justcards.android.utils.Constants.TO_POSITION;
+import static org.justcards.android.utils.Constants.TO_SHOW;
+import static org.justcards.android.utils.Constants.USER_TAG_SCORE;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -45,11 +76,90 @@ public class FirebaseMessagingClient {
         mCurrentUser = User.getCurrentUser(context);
     }
 
+    public User getCurrentUser() {
+        return mCurrentUser;
+    }
+
+    public void saveCurrentUserIsDealer(boolean isDealer) {
+        mCurrentUser.setDealer(isDealer);
+        mCurrentUser.save(mContext);
+    }
+
+    public void saveCurrentUserScore(final int score) {
+        mCurrentUser.setScore(score);
+        mCurrentUser.save(mContext);
+    }
+
+    public void resetCurrentUserForRound() {
+        mCurrentUser.setShowingCards(false);
+        mCurrentUser.setActive(true);
+        mCurrentUser.save(mContext);
+    }
+
+    public void resetCurrentUser() {
+        mCurrentUser.setDealer(false);
+        mCurrentUser.setShowingCards(false);
+        mCurrentUser.setActive(true);
+        mCurrentUser.setScore(0);
+        mCurrentUser.save(mContext);
+    }
+
+    public void saveCurrentUserIsShowingCards(boolean isShowingCards) {
+        mCurrentUser.setShowingCards(isShowingCards);
+        mCurrentUser.save(mContext);
+    }
+
+    public void saveCurrentUserIsActive(boolean isActive) {
+        mCurrentUser.setActive(isActive);
+        mCurrentUser.save(mContext);
+    }
+
+    /**
+     * @param payload the payload to broadcast
+     * @see [https://firebase.google.com/docs/cloud-messaging/android/topic-messaging]
+     * @see [https://firebase.google.com/docs/cloud-messaging/android/device-group]
+     */
+    private void sendBroadcast(final JsonObject payload) {
+        try {
+            JsonObject json = new JsonObject();
+            json.addProperty(TO, FROM_ADDRESS_PREFIX + mGameName);
+            json.add(DATA, payload);
+            HttpEntity entity = new StringEntity(json.toString());
+
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader(HeaderConstants.AUTHORIZATION, API_KEY);
+            client.post(mContext, API_URL, entity, "application/json", new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d(TAG, "sendBroadcast: Succeeded: " + payload.toString());
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Log.e(TAG, "sendBroadcast: Failed: Message: " + throwable.getMessage() + ":Status Code: " + statusCode + ": Response: " + responseString, throwable);
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "sendBroadcast: error occurred in creating the http entity.", e);
+        }
+        // TODO: retry this operation if it's network failure..
+    }
+
     public void joinGame() {
         if (isNetworkAvailable(mContext)) {
             Log.d(TAG, "Joining Game through subscribing to the game feed.");
             FirebaseMessaging.getInstance().subscribeToTopic(mGameName);
             changeGameParticipation(true);
+        }
+    }
+
+    public void leaveGame() {
+        if (isNetworkAvailable(mContext)) {
+            Log.d(TAG, "Leave Game through un-subscribing from the game feed.");
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(mGameName);
+            changeGameParticipation(false);
         }
     }
 
@@ -60,68 +170,119 @@ public class FirebaseMessagingClient {
      */
     private void changeGameParticipation(boolean joining) {
         // Send to Upstream Server
-
-        // https://firebase.google.com/docs/cloud-messaging/android/topic-messaging
-        // https://firebase.google.com/docs/cloud-messaging/android/device-group
-
-        try {
-            JsonObject payload = getJson(mCurrentUser);
-            if (joining) {
-                payload.addProperty(COMMON_IDENTIFIER, PARSE_NEW_PLAYER_ADDED);
-            } else {
-                payload.addProperty(COMMON_IDENTIFIER, PARSE_PLAYER_LEFT);
-            }
-
-            JsonObject json = new JsonObject();
-            json.addProperty("to", "/topics/" + mGameName);
-            json.add("data", payload);
-
-            String contentType = "application/json";
-
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.addHeader(HeaderConstants.AUTHORIZATION, API_KEY);
-            HttpEntity entity = new StringEntity(json.toString());
-
-            client.post(mContext, API_URL, entity, contentType, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.d(TAG, "onSuccess: ");
-                    super.onSuccess(statusCode, headers, response);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.e(TAG, "onFailure: ", throwable);
-                    super.onFailure(statusCode, headers, responseString, throwable);
-                }
-            });
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(COMMON_IDENTIFIER, joining ? PARSE_NEW_PLAYER_ADDED : PARSE_PLAYER_LEFT);
+        sendBroadcast(payload);
     }
 
-    /*private void sendBroadcast(final JsonObject payload) {
-        if (isNetworkAvailable(mContext)) {
-            HashMap<String, String> data = new HashMap<>();
-            data.put("customData", payload.toString());
-            data.put("channel", mGameName);
-            ParseCloud.callFunctionInBackground(SERVER_FUNCTION_NAME, data, (object, e) -> {
-                if (e == null) {
-                    Log.d(TAG, "sendBroadcast: Succeeded! " + payload.toString());
-                } else {
-                    Log.e(TAG, "sendBroadcast: Failed: Message: " + e.getMessage() + ": Object: " + object);
-                }
-            });
-        }
-        //TODO: retry this operation if it's network failure..
-    }*/
+    public void sendChatMessage(final String message) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(PARAM_CHAT, message);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_CHAT_MESSAGE);
+        sendBroadcast(payload);
+    }
 
-    public void leaveGame() {
-        if (isNetworkAvailable(mContext)) {
-            Log.d(TAG, "Leave Game through un-subscribing from the game feed.");
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(mGameName);
-            changeGameParticipation(false);
+    /**
+     * Player picks up a card from the table or drops one on the table
+     *
+     * @param card            which card
+     * @param fromPosition    position of the card where it was picked from
+     * @param toPosition      position of the card where it is dropped in
+     * @param pickedFromTable true: if picked from table, false: if dropped on table
+     */
+    public void exchangeCardWithTable(final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(TO_POSITION, toPosition);
+        payload.addProperty(TABLE_PICKED, pickedFromTable);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_EXCHANGE_CARD_WITH_TABLE);
+        sendBroadcast(payload);
+    }
+
+    /**
+     * Player swaps a card within his/her hand from one position to another
+     *
+     * @param card         which card
+     * @param fromPosition position of the card where it was picked from
+     * @param toPosition   position of the card where it is dropped in
+     */
+    public void swapCardWithinPlayer(final Card card, final int fromPosition, final int toPosition) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(TO_POSITION, toPosition);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_PLAYER);
+        sendBroadcast(payload);
+    }
+
+    /**
+     * Player picks up a card from a stack of cards and drops them on to the Sink
+     *
+     * @param card         which card
+     * @param fromTag      from which stack of cards
+     * @param fromPosition from which position in the stack of cards
+     */
+    public void dropCardToSink(final Card card, final String fromTag, final int fromPosition) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(FROM_TAG, fromTag);
+        payload.addProperty(FROM_POSITION, fromPosition);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DROP_CARD_TO_SINK);
+        sendBroadcast(payload);
+    }
+
+    public void toggleCard(final Card card, final int position, final String onTag) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(POSITION, position);
+        payload.addProperty(ON_TAG, onTag);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARD);
+        sendBroadcast(payload);
+    }
+
+    public void toggleCardsList(boolean toShow) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(TO_SHOW, toShow);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST);
+        sendBroadcast(payload);
+    }
+
+    public void mutePlayerForRound(boolean toMute) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(TO_MUTE, toMute);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_MUTE_PLAYER_FOR_ROUND);
+        sendBroadcast(payload);
+    }
+
+    public void updateUsersScore(final List<User> players) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(USER_TAG_SCORE, new Gson().toJsonTree(players));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORES_UPDATED);
+        sendBroadcast(payload);
+    }
+
+    public void declareRoundWinners(List<User> roundWinners) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_PLAYERS, new Gson().toJsonTree(roundWinners));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_ROUND_WINNERS);
+        sendBroadcast(payload);
+    }
+
+    public void endRound() {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_END_ROUND);
+        sendBroadcast(payload);
+    }
+
+    public void selectGameRules(String code, Object selection) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.addProperty(RULE_CODE, code);
+        if (selection instanceof Boolean) {
+            payload.addProperty(RULE_SELECTION, (Boolean) selection);
         }
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_SELECT_GAME_RULES);
+        sendBroadcast(payload);
     }
 
 }
