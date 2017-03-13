@@ -29,6 +29,8 @@ public class Constants {
     public static final String RULE_VIEW_TABLE_CARD = "ruleViewTableCard";
     public static final String FCM_TOKEN = "FCMToken";
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
+    public static final String GAME_PREFS = "gamePrefs";
+    public static final String GAME_NAME = "gameName";
 
     /** Request Codes Here */
     public static final int PLAY_SERVICES_RESOLUTION_REQUEST = 900;
@@ -37,6 +39,7 @@ public class Constants {
 
     /** Intent and Fragment Parameter here */
     public static final String PARAM_GAME_NAME = "gameName";
+    public static final String PARAM_GAME_DATA = "gameData";
     public static final String PARAM_GAME_TABLE = "gameTable";
     public static final String PARAM_CURRENT_VIEW_PLAYER = "currentView";
     public static final String PARAM_CARDS = "cards";
@@ -58,6 +61,8 @@ public class Constants {
     public static final String ARG_IS_SELF_ELIGIBLE = "isSelfEligible";
     public static final String ARG_FROM_PAGE = "fromPage";
     public static final String ARG_TO_PAGE = "toPage";
+    public static final String FROM = "from";
+    public static final String TO = "to";
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
@@ -77,7 +82,7 @@ public class Constants {
     public static final String RULE_CODE = "ruleCode";
     public static final String RULE_SELECTION = "ruleSelection";
 
-    /** Parse Events Here */
+    /** Notification Events Here */
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
     public static final String PARSE_DEAL_CARDS = "dealCards";

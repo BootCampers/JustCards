@@ -14,6 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static org.justcards.android.utils.Constants.FROM;
+import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
+import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
+import static org.justcards.android.utils.Constants.TO;
 
 /**
  * Author: agoenka
@@ -24,6 +28,7 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
 
     public static final String TAG = FCMMessageReceiverService.class.getSimpleName();
     public static final String ACTION = "org.justcards.push.intent.RECEIVE";
+    private static final String FROM_ADDRESS_PREFIX = "/topics/";
 
     /**
      * There are two types of messages data messages and notification messages.
@@ -61,15 +66,15 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
             Log.d(TAG, "Message notification title: " + notification.getTitle() + ". Message notification body: " + notification.getBody());
         }
 
-        if (!isEmpty(from) && from.startsWith("/topics/")) {
-            String gameName = from.replace("/topics/", "");
+        if (!isEmpty(from) && from.startsWith(FROM_ADDRESS_PREFIX)) {
+            String gameName = from.replace(FROM_ADDRESS_PREFIX, "");
 
             // Construct an Intent tying it to the ACTION on the application namespace
             Intent intent = new Intent(ACTION);
-            intent.putExtra("from", from); // From is usually the topic name. e.g. '/topics/199'
-            intent.putExtra("to", to); // To is usually null
-            intent.putExtra("gameName", gameName);
-            intent.putExtra("gameData", (HashMap) data); // Game Data is usually the game data saved in payload in the upstream message
+            intent.putExtra(FROM, from); // From is usually the topic name. e.g. '/topics/199'
+            intent.putExtra(TO, to); // To is usually null
+            intent.putExtra(PARAM_GAME_NAME, gameName);
+            intent.putExtra(PARAM_GAME_DATA, (HashMap) data); // Game Data is usually the game data saved in payload in the upstream message
 
             // Broadcast the received intent to be handled by the application
             broadCastLocally(intent);

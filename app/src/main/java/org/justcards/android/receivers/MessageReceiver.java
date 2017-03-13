@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.justcards.android.application.JustCardsAndroidApplication;
+import org.justcards.android.models.Game;
 import org.justcards.android.models.User;
 
 import java.util.HashMap;
 
 import static org.justcards.android.network.ParseUtils.isSelf;
 import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
+import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
+import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
 import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
@@ -45,42 +48,38 @@ public class MessageReceiver extends BroadcastReceiver {
     @SuppressWarnings("unchecked")
     private void processBroadcast(Intent intent) {
         String action = intent.getAction();
-
         if (action.equals(intentAction)) {
-            String gameName = intent.getStringExtra("gameName");
-            HashMap<String, String> gameData = (HashMap<String, String>) intent.getSerializableExtra("gameData");
-            String identifier = gameData.get(COMMON_IDENTIFIER);
-
-            User from = User.fromMap(gameData);
-            Log.d(TAG, identifier + "--" + gameData.toString());
-
-            switch (identifier) {
-                /*case PARSE_NEW_PLAYER_ADDED:
-                case PARSE_PLAYER_LEFT:*/
-                case PARSE_DEAL_CARDS:
-                case PARSE_DEAL_CARDS_TO_TABLE:
-                case PARSE_DEAL_CARDS_TO_SINK:
-                case PARSE_TOGGLE_CARDS_LIST:
-                /*case PARSE_MUTE_PLAYER_FOR_ROUND:
-                case PARSE_SCORES_UPDATED:*/
-                case PARSE_ROUND_WINNERS:
-                case PARSE_END_ROUND:
-                case PARSE_SELECT_GAME_RULES:
-                    application.notifyObservers(identifier, gameData);
-                    break;
-                case PARSE_EXCHANGE_CARD_WITH_TABLE:
-                case PARSE_SWAP_CARD_WITHIN_PLAYER:
-                case PARSE_DROP_CARD_TO_SINK:
-                case PARSE_TOGGLE_CARD:
-                case PARSE_CHAT_MESSAGE:
-                    // Process only if it's not from self/current user
-                    if (!isSelf(from)) {
+            String gameName = intent.getStringExtra(PARAM_GAME_NAME);
+            String savedGame = Game.getName(application);
+            if (savedGame == null || savedGame.equals(gameName)) {
+                HashMap<String, String> gameData = (HashMap<String, String>) intent.getSerializableExtra(PARAM_GAME_DATA);
+                String identifier = gameData.get(COMMON_IDENTIFIER);
+                Log.d(TAG, identifier + "--" + gameData.toString());
+                switch (identifier) {
+                    case PARSE_DEAL_CARDS:
+                    case PARSE_DEAL_CARDS_TO_TABLE:
+                    case PARSE_DEAL_CARDS_TO_SINK:
+                    case PARSE_TOGGLE_CARDS_LIST:
+                    case PARSE_ROUND_WINNERS:
+                    case PARSE_END_ROUND:
+                    case PARSE_SELECT_GAME_RULES:
                         application.notifyObservers(identifier, gameData);
-                    }
-                    break;
-                default:
-                    Log.e(TAG, "Unknown identifier " + identifier);
-                    break;
+                        break;
+                    case PARSE_EXCHANGE_CARD_WITH_TABLE:
+                    case PARSE_SWAP_CARD_WITHIN_PLAYER:
+                    case PARSE_DROP_CARD_TO_SINK:
+                    case PARSE_TOGGLE_CARD:
+                    case PARSE_CHAT_MESSAGE:
+                        // Process only if it's not from self/current user
+                        User from = User.fromMap(gameData);
+                        if (!isSelf(from)) {
+                            application.notifyObservers(identifier, gameData);
+                        }
+                        break;
+                    default:
+                        Log.e(TAG, "Unknown identifier " + identifier);
+                        break;
+                }
             }
         }
     }

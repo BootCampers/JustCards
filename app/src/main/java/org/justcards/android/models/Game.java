@@ -1,5 +1,7 @@
 package org.justcards.android.models;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -10,6 +12,9 @@ import org.justcards.android.utils.Constants;
 
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+import static org.justcards.android.utils.Constants.GAME_NAME;
+import static org.justcards.android.utils.Constants.GAME_PREFS;
 import static org.justcards.android.utils.Constants.PARAMS_PLAYER_GAME;
 
 /**
@@ -59,6 +64,19 @@ public class Game extends ParseObject {
                 players.remove(user);
             }
         }
+    }
+
+    public static void saveName(final String gameName, final Context context) {
+        context.getSharedPreferences(GAME_PREFS, MODE_PRIVATE)
+                .edit()
+                .putString(GAME_NAME, gameName)
+                .apply();
+    }
+
+    public static String getName(final Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(GAME_PREFS, MODE_PRIVATE);
+        String gameName = sharedPreferences.getString(GAME_NAME, "");
+        return !gameName.isEmpty() ? gameName : null;
     }
 
 }

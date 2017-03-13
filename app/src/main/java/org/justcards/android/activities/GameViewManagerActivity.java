@@ -33,8 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.plattysoft.leonids.ParticleSystem;
 import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
@@ -56,6 +54,7 @@ import org.justcards.android.interfaces.Observable;
 import org.justcards.android.interfaces.Observer;
 import org.justcards.android.models.Card;
 import org.justcards.android.models.ChatLog;
+import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
 import org.justcards.android.models.GameTable;
 import org.justcards.android.models.User;
@@ -73,6 +72,7 @@ import org.justcards.android.views.PlayerViewHelper;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindString;
@@ -194,6 +194,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
             Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
 
+            // Save Game Name
+            Game.saveName(mGameName, this);
+
             usersDatabaseReference = FirebaseDatabase.getInstance().getReference(mGameName);
             tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
             sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
@@ -201,7 +204,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             // Add myself to game
             User currentUser = User.getCurrentUser(this);
             String uId = usersDatabaseReference.push().getKey();
-            if(!mIsCurrentViewPlayer){
+            if (!mIsCurrentViewPlayer) {
                 currentUser.setDealer(true);
             } else {
                 currentUser.setDealer(false);
@@ -229,32 +232,32 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
                     User user = dataSnapshot.getValue(User.class);
-                    Log.d(TAG,"onChildAdded " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                    Log.d(TAG, "onChildAdded " + user.getDisplayName() + " " + dataSnapshot.getKey());
                     addPlayersToView(getList(user));
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
                     User userNewData = dataSnapshot.getValue(User.class);
-                    Log.d(TAG,"onChildChanged " + userNewData.getDisplayName() + " " + dataSnapshot.getKey());
-                    for(User userOldData : mPlayers){
-                        if(userOldData.getUserId().equals(userNewData.getUserId()) /*userid is not gonna change*/){
+                    Log.d(TAG, "onChildChanged " + userNewData.getDisplayName() + " " + dataSnapshot.getKey());
+                    for (User userOldData : mPlayers) {
+                        if (userOldData.getUserId().equals(userNewData.getUserId()) /*userid is not gonna change*/) {
                             //figure out what changed
-                            if(userNewData.isActive() != userOldData.isActive()){
-                                Log.d(TAG,"is active changed");
+                            if (userNewData.isActive() != userOldData.isActive()) {
+                                Log.d(TAG, "is active changed");
                                 handleMutePlayerForRound(userNewData, userNewData.isActive());
                             }
-                            if(userNewData.getScore() != userOldData.getScore()) {
-                                Log.d(TAG,"Score changed");
+                            if (userNewData.getScore() != userOldData.getScore()) {
+                                Log.d(TAG, "Score changed");
                                 handleScoresUpdate(userNewData, getList(userNewData));
                             }
-                            if(userNewData.isShowingCards() != userOldData.isShowingCards()){
-                                Log.d(TAG,"isShowingCards changed");
+                            if (userNewData.isShowingCards() != userOldData.isShowingCards()) {
+                                Log.d(TAG, "isShowingCards changed");
                                 toggleCardsListForPlayerView(userNewData, userNewData.isShowingCards());
                             }
 
-                            if(!userNewData.getCards().equals(userOldData.getCards())){
-                                Log.d(TAG,"Cards in hand changed");
+                            if (!userNewData.getCards().equals(userOldData.getCards())) {
+                                Log.d(TAG, "Cards in hand changed");
                             }
                         }
                     }
@@ -263,14 +266,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    Log.d(TAG,"onChildRemoved " + user.getDisplayName() + "--" + dataSnapshot.getKey());
+                    Log.d(TAG, "onChildRemoved " + user.getDisplayName() + "--" + dataSnapshot.getKey());
                     removePlayersFromView(getList(user));
                 }
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String previousKey) {
                     User user = dataSnapshot.getValue(User.class);
-                    Log.d(TAG,"onChildMoved " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                    Log.d(TAG, "onChildMoved " + user.getDisplayName() + " " + dataSnapshot.getKey());
                 }
 
                 @Override
@@ -306,7 +309,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 }
             });
 
-           // parseUtils.joinChannel();
+            // parseUtils.joinChannel();
         }
     }
 
@@ -587,7 +590,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (fragment != null && !isEmpty(cards)) {
             boolean result = ((CardsFragment) fragment).stackCards(cards);
             if (result) {
-                for(Card card : cards) {
+                for (Card card : cards) {
                     usersDatabaseReference.child(player.getUserId()).child("cards").push().setValue(card);
                 }
 
@@ -670,50 +673,51 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         //Do nothing
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public synchronized void onUpdate(final Observable o, final Object identifier, final Object arg) {
         String event = identifier.toString();
-        JsonObject json = (JsonObject) arg;
-        User from = User.fromJson(json);
         Log.d(TAG, "onUpdate: " + event);
+        HashMap<String, String> gameData = (HashMap<String, String>) arg;
+        User from = User.fromMap(gameData);
 
         switch (event) {
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 runOnUiThread(() -> {
-                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
-                    int fromPosition = json.get(FROM_POSITION).getAsInt();
-                    int toPosition = json.get(TO_POSITION).getAsInt();
-                    boolean pickedFromTable = json.get(TABLE_PICKED).getAsBoolean();
+                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                    int toPosition = Integer.valueOf(gameData.get(TO_POSITION));
+                    boolean pickedFromTable = Boolean.valueOf(gameData.get(TABLE_PICKED));
                     handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
                 });
                 break;
             case PARSE_SWAP_CARD_WITHIN_PLAYER:
                 runOnUiThread(() -> {
-                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
-                    int fromPosition = json.get(FROM_POSITION).getAsInt();
-                    int toPosition = json.get(TO_POSITION).getAsInt();
+                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                    int toPosition = Integer.valueOf(gameData.get(TO_POSITION));
                     handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
                 });
                 break;
             case PARSE_DROP_CARD_TO_SINK:
                 runOnUiThread(() -> {
-                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
-                    String fromTag = json.get(FROM_TAG).getAsString();
-                    int fromPosition = json.get(FROM_POSITION).getAsInt();
+                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    String fromTag = gameData.get(FROM_TAG);
+                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
                     handleCardDropToSink(from, card, fromTag, fromPosition);
                 });
                 break;
             case PARSE_TOGGLE_CARD:
                 runOnUiThread(() -> {
-                    Card card = gson.fromJson(json.get(PARAM_CARDS), Card.class);
-                    int position = json.get(POSITION).getAsInt();
-                    String onTag = json.get(ON_TAG).getAsString();
+                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    int position = Integer.valueOf(gameData.get(POSITION));
+                    String onTag = gameData.get(ON_TAG);
                     handleToggleCard(from, card, position, onTag);
                 });
                 break;
             case PARSE_ROUND_WINNERS:
                 runOnUiThread(() -> {
-                    List<User> roundWinners = gson.fromJson(json.get(PARAM_PLAYERS), getUsersType());
+                    List<User> roundWinners = gson.fromJson(gameData.get(PARAM_PLAYERS), getUsersType());
                     handleRoundWinners(roundWinners, from);
                 });
                 break;
@@ -722,19 +726,17 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 break;
             case PARSE_SELECT_GAME_RULES:
                 runOnUiThread(() -> {
-                    String code = json.get(RULE_CODE).getAsString();
+                    String code = gameData.get(RULE_CODE);
                     Object selection = null;
-                    JsonElement selectionElement = json.get(RULE_SELECTION);
-                    if (selectionElement.isJsonPrimitive()) {
-                        if (selectionElement.getAsJsonPrimitive().isBoolean()) {
-                            selection = selectionElement.getAsJsonPrimitive().getAsBoolean();
-                        }
+                    String selectionElement = gameData.get(RULE_SELECTION);
+                    if (!TextUtils.isEmpty(selectionElement)) {
+                        selection = Boolean.valueOf(selectionElement);
                     }
                     handleGameRules(from, code, selection);
                 });
                 break;
             case PARSE_CHAT_MESSAGE:
-                runOnUiThread(() -> onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), json.get(PARAM_CHAT).getAsString()));
+                runOnUiThread(() -> onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), gameData.get(PARAM_CHAT)));
                 break;
         }
     }
@@ -903,7 +905,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (onTag.equalsIgnoreCase(TABLE_TAG) && mPlayerViewFragment != null) {
                 fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
                 mChatAndLogFragment.addNewLogEvent(from.getDisplayName(), from.getAvatarUri(),
-                        from.getDisplayName() + " flipped " + card.getName().toLowerCase().replace("_", " ") +" on table");
+                        from.getDisplayName() + " flipped " + card.getName().toLowerCase().replace("_", " ") + " on table");
             } else if (onTag.equalsIgnoreCase(PLAYER_TAG)) {
                 fragment = getPlayerFragment(this, from);
             }
