@@ -77,7 +77,6 @@ public class FirebaseDB {
         myRef.orderByChild("userId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for(DataSnapshot children : dataSnapshot.getChildren()){
                     if(children.getValue(User.class).equals(user)){
                         Log.d(TAG, "Removed " + user.getDisplayName() + " from " + gameName);
@@ -91,7 +90,6 @@ public class FirebaseDB {
                 Log.d(TAG, "Failed to remove " + user.getDisplayName() + " from " + gameName);
             }
         });
-
     }
 }
 

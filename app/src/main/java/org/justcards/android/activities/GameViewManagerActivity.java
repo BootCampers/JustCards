@@ -74,6 +74,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -81,9 +82,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.justcards.android.models.GameRules.getRuleDescription;
+import static org.justcards.android.models.User.fromMap;
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.models.User.resetForRound;
+import static org.justcards.android.utils.AppUtils.getCardsType;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.getUsersType;
 import static org.justcards.android.utils.AppUtils.getVectorCompat;
@@ -94,11 +97,16 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
+import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
 import static org.justcards.android.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
+import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -196,9 +204,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             // Save Game Name
             Game.saveName(mGameName, this);
-            messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
 
             messagingClient = new FirebaseMessagingClient(this, mGameName);
+            messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
 
             usersDatabaseReference = FirebaseDatabase.getInstance().getReference(mGameName);
             tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
@@ -507,7 +515,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @OnClick(R.id.ibInfo)
     public void showGameInfo(View view) {
         PopupWindow popup = new PopupWindow(GameViewManagerActivity.this);
-        View layout = getLayoutInflater().inflate(R.layout.popup_gameid, null);
+        View layout = getLayoutInflater().inflate(R.layout.popup_gameid, container, false);
         Button btnGameId = (Button) layout.findViewById(R.id.btnGameId);
         btnGameId.setText("Game id " + mGameName + " ");
         btnGameId.setOnClickListener(view1 -> {
@@ -587,9 +595,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             boolean result = ((CardsFragment) fragment).stackCards(cards);
             if (result) {
                 for (Card card : cards) {
-                    usersDatabaseReference.child(player.getUserId()).child("cards").push().setValue(card);
+                    messagingClient.dealCards(player, card);
                 }
-
                 User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to everyone");
             }
@@ -601,7 +608,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
-            GameTable.save(mGameName, cards, toSink);//save to firebase db
+            GameTable.save(mGameName, cards, toSink); // save to firebase db
             if (!toSink) {
                 User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Table");
@@ -638,7 +645,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onScore(boolean saveClicked) {
         if (saveClicked) {
-            messagingClient.updateUsersScore(mPlayers);
+            for (User player: mPlayers) {
+                usersDatabaseReference.child(player.getUserId()).child("score").push().setValue(player.getScore());
+            }
             messagingClient.endRound();
         }
     }
@@ -678,6 +687,28 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         User from = User.fromMap(gameData);
 
         switch (event) {
+            case PARSE_DEAL_CARDS:
+                runOnUiThread(() -> {
+                    User to = fromMap(gson.fromJson(gameData.get(PARAM_PLAYER), Map.class));
+                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    handleDeal(card, from, to);
+                });
+                break;
+            case PARSE_DEAL_CARDS_TO_TABLE:
+                mMediaUtils.playGlassBreakingTone();
+                runOnUiThread(() -> {
+                    int cardCount = Integer.valueOf(gameData.get(PARAM_CARD_COUNT));
+                    List<Card> cards = gson.fromJson(gameData.get(PARAM_CARDS), getCardsType());
+                    handleDealTable(from, cards, cardCount);
+                });
+                break;
+            case PARSE_DEAL_CARDS_TO_SINK:
+                mMediaUtils.playGlassBreakingTone();
+                runOnUiThread(() -> {
+                    List<Card> cards = gson.fromJson(gameData.get(PARAM_CARDS), getCardsType());
+                    handleDealSink(from, cards);
+                });
+                break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
                 runOnUiThread(() -> {
                     Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);

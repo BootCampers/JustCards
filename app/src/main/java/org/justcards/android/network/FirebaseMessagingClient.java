@@ -11,6 +11,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 import org.justcards.android.models.Card;
+import org.justcards.android.models.GameTable;
 import org.justcards.android.models.User;
 
 import java.io.UnsupportedEncodingException;
@@ -29,30 +30,29 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
+import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
+import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
+import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
-import static org.justcards.android.utils.Constants.PARSE_MUTE_PLAYER_FOR_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
 import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
 import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.justcards.android.utils.Constants.PARSE_SCORES_UPDATED;
 import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
 import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
 import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
-import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARDS_LIST;
 import static org.justcards.android.utils.Constants.POSITION;
 import static org.justcards.android.utils.Constants.RULE_CODE;
 import static org.justcards.android.utils.Constants.RULE_SELECTION;
 import static org.justcards.android.utils.Constants.TABLE_PICKED;
 import static org.justcards.android.utils.Constants.TO;
-import static org.justcards.android.utils.Constants.TO_MUTE;
 import static org.justcards.android.utils.Constants.TO_POSITION;
-import static org.justcards.android.utils.Constants.TO_SHOW;
-import static org.justcards.android.utils.Constants.USER_TAG_SCORE;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
 /**
@@ -175,6 +175,42 @@ public class FirebaseMessagingClient {
         sendBroadcast(payload);
     }
 
+    /**
+     * Dealer dealing cards to a particular user
+     *
+     * @param toUser to whom this is sent
+     * @param card   which card
+     */
+    public void dealCards(final User toUser, final Card card) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_PLAYER, getJson(toUser));
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
+        sendBroadcast(payload);
+    }
+
+    /**
+     * Dealer moving cards to table
+     *
+     * @param cards which cards
+     */
+    public void dealCardsToTable(final List<Card> cards) {
+        ParseDB.deleteGameTables(mGameName, () -> {
+            GameTable.save(mGameName, cards, false);
+            JsonObject payload = getJson(mCurrentUser);
+            payload.addProperty(PARAM_CARD_COUNT, cards.size());
+            payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
+            sendBroadcast(payload);
+        });
+    }
+
+    public void dealCardsToSink(final List<Card> cards) {
+        JsonObject payload = getJson(mCurrentUser);
+        payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));
+        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_SINK);
+        sendBroadcast(payload);
+    }
+
     public void sendChatMessage(final String message) {
         JsonObject payload = getJson(mCurrentUser);
         payload.addProperty(PARAM_CHAT, message);
@@ -238,27 +274,6 @@ public class FirebaseMessagingClient {
         payload.addProperty(POSITION, position);
         payload.addProperty(ON_TAG, onTag);
         payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARD);
-        sendBroadcast(payload);
-    }
-
-    public void toggleCardsList(boolean toShow) {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.addProperty(TO_SHOW, toShow);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARDS_LIST);
-        sendBroadcast(payload);
-    }
-
-    public void mutePlayerForRound(boolean toMute) {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.addProperty(TO_MUTE, toMute);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_MUTE_PLAYER_FOR_ROUND);
-        sendBroadcast(payload);
-    }
-
-    public void updateUsersScore(final List<User> players) {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.add(USER_TAG_SCORE, new Gson().toJsonTree(players));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_SCORES_UPDATED);
         sendBroadcast(payload);
     }
 

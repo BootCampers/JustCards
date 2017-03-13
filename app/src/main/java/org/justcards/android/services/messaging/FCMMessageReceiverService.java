@@ -69,12 +69,17 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
         if (!isEmpty(from) && from.startsWith(FROM_ADDRESS_PREFIX)) {
             String gameName = from.replace(FROM_ADDRESS_PREFIX, "");
 
+            HashMap<String, String> gameData = new HashMap<>();
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                gameData.put(entry.getKey(), entry.getValue());
+            }
+
             // Construct an Intent tying it to the ACTION on the application namespace
             Intent intent = new Intent(ACTION);
             intent.putExtra(FROM, from); // From is usually the topic name. e.g. '/topics/199'
             intent.putExtra(TO, to); // To is usually null
             intent.putExtra(PARAM_GAME_NAME, gameName);
-            intent.putExtra(PARAM_GAME_DATA, (HashMap) data); // Game Data is usually the game data saved in payload in the upstream message
+            intent.putExtra(PARAM_GAME_DATA, gameData); // Game Data is usually the game data saved in payload in the upstream message
 
             // Broadcast the received intent to be handled by the application
             broadCastLocally(intent);
