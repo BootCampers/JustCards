@@ -11,7 +11,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 import org.justcards.android.models.Card;
-import org.justcards.android.models.GameTable;
 import org.justcards.android.models.User;
 
 import java.io.UnsupportedEncodingException;
@@ -30,14 +29,11 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
-import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
 import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -186,28 +182,6 @@ public class FirebaseMessagingClient {
         payload.add(PARAM_PLAYER, getJson(toUser));
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
-        sendBroadcast(payload);
-    }
-
-    /**
-     * Dealer moving cards to table
-     *
-     * @param cards which cards
-     */
-    public void dealCardsToTable(final List<Card> cards) {
-        ParseDB.deleteGameTables(mGameName, () -> {
-            GameTable.save(mGameName, cards, false);
-            JsonObject payload = getJson(mCurrentUser);
-            payload.addProperty(PARAM_CARD_COUNT, cards.size());
-            payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_TABLE);
-            sendBroadcast(payload);
-        });
-    }
-
-    public void dealCardsToSink(final List<Card> cards) {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.add(PARAM_CARDS, new Gson().toJsonTree(cards));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS_TO_SINK);
         sendBroadcast(payload);
     }
 

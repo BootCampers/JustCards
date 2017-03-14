@@ -18,8 +18,6 @@ import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -50,15 +48,13 @@ public class MessageReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action.equals(intentAction)) {
             String gameName = intent.getStringExtra(PARAM_GAME_NAME);
-            String savedGame = Game.getName(application);
+            String savedGame = Game.getInstance(application).getName();
             if (savedGame == null || savedGame.equals(gameName)) {
                 HashMap<String, String> gameData = (HashMap<String, String>) intent.getSerializableExtra(PARAM_GAME_DATA);
                 String identifier = gameData.get(COMMON_IDENTIFIER);
                 Log.d(TAG, identifier + "--" + gameData.toString());
                 switch (identifier) {
                     case PARSE_DEAL_CARDS:
-                    case PARSE_DEAL_CARDS_TO_TABLE:
-                    case PARSE_DEAL_CARDS_TO_SINK:
                     case PARSE_ROUND_WINNERS:
                     case PARSE_END_ROUND:
                     case PARSE_SELECT_GAME_RULES:

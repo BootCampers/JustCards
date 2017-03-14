@@ -1,5 +1,6 @@
 package org.justcards.android.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -10,27 +11,28 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.justcards.android.models.User;
 
+import static org.justcards.android.models.User.getCurrentUser;
+
 /**
  * Created by baphna on 2/22/2017.
- *
+ * <p>
  * Entries will be like this:
- *   -Game1
- *      --user1
- *      --user2
- *   -Game2
- *      --user2
- *      --user2
+ * -Game1
+ * --user1
+ * --user2
+ * -Game2
+ * --user2
+ * --user2
  */
+public class GameDB {
 
-public class FirebaseDB {
-
-    private static final String TAG = FirebaseDB.class.getSimpleName();
+    private static final String TAG = GameDB.class.getSimpleName();
 
     public interface OnGameExistsListener {
         void onGameExistsResult(final boolean result);
     }
 
-    public static void checkGameExists(final String gameName, final FirebaseDB.OnGameExistsListener listener) {
+    public static void checkExists(final String gameName, final GameDB.OnGameExistsListener listener) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(gameName);
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -46,6 +48,7 @@ public class FirebaseDB {
                     listener.onGameExistsResult(false);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -59,17 +62,18 @@ public class FirebaseDB {
      *
      * @param gameName the game number that needs to be deleted
      */
-    public static void deleteGame(final String gameName) {
-        FirebaseDatabase.getInstance().getReference(gameName).removeValue(); //remove users table
-        //TODO: do this at round end
-        //FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + gameName).removeValue(); //remove table
-        //FirebaseDatabase.getInstance().getReference(Constants.SINK_TAG + "_" + gameName).removeValue(); //remove sink
+    public static void delete(final String gameName, final Context context) {
+        if (getCurrentUser(context).isDealer()) {
+            FirebaseDatabase.getInstance().getReference(gameName).removeValue(); //remove users table
+            GameTableDB.getInstance(gameName).clearAll(context);
+        }
     }
 
     /**
      * Delete only this user from this game
-     * @param gameName
-     * @param user
+     *
+     * @param gameName the game name
+     * @param user     the user
      */
     public static void deleteGamesForUser(final String gameName, final User user) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -77,8 +81,8 @@ public class FirebaseDB {
         myRef.orderByChild("userId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot children : dataSnapshot.getChildren()){
-                    if(children.getValue(User.class).equals(user)){
+                for (DataSnapshot children : dataSnapshot.getChildren()) {
+                    if (children.getValue(User.class).equals(user)) {
                         Log.d(TAG, "Removed " + user.getDisplayName() + " from " + gameName);
                         children.getRef().removeValue();
                     }
@@ -92,4 +96,3 @@ public class FirebaseDB {
         });
     }
 }
-

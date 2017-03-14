@@ -36,10 +36,10 @@ public class AnimationUtils {
     public static void animateCircularReveal(final View view, final long animationTime) {
         view.postDelayed(() -> {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                // get the center for the clipping circle
+                // getInstance the center for the clipping circle
                 int cx = view.getMeasuredWidth() / 2;
                 int cy = view.getMeasuredHeight() / 2;
-                // get the final radius for the clipping circle
+                // getInstance the final radius for the clipping circle
                 int finalRadius = Math.max(view.getWidth(), view.getHeight()) / 2;
                 // create the animator for this view (the start radius is zero)
                 Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);

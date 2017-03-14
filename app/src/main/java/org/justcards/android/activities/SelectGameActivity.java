@@ -14,7 +14,7 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.justcards.android.R;
 import org.justcards.android.models.User;
-import org.justcards.android.network.FirebaseDB;
+import org.justcards.android.network.GameDB;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcels;
@@ -28,7 +28,7 @@ import static org.justcards.android.utils.AppUtils.showSnackBar;
 import static org.justcards.android.utils.Constants.DISPLAY_NAME;
 import static org.justcards.android.utils.Constants.PARAM_USER;
 
-public class SelectGameActivity extends AppCompatActivity implements FirebaseDB.OnGameExistsListener {
+public class SelectGameActivity extends AppCompatActivity implements GameDB.OnGameExistsListener {
 
     private User user = null;
 
@@ -69,7 +69,7 @@ public class SelectGameActivity extends AppCompatActivity implements FirebaseDB.
             showSnackBar(getApplicationContext(), view, "Please enter ID of the game you would like to join...");
         } else {
             String gameName = etGameName.getText().toString();
-            FirebaseDB.checkGameExists(gameName, this);
+            GameDB.checkExists(gameName, this);
         }
     }
 

@@ -56,11 +56,10 @@ import org.justcards.android.models.Card;
 import org.justcards.android.models.ChatLog;
 import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
-import org.justcards.android.models.GameTable;
+import org.justcards.android.network.GameTableDB;
 import org.justcards.android.models.User;
-import org.justcards.android.network.FirebaseDB;
+import org.justcards.android.network.GameDB;
 import org.justcards.android.network.FirebaseMessagingClient;
-import org.justcards.android.network.ParseDB;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
@@ -86,7 +85,6 @@ import static org.justcards.android.models.User.fromMap;
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.models.User.resetForRound;
-import static org.justcards.android.utils.AppUtils.getCardsType;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.getUsersType;
 import static org.justcards.android.utils.AppUtils.getVectorCompat;
@@ -97,7 +95,6 @@ import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
 import static org.justcards.android.utils.Constants.ON_TAG;
 import static org.justcards.android.utils.Constants.PARAM_CARDS;
-import static org.justcards.android.utils.Constants.PARAM_CARD_COUNT;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
 import static org.justcards.android.utils.Constants.PARAM_CURRENT_VIEW_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
@@ -105,8 +102,6 @@ import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
 import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
 import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS_TO_TABLE;
 import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
 import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
 import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
@@ -203,7 +198,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
 
             // Save Game Name
-            Game.saveName(mGameName, this);
+            Game.getInstance(this).setName(mGameName);
 
             messagingClient = new FirebaseMessagingClient(this, mGameName);
             messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
@@ -287,8 +282,43 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             tableDatabaseReference.addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
+                    String key = dataSnapshot.getKey();
+                    Card card = dataSnapshot.getValue(Card.class);
+                    Log.d(TAG, "onChildAdded: tableDatabaseReference: key: " + key + " : card: " + card.getName());
+                    mMediaUtils.playGlassBreakingTone();
+                    runOnUiThread(() -> handleDealTable(getList(card)));
+                }
 
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            sinkDatabaseReference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String key = dataSnapshot.getKey();
+                    Card card = dataSnapshot.getValue(Card.class);
+                    Log.d(TAG, "onChildAdded: tableDatabaseReference: key: " + key + " : card: " + card.getName());
+                    mMediaUtils.playGlassBreakingTone();
+                    runOnUiThread(() -> handleDealSink(getList(card)));
                 }
 
                 @Override
@@ -499,10 +529,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes Exit", v -> {
                     messagingClient.leaveGame();
-                    FirebaseDB.deleteGamesForUser(mGameName, getCurrentUser(GameViewManagerActivity.this));
-                    if (getCurrentUser(GameViewManagerActivity.this).isDealer()) {
-                        FirebaseDB.deleteGame(mGameName);
-                    }
+                    GameDB.deleteGamesForUser(mGameName, getCurrentUser(GameViewManagerActivity.this));
+                    GameDB.delete(mGameName, this);
                     ((JustCardsAndroidApplication) getApplication()).removeAllObservers();
                     messagingClient.resetCurrentUser();
                     finish();
@@ -608,7 +636,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
-            GameTable.save(mGameName, cards, toSink); // save to firebase db
+            GameTableDB.getInstance(mGameName).save(cards, toSink); // save to firebase db
             if (!toSink) {
                 User self = getCurrentUser(this);
                 onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Table");
@@ -645,7 +673,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onScore(boolean saveClicked) {
         if (saveClicked) {
-            for (User player: mPlayers) {
+            for (User player : mPlayers) {
                 usersDatabaseReference.child(player.getUserId()).child("score").push().setValue(player.getScore());
             }
             messagingClient.endRound();
@@ -692,21 +720,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User to = fromMap(gson.fromJson(gameData.get(PARAM_PLAYER), Map.class));
                     Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
                     handleDeal(card, from, to);
-                });
-                break;
-            case PARSE_DEAL_CARDS_TO_TABLE:
-                mMediaUtils.playGlassBreakingTone();
-                runOnUiThread(() -> {
-                    int cardCount = Integer.valueOf(gameData.get(PARAM_CARD_COUNT));
-                    List<Card> cards = gson.fromJson(gameData.get(PARAM_CARDS), getCardsType());
-                    handleDealTable(from, cards, cardCount);
-                });
-                break;
-            case PARSE_DEAL_CARDS_TO_SINK:
-                mMediaUtils.playGlassBreakingTone();
-                runOnUiThread(() -> {
-                    List<Card> cards = gson.fromJson(gameData.get(PARAM_CARDS), getCardsType());
-                    handleDealSink(from, cards);
                 });
                 break;
             case PARSE_EXCHANGE_CARD_WITH_TABLE:
@@ -821,16 +834,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDealTable(final User from, final List<Card> cards, final int cardCount) {
-        if (from != null && from.isDealer() && cardCount > 0) {
-            if (isEmpty(cards)) {
-                ParseDB.getGameTableCards(mGameName, cardCount, this::handleDealTable);
-            } else {
-                handleDealTable(cards);
-            }
-        }
-    }
-
     public void handleDealTable(final List<Card> cards) {
         CardUtil.setShowingFront(cards);
         Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
@@ -842,8 +845,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleDealSink(final User from, final List<Card> cards) {
-        if (from != null && from.isDealer() && !isEmpty(cards)) {
+    public void handleDealSink(final List<Card> cards) {
+        if (!isEmpty(cards)) {
             CardUtil.setShowingFront(cards);
             addCardsToSink(cards);
             if (messagingClient.getCurrentUser().isDealer() && mDealerViewFragment != null) {
@@ -1074,6 +1077,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
+                    GameTableDB.getInstance(mGameName).clear(false, this);
                 }
             }
 
@@ -1111,6 +1115,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         sinkCards.clear();
         ivSink.setImageResource(R.drawable.ic_sink_empty);
         tvSinkCardsCount.setText(String.valueOf(sinkCards.size()));
+        GameTableDB.getInstance(mGameName).clear(true, this);
     }
 
     private void handleGameRules(final User from, final String code, final Object selection) {

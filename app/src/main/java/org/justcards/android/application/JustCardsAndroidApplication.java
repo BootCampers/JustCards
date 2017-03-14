@@ -6,14 +6,11 @@ import android.util.Log;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
 import com.parse.interceptors.ParseLogInterceptor;
 
 import org.justcards.android.R;
 import org.justcards.android.interfaces.Observable;
 import org.justcards.android.interfaces.Observer;
-import org.justcards.android.models.Game;
-import org.justcards.android.models.GameTable;
 import org.justcards.android.utils.Constants;
 
 import java.util.ArrayList;
@@ -26,7 +23,8 @@ public class JustCardsAndroidApplication extends Application implements Observab
 
     public static final String APPLICATION_ID = "codepath-android";
     public static final String APPLICATION_SERVER = "https://codepath-maps-push-lab.herokuapp.com/parse/";
-    @SuppressWarnings("unused") public static final String CLIENT_KEY = "8bXPznF5eSLWq0sY9gTUrEF5BJlia7ltmLQFRh";
+    @SuppressWarnings("unused")
+    public static final String CLIENT_KEY = "8bXPznF5eSLWq0sY9gTUrEF5BJlia7ltmLQFRh";
 
     private List<Observer> mObservers = new ArrayList<>();
 
@@ -35,9 +33,6 @@ public class JustCardsAndroidApplication extends Application implements Observab
         super.onCreate();
 
         ViewTarget.setTagId(R.id.glide_tag);
-
-        ParseObject.registerSubclass(Game.class);
-        ParseObject.registerSubclass(GameTable.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(APPLICATION_ID)
@@ -70,7 +65,7 @@ public class JustCardsAndroidApplication extends Application implements Observab
         }
     }
 
-    public synchronized void removeAllObservers(){
+    public synchronized void removeAllObservers() {
         mObservers.clear();
     }
 }
