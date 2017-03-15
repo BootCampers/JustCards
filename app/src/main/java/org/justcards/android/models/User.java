@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.parse.ParseUser;
 
 import org.justcards.android.utils.Constants;
@@ -40,7 +41,8 @@ public class User {
     private int score;
     private HashMap<String, Card> cards = new HashMap<>();
 
-    public User() {}
+    public User() {
+    }
 
     public User(String avatarUri, String displayName, String userId) {
         this.avatarUri = avatarUri;
@@ -65,6 +67,20 @@ public class User {
         boolean isActive = Boolean.valueOf(map.get(IS_ACTIVE));
         int score = Integer.valueOf(map.get(SCORE));
         Log.d(TAG, "fromMap -- " + userId + " -- " + displayName + " -- " + avatarUri);
+        return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
+    }
+
+    public static User fromJson(String jsonString) {
+        JsonParser parser = new JsonParser();
+        JsonObject json = parser.parse(jsonString).getAsJsonObject();
+        String userId = json.get(USER_ID).getAsString();
+        String displayName = json.get(DISPLAY_NAME).getAsString();
+        String avatarUri = json.get(USER_AVATAR_URI).getAsString();
+        boolean isDealer = json.get(IS_DEALER).getAsBoolean();
+        boolean isShowingCards = json.get(IS_SHOWING_CARDS).getAsBoolean();
+        boolean isActive = json.get(IS_ACTIVE).getAsBoolean();
+        int score = json.get(SCORE).getAsInt();
+        Log.d(TAG, "fromJson--" + userId + "--" + displayName + "--" + avatarUri);
         return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 

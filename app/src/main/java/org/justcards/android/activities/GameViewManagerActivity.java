@@ -56,10 +56,10 @@ import org.justcards.android.models.Card;
 import org.justcards.android.models.ChatLog;
 import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
-import org.justcards.android.network.GameTableDB;
 import org.justcards.android.models.User;
-import org.justcards.android.network.GameDB;
 import org.justcards.android.network.FirebaseMessagingClient;
+import org.justcards.android.network.GameDB;
+import org.justcards.android.network.GameTableDB;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
@@ -73,7 +73,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -81,7 +80,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static org.justcards.android.models.GameRules.getRuleDescription;
-import static org.justcards.android.models.User.fromMap;
+import static org.justcards.android.models.User.fromJson;
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.models.User.resetForRound;
@@ -238,27 +237,27 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     User userNewData = dataSnapshot.getValue(User.class);
                     Log.d(TAG, "onChildChanged " + userNewData.getDisplayName() + " " + dataSnapshot.getKey());
                     /*userId is not gonna change*///figure out what changed
-                    mPlayers.stream()
-                            .filter(userOldData -> userOldData.getUserId().equals(userNewData.getUserId()))
-                            .forEach(userOldData -> {
-                                //figure out what changed
-                                if (userNewData.isActive() != userOldData.isActive()) {
-                                    Log.d(TAG, "is active changed");
-                                    handleMutePlayerForRound(userNewData, userNewData.isActive());
-                                }
-                                if (userNewData.getScore() != userOldData.getScore()) {
-                                    Log.d(TAG, "Score changed");
-                                    handleScoresUpdate(userNewData, getList(userNewData));
-                                }
-                                if (userNewData.isShowingCards() != userOldData.isShowingCards()) {
-                                    Log.d(TAG, "isShowingCards changed");
-                                    toggleCardsListForPlayerView(userNewData, userNewData.isShowingCards());
-                                }
+                    for (User userOldData : mPlayers) {
+                        if (userOldData.getUserId().equals(userNewData.getUserId())) {
+                            //figure out what changed
+                            if (userNewData.isActive() != userOldData.isActive()) {
+                                Log.d(TAG, "is active changed");
+                                handleMutePlayerForRound(userNewData, userNewData.isActive());
+                            }
+                            if (userNewData.getScore() != userOldData.getScore()) {
+                                Log.d(TAG, "Score changed");
+                                handleScoresUpdate(userNewData, getList(userNewData));
+                            }
+                            if (userNewData.isShowingCards() != userOldData.isShowingCards()) {
+                                Log.d(TAG, "isShowingCards changed");
+                                toggleCardsListForPlayerView(userNewData, userNewData.isShowingCards());
+                            }
 
-                                if (!userNewData.getCards().equals(userOldData.getCards())) {
-                                    Log.d(TAG, "Cards in hand changed");
-                                }
-                            });
+                            if (!userNewData.getCards().equals(userOldData.getCards())) {
+                                Log.d(TAG, "Cards in hand changed");
+                            }
+                        }
+                    }
                 }
 
                 @Override
@@ -276,7 +275,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.e(TAG, "onCancelled: " + databaseError.getDetails());
                 }
             });
 
@@ -717,7 +716,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         switch (event) {
             case PARSE_DEAL_CARDS:
                 runOnUiThread(() -> {
-                    User to = fromMap(gson.fromJson(gameData.get(PARAM_PLAYER), Map.class));
+                    User to = fromJson(gameData.get(PARAM_PLAYER));
                     Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
                     handleDeal(card, from, to);
                 });
