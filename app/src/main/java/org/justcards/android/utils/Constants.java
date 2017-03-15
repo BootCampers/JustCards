@@ -79,8 +79,6 @@ public class Constants {
     public static final String FROM_TAG = "fromTag";
     public static final String POSITION = "position";
     public static final String ON_TAG = "onTag";
-    public static final String TO_SHOW = "toShow";
-    public static final String TO_MUTE = "toMute";
     public static final String RULE_CODE = "ruleCode";
     public static final String RULE_SELECTION = "ruleSelection";
 
@@ -88,15 +86,10 @@ public class Constants {
     public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
     public static final String PARSE_PLAYER_LEFT = "playerLeft";
     public static final String PARSE_DEAL_CARDS = "dealCards";
-    public static final String PARSE_DEAL_CARDS_TO_TABLE = "dealCardsToTable";
-    public static final String PARSE_DEAL_CARDS_TO_SINK = "dealCardsToSink";
     public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
     public static final String PARSE_SWAP_CARD_WITHIN_PLAYER = "swapCardWithinPlayer";
     public static final String PARSE_DROP_CARD_TO_SINK = "dropCardToSink";
     public static final String PARSE_TOGGLE_CARD = "toggleCard";
-    public static final String PARSE_TOGGLE_CARDS_LIST = "toggleCardsList";
-    public static final String PARSE_MUTE_PLAYER_FOR_ROUND = "mutePlayerForRound";
-    public static final String PARSE_SCORES_UPDATED = "scoresUpdated";
     public static final String PARSE_ROUND_WINNERS = "roundWinners";
     public static final String PARSE_END_ROUND = "endRound";
     public static final String PARSE_CHAT_MESSAGE = "chatMessage";

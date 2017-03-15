@@ -45,8 +45,16 @@ public class GameTableDB {
     public static GameTableDB getInstance(final String gameName) {
         return GameTableDB
                 .build()
-                .setTableDatabaseReference(FirebaseDatabase.getInstance().getReference(TABLE_TAG + "_" + gameName))
-                .setSinkDatabaseReference(FirebaseDatabase.getInstance().getReference(SINK_TAG + "_" + gameName));
+                .setTableDatabaseReference(FirebaseDatabase.getInstance().getReference(getTableObjectName(gameName)))
+                .setSinkDatabaseReference(FirebaseDatabase.getInstance().getReference(getSinkObjectName(gameName)));
+    }
+
+    public static String getTableObjectName(final String gameName) {
+        return gameName + "_" + TABLE_TAG;
+    }
+
+    public static String getSinkObjectName(final String gameName) {
+        return gameName + "_" + SINK_TAG;
     }
 
     public void save(List<Card> cards, boolean toSink) {
@@ -56,12 +64,13 @@ public class GameTableDB {
         tableCardsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                int keyNum = (dataSnapshot.getValue() == null) ? -1 : 0;
                 for (DataSnapshot cardSnapShot : dataSnapshot.getChildren()) {
                     String key = cardSnapShot.getKey();
-                    int keyNum = isEmpty(key) ? -1 : Integer.valueOf(key);
-                    for (Card card : cards) {
-                        dbRef.child(String.valueOf(++keyNum)).setValue(card);
-                    }
+                    keyNum = isEmpty(key) ? -1 : Integer.valueOf(key);
+                }
+                for (Card card : cards) {
+                    dbRef.child(String.valueOf(++keyNum)).setValue(card);
                 }
             }
 

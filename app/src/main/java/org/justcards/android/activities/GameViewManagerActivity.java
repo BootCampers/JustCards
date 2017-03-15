@@ -84,6 +84,8 @@ import static org.justcards.android.models.User.fromJson;
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.isSelf;
 import static org.justcards.android.models.User.resetForRound;
+import static org.justcards.android.network.GameTableDB.getSinkObjectName;
+import static org.justcards.android.network.GameTableDB.getTableObjectName;
 import static org.justcards.android.utils.AppUtils.getList;
 import static org.justcards.android.utils.AppUtils.getUsersType;
 import static org.justcards.android.utils.AppUtils.getVectorCompat;
@@ -203,8 +205,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
 
             usersDatabaseReference = FirebaseDatabase.getInstance().getReference(mGameName);
-            tableDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
-            sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(Constants.TABLE_TAG + "_" + mGameName);
+            tableDatabaseReference = FirebaseDatabase.getInstance().getReference(getTableObjectName(mGameName));
+            sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(getSinkObjectName(mGameName));
 
             // Add myself to game
             User currentUser = User.getCurrentUser(this);
@@ -236,7 +238,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
                     User userNewData = dataSnapshot.getValue(User.class);
                     Log.d(TAG, "onChildChanged " + userNewData.getDisplayName() + " " + dataSnapshot.getKey());
-                    /*userId is not gonna change*///figure out what changed
+                    // userId is not going to change
+                    // evaluate the field changed
                     for (User userOldData : mPlayers) {
                         if (userOldData.getUserId().equals(userNewData.getUserId())) {
                             //figure out what changed
@@ -673,7 +676,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onScore(boolean saveClicked) {
         if (saveClicked) {
             for (User player : mPlayers) {
-                usersDatabaseReference.child(player.getUserId()).child("score").push().setValue(player.getScore());
+                usersDatabaseReference.child(player.getUserId()).child("score").setValue(player.getScore());
             }
             messagingClient.endRound();
         }
