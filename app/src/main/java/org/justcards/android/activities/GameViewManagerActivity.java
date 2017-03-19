@@ -210,10 +210,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             // Add myself to game
             User currentUser = User.getCurrentUser(this);
-            String uId = usersDatabaseReference.push().getKey();
+            /*String uId = usersDatabaseReference.push().getKey();
             currentUser.setUserId(uId);
-            currentUser.save(this);
-            usersDatabaseReference.child(uId).setValue(currentUser);
+            currentUser.save(this);*/
+            usersDatabaseReference.child(currentUser.getUserId()).setValue(currentUser);
 
             //***   Dummy code for testing ****///
             List<User> dummyPlayers = PlayerUtils.getPlayers(2);
