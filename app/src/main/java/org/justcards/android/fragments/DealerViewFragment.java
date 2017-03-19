@@ -64,8 +64,11 @@ public class DealerViewFragment extends Fragment implements
 
     public interface OnDealListener {
         boolean onDeal(List<Card> cards, User player);
+
         boolean onDealTable(List<Card> cards, boolean toSink);
+
         void onDealerOptionsShowing(boolean isDealerOptionShowing);
+
         void onSelectGameRule(String code, Object selection);
     }
 

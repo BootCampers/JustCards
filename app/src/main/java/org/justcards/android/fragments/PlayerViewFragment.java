@@ -1,6 +1,5 @@
 package org.justcards.android.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -79,16 +78,6 @@ public class PlayerViewFragment extends Fragment {
                 .replace(R.id.flPlayerContainer, playerCardsFragment, PLAYER_TAG)
                 .replace(R.id.flTableContainer, tableCardsFragment, TABLE_TAG)
                 .commit();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override

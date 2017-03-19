@@ -71,7 +71,6 @@ public class Constants {
      */
     public static final String FROM_ADDRESS_PREFIX = "/topics/";
     public static final String COMMON_IDENTIFIER = "commonIdentifier";
-    public static final String SERVER_FUNCTION_NAME = "pushToChannel";
     public static final String TABLE_PICKED = "pickedFromTable";
     public static final String FROM_POSITION = "fromPosition";
     public static final String TO_POSITION = "toPosition";

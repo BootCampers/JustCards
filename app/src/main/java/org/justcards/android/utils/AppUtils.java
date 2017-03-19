@@ -17,7 +17,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.gson.reflect.TypeToken;
 
 import org.justcards.android.R;
-import org.justcards.android.models.Card;
 import org.justcards.android.models.User;
 import org.parceler.Parcels;
 
@@ -53,11 +52,6 @@ public class AppUtils {
         List<T> list = new ArrayList<>();
         list.add(arg);
         return list;
-    }
-
-    public static Type getCardsType() {
-        return new TypeToken<List<Card>>() {
-        }.getType();
     }
 
     public static Type getUsersType() {

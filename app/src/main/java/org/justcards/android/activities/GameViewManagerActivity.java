@@ -202,17 +202,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             Game.getInstance(this).setName(mGameName);
 
             messagingClient = new FirebaseMessagingClient(this, mGameName);
-            messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
 
             usersDatabaseReference = FirebaseDatabase.getInstance().getReference(mGameName);
             tableDatabaseReference = FirebaseDatabase.getInstance().getReference(getTableObjectName(mGameName));
             sinkDatabaseReference = FirebaseDatabase.getInstance().getReference(getSinkObjectName(mGameName));
 
-            // Add myself to game
+            // Add current user to game
+            messagingClient.saveCurrentUserIsDealer(!mIsCurrentViewPlayer);
             User currentUser = User.getCurrentUser(this);
-            /*String uId = usersDatabaseReference.push().getKey();
-            currentUser.setUserId(uId);
-            currentUser.save(this);*/
             usersDatabaseReference.child(currentUser.getUserId()).setValue(currentUser);
 
             //***   Dummy code for testing ****///
@@ -483,6 +480,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
                             User currentUser = User.getCurrentUser(this);
                             usersDatabaseReference.child(currentUser.getUserId()).child("showingCards").setValue(!currentUser.isShowingCards());
+                            messagingClient.saveCurrentUserIsShowingCards(!currentUser.isShowingCards());
                         })
                         .setNegativeButton(android.R.string.no, null)
                         .show();
@@ -510,6 +508,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
                         User currentUser = User.getCurrentUser(this);
                         usersDatabaseReference.child(currentUser.getUserId()).child("active").setValue(!currentUser.isActive());
+                        messagingClient.saveCurrentUserIsActive(!currentUser.isActive());
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
