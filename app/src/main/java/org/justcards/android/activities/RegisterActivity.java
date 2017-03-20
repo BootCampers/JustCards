@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.justcards.android.R;
@@ -90,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity implements
         }
 
         // TODO: This functionality may need to be refactored to avoid login to Parse using Anonymous User feature
-        if (User.getCurrentUser() == null) {
+        if (getCurrentUser() == null) {
             loginToParse();
         } else {
             startWithCurrentUser();
@@ -155,11 +156,11 @@ public class RegisterActivity extends AppCompatActivity implements
     }
 
     private void startWithCurrentUser() {
-        Log.d(TAG, "startWithCurrentUser: Parse User ID: " + User.getCurrentUser().getObjectId());
+        Log.d(TAG, "startWithCurrentUser: Parse User ID: " + getCurrentUser().getObjectId());
         User user = User.get(this);
         if (null != user) {
             Log.d(TAG, "proceedToGame: Logged In User: " + user);
-            user.setUserId(User.getCurrentUser().getObjectId());
+            user.setUserId(getCurrentUser().getObjectId());
             user.save(this);
             startSelectGame(user);
             overridePendingTransition(0, 0);
@@ -203,7 +204,7 @@ public class RegisterActivity extends AppCompatActivity implements
             return;
         }
 
-        User user = new User(userAvatarURI, username, User.getCurrentUser().getObjectId());
+        User user = new User(userAvatarURI, username, getCurrentUser().getObjectId());
         user.save(this);
         startSelectGame(user);
     }
@@ -212,7 +213,7 @@ public class RegisterActivity extends AppCompatActivity implements
     public void signInWithFacebook(View view) {
         ArrayList<String> permissions = new ArrayList<>();
         permissions.add("email");
-        ParseFacebookUtils.linkWithReadPermissionsInBackground(User.getCurrentUser(), this, permissions,
+        ParseFacebookUtils.linkWithReadPermissionsInBackground(getCurrentUser(), this, permissions,
                 (err) -> {
                     if (err != null) {
                         Log.d(TAG, "Uh oh. Error occurred: " + err.getMessage());
@@ -285,9 +286,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
                         Log.d(TAG, "Facebook profileName is:" + profileName);
                         Log.d(TAG, "Facebook image is: " + profilePictureUrl);
-                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(User.getCurrentUser()));
+                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(getCurrentUser()));
 
-                        User user = new User(profilePictureUrl, profileName, User.getCurrentUser().getObjectId());
+                        User user = new User(profilePictureUrl, profileName, getCurrentUser().getObjectId());
                         Log.d(TAG, "getFbUser: Retrieved User: " + user);
 
                         user.save(this);
@@ -327,6 +328,11 @@ public class RegisterActivity extends AppCompatActivity implements
                         }
                     }
                 });
+    }
+
+    // TODO: This function needs to be refactored to not use Parse Anonymous User functionality
+    private static ParseUser getCurrentUser() {
+        return ParseUser.getCurrentUser();
     }
 
 }

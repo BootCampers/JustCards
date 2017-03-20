@@ -67,8 +67,9 @@ public class MessageReceiver extends BroadcastReceiver {
                     case EVENT_CHAT_MESSAGE:
                         // Process only if it's not from self/current user
                         User from = User.fromMap(gameData);
-                        Log.d(TAG, "MessageReceiver: Saved User ID: " + getCurrentUser().getObjectId() + " : Received User ID: " + from.getUserId());
-                        if (!isSelf(from)) {
+                        Context context = application.getApplicationContext();
+                        Log.d(TAG, "MessageReceiver: Saved User ID: " + getCurrentUser(context).getUserId() + " : Received User ID: " + from.getUserId());
+                        if (!isSelf(from, context)) {
                             application.notifyObservers(identifier, gameData);
                         }
                         break;

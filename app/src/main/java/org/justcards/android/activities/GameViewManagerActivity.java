@@ -883,7 +883,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
 
             if (player.isShowingCards()) {
-                if (isSelf(player)) {
+                if (isSelf(player, this)) {
                     Toast.makeText(this, "You are showing your cards now!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, player.getDisplayName() + " is currently showing cards!", Toast.LENGTH_SHORT).show();
@@ -909,7 +909,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             player.setActive(!toMute);
 
             if (!player.isActive()) {
-                if (isSelf(player)) {
+                if (isSelf(player, this)) {
                     Toast.makeText(this, "You are on mute now!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, player.getDisplayName() + " is on mute!", Toast.LENGTH_SHORT).show();
@@ -933,7 +933,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     }
                 }
 
-                if (isSelf(player)) {
+                if (isSelf(player, this)) {
                     User.getCurrentUser(this).saveScore(player.getScore(), this);
                 }
 

@@ -226,7 +226,7 @@ public class DealerViewFragment extends Fragment implements
                     cards = dealerFragment.shuffleCards();
                 }
                 for (User player : mPlayers) {
-                    if (isPlayerNotEligibleForDeal(player, doDealSelf)) {
+                    if (isPlayerNotEligibleForDeal(player, doDealSelf, getContext())) {
                         continue;
                     }
 

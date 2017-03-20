@@ -131,8 +131,8 @@ public class RuleUtils {
         return (self.isShowingCards() || !self.isActive()) && !DEALER_TAG.equalsIgnoreCase(tag);
     }
 
-    public static boolean isPlayerNotEligibleForDeal(final User player, final boolean doDealSelf) {
-        return !player.isActive() || player.isShowingCards() || (!doDealSelf && isSelf(player));
+    public static boolean isPlayerNotEligibleForDeal(final User player, final boolean doDealSelf, final Context context) {
+        return !player.isActive() || player.isShowingCards() || (!doDealSelf && isSelf(player, context));
     }
 
 }

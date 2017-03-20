@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.parse.ParseUser;
 
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcel;
@@ -108,13 +107,8 @@ public class User {
         return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 
-    // TODO: This function needs to be refactored to not use Parse Anonymous User functionality
-    public static ParseUser getCurrentUser() {
-        return ParseUser.getCurrentUser();
-    }
-
-    public static boolean isSelf(final User user) {
-        return user.getUserId().equalsIgnoreCase(getCurrentUser().getObjectId());
+    public static boolean isSelf(final User user, final Context context) {
+        return user == getCurrentUser(context);
     }
 
     public static User get(final Context context) {
