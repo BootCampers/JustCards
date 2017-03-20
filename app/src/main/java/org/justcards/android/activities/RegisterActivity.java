@@ -35,10 +35,9 @@ import com.parse.ParseFacebookUtils;
 
 import org.json.JSONException;
 import org.justcards.android.R;
-import org.justcards.android.models.User;
 import org.justcards.android.messaging.services.RegistrationService;
+import org.justcards.android.models.User;
 import org.justcards.android.utils.AnimationUtils;
-import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
 
@@ -53,15 +52,22 @@ import static org.justcards.android.utils.AppUtils.showSnackBar;
 import static org.justcards.android.utils.Constants.PARAM_USER;
 import static org.justcards.android.utils.Constants.PLAY_SERVICES_RESOLUTION_REQUEST;
 import static org.justcards.android.utils.Constants.REQ_CODE_PICK_IMAGE;
+import static org.justcards.android.utils.Constants.REQ_CODE_SIGN_IN;
 import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
-import static org.justcards.android.utils.Constants.TAG;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
 public class RegisterActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int RC_SIGN_IN = 9001;
+    public static final String TAG = RegisterActivity.class.getSimpleName();
     private String userAvatarURI = "";
+
+    // Firebase instances for Authentication
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
+    // Google Sign In API client
+    private GoogleApiClient mGoogleApiClient;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.etUserName) EditText etUserName;
@@ -72,39 +78,42 @@ public class RegisterActivity extends AppCompatActivity implements
     @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
 
-    private GoogleApiClient mGoogleApiClient;
-
-    // Firebase instance variables
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(checkPlayServices()) {
+        // Check whether Google Play Services are enabled or not.
+        // If enabled, start the Google Instance ID Registration Service
+        if (checkPlayServices()) {
             Intent intent = new Intent(this, RegistrationService.class);
             startService(intent);
         }
 
-        if (User.getCurrentUser() != null) {
-            startWithCurrentUser();
-        } else {
+        // TODO: This functionality may need to be refactored to avoid login to Parse using Anonymous User feature
+        if (User.getCurrentUser() == null) {
             loginToParse();
+        } else {
+            startWithCurrentUser();
         }
 
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        // Initialize Google Sign In API Client
+        mGoogleApiClient = getGoogleApiClient();
+    }
+
+    private GoogleApiClient getGoogleApiClient() {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+
+        return new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        // Initialize FirebaseAuth
-        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     /**
@@ -116,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
-            if(apiAvailability.isUserResolvableError(resultCode)) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(TAG, "This device does not have play services enabled.");
@@ -127,6 +136,13 @@ public class RegisterActivity extends AppCompatActivity implements
         return true;
     }
 
+    private void notifyNetworkFailure(final boolean networkFailure) {
+        networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
+        fabBrowseAvatar.setEnabled(!networkFailure);
+        btnRegister.setEnabled(!networkFailure);
+    }
+
+    // TODO: This function may need to be removed to avoid using Parse Login
     private void loginToParse() {
         ParseAnonymousUtils.logIn((user, e) -> {
             if (e != null) {
@@ -142,7 +158,7 @@ public class RegisterActivity extends AppCompatActivity implements
         Log.d(TAG, "startWithCurrentUser: Parse User ID: " + User.getCurrentUser().getObjectId());
         User user = User.get(this);
         if (null != user) {
-            Log.d(TAG, "startWithCurrentUser: Saved User: " + user);
+            Log.d(TAG, "proceedToGame: Logged In User: " + user);
             user.setUserId(User.getCurrentUser().getObjectId());
             user.save(this);
             startSelectGame(user);
@@ -162,85 +178,19 @@ public class RegisterActivity extends AppCompatActivity implements
         }
     }
 
-    @OnClick(R.id.btnFbLogin)
-    public void fbLogin(View view) {
-        ArrayList<String> permissions = new ArrayList<>();
-        permissions.add("email");
-        ParseFacebookUtils.linkWithReadPermissionsInBackground(User.getCurrentUser(), this, permissions,
-                (err) -> {
-                    if (err != null) {
-                        Log.d(Constants.TAG, "Uh oh. Error occurred: " + err.getMessage());
-                        // TODO: Fix Issue of 'this auth is already used'
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Logged in with facebook account!", Toast.LENGTH_SHORT).show();
-                        Log.d(Constants.TAG, "Linked user's facebook login with parse!");
-                    }
-                });
-    }
-
-
-    @OnClick(R.id.fabBrowseAvatar)
-    public void browse() {
-        Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
-        startActivityForResult(intent, REQ_CODE_PICK_IMAGE, null);
+    private void startSelectGame(final User user) {
+        Intent selectGameIntent = new Intent(this, SelectGameActivity.class);
+        selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
+        finish();
+        startActivity(selectGameIntent);
         AnimationUtils.enterVineTransition(this);
     }
 
-    // Suggested by https://disqus.com/by/dominiquecanlas/
-    private void getUserDetailsFromFB() {
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "email,name,picture.type(large)");
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me",
-                parameters,
-                HttpMethod.GET,
-                response -> {
-                    /* handle the result */
-                    try {
-                        Log.d(TAG, "getUserDetailsFromFB: response from facebook: " + response);
-
-                        String profileName = response.getJSONObject().getString("name");
-                        String profilePictureUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-
-                        Log.d(Constants.TAG, "Facebook profileName is:" + profileName);
-                        Log.d(Constants.TAG, "Facebook image is: " + profilePictureUrl);
-                        Log.d(TAG, "getUserDetailsFromFB: is facebook profile linked: " + ParseFacebookUtils.isLinked(User.getCurrentUser()));
-
-                        User user = new User(profilePictureUrl, profileName, User.getCurrentUser().getObjectId());
-                        Log.d(TAG, "getUserDetailsFromFB: Retrieved User: " + user);
-
-                        user.save(this);
-                        startSelectGame(user);
-                        AnimationUtils.enterVineTransition(this);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-        ).executeAsync();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_CODE_PICK_IMAGE) {
-            userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
-            Log.d(Constants.TAG, userAvatarURI);
-            loadRoundedImage(this, ivAvatar, userAvatarURI);
-        } else if (requestCode == RC_SIGN_IN /*Google sign in*/) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                // Google Sign-In was successful, authenticate with Firebase
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                // Google Sign-In failed
-                Toast.makeText(getApplicationContext(), "Google Sign-In failed.", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
-            getUserDetailsFromFB();
-        }
+    @OnClick(R.id.fabBrowseAvatar)
+    public void browseAvatar() {
+        Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
+        startActivityForResult(intent, REQ_CODE_PICK_IMAGE, null);
+        AnimationUtils.enterVineTransition(this);
     }
 
     @OnClick(R.id.btnRegister)
@@ -255,28 +205,100 @@ public class RegisterActivity extends AppCompatActivity implements
 
         User user = new User(userAvatarURI, username, User.getCurrentUser().getObjectId());
         user.save(this);
-
         startSelectGame(user);
     }
 
-    private void startSelectGame(final User user) {
-        Intent selectGameIntent = new Intent(this, SelectGameActivity.class);
-        selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
-        finish();
-        startActivity(selectGameIntent);
-        AnimationUtils.enterVineTransition(this);
-    }
-
-    private void notifyNetworkFailure(final boolean networkFailure) {
-        networkFailureBanner.setVisibility(networkFailure ? View.VISIBLE : View.GONE);
-        fabBrowseAvatar.setEnabled(!networkFailure);
-        btnRegister.setEnabled(!networkFailure);
+    @OnClick(R.id.btnFbSignIn)
+    public void signInWithFacebook(View view) {
+        ArrayList<String> permissions = new ArrayList<>();
+        permissions.add("email");
+        ParseFacebookUtils.linkWithReadPermissionsInBackground(User.getCurrentUser(), this, permissions,
+                (err) -> {
+                    if (err != null) {
+                        Log.d(TAG, "Uh oh. Error occurred: " + err.getMessage());
+                        // TODO: Fix Issue of 'this auth is already used'
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Logged in with facebook account!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Linked user's facebook login with parse!");
+                    }
+                });
     }
 
     @OnClick(R.id.btnGoogleSignIn)
     public void signInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, REQ_CODE_SIGN_IN);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_PICK_IMAGE:
+                userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
+                Log.d(TAG, userAvatarURI);
+                loadRoundedImage(this, ivAvatar, userAvatarURI);
+                break;
+            case REQ_CODE_SIGN_IN:
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                if (result.isSuccess()) {
+                    // Google Sign-In was successful, authenticate with Firebase
+                    GoogleSignInAccount account = result.getSignInAccount();
+                    firebaseAuthWithGoogle(account);
+                } else {
+                    // Google Sign-In failed
+                    Toast.makeText(getApplicationContext(), "Google Sign-In failed.", Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+                ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
+                getFbUser();
+                break;
+        }
+    }
+
+    /**
+     * @see [https://disqus.com/by/dominiquecanlas/]
+     */
+    private void getFbUser() {
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "email,name,picture.type(large)");
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me",
+                parameters,
+                HttpMethod.GET,
+                response -> {
+                    /* handle the result */
+                    try {
+                        Log.d(TAG, "getFbUser: response from facebook: " + response);
+
+                        String profileName = response.getJSONObject().getString("name");
+                        String profilePictureUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
+
+                        Log.d(TAG, "Facebook profileName is:" + profileName);
+                        Log.d(TAG, "Facebook image is: " + profilePictureUrl);
+                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(User.getCurrentUser()));
+
+                        User user = new User(profilePictureUrl, profileName, User.getCurrentUser().getObjectId());
+                        Log.d(TAG, "getFbUser: Retrieved User: " + user);
+
+                        user.save(this);
+                        startSelectGame(user);
+                        AnimationUtils.enterVineTransition(this);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "getFbUser: Exception occurred while getting user information from facebook.", e);
+                    }
+                }
+        ).executeAsync();
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -286,34 +308,25 @@ public class RegisterActivity extends AppCompatActivity implements
                 .addOnCompleteListener(this, task -> {
                     Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
+                    // If sign in fails, display a message to the user.
+                    // If sign in succeeds the auth state listener will be notified
+                    // and logic to handle the signed in user can be handled in the listener.
                     if (!task.isSuccessful()) {
                         Log.w(TAG, "signInWithCredential", task.getException());
-                        Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Authentication with Google failed.", Toast.LENGTH_SHORT).show();
                     } else {
-                        //Login success
+                        // Login success
                         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                        if (mFirebaseUser.getPhotoUrl() != null) {
-                            User user = new User(mFirebaseUser.getPhotoUrl().toString(),
-                                    mFirebaseUser.getDisplayName(),
-                                    mFirebaseUser.getUid());
+                        if (mFirebaseUser != null && mFirebaseUser.getPhotoUrl() != null) {
+                            User user = new User(mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getDisplayName(), mFirebaseUser.getUid());
                             user.save(getApplicationContext());
                             startSelectGame(user);
                         } else {
-                            //TODO: Give a random image to the user and start game
+                            Log.e(TAG, "firebaseAuthWithGoogle: User information received from Firebase Authentication is null");
+                            // TODO: Give a random image to the user and start game
                         }
                     }
                 });
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
-    }
 }

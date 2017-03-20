@@ -94,7 +94,7 @@
                     android:text="@string/or"/>
 
                 <Button
-                    android:id="@+id/btnFbLogin"
+                    android:id="@+id/btnFbSignIn"
                     style="@style/FaceBookButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -104,9 +104,9 @@
 
                 <com.google.android.gms.common.SignInButton
                     android:id="@+id/btnGoogleSignIn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/btnFbLogin"
+                    android:layout_below="@id/btnFbSignIn"
                     android:layout_centerHorizontal="true"
                     android:visibility="visible"/>
 

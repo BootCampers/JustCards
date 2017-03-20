@@ -36,6 +36,7 @@ public class Constants {
     public static final int PLAY_SERVICES_RESOLUTION_REQUEST = 900;
     public static final int REQ_CODE_SELECT_CARDS = 1;
     public static final int REQ_CODE_PICK_IMAGE = 2;
+    public static final int REQ_CODE_SIGN_IN = 901;
 
     /** Intent and Fragment Parameter here */
     public static final String PARAM_GAME_NAME = "gameName";
