@@ -105,13 +105,13 @@ public class UsersDB {
     }
 
     public void save(final User user) {
-        if (user != null && TextUtils.isEmpty(user.getUserId())) {
+        if (user != null && !TextUtils.isEmpty(user.getUserId())) {
             mUsersDbRef.child(user.getUserId()).setValue(user);
         }
     }
 
     public void save(final List<User> users) {
-        if (isEmpty(users)) {
+        if (!isEmpty(users)) {
             for (User user : users) {
                 save(user);
             }
@@ -119,19 +119,19 @@ public class UsersDB {
     }
 
     public void setScore(final User user) {
-        if (user != null && TextUtils.isEmpty(user.getUserId())) {
+        if (user != null && !TextUtils.isEmpty(user.getUserId())) {
             mUsersDbRef.child(user.getUserId()).child("score").setValue(user.getScore());
         }
     }
 
     public void setShowingCards(final User user) {
-        if (user != null && TextUtils.isEmpty(user.getUserId())) {
+        if (user != null && !TextUtils.isEmpty(user.getUserId())) {
             mUsersDbRef.child(user.getUserId()).child("showingCards").setValue(user.isShowingCards());
         }
     }
 
     public void setActive(final User user) {
-        if (user != null && TextUtils.isEmpty(user.getUserId())) {
+        if (user != null && !TextUtils.isEmpty(user.getUserId())) {
             mUsersDbRef.child(user.getUserId()).child("active").setValue(user.isActive());
         }
     }
