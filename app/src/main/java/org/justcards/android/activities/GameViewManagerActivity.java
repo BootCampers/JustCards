@@ -208,7 +208,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mUsersDb.save(currentUser);
 
             // Dummy players for testing
-            mUsersDb.save(PlayerUtils.getPlayers(2));
+            mUsersDb.save(PlayerUtils.getPlayers(3));
         }
     }
 
@@ -745,6 +745,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleDeal(final Card card, final User from, final User to) {
         if (card != null && from != null && from.isDealer() && to != null) {
+            Log.d(TAG, "handleDeal: from: " + from.getUserId() + " : to: " + to.getUserId() + ": Card: " + card.getName());
             card.setShowingFront(false);
             if (mIsCurrentViewPlayer) {
                 Fragment playerFragment = getPlayerFragment(this, to);

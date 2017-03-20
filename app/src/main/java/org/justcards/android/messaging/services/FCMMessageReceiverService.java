@@ -29,6 +29,21 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
 
     public static final String TAG = FCMMessageReceiverService.class.getSimpleName();
     public static final String ACTION = "org.justcards.push.intent.RECEIVE";
+    private MessageReceiver mMessageReceiver;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mMessageReceiver = new MessageReceiver();
+        // Register the receiver to send the broadcast intent to
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(ACTION));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    }
 
     /**
      * There are two types of messages data messages and notification messages.
@@ -82,7 +97,7 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
             intent.putExtra(PARAM_GAME_DATA, gameData); // Game Data is usually the game data saved in payload in the upstream message
 
             // Broadcast the received intent to be handled by the application
-            broadCastLocally(intent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }
 
@@ -96,16 +111,6 @@ public class FCMMessageReceiverService extends FirebaseMessagingService {
     public void onSendError(String s, Exception e) {
         Log.e(TAG, "onSendError: " + s, e);
         super.onSendError(s, e);
-    }
-
-    private void broadCastLocally(final Intent intent) {
-        MessageReceiver messageReceiver = new MessageReceiver();
-        IntentFilter intentFilter = new IntentFilter(ACTION);
-
-        // Register the receiver to send the broadcast intent to
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, intentFilter);
-        // Fire the broadcast with intent
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 }
