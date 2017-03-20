@@ -108,6 +108,7 @@ public class User {
         return new User(avatarUri, displayName, userId, isDealer, isShowingCards, isActive, score);
     }
 
+    // TODO: This function needs to be refactored to not use Parse Anonymous User functionality
     public static ParseUser getCurrentUser() {
         return ParseUser.getCurrentUser();
     }
@@ -141,10 +142,42 @@ public class User {
                 .apply();
     }
 
-    private void resetForRound() {
-        isShowingCards = false;
-        isActive = true;
-        cards = new HashMap<>();
+    public User saveIsDealer(boolean isDealer, final Context context) {
+        setDealer(isDealer);
+        save(context);
+        return this;
+    }
+
+    public User flipIsShowingCards(final Context context) {
+        setShowingCards(!isShowingCards);
+        save(context);
+        return this;
+    }
+
+    public User flipIsActive(final Context context) {
+        setActive(!isActive);
+        save(context);
+        return this;
+    }
+
+    public User saveScore(int score, final Context context) {
+        setScore(score);
+        save(context);
+        return this;
+    }
+
+    public User resetForRound(final Context context) {
+        resetForRound();
+        save(context);
+        return this;
+    }
+
+    public User reset(final Context context) {
+        resetForRound();
+        setDealer(false);
+        setScore(0);
+        save(context);
+        return this;
     }
 
     public static void resetForRound(final List<User> users) {
@@ -153,6 +186,12 @@ public class User {
                 user.resetForRound();
             }
         }
+    }
+
+    private void resetForRound() {
+        isShowingCards = false;
+        isActive = true;
+        cards = new HashMap<>();
     }
 
     public String getUserId() {

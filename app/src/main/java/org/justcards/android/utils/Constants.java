@@ -40,7 +40,6 @@ public class Constants {
     /** Intent and Fragment Parameter here */
     public static final String PARAM_GAME_NAME = "gameName";
     public static final String PARAM_GAME_DATA = "gameData";
-    public static final String PARAM_GAME_TABLE = "gameTable";
     public static final String PARAM_CURRENT_VIEW_PLAYER = "currentView";
     public static final String PARAM_CARDS = "cards";
     public static final String PARAM_CHAT = "chat";
@@ -55,8 +54,6 @@ public class Constants {
     public static final String ARG_PLAYER_COUNT = "playerCount";
     public static final String ARG_CARD_COUNT = "cardCount";
     public static final String ARG_COLUMN_COUNT = "columnCount";
-    public static final String PARAMS_PLAYER_GAME = "playerGame";
-    public static final String PARAM_CARD_COUNT = "cardCount";
     public static final String SELECTED_AVATAR = "selectedAvatar";
     public static final String ARG_IS_SELF_ELIGIBLE = "isSelfEligible";
     public static final String ARG_FROM_PAGE = "fromPage";
@@ -67,32 +64,30 @@ public class Constants {
 
     /**
      * Process broadcast based on identifier .. like new player added, chat message, card exchanged
-     * User PARSE_<> naming convention for all identifiers
      */
     public static final String FROM_ADDRESS_PREFIX = "/topics/";
-    public static final String COMMON_IDENTIFIER = "commonIdentifier";
+    public static final String EVENT_IDENTIFIER = "eventIdentifier";
     public static final String TABLE_PICKED = "pickedFromTable";
     public static final String FROM_POSITION = "fromPosition";
     public static final String TO_POSITION = "toPosition";
-    public static final String USER_TAG_SCORE = "userTag";
     public static final String FROM_TAG = "fromTag";
     public static final String POSITION = "position";
     public static final String ON_TAG = "onTag";
     public static final String RULE_CODE = "ruleCode";
     public static final String RULE_SELECTION = "ruleSelection";
 
-    /** Notification Events Here */
-    public static final String PARSE_NEW_PLAYER_ADDED = "newPlayerAdded";
-    public static final String PARSE_PLAYER_LEFT = "playerLeft";
-    public static final String PARSE_DEAL_CARDS = "dealCards";
-    public static final String PARSE_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
-    public static final String PARSE_SWAP_CARD_WITHIN_PLAYER = "swapCardWithinPlayer";
-    public static final String PARSE_DROP_CARD_TO_SINK = "dropCardToSink";
-    public static final String PARSE_TOGGLE_CARD = "toggleCard";
-    public static final String PARSE_ROUND_WINNERS = "roundWinners";
-    public static final String PARSE_END_ROUND = "endRound";
-    public static final String PARSE_CHAT_MESSAGE = "chatMessage";
-    public static final String PARSE_SELECT_GAME_RULES = "selectGameRules";
+    /** Game Events Here */
+    public static final String EVENT_NEW_PLAYER_ADDED = "newPlayerAdded";
+    public static final String EVENT_PLAYER_LEFT = "playerLeft";
+    public static final String EVENT_DEAL_CARDS = "dealCards";
+    public static final String EVENT_EXCHANGE_CARD_WITH_TABLE = "exchangeCardWithTable";
+    public static final String EVENT_SWAP_CARD_WITHIN_PLAYER = "swapCardWithinPlayer";
+    public static final String EVENT_DROP_CARD_TO_SINK = "dropCardToSink";
+    public static final String EVENT_TOGGLE_CARD = "toggleCard";
+    public static final String EVENT_ROUND_WINNERS = "roundWinners";
+    public static final String EVENT_END_ROUND = "endRound";
+    public static final String EVENT_CHAT_MESSAGE = "chatMessage";
+    public static final String EVENT_SELECT_GAME_RULES = "selectGameRules";
 
     /** Dealing Options */
     public static final String DO_CARD_COUNT = "cardsCount";

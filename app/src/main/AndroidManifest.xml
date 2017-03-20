@@ -79,24 +79,24 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"/>
         
-        <service android:name=".services.messaging.RegistrationService" android:exported="false"/>
+        <service android:name=".messaging.services.RegistrationService" android:exported="false"/>
 
         <service
-            android:name=".services.messaging.InstanceIDListenerService" android:exported="false">
+            android:name=".messaging.services.InstanceIDListenerService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".services.messaging.FCMMessageReceiverService" android:exported="false" >
+            android:name=".messaging.services.FCMMessageReceiverService" android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <receiver
-            android:name=".receivers.MessageReceiver"
+            android:name=".messaging.MessageReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="org.justcards.push.intent.RECEIVE"/>
@@ -105,36 +105,9 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.parse.PushService"/>
-
-        <receiver
-            android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
-
-                <category android:name="org.justcards.android"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE"/>
-                <action android:name="com.parse.push.intent.DELETE"/>
-                <action android:name="com.parse.push.intent.OPEN"/>
-            </intent-filter>
-        </receiver>
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8ead5d8ebeaa8becc7bf9fd97c21bfa146b0f572"/>
-
-        <meta-data
-            android:name="com.parse.push.gcm_sender_id"
-            android:value="@string/gcm_sender_id"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

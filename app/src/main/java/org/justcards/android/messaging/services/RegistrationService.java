@@ -1,4 +1,4 @@
-package org.justcards.android.services.messaging;
+package org.justcards.android.messaging.services;
 
 import android.app.IntentService;
 import android.content.Intent;

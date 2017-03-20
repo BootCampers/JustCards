@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import org.justcards.android.R;
 import org.justcards.android.models.Card;
-import org.justcards.android.network.GameDB;
+import org.justcards.android.db.GameDB;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcels;

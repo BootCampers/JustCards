@@ -1,4 +1,4 @@
-package org.justcards.android.receivers;
+package org.justcards.android.messaging;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,18 +13,18 @@ import java.util.HashMap;
 
 import static org.justcards.android.models.User.getCurrentUser;
 import static org.justcards.android.models.User.isSelf;
-import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
+import static org.justcards.android.utils.Constants.EVENT_IDENTIFIER;
 import static org.justcards.android.utils.Constants.PARAM_GAME_DATA;
 import static org.justcards.android.utils.Constants.PARAM_GAME_NAME;
-import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
-import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
-import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
-import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
-import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
+import static org.justcards.android.utils.Constants.EVENT_CHAT_MESSAGE;
+import static org.justcards.android.utils.Constants.EVENT_DEAL_CARDS;
+import static org.justcards.android.utils.Constants.EVENT_DROP_CARD_TO_SINK;
+import static org.justcards.android.utils.Constants.EVENT_END_ROUND;
+import static org.justcards.android.utils.Constants.EVENT_EXCHANGE_CARD_WITH_TABLE;
+import static org.justcards.android.utils.Constants.EVENT_ROUND_WINNERS;
+import static org.justcards.android.utils.Constants.EVENT_SELECT_GAME_RULES;
+import static org.justcards.android.utils.Constants.EVENT_SWAP_CARD_WITHIN_PLAYER;
+import static org.justcards.android.utils.Constants.EVENT_TOGGLE_CARD;
 import static org.justcards.android.utils.Constants.TAG;
 
 public class MessageReceiver extends BroadcastReceiver {
@@ -51,20 +51,20 @@ public class MessageReceiver extends BroadcastReceiver {
             String savedGame = Game.getInstance(application).getName();
             if (savedGame == null || savedGame.equals(gameName)) {
                 HashMap<String, String> gameData = (HashMap<String, String>) intent.getSerializableExtra(PARAM_GAME_DATA);
-                String identifier = gameData.get(COMMON_IDENTIFIER);
+                String identifier = gameData.get(EVENT_IDENTIFIER);
                 Log.d(TAG, identifier + "--" + gameData.toString());
                 switch (identifier) {
-                    case PARSE_DEAL_CARDS:
-                    case PARSE_ROUND_WINNERS:
-                    case PARSE_END_ROUND:
-                    case PARSE_SELECT_GAME_RULES:
+                    case EVENT_DEAL_CARDS:
+                    case EVENT_ROUND_WINNERS:
+                    case EVENT_END_ROUND:
+                    case EVENT_SELECT_GAME_RULES:
                         application.notifyObservers(identifier, gameData);
                         break;
-                    case PARSE_EXCHANGE_CARD_WITH_TABLE:
-                    case PARSE_SWAP_CARD_WITHIN_PLAYER:
-                    case PARSE_DROP_CARD_TO_SINK:
-                    case PARSE_TOGGLE_CARD:
-                    case PARSE_CHAT_MESSAGE:
+                    case EVENT_EXCHANGE_CARD_WITH_TABLE:
+                    case EVENT_SWAP_CARD_WITHIN_PLAYER:
+                    case EVENT_DROP_CARD_TO_SINK:
+                    case EVENT_TOGGLE_CARD:
+                    case EVENT_CHAT_MESSAGE:
                         // Process only if it's not from self/current user
                         User from = User.fromMap(gameData);
                         Log.d(TAG, "MessageReceiver: Saved User ID: " + getCurrentUser().getObjectId() + " : Received User ID: " + from.getUserId());

@@ -1,4 +1,4 @@
-package org.justcards.android.network;
+package org.justcards.android.messaging;
 
 import android.content.Context;
 import android.util.Log;
@@ -22,8 +22,19 @@ import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
 import static org.justcards.android.models.User.getJson;
-import static org.justcards.android.utils.Constants.COMMON_IDENTIFIER;
 import static org.justcards.android.utils.Constants.DATA;
+import static org.justcards.android.utils.Constants.EVENT_CHAT_MESSAGE;
+import static org.justcards.android.utils.Constants.EVENT_DEAL_CARDS;
+import static org.justcards.android.utils.Constants.EVENT_DROP_CARD_TO_SINK;
+import static org.justcards.android.utils.Constants.EVENT_END_ROUND;
+import static org.justcards.android.utils.Constants.EVENT_EXCHANGE_CARD_WITH_TABLE;
+import static org.justcards.android.utils.Constants.EVENT_IDENTIFIER;
+import static org.justcards.android.utils.Constants.EVENT_NEW_PLAYER_ADDED;
+import static org.justcards.android.utils.Constants.EVENT_PLAYER_LEFT;
+import static org.justcards.android.utils.Constants.EVENT_ROUND_WINNERS;
+import static org.justcards.android.utils.Constants.EVENT_SELECT_GAME_RULES;
+import static org.justcards.android.utils.Constants.EVENT_SWAP_CARD_WITHIN_PLAYER;
+import static org.justcards.android.utils.Constants.EVENT_TOGGLE_CARD;
 import static org.justcards.android.utils.Constants.FROM_ADDRESS_PREFIX;
 import static org.justcards.android.utils.Constants.FROM_POSITION;
 import static org.justcards.android.utils.Constants.FROM_TAG;
@@ -32,17 +43,6 @@ import static org.justcards.android.utils.Constants.PARAM_CARDS;
 import static org.justcards.android.utils.Constants.PARAM_CHAT;
 import static org.justcards.android.utils.Constants.PARAM_PLAYER;
 import static org.justcards.android.utils.Constants.PARAM_PLAYERS;
-import static org.justcards.android.utils.Constants.PARSE_CHAT_MESSAGE;
-import static org.justcards.android.utils.Constants.PARSE_DEAL_CARDS;
-import static org.justcards.android.utils.Constants.PARSE_DROP_CARD_TO_SINK;
-import static org.justcards.android.utils.Constants.PARSE_END_ROUND;
-import static org.justcards.android.utils.Constants.PARSE_EXCHANGE_CARD_WITH_TABLE;
-import static org.justcards.android.utils.Constants.PARSE_NEW_PLAYER_ADDED;
-import static org.justcards.android.utils.Constants.PARSE_PLAYER_LEFT;
-import static org.justcards.android.utils.Constants.PARSE_ROUND_WINNERS;
-import static org.justcards.android.utils.Constants.PARSE_SELECT_GAME_RULES;
-import static org.justcards.android.utils.Constants.PARSE_SWAP_CARD_WITHIN_PLAYER;
-import static org.justcards.android.utils.Constants.PARSE_TOGGLE_CARD;
 import static org.justcards.android.utils.Constants.POSITION;
 import static org.justcards.android.utils.Constants.RULE_CODE;
 import static org.justcards.android.utils.Constants.RULE_SELECTION;
@@ -54,7 +54,7 @@ import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 /**
  * Author: agoenka
  * Created At: 2/28/2017
- * Version: 1.0
+ * Version: 1.1
  */
 public class FirebaseMessagingClient {
 
@@ -64,50 +64,20 @@ public class FirebaseMessagingClient {
 
     private Context mContext;
     private String mGameName;
-    private User mCurrentUser;
 
     public FirebaseMessagingClient(Context context, String gameName) {
         this.mContext = context;
         this.mGameName = gameName;
-        mCurrentUser = User.getCurrentUser(context);
     }
 
-    public User getCurrentUser() {
-        return mCurrentUser;
+    private User getCurrentUser() {
+        return User.getCurrentUser(mContext);
     }
 
-    public void saveCurrentUserIsDealer(boolean isDealer) {
-        mCurrentUser.setDealer(isDealer);
-        mCurrentUser.save(mContext);
-    }
-
-    public void saveCurrentUserScore(final int score) {
-        mCurrentUser.setScore(score);
-        mCurrentUser.save(mContext);
-    }
-
-    public void resetCurrentUserForRound() {
-        mCurrentUser.setShowingCards(false);
-        mCurrentUser.setActive(true);
-        mCurrentUser.save(mContext);
-    }
-
-    public void resetCurrentUser() {
-        mCurrentUser.setDealer(false);
-        mCurrentUser.setShowingCards(false);
-        mCurrentUser.setActive(true);
-        mCurrentUser.setScore(0);
-        mCurrentUser.save(mContext);
-    }
-
-    public void saveCurrentUserIsShowingCards(boolean isShowingCards) {
-        mCurrentUser.setShowingCards(isShowingCards);
-        mCurrentUser.save(mContext);
-    }
-
-    public void saveCurrentUserIsActive(boolean isActive) {
-        mCurrentUser.setActive(isActive);
-        mCurrentUser.save(mContext);
+    private JsonObject initJson(final String eventId) {
+        JsonObject json = getJson(getCurrentUser());
+        json.addProperty(EVENT_IDENTIFIER, eventId);
+        return json;
     }
 
     /**
@@ -115,7 +85,7 @@ public class FirebaseMessagingClient {
      * @see [https://firebase.google.com/docs/cloud-messaging/android/topic-messaging]
      * @see [https://firebase.google.com/docs/cloud-messaging/android/device-group]
      */
-    private void sendBroadcast(final JsonObject payload) {
+    private void broadcast(final JsonObject payload) {
         try {
             JsonObject json = new JsonObject();
             json.addProperty(TO, FROM_ADDRESS_PREFIX + mGameName);
@@ -127,18 +97,18 @@ public class FirebaseMessagingClient {
             client.post(mContext, API_URL, entity, "application/json", new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.d(TAG, "sendBroadcast: Succeeded: " + payload.toString());
+                    Log.d(TAG, "broadcast: Succeeded: " + payload.toString());
                     super.onSuccess(statusCode, headers, response);
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.e(TAG, "sendBroadcast: Failed: Message: " + throwable.getMessage() + ":Status Code: " + statusCode + ": Response: " + responseString, throwable);
+                    Log.e(TAG, "broadcast: Failed: Message: " + throwable.getMessage() + ":Status Code: " + statusCode + ": Response: " + responseString, throwable);
                     super.onFailure(statusCode, headers, responseString, throwable);
                 }
             });
         } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "sendBroadcast: error occurred in creating the http entity.", e);
+            Log.e(TAG, "broadcast: error occurred in creating the http entity.", e);
         }
         // TODO: retry this operation if it's network failure..
     }
@@ -165,10 +135,8 @@ public class FirebaseMessagingClient {
      * @param joining true if joining the game , false if leaving the game
      */
     private void changeGameParticipation(boolean joining) {
-        // Send to Upstream Server
-        JsonObject payload = getJson(mCurrentUser);
-        payload.addProperty(COMMON_IDENTIFIER, joining ? PARSE_NEW_PLAYER_ADDED : PARSE_PLAYER_LEFT);
-        sendBroadcast(payload);
+        JsonObject payload = initJson(joining ? EVENT_NEW_PLAYER_ADDED : EVENT_PLAYER_LEFT);
+        broadcast(payload);
     }
 
     /**
@@ -178,18 +146,25 @@ public class FirebaseMessagingClient {
      * @param card   which card
      */
     public void dealCards(final User toUser, final Card card) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_DEAL_CARDS);
         payload.add(PARAM_PLAYER, getJson(toUser));
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DEAL_CARDS);
-        sendBroadcast(payload);
+        broadcast(payload);
+    }
+
+    public void selectGameRules(String code, Object selection) {
+        JsonObject payload = initJson(EVENT_SELECT_GAME_RULES);
+        payload.addProperty(RULE_CODE, code);
+        if (selection instanceof Boolean) {
+            payload.addProperty(RULE_SELECTION, (Boolean) selection);
+        }
+        broadcast(payload);
     }
 
     public void sendChatMessage(final String message) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_CHAT_MESSAGE);
         payload.addProperty(PARAM_CHAT, message);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_CHAT_MESSAGE);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     /**
@@ -201,13 +176,12 @@ public class FirebaseMessagingClient {
      * @param pickedFromTable true: if picked from table, false: if dropped on table
      */
     public void exchangeCardWithTable(final Card card, final int fromPosition, final int toPosition, final boolean pickedFromTable) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_EXCHANGE_CARD_WITH_TABLE);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(TO_POSITION, toPosition);
         payload.addProperty(TABLE_PICKED, pickedFromTable);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_EXCHANGE_CARD_WITH_TABLE);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     /**
@@ -218,12 +192,11 @@ public class FirebaseMessagingClient {
      * @param toPosition   position of the card where it is dropped in
      */
     public void swapCardWithinPlayer(final Card card, final int fromPosition, final int toPosition) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_SWAP_CARD_WITHIN_PLAYER);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(FROM_POSITION, fromPosition);
         payload.addProperty(TO_POSITION, toPosition);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_SWAP_CARD_WITHIN_PLAYER);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     /**
@@ -234,44 +207,30 @@ public class FirebaseMessagingClient {
      * @param fromPosition from which position in the stack of cards
      */
     public void dropCardToSink(final Card card, final String fromTag, final int fromPosition) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_DROP_CARD_TO_SINK);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(FROM_TAG, fromTag);
         payload.addProperty(FROM_POSITION, fromPosition);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_DROP_CARD_TO_SINK);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     public void toggleCard(final Card card, final int position, final String onTag) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_TOGGLE_CARD);
         payload.add(PARAM_CARDS, new Gson().toJsonTree(card));
         payload.addProperty(POSITION, position);
         payload.addProperty(ON_TAG, onTag);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_TOGGLE_CARD);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     public void declareRoundWinners(List<User> roundWinners) {
-        JsonObject payload = getJson(mCurrentUser);
+        JsonObject payload = initJson(EVENT_ROUND_WINNERS);
         payload.add(PARAM_PLAYERS, new Gson().toJsonTree(roundWinners));
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_ROUND_WINNERS);
-        sendBroadcast(payload);
+        broadcast(payload);
     }
 
     public void endRound() {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_END_ROUND);
-        sendBroadcast(payload);
-    }
-
-    public void selectGameRules(String code, Object selection) {
-        JsonObject payload = getJson(mCurrentUser);
-        payload.addProperty(RULE_CODE, code);
-        if (selection instanceof Boolean) {
-            payload.addProperty(RULE_SELECTION, (Boolean) selection);
-        }
-        payload.addProperty(COMMON_IDENTIFIER, PARSE_SELECT_GAME_RULES);
-        sendBroadcast(payload);
+        JsonObject payload = initJson(EVENT_END_ROUND);
+        broadcast(payload);
     }
 
 }
