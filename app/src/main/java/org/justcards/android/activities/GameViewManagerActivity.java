@@ -208,7 +208,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mUsersDb.save(currentUser);
 
             // Dummy players for testing
-            mUsersDb.save(PlayerUtils.getPlayers(3));
+            if (!mIsCurrentViewPlayer) {
+                mUsersDb.save(PlayerUtils.getPlayers(3));
+            }
         }
     }
 
