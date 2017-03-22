@@ -209,7 +209,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
             // Dummy players for testing
             if (!mIsCurrentViewPlayer) {
-                mUsersDb.save(PlayerUtils.getPlayers(3));
+                mUsersDb.save(PlayerUtils.getPlayers(2));
             }
         }
     }

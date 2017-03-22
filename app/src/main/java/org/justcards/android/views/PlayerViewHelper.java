@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 
 import org.justcards.android.fragments.PlayerFragment;
@@ -20,6 +21,8 @@ import static org.justcards.android.utils.Constants.PLAYER_TAG;
  * Version: ${VERSION}
  */
 public class PlayerViewHelper {
+
+    private static final String TAG = PlayerViewHelper.class.getSimpleName();
 
     private PlayerViewHelper() {
         //no instance
@@ -44,6 +47,8 @@ public class PlayerViewHelper {
     }
 
     private static void addPlayerFragment(@NonNull final FragmentManager fm, final int containerResId, final User player, int x, int y) {
+        Log.d(TAG, "addPlayerFragment: FragmentManager: " + fm + " : playerFragmentTag: " + getPlayerFragmentTag(player));
+
         Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
 
         fm.beginTransaction()
