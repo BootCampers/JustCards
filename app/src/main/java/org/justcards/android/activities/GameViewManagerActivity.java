@@ -396,6 +396,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 .setMessage("Are you sure you want to exit from game?")
                 .setPositiveButton("Yes Exit", v -> {
                     messagingClient.leaveGame();
+                    mUsersDb.observeOff();
+                    mTableDb.observeOff();
                     GameDB.deleteGamesForUser(mGameName, getCurrentUser(GameViewManagerActivity.this));
                     GameDB.delete(mGameName, this);
                     ((JustCardsAndroidApplication) getApplication()).removeAllObservers();

@@ -30,6 +30,8 @@ public class TableDB {
     private DatabaseReference mTableDbRef;
     private DatabaseReference mSinkDbRef;
     private OnEventListener mListener;
+    private ChildEventListener mTableDbChildEventListener;
+    private ChildEventListener mSinkDbChildEventListener;
 
     public interface OnEventListener {
         void handleDealTable(final List<Card> cards);
@@ -74,7 +76,7 @@ public class TableDB {
     public TableDB observeOn(OnEventListener listener) {
         setListener(listener);
 
-        mTableDbRef.addChildEventListener(new ChildEventListener() {
+        mTableDbChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
                 String key = dataSnapshot.getKey();
@@ -104,9 +106,9 @@ public class TableDB {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
 
-        mSinkDbRef.addChildEventListener(new ChildEventListener() {
+        mSinkDbChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey();
@@ -136,9 +138,21 @@ public class TableDB {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        mTableDbRef.addChildEventListener(mTableDbChildEventListener);
+        mSinkDbRef.addChildEventListener(mSinkDbChildEventListener);
 
         return this;
+    }
+
+    public void observeOff() {
+        if (mTableDbChildEventListener != null) {
+            mTableDbRef.removeEventListener(mTableDbChildEventListener);
+        }
+        if (mSinkDbChildEventListener != null) {
+            mSinkDbRef.removeEventListener(mSinkDbChildEventListener);
+        }
     }
 
     public void pushCards(List<Card> cards, boolean toSink) {

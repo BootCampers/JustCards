@@ -28,6 +28,7 @@ public class UsersDB {
 
     private DatabaseReference mUsersDbRef;
     private OnEventListener mListener;
+    private ChildEventListener mChildEventListener;
 
     public interface OnEventListener {
         void handlePlayersAdded(final List<User> players);
@@ -60,10 +61,10 @@ public class UsersDB {
     public UsersDB observeOn(OnEventListener listener) {
         setListener(listener);
 
-        //Get previously joined players
-        mUsersDbRef.addChildEventListener(new ChildEventListener() {
+        mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
+                //Get previously joined players
                 User user = dataSnapshot.getValue(User.class);
                 Log.d(TAG, "onChildAdded " + user.getDisplayName() + " " + dataSnapshot.getKey());
                 if (mListener != null) {
@@ -99,9 +100,17 @@ public class UsersDB {
             public void onCancelled(DatabaseError databaseError) {
                 Log.e(TAG, "onCancelled: " + databaseError.getDetails());
             }
-        });
+        };
+
+        mUsersDbRef.addChildEventListener(mChildEventListener);
 
         return this;
+    }
+
+    public void observeOff() {
+        if (mChildEventListener != null) {
+            mUsersDbRef.removeEventListener(mChildEventListener);
+        }
     }
 
     public void save(final User user) {
