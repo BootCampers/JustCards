@@ -16,8 +16,11 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.HttpMethod;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -27,22 +30,17 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseUser;
 
-import org.json.JSONException;
 import org.justcards.android.R;
 import org.justcards.android.messaging.services.RegistrationService;
 import org.justcards.android.models.User;
 import org.justcards.android.utils.AnimationUtils;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,24 +50,28 @@ import static org.justcards.android.utils.AppUtils.loadRoundedImage;
 import static org.justcards.android.utils.AppUtils.showSnackBar;
 import static org.justcards.android.utils.Constants.PARAM_USER;
 import static org.justcards.android.utils.Constants.PLAY_SERVICES_RESOLUTION_REQUEST;
+import static org.justcards.android.utils.Constants.REQ_CODE_GOOGLE_SIGN_IN;
 import static org.justcards.android.utils.Constants.REQ_CODE_PICK_IMAGE;
-import static org.justcards.android.utils.Constants.REQ_CODE_SIGN_IN;
 import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
 import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
-public class RegisterActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener {
+public class RegisterActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = RegisterActivity.class.getSimpleName();
-    private String userAvatarURI = "";
+    private String mUserAvatarUri = "";
+    private String mUsername = "";
 
     // Firebase instances for Authentication
     private FirebaseAuth mFirebaseAuth;
 
+    // Listener for Firebase Authentication which gets triggered on Authentication state changes
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     // Google Sign In API client
     private GoogleApiClient mGoogleApiClient;
+
+    // Facebook Login Button Callback Manager
+    private CallbackManager mCallbackManager;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.etUserName) EditText etUserName;
@@ -77,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements
     @BindView(R.id.fabBrowseAvatar) FloatingActionButton fabBrowseAvatar;
     @BindView(R.id.btnRegister) Button btnRegister;
     @BindView(R.id.btnGoogleSignIn) SignInButton btnGoogleSignIn;
+    @BindView(R.id.btnFbSignIn) LoginButton btnFbSignIn;
     @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
     @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
 
@@ -95,38 +98,7 @@ public class RegisterActivity extends AppCompatActivity implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         initAuthListener();
 
-        // Initialize Google Sign In API Client
-        mGoogleApiClient = getGoogleApiClient();
-
-        if (getCurrentUser() == null) {
-            loginToFirebase();
-        } else {
-            startWithCurrentUser();
-        }
-    }
-
-    private void initAuthListener() {
-        mAuthListener = firebaseAuth -> {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                Log.d(TAG, "User has signed in to firebase: " + user.getUid());
-            } else {
-                Log.d(TAG, "User has signed out of firebase.");
-            }
-        };
-    }
-
-    private GoogleApiClient getGoogleApiClient() {
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        return new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        startWithCurrentUser();
     }
 
     /**
@@ -147,6 +119,17 @@ public class RegisterActivity extends AppCompatActivity implements
             return false;
         }
         return true;
+    }
+
+    private void initAuthListener() {
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.d(TAG, "User has signed in to firebase: " + user.getUid());
+            } else {
+                Log.d(TAG, "User has signed out of firebase.");
+            }
+        };
     }
 
     private void notifyNetworkFailure(final boolean networkFailure) {
@@ -176,29 +159,10 @@ public class RegisterActivity extends AppCompatActivity implements
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
-    private void loginToFirebase() {
-        mFirebaseAuth.signInAnonymously().addOnCompleteListener(this, task -> {
-            Log.d(TAG, "loginToFirebase: signInAnonymously: complete: " + task.isSuccessful());
-            // If sign in fails, display a message to the user.
-            // If sign in succeeds the auth state listener will be notified.
-            // Logic to handle the signed in user can be handled in the listener.
-            if (!task.isSuccessful()) {
-                Log.w(TAG, "loginToFirebase: signInAnonymously: ", task.getException());
-                Toast.makeText(RegisterActivity.this, "Anonymous Sign-In to Firebase failed!", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.d(TAG, "loginToFirebase: signInAnonymously: succeeded.");
-                startWithCurrentUser();
-            }
-        });
-    }
-
     private void startWithCurrentUser() {
-        Log.d(TAG, "startWithCurrentUser: Firebase User ID: " + getCurrentUser().getUid());
         User user = User.get(this);
         if (null != user) {
-            Log.d(TAG, "proceedToGame: Logged In User: " + user);
-            user.setUserId(getCurrentUser().getUid());
-            user.save(this);
+            Log.d(TAG, "startWithCurrentUser: Logged In User: " + user);
             startSelectGame(user);
             overridePendingTransition(0, 0);
         } else {
@@ -208,11 +172,34 @@ public class RegisterActivity extends AppCompatActivity implements
 
             if (isNetworkAvailable(this)) {
                 notifyNetworkFailure(false);
-                userAvatarURI = PlayerUtils.getDefaultAvatar();
-                loadRoundedImage(this, ivAvatar, userAvatarURI);
+                mUserAvatarUri = PlayerUtils.getDefaultAvatar();
+                loadRoundedImage(this, ivAvatar, mUserAvatarUri);
             } else {
                 notifyNetworkFailure(true);
             }
+
+            // Initialize Google Sign In API Client
+            mGoogleApiClient = getGoogleApiClient();
+
+            // Initialize the Facebook Login Button and its callbacks for Facebook OAuth
+            initializeFacebookSignIn();
+        }
+    }
+
+    private void startWithFirebaseUser() {
+        FirebaseUser firebaseUser = getCurrentUser();
+        if (firebaseUser != null) {
+            String avatarUri;
+            if (firebaseUser.getPhotoUrl() != null) {
+                avatarUri = firebaseUser.getPhotoUrl().toString();
+            } else {
+                avatarUri = PlayerUtils.getDefaultAvatar();
+            }
+            User user = new User(avatarUri, firebaseUser.getDisplayName(), firebaseUser.getUid());
+            user.save(this);
+            startSelectGame(user);
+        } else {
+            Log.e(TAG, "startWithFirebaseUser: User information received from Firebase Authentication is null");
         }
     }
 
@@ -224,6 +211,43 @@ public class RegisterActivity extends AppCompatActivity implements
         AnimationUtils.enterVineTransition(this);
     }
 
+    private GoogleApiClient getGoogleApiClient() {
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        return new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+    }
+
+    private void initializeFacebookSignIn() {
+        mCallbackManager = CallbackManager.Factory.create();
+        btnFbSignIn.setReadPermissions("email", "public_profile");
+        btnFbSignIn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook: onSuccess: " + loginResult);
+                firebaseAuthWithFacebook(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook: onCancel");
+                Toast.makeText(RegisterActivity.this, "Facebook Authentication Cancelled.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e(TAG, "facebook: onError", error);
+                Toast.makeText(RegisterActivity.this, "Facebook Authentication Failed.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @OnClick(R.id.fabBrowseAvatar)
     public void browseAvatar() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
@@ -233,39 +257,39 @@ public class RegisterActivity extends AppCompatActivity implements
 
     @OnClick(R.id.btnRegister)
     public void register(final View view) {
-        String username = etUserName.getText().toString().replaceAll("\\s+", "");
-        if (username.isEmpty()) {
-            showSnackBar(getApplicationContext(), view, "Username must have a value!");
+        mUsername = etUserName.getText().toString().replaceAll("\\s+", "");
+        if (mUsername.isEmpty()) {
+            showSnackBar(this, view, "Username must have a value!");
             etUserName.requestFocus();
             scrollViewRegister.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
             return;
         }
 
-        User user = new User(userAvatarURI, username, getCurrentUser().getUid());
-        user.save(this);
-        startSelectGame(user);
+        loginAnonymouslyToFirebase();
     }
 
-    @OnClick(R.id.btnFbSignIn)
-    public void signInWithFacebook(View view) {
-        ArrayList<String> permissions = new ArrayList<>();
-        permissions.add("email");
-        ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), this, permissions,
-                (err) -> {
-                    if (err != null) {
-                        Log.d(TAG, "Uh oh. Error occurred: " + err.getMessage());
-                        // TODO: Fix Issue of 'this auth is already used'
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Logged in with facebook account!", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Linked user's facebook login with parse!");
-                    }
-                });
+    private void loginAnonymouslyToFirebase() {
+        mFirebaseAuth.signInAnonymously().addOnCompleteListener(this, task -> {
+            Log.d(TAG, "loginAnonymouslyToFirebase: signInAnonymously: complete: " + task.isSuccessful());
+            // If sign in fails, display a message to the user.
+            // If sign in succeeds the auth state listener will be notified.
+            // Logic to handle the signed in user can be handled in the listener.
+            if (!task.isSuccessful()) {
+                Log.w(TAG, "loginAnonymouslyToFirebase: signInAnonymously: ", task.getException());
+                Toast.makeText(RegisterActivity.this, "Anonymous Sign-In to Firebase failed!", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.d(TAG, "loginAnonymouslyToFirebase: signInAnonymously: succeeded.");
+                User user = new User(mUserAvatarUri, mUsername, getCurrentUser().getUid());
+                user.save(this);
+                startWithCurrentUser();
+            }
+        });
     }
 
     @OnClick(R.id.btnGoogleSignIn)
     public void signInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, REQ_CODE_SIGN_IN);
+        startActivityForResult(signInIntent, REQ_CODE_GOOGLE_SIGN_IN);
     }
 
     @Override
@@ -273,90 +297,52 @@ public class RegisterActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQ_CODE_PICK_IMAGE:
-                userAvatarURI = data.getStringExtra(SELECTED_AVATAR);
-                Log.d(TAG, userAvatarURI);
-                loadRoundedImage(this, ivAvatar, userAvatarURI);
+                mUserAvatarUri = data.getStringExtra(SELECTED_AVATAR);
+                Log.d(TAG, mUserAvatarUri);
+                loadRoundedImage(this, ivAvatar, mUserAvatarUri);
                 break;
-            case REQ_CODE_SIGN_IN:
+            case REQ_CODE_GOOGLE_SIGN_IN:
                 GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
                 if (result.isSuccess()) {
                     // Google Sign-In was successful, authenticate with Firebase
-                    GoogleSignInAccount account = result.getSignInAccount();
-                    firebaseAuthWithGoogle(account);
+                    firebaseAuthWithGoogle(result.getSignInAccount());
                 } else {
                     // Google Sign-In failed
-                    Toast.makeText(getApplicationContext(), "Google Sign-In failed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Google Sign-In failed.", Toast.LENGTH_LONG).show();
                 }
                 break;
             default:
-                ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
-                getFbUser();
+                // Pass the activity result back to Facebook SDK
+                mCallbackManager.onActivityResult(requestCode, resultCode, data);
                 break;
         }
     }
 
-    /**
-     * @see [https://disqus.com/by/dominiquecanlas/]
-     */
-    private void getFbUser() {
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "email,name,picture.type(large)");
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me",
-                parameters,
-                HttpMethod.GET,
-                response -> {
-                    /* handle the result */
-                    try {
-                        Log.d(TAG, "getFbUser: response from facebook: " + response);
-
-                        String profileName = response.getJSONObject().getString("name");
-                        String profilePictureUrl = response.getJSONObject().getJSONObject("picture").getJSONObject("data").getString("url");
-
-                        Log.d(TAG, "Facebook profileName is:" + profileName);
-                        Log.d(TAG, "Facebook image is: " + profilePictureUrl);
-                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(ParseUser.getCurrentUser()));
-
-                        User user = new User(profilePictureUrl, profileName, getCurrentUser().getUid());
-                        Log.d(TAG, "getFbUser: Retrieved User: " + user);
-
-                        user.save(this);
-                        startSelectGame(user);
-                        AnimationUtils.enterVineTransition(this);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "getFbUser: Exception occurred while getting user information from facebook.", e);
-                    }
-                }
-        ).executeAsync();
-    }
-
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        EmailAuthProvider.getCredential("email", "password");
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+        firebaseAuth(credential, "Google");
+    }
 
+    private void firebaseAuthWithFacebook(final AccessToken token) {
+        Log.d(TAG, "firebaseAuthWithFacebook: token: " + token);
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        firebaseAuth(credential, "Facebook");
+    }
+
+    private void firebaseAuth(final AuthCredential credential, String authType) {
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    Log.d(TAG, "signInWithCredential: onComplete: " + authType + ": " + task.isSuccessful());
                     // If sign in fails, display a message to the user.
                     // If sign in succeeds the auth state listener will be notified
                     // and logic to handle the signed in user can be handled in the listener.
                     if (!task.isSuccessful()) {
-                        Log.w(TAG, "signInWithCredential", task.getException());
-                        Toast.makeText(RegisterActivity.this, "Authentication with Google failed.", Toast.LENGTH_SHORT).show();
+                        Log.w(TAG, "signInWithCredential: " + authType + ": ", task.getException());
+                        Toast.makeText(RegisterActivity.this, "Authentication with " + authType + " failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         // Login success
-                        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                        if (mFirebaseUser != null && mFirebaseUser.getPhotoUrl() != null) {
-                            User user = new User(mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getDisplayName(), mFirebaseUser.getUid());
-                            user.save(getApplicationContext());
-                            startSelectGame(user);
-                        } else {
-                            Log.e(TAG, "firebaseAuthWithGoogle: User information received from Firebase Authentication is null");
-                            // TODO: Give a random image to the user and start game
-                        }
+                        startWithFirebaseUser();
                     }
                 });
     }

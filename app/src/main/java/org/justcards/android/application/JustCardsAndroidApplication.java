@@ -4,9 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
-import com.parse.Parse;
-import com.parse.ParseFacebookUtils;
-import com.parse.interceptors.ParseLogInterceptor;
 
 import org.justcards.android.R;
 import org.justcards.android.interfaces.Observable;
@@ -21,11 +18,6 @@ import java.util.List;
  */
 public class JustCardsAndroidApplication extends Application implements Observable {
 
-    public static final String APPLICATION_ID = "codepath-android";
-    public static final String APPLICATION_SERVER = "https://codepath-maps-push-lab.herokuapp.com/parse/";
-    @SuppressWarnings("unused")
-    public static final String CLIENT_KEY = "8bXPznF5eSLWq0sY9gTUrEF5BJlia7ltmLQFRh";
-
     private List<Observer> mObservers = new ArrayList<>();
 
     @Override
@@ -33,16 +25,6 @@ public class JustCardsAndroidApplication extends Application implements Observab
         super.onCreate();
 
         ViewTarget.setTagId(R.id.glide_tag);
-
-        Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId(APPLICATION_ID)
-                .clientKey("")
-                .addNetworkInterceptor(new ParseLogInterceptor())
-                .server(APPLICATION_SERVER)
-                .build());
-
-        // ParseFacebookUtils should initialize the Facebook SDK for you
-        ParseFacebookUtils.initialize(this);
     }
 
     @Override
