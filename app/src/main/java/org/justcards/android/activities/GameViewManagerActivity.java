@@ -582,169 +582,148 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         Log.d(TAG, "onUpdate: " + event);
         HashMap<String, String> gameData = (HashMap<String, String>) arg;
         User from = User.fromMap(gameData);
+        Card card;
+        int fromPosition;
+        int toPosition;
 
         switch (event) {
             case EVENT_DEAL_CARDS:
-                runOnUiThread(() -> {
-                    User to = fromJson(gameData.get(PARAM_PLAYER));
-                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                    handleDeal(card, from, to);
-                });
+                User to = fromJson(gameData.get(PARAM_PLAYER));
+                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                handleDeal(card, from, to);
                 break;
             case EVENT_EXCHANGE_CARD_WITH_TABLE:
-                runOnUiThread(() -> {
-                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                    int toPosition = Integer.valueOf(gameData.get(TO_POSITION));
-                    boolean pickedFromTable = Boolean.valueOf(gameData.get(TABLE_PICKED));
-                    handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
-                });
+                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                toPosition = Integer.valueOf(gameData.get(TO_POSITION));
+                boolean pickedFromTable = Boolean.valueOf(gameData.get(TABLE_PICKED));
+                handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
                 break;
             case EVENT_SWAP_CARD_WITHIN_PLAYER:
-                runOnUiThread(() -> {
-                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                    int toPosition = Integer.valueOf(gameData.get(TO_POSITION));
-                    handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
-                });
+                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                toPosition = Integer.valueOf(gameData.get(TO_POSITION));
+                handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
                 break;
             case EVENT_DROP_CARD_TO_SINK:
-                runOnUiThread(() -> {
-                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                    String fromTag = gameData.get(FROM_TAG);
-                    int fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                    handleCardDropToSink(from, card, fromTag, fromPosition);
-                });
+                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                String fromTag = gameData.get(FROM_TAG);
+                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                handleCardDropToSink(from, card, fromTag, fromPosition);
                 break;
             case EVENT_TOGGLE_CARD:
-                runOnUiThread(() -> {
-                    Card card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                    int position = Integer.valueOf(gameData.get(POSITION));
-                    String onTag = gameData.get(ON_TAG);
-                    handleToggleCard(from, card, position, onTag);
-                });
+                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                int position = Integer.valueOf(gameData.get(POSITION));
+                String onTag = gameData.get(ON_TAG);
+                handleToggleCard(from, card, position, onTag);
                 break;
             case EVENT_ROUND_WINNERS:
-                runOnUiThread(() -> {
-                    List<User> roundWinners = gson.fromJson(gameData.get(PARAM_PLAYERS), getUsersType());
-                    handleRoundWinners(roundWinners, from);
-                });
+                List<User> roundWinners = gson.fromJson(gameData.get(PARAM_PLAYERS), getUsersType());
+                handleRoundWinners(roundWinners, from);
                 break;
             case EVENT_END_ROUND:
-                runOnUiThread(() -> handleEndRound(from));
+                handleEndRound(from);
                 break;
             case EVENT_SELECT_GAME_RULES:
-                runOnUiThread(() -> {
-                    String code = gameData.get(RULE_CODE);
-                    Object selection = null;
-                    String selectionElement = gameData.get(RULE_SELECTION);
-                    if (!TextUtils.isEmpty(selectionElement)) {
-                        selection = Boolean.valueOf(selectionElement);
-                    }
-                    handleGameRules(from, code, selection);
-                });
+                String code = gameData.get(RULE_CODE);
+                Object selection = null;
+                String selectionElement = gameData.get(RULE_SELECTION);
+                if (!TextUtils.isEmpty(selectionElement)) {
+                    selection = Boolean.valueOf(selectionElement);
+                }
+                handleGameRules(from, code, selection);
                 break;
             case EVENT_CHAT_MESSAGE:
-                runOnUiThread(() -> onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), gameData.get(PARAM_CHAT)));
+                onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), gameData.get(PARAM_CHAT));
                 break;
         }
     }
 
     @Override
     public void handlePlayersAdded(final List<User> players) {
-        runOnUiThread(() -> {
-            mPlayers.addAll(players);
-            if (mDealerViewFragment != null) {
-                mDealerViewFragment.addPlayers(players);
-            }
+        mPlayers.addAll(players);
+        if (mDealerViewFragment != null) {
+            mDealerViewFragment.addPlayers(players);
+        }
 
-            PlayerViewHelper.addPlayers(this, container.getId(), players);
-            for (User player : players) {
-                if (player.equals(getCurrentUser(this))) {
-                    togglePlayerView(player);
-                }
-                handleToggleCardsListForPlayerView(player, false);
-                onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
+        PlayerViewHelper.addPlayers(this, container.getId(), players);
+        for (User player : players) {
+            if (player.equals(getCurrentUser(this))) {
+                togglePlayerView(player);
             }
-        });
+            handleToggleCardsListForPlayerView(player, false);
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " joined.");
+        }
     }
 
     @Override
     public void handlePlayersRemoved(final List<User> players) {
-        runOnUiThread(() -> {
-            for (User player : players) {
-                mPlayers.remove(player);
-                if (mDealerViewFragment != null) {
-                    mDealerViewFragment.removePlayer(player);
-                }
-                Fragment playerFragment = getPlayerFragment(this, player);
-                if (playerFragment != null) {
-                    getSupportFragmentManager().beginTransaction().remove(playerFragment).commitNow();
-                } else {
-                    Log.e(TAG, "NULL Failed to remove view for " + player);
-                }
-                onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " left.");
+        for (User player : players) {
+            mPlayers.remove(player);
+            if (mDealerViewFragment != null) {
+                mDealerViewFragment.removePlayer(player);
             }
-        });
+            Fragment playerFragment = getPlayerFragment(this, player);
+            if (playerFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(playerFragment).commitNow();
+            } else {
+                Log.e(TAG, "NULL Failed to remove view for " + player);
+            }
+            onNewLogEvent(player.getDisplayName(), player.getAvatarUri(), player.getDisplayName() + " left.");
+        }
     }
 
     @Override
     public void handlePlayerChanged(final User player) {
-        runOnUiThread(() -> {
-            // evaluate the fields changed
-            for (User mPlayer : mPlayers) {
-                if (mPlayer == player) {
-                    //figure out what changed
-                    if (player.isActive() != mPlayer.isActive()) {
-                        Log.d(TAG, "is active changed");
-                        handleMutePlayerForRound(player, player.isActive());
-                    }
+        // evaluate the fields changed
+        for (User mPlayer : mPlayers) {
+            if (mPlayer == player) {
+                //figure out what changed
+                if (player.isActive() != mPlayer.isActive()) {
+                    Log.d(TAG, "is active changed");
+                    handleMutePlayerForRound(player, player.isActive());
+                }
 
-                    if (player.isShowingCards() != mPlayer.isShowingCards()) {
-                        Log.d(TAG, "isShowingCards changed");
-                        handleToggleCardsListForPlayerView(player, player.isShowingCards());
-                    }
+                if (player.isShowingCards() != mPlayer.isShowingCards()) {
+                    Log.d(TAG, "isShowingCards changed");
+                    handleToggleCardsListForPlayerView(player, player.isShowingCards());
+                }
 
-                    if (player.getScore() != mPlayer.getScore()) {
-                        Log.d(TAG, "Score changed");
-                        handleUpdateScores(getList(player));
-                    }
+                if (player.getScore() != mPlayer.getScore()) {
+                    Log.d(TAG, "Score changed");
+                    handleUpdateScores(getList(player));
+                }
 
-                    if (!player.getCards().equals(mPlayer.getCards())) {
-                        Log.d(TAG, "Cards in hand changed");
-                    }
+                if (!player.getCards().equals(mPlayer.getCards())) {
+                    Log.d(TAG, "Cards in hand changed");
                 }
             }
-        });
+        }
     }
 
     @Override
     public void handleDealTable(final List<Card> cards) {
         mMediaUtils.playGlassBreakingTone();
-        runOnUiThread(() -> {
-            CardUtil.setShowingFront(cards);
-            Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
-            if (fragment != null) {
-                boolean stacked = ((CardsFragment) fragment).stackCards(cards);
-                if (stacked && User.getCurrentUser(this).isDealer() && mDealerViewFragment != null) {
-                    mDealerViewFragment.drawDealerCards(cards);
-                }
+        CardUtil.setShowingFront(cards);
+        Fragment fragment = mPlayerViewFragment.getChildFragmentManager().findFragmentByTag(TABLE_TAG);
+        if (fragment != null) {
+            boolean stacked = ((CardsFragment) fragment).stackCards(cards);
+            if (stacked && User.getCurrentUser(this).isDealer() && mDealerViewFragment != null) {
+                mDealerViewFragment.drawDealerCards(cards);
             }
-        });
+        }
     }
 
     @Override
     public void handleDealSink(final List<Card> cards) {
         mMediaUtils.playGlassBreakingTone();
-        runOnUiThread(() -> {
-            if (!isEmpty(cards)) {
-                CardUtil.setShowingFront(cards);
-                addCardsToSink(cards);
-                if (User.getCurrentUser(this).isDealer() && mDealerViewFragment != null) {
-                    mDealerViewFragment.drawDealerCards(cards);
-                }
+        if (!isEmpty(cards)) {
+            CardUtil.setShowingFront(cards);
+            addCardsToSink(cards);
+            if (User.getCurrentUser(this).isDealer() && mDealerViewFragment != null) {
+                mDealerViewFragment.drawDealerCards(cards);
             }
-        });
+        }
     }
 
     public void handleDeal(final Card card, final User from, final User to) {

@@ -27,10 +27,10 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -65,7 +65,8 @@ public class RegisterActivity extends AppCompatActivity implements
 
     // Firebase instances for Authentication
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     // Google Sign In API client
     private GoogleApiClient mGoogleApiClient;
@@ -90,18 +91,29 @@ public class RegisterActivity extends AppCompatActivity implements
             startService(intent);
         }
 
-        // TODO: This functionality may need to be refactored to avoid login to Parse using Anonymous User feature
-        if (getCurrentUser() == null) {
-            loginToParse();
-        } else {
-            startWithCurrentUser();
-        }
-
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+        initAuthListener();
 
         // Initialize Google Sign In API Client
         mGoogleApiClient = getGoogleApiClient();
+
+        if (getCurrentUser() == null) {
+            loginToFirebase();
+        } else {
+            startWithCurrentUser();
+        }
+    }
+
+    private void initAuthListener() {
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.d(TAG, "User has signed in to firebase: " + user.getUid());
+            } else {
+                Log.d(TAG, "User has signed out of firebase.");
+            }
+        };
     }
 
     private GoogleApiClient getGoogleApiClient() {
@@ -143,24 +155,49 @@ public class RegisterActivity extends AppCompatActivity implements
         btnRegister.setEnabled(!networkFailure);
     }
 
-    // TODO: This function may need to be removed to avoid using Parse Login
-    private void loginToParse() {
-        ParseAnonymousUtils.logIn((user, e) -> {
-            if (e != null) {
-                Log.e("DEBUG", "Anonymous loginToParse failed: ", e);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not be available.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loginToFirebase() {
+        mFirebaseAuth.signInAnonymously().addOnCompleteListener(this, task -> {
+            Log.d(TAG, "loginToFirebase: signInAnonymously: complete: " + task.isSuccessful());
+            // If sign in fails, display a message to the user.
+            // If sign in succeeds the auth state listener will be notified.
+            // Logic to handle the signed in user can be handled in the listener.
+            if (!task.isSuccessful()) {
+                Log.w(TAG, "loginToFirebase: signInAnonymously: ", task.getException());
+                Toast.makeText(RegisterActivity.this, "Anonymous Sign-In to Firebase failed!", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d("DEBUG", "Anonymous loginToParse succeeded");
+                Log.d(TAG, "loginToFirebase: signInAnonymously: succeeded.");
                 startWithCurrentUser();
             }
         });
     }
 
     private void startWithCurrentUser() {
-        Log.d(TAG, "startWithCurrentUser: Parse User ID: " + getCurrentUser().getObjectId());
+        Log.d(TAG, "startWithCurrentUser: Firebase User ID: " + getCurrentUser().getUid());
         User user = User.get(this);
         if (null != user) {
             Log.d(TAG, "proceedToGame: Logged In User: " + user);
-            user.setUserId(getCurrentUser().getObjectId());
+            user.setUserId(getCurrentUser().getUid());
             user.save(this);
             startSelectGame(user);
             overridePendingTransition(0, 0);
@@ -204,7 +241,7 @@ public class RegisterActivity extends AppCompatActivity implements
             return;
         }
 
-        User user = new User(userAvatarURI, username, getCurrentUser().getObjectId());
+        User user = new User(userAvatarURI, username, getCurrentUser().getUid());
         user.save(this);
         startSelectGame(user);
     }
@@ -213,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity implements
     public void signInWithFacebook(View view) {
         ArrayList<String> permissions = new ArrayList<>();
         permissions.add("email");
-        ParseFacebookUtils.linkWithReadPermissionsInBackground(getCurrentUser(), this, permissions,
+        ParseFacebookUtils.linkWithReadPermissionsInBackground(ParseUser.getCurrentUser(), this, permissions,
                 (err) -> {
                     if (err != null) {
                         Log.d(TAG, "Uh oh. Error occurred: " + err.getMessage());
@@ -229,13 +266,6 @@ public class RegisterActivity extends AppCompatActivity implements
     public void signInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, REQ_CODE_SIGN_IN);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -286,9 +316,9 @@ public class RegisterActivity extends AppCompatActivity implements
 
                         Log.d(TAG, "Facebook profileName is:" + profileName);
                         Log.d(TAG, "Facebook image is: " + profilePictureUrl);
-                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(getCurrentUser()));
+                        Log.d(TAG, "getFbUser: is facebook profile linked: " + ParseFacebookUtils.isLinked(ParseUser.getCurrentUser()));
 
-                        User user = new User(profilePictureUrl, profileName, getCurrentUser().getObjectId());
+                        User user = new User(profilePictureUrl, profileName, getCurrentUser().getUid());
                         Log.d(TAG, "getFbUser: Retrieved User: " + user);
 
                         user.save(this);
@@ -304,6 +334,7 @@ public class RegisterActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        EmailAuthProvider.getCredential("email", "password");
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
@@ -317,7 +348,7 @@ public class RegisterActivity extends AppCompatActivity implements
                         Toast.makeText(RegisterActivity.this, "Authentication with Google failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         // Login success
-                        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
                         if (mFirebaseUser != null && mFirebaseUser.getPhotoUrl() != null) {
                             User user = new User(mFirebaseUser.getPhotoUrl().toString(), mFirebaseUser.getDisplayName(), mFirebaseUser.getUid());
                             user.save(getApplicationContext());
@@ -330,9 +361,8 @@ public class RegisterActivity extends AppCompatActivity implements
                 });
     }
 
-    // TODO: This function needs to be refactored to not use Parse Anonymous User functionality
-    private static ParseUser getCurrentUser() {
-        return ParseUser.getCurrentUser();
+    private FirebaseUser getCurrentUser() {
+        return mFirebaseAuth.getCurrentUser();
     }
 
 }
