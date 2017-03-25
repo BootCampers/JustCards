@@ -313,9 +313,11 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQ_CODE_PICK_IMAGE:
-                mUserAvatarUri = data.getStringExtra(SELECTED_AVATAR);
-                Log.d(TAG, mUserAvatarUri);
-                loadRoundedImage(this, ivAvatar, mUserAvatarUri);
+                if (data != null) {
+                    mUserAvatarUri = data.getStringExtra(SELECTED_AVATAR);
+                    Log.d(TAG, mUserAvatarUri);
+                    loadRoundedImage(this, ivAvatar, mUserAvatarUri);
+                }
                 break;
             case REQ_CODE_GOOGLE_SIGN_IN:
                 GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
