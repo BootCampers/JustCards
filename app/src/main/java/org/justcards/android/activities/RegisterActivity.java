@@ -183,6 +183,9 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
             // Initialize the Facebook Login Button and its callbacks for Facebook OAuth
             initializeFacebookSignIn();
+
+            // Customize the Google Sign In Button
+            btnGoogleSignIn.setSize(SignInButton.SIZE_WIDE);
         }
     }
 
