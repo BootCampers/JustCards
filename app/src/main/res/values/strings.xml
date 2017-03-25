@@ -2,9 +2,15 @@
 
     <string name="app_name">JustCards</string>
 
+    <string name="title_activity_sign_up">Sign up</string>
+    <string name="title_activity_avatar_selection">Choose your avatar</string>
+    <string name="title_activity_select_game">Select a game</string>
+    <string name="title_activity_select_cards">Select cards</string>
+    <string name="title_activity_create_game">Start a new game</string>
+    <string name="title_activity_game_view_manager">My game</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -16,9 +22,9 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="title_activity_game_view_manager">GameViewManagerActivity</string>
+
     <string name="msg_no_cards">No cards</string>
-    <string name="title_activity_select_cards">Select Cards</string>
+
     <string name="register">Register</string>
     <string name="prompt_username">Username</string>
     <string name="create_game">Start New Game</string>
@@ -33,7 +39,7 @@
     <string name="msg_send_to_table">Move to table</string>
     <string name="msg_keep_on_dealer_stack">Keep on dealer stack</string>
     <string name="msg_discard">Discard</string>
-    <string name="title_activity_avatar_selection">Choose your Avatar</string>
+
     <string name="dealing_options">Deal Options</string>
     <string name="card_for_each_player">Cards for each player</string>
     <string name="shuffle_before_dealing">Shuffle before dealing</string>
@@ -69,7 +75,6 @@
     <string name="or">OR</string>
 
     <string name="facebook_app_id">646487625523989</string>
-    <string name="new_game">New Game</string>
     <string name="login_with_facebook">Login with Facebook</string>
 
 </resources>

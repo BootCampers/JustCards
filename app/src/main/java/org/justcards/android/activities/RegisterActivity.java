@@ -171,6 +171,10 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             ButterKnife.bind(this);
             setSupportActionBar(toolbar);
 
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(R.string.title_activity_sign_up);
+            }
+
             if (isNetworkAvailable(this)) {
                 notifyNetworkFailure(false);
                 mUserAvatarUri = PlayerUtils.getDefaultAvatar();

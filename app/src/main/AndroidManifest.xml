@@ -26,7 +26,9 @@
         tools:replace="android:icon,android:theme">
         <activity
             android:name=".activities.RegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -43,10 +45,11 @@
         </activity>
         <activity
             android:name=".activities.SelectGameActivity"
+            android:label="@string/title_activity_select_game"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.CreateGameActivity"
-            android:label="@string/new_game"
+            android:label="@string/title_activity_create_game"
             android:parentActivityName=".activities.SelectGameActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
