@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -181,11 +182,23 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             // Initialize Google Sign In API Client
             mGoogleApiClient = getGoogleApiClient();
 
+            // Customize the Google Sign In Button
+            initializeGoogleSignInButton();
+
             // Initialize the Facebook Login Button and its callbacks for Facebook OAuth
             initializeFacebookSignIn();
+        }
+    }
 
-            // Customize the Google Sign In Button
-            btnGoogleSignIn.setSize(SignInButton.SIZE_WIDE);
+    protected void initializeGoogleSignInButton() {
+        btnGoogleSignIn.setSize(SignInButton.SIZE_WIDE);
+        for (int i = 0; i < btnGoogleSignIn.getChildCount(); i++) {
+            View v = btnGoogleSignIn.getChildAt(i);
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setTextSize(16);
+                return;
+            }
         }
     }
 
