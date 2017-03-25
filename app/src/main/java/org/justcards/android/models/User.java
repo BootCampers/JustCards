@@ -108,7 +108,7 @@ public class User {
     }
 
     public static boolean isSelf(final User user, final Context context) {
-        return user == getCurrentUser(context);
+        return getCurrentUser(context).equals(user);
     }
 
     public static User get(final Context context) {
