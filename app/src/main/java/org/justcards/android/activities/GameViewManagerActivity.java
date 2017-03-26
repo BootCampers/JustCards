@@ -217,7 +217,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void initFragments() {
         // Instantiating all the child fragments for game view
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
-        mDealerViewFragment = DealerViewFragment.newInstance(mCards, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
 
         // Controlling the fragments for display based on player's role
@@ -229,6 +228,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .add(R.id.flGameContainer, mPlayerViewFragment)
                     .commit();
         } else {
+            mDealerViewFragment = DealerViewFragment.newInstance(mCards, null);
             fabSwap.setLabelText(msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
@@ -973,7 +973,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
 
             // Clear leftover cards from dealer's stack and re-stack with selected cards for the game
-            if (mDealerViewFragment != null && mDealerViewFragment.isAdded()) {
+            if (mDealerViewFragment != null) {
                 fragment = mDealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
