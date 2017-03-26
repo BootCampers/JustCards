@@ -677,7 +677,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void handlePlayerChanged(final User player) {
         // evaluate the fields changed
         for (User mPlayer : mPlayers) {
-            if (mPlayer == player) {
+            if (mPlayer.equals(player)) {
                 //figure out what changed
                 if (player.isActive() != mPlayer.isActive()) {
                     Log.d(TAG, "is active changed");
