@@ -973,7 +973,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
 
             // Clear leftover cards from dealer's stack and re-stack with selected cards for the game
-            if (mDealerViewFragment != null) {
+            if (mDealerViewFragment != null && mDealerViewFragment.isAdded()) {
                 fragment = mDealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
                 if (fragment != null) {
                     ((CardsFragment) fragment).clearCards();
