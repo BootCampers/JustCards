@@ -64,7 +64,6 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         void onCardExchange(String fromTag, String toTag, int fromPosition, int toPosition, Card card);
     }
 
-
     public interface OnLogEventListener {
         void onNewLogEvent(String whoPosted, String fromAvatar, String detail);
     }
@@ -149,7 +148,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     @Override
     public synchronized void cardCountChange(int newCount) {
         Log.d(TAG, CardsFragment.class.getSimpleName() + "--newCount--" + newCount);
-        if(getParentFragment() instanceof  PlayerFragment) {
+        if (getParentFragment() instanceof PlayerFragment) {
             ((PlayerFragment) getParentFragment()).cardCountChange(newCount);
         }
     }
@@ -167,20 +166,22 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
     }
 
     public void toggleCard(Card card, int position) {
-        RecyclerView.ViewHolder holder = rvCardsList.findViewHolderForAdapterPosition(position);
-        if (holder != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-            ImageView ivCard = ((CardsAdapter.ViewHolder) holder).ivCard;
-            Card holderCard = mAdapter.getCards().get(position);
-            if (card.equals(holderCard)) {
-                AnimationUtils.animateFlip(mAdapter.getContext(), ivCard, () -> {
-                    Glide.with(mAdapter.getContext())
-                            .load(card.isShowingFront() ? holderCard.getDrawable(mAdapter.getContext()) : holderCard.getDrawableBack())
-                            .crossFade()
-                            .into(ivCard);
-                    holderCard.setShowingFront(card.isShowingFront());
-                });
+        if (position > -1 && position < mAdapter.getCards().size()) {
+            Card currentCard = mAdapter.getCards().get(position);
+            if (card.equals(currentCard)) {
+                currentCard.setShowingFront(card.isShowingFront());
+
+                RecyclerView.ViewHolder holder = rvCardsList.findViewHolderForAdapterPosition(position);
+                if (holder != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    ImageView ivCard = ((CardsAdapter.ViewHolder) holder).ivCard;
+                    AnimationUtils.animateFlip(mAdapter.getContext(), ivCard, () ->
+                            Glide.with(mAdapter.getContext())
+                                    .load(currentCard.isShowingFront() ? currentCard.getDrawable(mAdapter.getContext()) : currentCard.getDrawableBack())
+                                    .crossFade()
+                                    .into(ivCard));
+                }
             } else {
-                Log.d(TAG, "Problem found in toggleCard: " + "Received: " + card + ", but Found: " + holderCard);
+                Log.d(TAG, "Problem found in toggleCard: " + "Received: " + card + ", but Found: " + currentCard);
             }
         }
     }

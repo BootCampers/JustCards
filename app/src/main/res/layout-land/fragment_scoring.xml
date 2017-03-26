@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:padding="8dp"
-        android:text="@string/msg_score_sheet"/>
+        android:text="@string/lbl_score_board"/>
 
     <ImageButton
         android:id="@+id/ibCancel"
