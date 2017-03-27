@@ -32,7 +32,9 @@
     </style>
 
     <style name="FragmentButtonStyle">
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:background">@drawable/fragment_button</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:minWidth">140dp</item>
     </style>
 
     <style name="FaceBookButtonStyle">
