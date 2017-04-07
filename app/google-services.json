@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "853701705378-fb97aggadaplnfrmsbkdrlc0090lr1r1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.justcards.android",
+            "certificate_hash": "b800eff5abb4608afead7f57707dd37247698224"
+          }
+        },
+        {
+          "client_id": "853701705378-ot3ajas647ch0tcd3rtv1ablrb999e52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.justcards.android",
+            "certificate_hash": "38761703b816bbbb5214e5d51982defac5520651"
+          }
+        },
+        {
           "client_id": "853701705378-boisqnvqsjh07k2fb8t2juuntfkce0ac.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853701705378-boisqnvqsjh07k2fb8t2juuntfkce0ac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
