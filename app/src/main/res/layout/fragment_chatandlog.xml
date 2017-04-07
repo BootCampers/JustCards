@@ -22,8 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/etChatMsg"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/view_margin_8dp"
+        android:layout_marginRight="@dimen/view_margin_8dp"
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragments.ChatAndLogFragment"
         tools:listitem="@layout/item_chat_log"/>

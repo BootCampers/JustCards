@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -163,9 +164,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabShow) FloatingActionButton fabShow;
     @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
+    @BindView(R.id.flLogContainer) FrameLayout flLogContainer;
 
     @BindString(R.string.msg_show_dealer_view) String msgDealerSide;
     @BindString(R.string.msg_show_player_view) String msgPlayerSide;
+    private FrameLayout mFlChatLogContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +221,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Instantiating all the child fragments for game view
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
+
+        //Insert chat and log fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
+                .commit();
+        findViewById(R.id.flLogContainer).setVisibility(View.VISIBLE);
+        ibComment.setImageResource(R.drawable.ic_cancel);
 
         // Controlling the fragments for display based on player's role
         if (mIsCurrentViewPlayer) {
@@ -276,6 +286,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
         }));
         llSink.setOnTouchListener(new OnTouchMoveListener(container));
+
+        showChatAndLogView();
     }
 
     @Override
@@ -443,17 +455,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.ibComment)
     public void toggleChatAndLogView(View v) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (!mIsShowingChat) {
-            fragmentTransaction.replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG);
-            ibComment.setImageResource(R.drawable.ic_cancel);
-            mIsShowingChat = true;
+            showChatAndLogView();
         } else {
-            fragmentTransaction.remove(mChatAndLogFragment);
-            ibComment.setImageResource(R.drawable.ic_comment);
-            mIsShowingChat = false;
+            hideChatAndLogView();
         }
-        fragmentTransaction.commit();
+    }
+
+    private void showChatAndLogView() {
+        ibComment.setImageResource(R.drawable.ic_cancel);
+        flLogContainer.setVisibility(View.VISIBLE);
+        mIsShowingChat = true;
+    }
+
+    private void hideChatAndLogView() {
+        flLogContainer.setVisibility(View.GONE);
+        ibComment.setImageResource(R.drawable.ic_comment);
+        mIsShowingChat = false;
     }
 
     @OnClick(R.id.ibHelp)
@@ -467,6 +485,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
+
+        //Toggle Chat and Log visibility
+        if(isDealerOptionShowing){
+            hideChatAndLogView();
+        } else {
+            showChatAndLogView();
+        }
+
         //Show and hide all players when dealer option is showing to un-clutter the view
         for (User player : mPlayers) {
             Fragment playerFragment = getPlayerFragment(this, player);
@@ -562,7 +588,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onDealOptionSelected(Bundle bundle) {
-        // Do Nothing
+        // Do nothing
     }
 
     @Override
@@ -929,6 +955,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleRoundWinners(final List<User> roundWinners, final User from) {
+
+        //Hide the chat view to show full screen
+        hideChatAndLogView();
+
         Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
         if (!isEmpty(roundWinners) && from != null && from.isDealer()) {
             mMediaUtils.playClapsTone();

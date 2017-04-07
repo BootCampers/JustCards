@@ -25,19 +25,28 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/flGameContainer"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <FrameLayout
-        android:id="@+id/flLogContainer"
-        android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/common_margin"/>
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/flLogContainer"
+            android:layout_width="@dimen/chat_log_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/chat_log_top_margin"/>
+
+        <FrameLayout
+            android:id="@+id/flGameContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/flLogContainer"
+            android:layout_toStartOf="@+id/flLogContainer" />
+
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/ibHelp"
