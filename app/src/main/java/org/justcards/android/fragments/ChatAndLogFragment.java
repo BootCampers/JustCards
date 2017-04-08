@@ -40,6 +40,7 @@ public class ChatAndLogFragment extends Fragment {
 
     public interface OnChatAndLogListener {
         void onChat(ChatLog item);
+        void onChatScroll(int dy);
     }
 
     public static ChatAndLogFragment newInstance(int columnCount) {
@@ -75,6 +76,14 @@ public class ChatAndLogFragment extends Fragment {
         chatAndLogAdapter = new ChatAndLogAdapter(chatLogs, mListener);
         recyclerView.setAdapter(chatAndLogAdapter);
         recyclerView.smoothScrollToPosition(chatLogs.size());
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mListener.onChatScroll(dy);
+            }
+        });
 
         etNewMessage.setOnEditorActionListener((v, actionId, event) -> {
             boolean handled = false;

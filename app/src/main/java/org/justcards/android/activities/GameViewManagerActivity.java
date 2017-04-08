@@ -472,6 +472,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         flLogContainer.setVisibility(View.GONE);
         ibComment.setImageResource(R.drawable.ic_comment);
         mIsShowingChat = false;
+
+        fabMenu.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.ibHelp)
@@ -594,6 +596,16 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onChat(ChatLog item) {
         messagingClient.sendChatMessage(item.getDetails());
+    }
+
+    @Override
+    public void onChatScroll(int dy) {
+        //TODO: Do animation instead of setting visibility
+        if (dy > 0) {
+            fabMenu.setVisibility(View.INVISIBLE);
+        } else if (dy < 0) {
+            fabMenu.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
