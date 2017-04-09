@@ -153,6 +153,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.clGameLayout) ViewGroup container;
+    @BindView(R.id.flLogContainer) FrameLayout flLogContainer;
     @BindView(R.id.llSink) ViewGroup llSink;
     @BindView(R.id.ibComment) ImageButton ibComment;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
@@ -164,11 +165,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.fabMute) FloatingActionButton fabMute;
     @BindView(R.id.fabShow) FloatingActionButton fabShow;
     @BindView(R.id.fabMenu) FloatingActionMenu fabMenu;
-    @BindView(R.id.flLogContainer) FrameLayout flLogContainer;
 
     @BindString(R.string.msg_show_dealer_view) String msgDealerSide;
     @BindString(R.string.msg_show_player_view) String msgPlayerSide;
-    private FrameLayout mFlChatLogContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,8 +225,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
                 .commit();
-        findViewById(R.id.flLogContainer).setVisibility(View.VISIBLE);
-        ibComment.setImageResource(R.drawable.ic_cancel);
+        showChatAndLogView();
 
         // Controlling the fragments for display based on player's role
         if (mIsCurrentViewPlayer) {
@@ -286,14 +284,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             }
         }));
         llSink.setOnTouchListener(new OnTouchMoveListener(container));
-
-        showChatAndLogView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtils.animateCircularReveal(fabMenu);
+        AnimationUtils.animateCircularReveal(fabMenu.getMenuIconView());
     }
 
     @OnClick(R.id.fabSwap)
@@ -463,8 +459,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void showChatAndLogView() {
-        ibComment.setImageResource(R.drawable.ic_cancel);
         flLogContainer.setVisibility(View.VISIBLE);
+        ibComment.setImageResource(R.drawable.ic_cancel);
         mIsShowingChat = true;
     }
 
@@ -472,8 +468,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         flLogContainer.setVisibility(View.GONE);
         ibComment.setImageResource(R.drawable.ic_comment);
         mIsShowingChat = false;
-
-        fabMenu.setVisibility(View.VISIBLE);
+        fabMenu.showMenuButton(true);
     }
 
     @OnClick(R.id.ibHelp)
@@ -487,15 +482,14 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
-
-        //Toggle Chat and Log visibility
-        if(isDealerOptionShowing){
+        // Toggle Chat and Log visibility
+        if (isDealerOptionShowing) {
             hideChatAndLogView();
         } else {
             showChatAndLogView();
         }
 
-        //Show and hide all players when dealer option is showing to un-clutter the view
+        // Show and hide all players when dealer option is showing to un-clutter the view
         for (User player : mPlayers) {
             Fragment playerFragment = getPlayerFragment(this, player);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -600,11 +594,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @Override
     public void onChatScroll(int dy) {
-        //TODO: Do animation instead of setting visibility
         if (dy > 0) {
-            fabMenu.setVisibility(View.INVISIBLE);
+            fabMenu.hideMenuButton(true);
         } else if (dy < 0) {
-            fabMenu.setVisibility(View.VISIBLE);
+            fabMenu.showMenuButton(true);
         }
     }
 
@@ -967,7 +960,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     public void handleRoundWinners(final List<User> roundWinners, final User from) {
-
         //Hide the chat view to show full screen
         hideChatAndLogView();
 
