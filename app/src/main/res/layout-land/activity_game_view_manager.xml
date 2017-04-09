@@ -97,7 +97,7 @@
             style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Exit from game"/>
+            app:fab_label="Exit"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSwap"
@@ -111,14 +111,14 @@
             style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Mute for this round"/>
+            app:fab_label="Pass round"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabShow"
             style="@style/FabMenuButtonsSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_label="Show cards to everyone"/>
+            app:fab_label="Show cards"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
