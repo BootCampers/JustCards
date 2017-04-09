@@ -8,7 +8,10 @@
     <color name="colorAccentLight">#ff7043</color>
     <color name="colorAccentTranslucent">#22FF5722</color>
     <color name="colorTextPrimary">#FFFFFFFF</color>
-    <color name="colorTextSecondary">#757575</color>
+    <color name="colorTextHint">#757575</color>
+    <color name="colorControlNormal">#f44336</color>
+    <color name="colorControlActivated">#ff5722</color>
+    <color name="colorControlHighlight">#d32f2f</color>
     <color name="colorRipple">@color/white</color>
     <color name="colorTransparent">#00000000</color>
     <color name="shadow">#696969</color>

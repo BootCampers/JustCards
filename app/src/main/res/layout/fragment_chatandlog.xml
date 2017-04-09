@@ -11,8 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/chat_window_margin"
+        android:layout_marginEnd="@dimen/chat_window_margin"
+        android:layout_marginStart="@dimen/chat_window_margin"
+        android:hint="@string/comment"
         android:imeOptions="actionSend"
-        android:hint="@string/comment">
+        android:inputType="textMultiLine"
+        android:theme="@style/FragmentEditTextColorStyle">
         <requestFocus/>
     </EditText>
 
@@ -22,8 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/etChatMsg"
-        android:layout_marginLeft="@dimen/view_margin_8dp"
-        android:layout_marginRight="@dimen/view_margin_8dp"
+        android:layout_marginEnd="@dimen/chat_window_margin"
+        android:layout_marginStart="@dimen/chat_window_margin"
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragments.ChatAndLogFragment"
         tools:listitem="@layout/item_chat_log"/>

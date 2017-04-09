@@ -6,8 +6,18 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:textColorPrimary">@color/colorTextPrimary</item>
-        <item name="android:textColorHint">@color/colorTextPrimary</item>
+        <item name="android:textColorHint">@color/colorTextHint</item>
+        <item name="colorControlNormal">#d32f2f</item>
+        <item name="colorControlActivated">#ff5722</item>
+        <item name="colorControlHighlight">#f44336</item>
         <item name="android:buttonStyle">@style/AppButtons</item>
+    </style>
+
+    <style name="FragmentEditTextColorStyle" parent="AppTheme">
+        <item name="android:textColorHint">@color/colorTextHint</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
