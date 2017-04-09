@@ -35,7 +35,6 @@
             android:layout_width="@dimen/chat_log_width"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/chat_log_top_margin"/>
 
@@ -43,7 +42,6 @@
             android:id="@+id/flGameContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/flLogContainer"
             android:layout_toStartOf="@+id/flLogContainer" />
 
     </RelativeLayout>
@@ -54,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginEnd="@dimen/help_right_margin"
-        android:layout_marginRight="@dimen/help_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_help_outline"/>
@@ -65,7 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginEnd="@dimen/setting_right_margin"
-        android:layout_marginRight="@dimen/setting_right_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_info_outline"/>
@@ -76,7 +72,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:layout_marginEnd="@dimen/common_margin"
-        android:layout_marginRight="@dimen/common_margin"
         android:layout_marginTop="@dimen/common_margin"
         android:background="@color/colorTransparent"
         app:srcCompat="@drawable/ic_comment"/>
@@ -86,7 +81,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
@@ -133,7 +127,6 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="15dp"
         android:orientation="vertical"
@@ -154,7 +147,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
             android:layout_marginStart="2dp"
             app:srcCompat="@drawable/ic_sink_empty"/>
 

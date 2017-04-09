@@ -61,9 +61,8 @@
                     style="@style/LabelTextStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvGameNumberLabel"
-                    android:layout_alignLeft="@id/tvGameNumberLabel"
                     android:layout_alignStart="@id/tvGameNumberLabel"
+                    android:layout_below="@+id/tvGameNumberLabel"
                     android:paddingBottom="@dimen/text_margin"
                     android:paddingTop="@dimen/text_margin"
                     tools:text="54321"/>
@@ -75,11 +74,8 @@
                     android:layout_below="@+id/tvGameNumberLabel"
                     android:layout_marginBottom="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="@dimen/text_margin"
                     android:layout_marginStart="@dimen/text_margin"
                     android:layout_toEndOf="@id/tvGameNumber"
-                    android:layout_toRightOf="@id/tvGameNumber"
                     android:elevation="12dp"
                     app:fabSize="normal"
                     app:srcCompat="@drawable/ic_share"
@@ -117,7 +113,6 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="5dp"
                     android:paddingEnd="@dimen/text_margin"
-                    android:paddingRight="@dimen/text_margin"
                     android:paddingStart="@dimen/text_margin"
                     tools:text="@string/msg_selected_cards_count"/>
 
@@ -126,7 +121,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/tvSelectedCards"
-                    android:layout_toRightOf="@id/tvSelectedCards"
                     android:paddingEnd="@dimen/text_margin"
                     android:paddingLeft="@dimen/text_margin"
                     android:paddingRight="@dimen/text_margin"
