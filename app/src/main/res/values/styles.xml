@@ -120,6 +120,7 @@
     <style name="EditTextStyle">
         <item name="android:background">@drawable/foggy_textbox</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textColorHint">@color/colorTextHintSecondary</item>
     </style>
 
     <style name="SpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">

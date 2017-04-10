@@ -58,11 +58,9 @@
                     style="@style/LabelTextStyleMediumItalic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="20dp"
-                    android:layout_toEndOf="@+id/ivAvatar"
-                    android:layout_toRightOf="@+id/ivAvatar"/>
+                    android:layout_toEndOf="@+id/ivAvatar"/>
 
                 <TextView
                     android:id="@+id/tvAskUser"
@@ -70,11 +68,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tvWelcome"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@+id/ivAvatar"
-                    android:layout_toRightOf="@+id/ivAvatar"
                     android:text="@string/what_would_you_like_to_do"/>
 
             </RelativeLayout>

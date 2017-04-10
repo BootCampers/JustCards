@@ -9,6 +9,7 @@
     <color name="colorAccentTranslucent">#22FF5722</color>
     <color name="colorTextPrimary">#FFFFFFFF</color>
     <color name="colorTextHint">#757575</color>
+    <color name="colorTextHintSecondary">#e0e0e0</color>
     <color name="colorControlNormal">#f44336</color>
     <color name="colorControlActivated">#ff5722</color>
     <color name="colorControlHighlight">#d32f2f</color>
