@@ -45,7 +45,6 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.tvContent.setText(mValues.get(position).getDetails());
-        holder.tvTitle.setText(mValues.get(position).getFrom());
 
         Glide.with(holder.ivAvatar.getContext())
                 .load(holder.mItem.getFromAvatar())
@@ -70,9 +69,9 @@ public class ChatAndLogAdapter extends RecyclerView.Adapter<ChatAndLogAdapter.Vi
 
         final View mView;
         ChatLog mItem;
+
         @BindView(R.id.ivAvatar) CircularImageView ivAvatar;
         @BindView(R.id.tvContent) TextView tvContent;
-        @BindView(R.id.tvTitle) TextView tvTitle;
 
         ViewHolder(View view) {
             super(view);
