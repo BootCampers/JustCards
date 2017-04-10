@@ -1,5 +1,7 @@
 package org.justcards.android.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -155,7 +157,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @BindView(R.id.clGameLayout) ViewGroup container;
     @BindView(R.id.flLogContainer) FrameLayout flLogContainer;
     @BindView(R.id.llSink) ViewGroup llSink;
-    @BindView(R.id.ibComment) ImageButton ibComment;
+    @BindView(R.id.ibChat) ImageButton ibChat;
     @BindView(R.id.ibInfo) ImageButton ibInfo;
     @BindView(R.id.ibHelp) ImageButton ibHelp;
     @BindView(R.id.ivSink) ImageView ivSink;
@@ -449,7 +451,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         popup.showAsDropDown(view);
     }
 
-    @OnClick(R.id.ibComment)
+    @OnClick(R.id.ibChat)
     public void toggleChatAndLogView(View v) {
         if (!mIsShowingChat) {
             showChatAndLogView();
@@ -459,16 +461,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     private void showChatAndLogView() {
-        flLogContainer.setVisibility(View.VISIBLE);
-        ibComment.setImageResource(R.drawable.ic_cancel);
         mIsShowingChat = true;
+        ibChat.setImageResource(R.drawable.ic_cancel);
+        AnimationUtils.animateCornerReveal(flLogContainer);
     }
 
     private void hideChatAndLogView() {
-        flLogContainer.setVisibility(View.GONE);
-        ibComment.setImageResource(R.drawable.ic_comment);
         mIsShowingChat = false;
-        fabMenu.showMenuButton(true);
+        ibChat.setImageResource(R.drawable.ic_comment);
+        AnimationUtils.animateCornerUnReveal(flLogContainer, new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                flLogContainer.setVisibility(View.GONE);
+                fabMenu.showMenuButton(true);
+            }
+        });
     }
 
     @OnClick(R.id.ibHelp)

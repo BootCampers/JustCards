@@ -19,6 +19,9 @@ import org.justcards.android.R;
 public class AnimationUtils {
 
     private static final long FAB_ANIMATION_TIME = 300;
+    private static final long FAB_ANIMATION_END_TIME = 100;
+    private static final long ANIMATION_ENTER_DURATION = 500;
+    private static final long ANIMATION_EXIT_DURATION = 400;
     private static final int CAMERA_DISTANCE = 8000;
 
     private AnimationUtils() {
@@ -48,6 +51,59 @@ public class AnimationUtils {
                 anim.start();
             }
         }, animationTime);
+    }
+
+    public static void animateCornerReveal(final View view) {
+        animateCornerReveal(view, null);
+    }
+
+    private static void animateCornerReveal(final View view, final Animator.AnimatorListener listener) {
+        animateCornerReveal(view, listener, ANIMATION_ENTER_DURATION);
+    }
+
+    private static void animateCornerReveal(final View view, final Animator.AnimatorListener listener, final long duration) {
+        view.postDelayed(() -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                // getInstance the starting point for the clipping circle
+                int cx = view.getWidth();
+                int cy = 0;
+                // getInstance the final radius for the clipping circle
+                float finalRadius = (float) Math.hypot(view.getWidth(), view.getHeight());
+                // create the animator for this view (the start radius is zero)
+                Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0f, finalRadius);
+                anim.setDuration(duration);
+                if (listener != null) {
+                    anim.addListener(listener);
+                }
+                // make the view visible and start the animation
+                view.setVisibility(View.VISIBLE);
+                anim.start();
+            }
+        }, FAB_ANIMATION_TIME);
+    }
+
+    public static void animateCornerUnReveal(final View view, final Animator.AnimatorListener listener) {
+        animateCornerUnReveal(view, listener, ANIMATION_EXIT_DURATION);
+    }
+
+    private static void animateCornerUnReveal(final View view, final Animator.AnimatorListener listener, final long duration) {
+        view.postDelayed(() -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                // getInstance the starting point for the clipping circle
+                int cx = view.getWidth();
+                int cy = 0;
+                // getInstance the initial radius for the clipping circle
+                float initialRadius = (float) Math.hypot(view.getWidth(), view.getHeight());
+                // create the animator for this view
+                Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, initialRadius, 0f);
+                anim.setDuration(duration);
+                if (listener != null) {
+                    anim.addListener(listener);
+                }
+                // start the animation
+                anim.start();
+            }
+        }, FAB_ANIMATION_END_TIME);
     }
 
     private static void changeCameraDistance(final Context context, final View view) {

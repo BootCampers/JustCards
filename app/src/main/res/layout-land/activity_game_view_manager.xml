@@ -67,7 +67,7 @@
         app:srcCompat="@drawable/ic_info_outline"/>
 
     <ImageButton
-        android:id="@+id/ibComment"
+        android:id="@+id/ibChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
