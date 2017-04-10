@@ -56,7 +56,7 @@
     <string name="comment">Type a message</string>
     <string name="msg_add_another_deck">Add another deck</string>
     <string name="what_would_you_like_to_do">What would you like to do?</string>
-    <string name="share_game_number">Share this game number with others who would like to participate in the game with you!</string>
+    <string name="share_game_number">Share this game number with others to invite in the game!</string>
     <string name="msg_share">"Join us for a fun filled cards game on JustCards app with game id: "</string>
     <string name="msg_no_app_sharing">No app found for sharing</string>
     <string name="msg_show">Show</string>
@@ -69,7 +69,7 @@
     <string name="msg_end_round">End Round</string>
     <string name="msg_okay">Okay</string>
     <string name="msg_selected_cards_count">Selected %d cards</string>
-    <string name="msg_game_number">Game Number:</string>
+    <string name="msg_game_number">Game number:</string>
     <string name="msg_enter_game_number">Please enter game number first</string>
     <string name="reselect">Reselect</string>
     <string name="or">OR</string>
