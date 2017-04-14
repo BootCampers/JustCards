@@ -39,7 +39,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import org.justcards.android.R;
 import org.justcards.android.messaging.services.RegistrationService;
 import org.justcards.android.models.User;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
 
@@ -228,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         selectGameIntent.putExtra(PARAM_USER, Parcels.wrap(user));
         finish();
         startActivity(selectGameIntent);
-        AnimationUtils.enterVineTransition(this);
+        AnimationUtilsJC.enterVineTransition(this);
     }
 
     private GoogleApiClient getGoogleApiClient() {
@@ -272,7 +272,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     public void browseAvatar() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE, null);
-        AnimationUtils.enterVineTransition(this);
+        AnimationUtilsJC.enterVineTransition(this);
     }
 
     @OnClick(R.id.btnRegister)

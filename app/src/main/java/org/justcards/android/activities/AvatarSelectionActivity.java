@@ -13,7 +13,7 @@ import android.view.View;
 
 import org.justcards.android.R;
 import org.justcards.android.adapters.AvatarArrayAdapter;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
 
@@ -60,13 +60,13 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
         intent.putExtra(Constants.SELECTED_AVATAR, selectedAvatarUrl);
         setResult(RESULT_OK, intent);
         finish();
-        AnimationUtils.exitVineTransition(this);
+        AnimationUtilsJC.exitVineTransition(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtils.animateCircularReveal(fab);
+        AnimationUtilsJC.animateCircularReveal(fab);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-            AnimationUtils.exitVineTransition(this);
+            AnimationUtilsJC.exitVineTransition(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -87,6 +87,6 @@ public class AvatarSelectionActivity extends AppCompatActivity implements Avatar
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        AnimationUtils.exitVineTransition(this);
+        AnimationUtilsJC.exitVineTransition(this);
     }
 }

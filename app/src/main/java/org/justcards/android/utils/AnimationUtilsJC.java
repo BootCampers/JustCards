@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import org.justcards.android.R;
 
@@ -16,7 +18,7 @@ import org.justcards.android.R;
  * Created At: 12/10/2016
  * Version: ${VERSION}
  */
-public class AnimationUtils {
+public class AnimationUtilsJC {
 
     private static final long FAB_ANIMATION_TIME = 300;
     private static final long FAB_ANIMATION_END_TIME = 100;
@@ -24,12 +26,19 @@ public class AnimationUtils {
     private static final long ANIMATION_EXIT_DURATION = 400;
     private static final int CAMERA_DISTANCE = 8000;
 
-    private AnimationUtils() {
+    private AnimationUtilsJC() {
         //no instance
     }
 
     public interface FlipLoaderListener {
         void onFlip();
+    }
+
+    public static void bounceAnimation(Context context, final View view) {
+        final Animation bounceAnimation = AnimationUtils.loadAnimation(context, R.anim.bounce);
+        BounceInterpolator interpolator = new BounceInterpolator(0.2, 20);
+        bounceAnimation.setInterpolator(interpolator);
+        view.startAnimation(bounceAnimation);
     }
 
     public static void animateCircularReveal(final View view) {

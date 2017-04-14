@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import org.justcards.android.R;
 import org.justcards.android.models.Card;
 import org.justcards.android.models.User;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.RuleUtils;
 import org.justcards.android.views.OnCardsDragListener;
 
@@ -112,7 +112,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
             if (!card.isViewAllowed()) {
                 RuleUtils.handleNotAllowed(mContext, "This card is not allowed to be flipped!");
             } else {
-                AnimationUtils.animateFlip(mContext, holder.ivCard, () -> {
+                AnimationUtilsJC.animateFlip(mContext, holder.ivCard, () -> {
                     Glide.with(mContext)
                             .load(card.isShowingFront() ? card.getDrawableBack() : card.getDrawable(mContext))
                             .into(holder.ivCard);

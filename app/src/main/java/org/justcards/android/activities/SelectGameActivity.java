@@ -15,7 +15,7 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import org.justcards.android.R;
 import org.justcards.android.models.User;
 import org.justcards.android.db.GameDB;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcels;
 
@@ -58,8 +58,8 @@ public class SelectGameActivity extends AppCompatActivity implements GameDB.OnGa
         assert user != null;
         tvWelcome.setText("Welcome " + user.getDisplayName() + "!");
         loadRoundedImage(this, ivAvatar, user.getAvatarUri());
-        AnimationUtils.animateCircularReveal(tvWelcome, 500);
-        AnimationUtils.animateCircularReveal(tvAskUser, 500);
+        AnimationUtilsJC.animateCircularReveal(tvWelcome, 500);
+        AnimationUtilsJC.animateCircularReveal(tvAskUser, 500);
         etGameName.clearFocus();
     }
 
@@ -78,7 +78,7 @@ public class SelectGameActivity extends AppCompatActivity implements GameDB.OnGa
         Intent intent = new Intent(this, CreateGameActivity.class);
         intent.putExtra(DISPLAY_NAME, user.getDisplayName());
         startActivity(intent);
-        AnimationUtils.enterVineTransition(this);
+        AnimationUtilsJC.enterVineTransition(this);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class SelectGameActivity extends AppCompatActivity implements GameDB.OnGa
             gameViewManagerIntent.putExtra(Constants.PARAM_GAME_NAME, etGameName.getText().toString().trim());
             gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, true); // if false then it's dealer
             startActivity(gameViewManagerIntent);
-            AnimationUtils.enterZoomTransition(this);
+            AnimationUtilsJC.enterZoomTransition(this);
         } else {
             new LovelyStandardDialog(this)
                     .setTopColorRes(R.color.colorPrimary)

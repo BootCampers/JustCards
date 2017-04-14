@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import org.justcards.android.R;
 import org.justcards.android.adapters.CardsAdapter;
 import org.justcards.android.models.Card;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.views.CenterScrollListener;
 import org.justcards.android.views.CircleLayoutManager;
@@ -174,7 +174,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
                 RecyclerView.ViewHolder holder = rvCardsList.findViewHolderForAdapterPosition(position);
                 if (holder != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                     ImageView ivCard = ((CardsAdapter.ViewHolder) holder).ivCard;
-                    AnimationUtils.animateFlip(mAdapter.getContext(), ivCard, () ->
+                    AnimationUtilsJC.animateFlip(mAdapter.getContext(), ivCard, () ->
                             Glide.with(mAdapter.getContext())
                                     .load(currentCard.isShowingFront() ? currentCard.getDrawable(mAdapter.getContext()) : currentCard.getDrawableBack())
                                     .crossFade()

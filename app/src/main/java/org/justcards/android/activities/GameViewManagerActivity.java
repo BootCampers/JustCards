@@ -59,7 +59,7 @@ import org.justcards.android.models.ChatLog;
 import org.justcards.android.models.Game;
 import org.justcards.android.models.GameRules;
 import org.justcards.android.models.User;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
@@ -291,7 +291,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtils.animateCircularReveal(fabMenu.getMenuIconView());
+        AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
     }
 
     @OnClick(R.id.fabSwap)
@@ -413,7 +413,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     ((JustCardsAndroidApplication) getApplication()).removeAllObservers();
                     User.getCurrentUser(this).reset(this);
                     finish();
-                    AnimationUtils.exitZoomTransition(this);
+                    AnimationUtilsJC.exitZoomTransition(this);
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
@@ -463,13 +463,15 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     private void showChatAndLogView() {
         mIsShowingChat = true;
         ibChat.setImageResource(R.drawable.ic_cancel);
-        AnimationUtils.animateCornerReveal(flLogContainer);
+        AnimationUtilsJC.bounceAnimation(this, ibChat);
+        AnimationUtilsJC.animateCornerReveal(flLogContainer);
     }
 
     private void hideChatAndLogView() {
         mIsShowingChat = false;
         ibChat.setImageResource(R.drawable.ic_comment);
-        AnimationUtils.animateCornerUnReveal(flLogContainer, new AnimatorListenerAdapter() {
+        AnimationUtilsJC.bounceAnimation(this, ibChat);
+        AnimationUtilsJC.animateCornerUnReveal(flLogContainer, new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);

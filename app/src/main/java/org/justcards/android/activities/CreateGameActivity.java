@@ -18,7 +18,7 @@ import android.widget.TextView;
 import org.justcards.android.R;
 import org.justcards.android.models.Card;
 import org.justcards.android.db.GameDB;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.Constants;
 import org.parceler.Parcels;
 
@@ -78,7 +78,7 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtils.animateCircularReveal(fabShareGameId);
+        AnimationUtilsJC.animateCircularReveal(fabShareGameId);
     }
 
     @OnClick(R.id.fabShareGameId)
@@ -101,7 +101,7 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
         if (mCards == null || mCards.size() == 0) {
             Intent intent = new Intent(this, SelectCardsActivity.class);
             startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
-            AnimationUtils.enterVineTransition(this);
+            AnimationUtilsJC.enterVineTransition(this);
         } else {
             if (TextUtils.isEmpty(tvGameNumber.getText())) {
                 showSnackBar(getApplicationContext(), view, msgEnterGameNumber);
@@ -111,7 +111,7 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
                 gameViewManagerIntent.putExtra(Constants.PARAM_CARDS, getParcelable(mCards));
                 gameViewManagerIntent.putExtra(Constants.PARAM_CURRENT_VIEW_PLAYER, false); // go to dealer view by default
                 startActivity(gameViewManagerIntent);
-                AnimationUtils.enterZoomTransition(this);
+                AnimationUtilsJC.enterZoomTransition(this);
                 finish();
             }
         }
@@ -121,7 +121,7 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
     public void selectCards() {
         Intent intent = new Intent(this, SelectCardsActivity.class);
         startActivityForResult(intent, REQ_CODE_SELECT_CARDS);
-        AnimationUtils.enterVineTransition(this);
+        AnimationUtilsJC.enterVineTransition(this);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-            AnimationUtils.exitVineTransition(this);
+            AnimationUtilsJC.exitVineTransition(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -160,6 +160,6 @@ public class CreateGameActivity extends AppCompatActivity implements GameDB.OnGa
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        AnimationUtils.exitVineTransition(this);
+        AnimationUtilsJC.exitVineTransition(this);
     }
 }

@@ -11,7 +11,7 @@ import android.view.View;
 import org.justcards.android.R;
 import org.justcards.android.fragments.SelectCardsFragment;
 import org.justcards.android.models.Card;
-import org.justcards.android.utils.AnimationUtils;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.parceler.Parcels;
 
@@ -59,20 +59,20 @@ public class SelectCardsActivity extends AppCompatActivity {
         data.putExtra(PARAM_CARDS, Parcels.wrap(cards));
         setResult(RESULT_OK, data);
         finish();
-        AnimationUtils.exitVineTransition(this);
+        AnimationUtilsJC.exitVineTransition(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtils.animateCircularReveal(fabSaveSelection);
+        AnimationUtilsJC.animateCircularReveal(fabSaveSelection);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-            AnimationUtils.exitVineTransition(this);
+            AnimationUtilsJC.exitVineTransition(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -81,6 +81,6 @@ public class SelectCardsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        AnimationUtils.exitVineTransition(this);
+        AnimationUtilsJC.exitVineTransition(this);
     }
 }
