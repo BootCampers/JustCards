@@ -6,6 +6,7 @@
     android:id="@+id/clGameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_game_background"
     android:fitsSystemWindows="true"
     tools:context=".activities.GameViewManagerActivity">
 
@@ -24,18 +25,131 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/flGameContainer"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:orientation="horizontal">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabMenu"
+        <FrameLayout
+            android:id="@+id/flLogContainer"
+            android:layout_width="@dimen/chat_log_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/chat_log_top_margin"/>
+
+        <FrameLayout
+            android:id="@+id/flGameContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@+id/flLogContainer" />
+
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/ibHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email"/>
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="@dimen/help_right_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_help_outline"/>
+
+    <ImageButton
+        android:id="@+id/ibInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="@dimen/setting_right_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_info_outline"/>
+
+    <ImageButton
+        android:id="@+id/ibChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="@dimen/common_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:background="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_comment"/>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fabMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:menu_colorNormal="?attr/colorAccent"
+        app:menu_colorPressed="?attr/colorAccent"
+        app:menu_colorRipple="@color/colorRipple"
+        app:menu_labels_ellipsize="end"
+        app:menu_labels_position="left"
+        app:menu_labels_singleLine="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabExit"
+            style="@style/FabMenuButtonsSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Exit"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabSwap"
+            style="@style/FabMenuButtonsSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="@string/msg_show_dealer_view"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabMute"
+            style="@style/FabMenuButtonsSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Pass round"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabShow"
+            style="@style/FabMenuButtonsSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Show cards"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+    <LinearLayout
+        android:id="@+id/llSink"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical"
+        app:layout_anchor="@+id/fabMenu"
+        app:layout_anchorGravity="bottom|left">
+
+        <TextView
+            android:id="@+id/tvSinkCardsCount"
+            style="@style/RoundTextStyle"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:text="@string/zero"
+            tools:text="0"/>
+
+        <ImageView
+            android:id="@+id/ivSink"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            app:srcCompat="@drawable/ic_sink_empty"/>
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

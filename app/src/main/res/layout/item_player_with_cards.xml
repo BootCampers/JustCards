@@ -4,29 +4,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llPlayerContainer"
-    android:layout_width="wrap_content"
+    android:layout_width="175dp"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/ivPlayerAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        app:civ_border_color="#EEEEEE"
-        app:civ_border_width="0dp"
-        app:civ_shadow="true"
-        app:civ_shadow_color="#8BC34A"
-        app:civ_shadow_radius="0"
-        app:srcCompat="@drawable/ic_face"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <FrameLayout
+            android:layout_width="68dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp">
+
+            <TextView
+                android:id="@+id/tvCardsCount"
+                style="@style/RoundFloatingTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/zero"
+                tools:text="0"/>
+
+            <TextView
+                android:id="@+id/tvScore"
+                style="@style/RoundFloatingTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:text="@string/zero"
+                tools:text="0"/>
+
+        </FrameLayout>
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/ivPlayerAvatar"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_face"/>
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvUserName"
+        style="@style/TextStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_margin="5dp"
         tools:text="Name"/>
 
     <include layout="@layout/fragment_cards_list"/>

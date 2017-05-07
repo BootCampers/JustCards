@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 
+import org.justcards.android.activities.GameViewManagerActivity;
 import org.justcards.android.fragments.PlayerFragment;
 import org.justcards.android.models.User;
 
@@ -28,7 +29,7 @@ public class PlayerViewHelper {
         //no instance
     }
 
-    public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players) {
+    public static void addPlayers(@NonNull final GameViewManagerActivity activity, final int containerResId, final List<User> players) {
         View decorView = activity.getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();

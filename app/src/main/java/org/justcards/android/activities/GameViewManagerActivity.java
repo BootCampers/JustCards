@@ -687,7 +687,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mDealerViewFragment.addPlayers(players);
         }
 
-        PlayerViewHelper.addPlayers(this, container.getId(), players);
+        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, container.getId(), players);
         for (User player : players) {
             if (player.equals(getCurrentUser(this))) {
                 togglePlayerView(player);
