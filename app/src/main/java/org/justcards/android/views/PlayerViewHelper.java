@@ -43,7 +43,11 @@ public class PlayerViewHelper {
 
         for (User player : players) {
             x += incX;
-            addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
+            if(activity.getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player)) == null) {
+                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
+            } else {
+                Log.i(TAG, "Player fragment already added.");
+            }
         }
     }
 
@@ -66,7 +70,9 @@ public class PlayerViewHelper {
     }
 
     private static String getPlayerFragmentTag(final User player) {
-        return player.getDisplayName() + "_" + player.getUserId();
+        String playerFragmentTag = player.getDisplayName() + "_" + player.getUserId();
+        Log.i(TAG, "Player fragment tag is: " + playerFragmentTag);
+        return playerFragmentTag;
     }
 
     private static String getPlayerCardsAdapterTag(final User player) {
