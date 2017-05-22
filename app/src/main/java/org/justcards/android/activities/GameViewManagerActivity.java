@@ -3,8 +3,10 @@ package org.justcards.android.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -176,19 +178,24 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view_manager);
-        ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-        mMediaUtils = new MediaUtils(this);
-        initGameParams();
-        initFragments();
-        initViews();
+            ButterKnife.bind(this);
 
-        ((JustCardsAndroidApplication) getApplication()).addObserver(this);
+            setSupportActionBar(toolbar);
+
+            mMediaUtils = new MediaUtils(this);
+            initGameParams();
+            initFragments();
+            initViews();
+
+            ((JustCardsAndroidApplication) getApplication()).addObserver(this);
+        }
     }
 
     private void initGameParams() {
@@ -291,7 +298,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
+        }
     }
 
     @OnClick(R.id.fabSwap)
@@ -627,57 +636,67 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         int fromPosition;
         int toPosition;
 
-        switch (event) {
-            case EVENT_DEAL_CARDS:
-                User to = fromJson(gameData.get(PARAM_PLAYER));
-                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                handleDeal(card, from, to);
-                break;
-            case EVENT_EXCHANGE_CARD_WITH_TABLE:
-                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                toPosition = Integer.valueOf(gameData.get(TO_POSITION));
-                boolean pickedFromTable = Boolean.valueOf(gameData.get(TABLE_PICKED));
-                handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
-                break;
-            case EVENT_SWAP_CARD_WITHIN_PLAYER:
-                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                toPosition = Integer.valueOf(gameData.get(TO_POSITION));
-                handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
-                break;
-            case EVENT_DROP_CARD_TO_SINK:
-                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                String fromTag = gameData.get(FROM_TAG);
-                fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
-                handleCardDropToSink(from, card, fromTag, fromPosition);
-                break;
-            case EVENT_TOGGLE_CARD:
-                card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
-                int position = Integer.valueOf(gameData.get(POSITION));
-                String onTag = gameData.get(ON_TAG);
-                handleToggleCard(from, card, position, onTag);
-                break;
-            case EVENT_ROUND_WINNERS:
-                List<User> roundWinners = gson.fromJson(gameData.get(PARAM_PLAYERS), getUsersType());
-                handleRoundWinners(roundWinners, from);
-                break;
-            case EVENT_END_ROUND:
-                handleEndRound(from);
-                break;
-            case EVENT_SELECT_GAME_RULES:
-                String code = gameData.get(RULE_CODE);
-                Object selection = null;
-                String selectionElement = gameData.get(RULE_SELECTION);
-                if (!TextUtils.isEmpty(selectionElement)) {
-                    selection = Boolean.valueOf(selectionElement);
-                }
-                handleGameRules(from, code, selection);
-                break;
-            case EVENT_CHAT_MESSAGE:
-                onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), gameData.get(PARAM_CHAT));
-                break;
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && !this.isDestroyed()) {
+
+            switch (event) {
+                case EVENT_DEAL_CARDS:
+                    User to = fromJson(gameData.get(PARAM_PLAYER));
+                    card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    handleDeal(card, from, to);
+                    break;
+                case EVENT_EXCHANGE_CARD_WITH_TABLE:
+                    card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                    toPosition = Integer.valueOf(gameData.get(TO_POSITION));
+                    boolean pickedFromTable = Boolean.valueOf(gameData.get(TABLE_PICKED));
+                    handleCardExchangeWithTable(from, card, fromPosition, toPosition, pickedFromTable);
+                    break;
+                case EVENT_SWAP_CARD_WITHIN_PLAYER:
+                    card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                    toPosition = Integer.valueOf(gameData.get(TO_POSITION));
+                    handleCardExchangeWithinPlayer(from, card, fromPosition, toPosition);
+                    break;
+                case EVENT_DROP_CARD_TO_SINK:
+                    card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    String fromTag = gameData.get(FROM_TAG);
+                    fromPosition = Integer.valueOf(gameData.get(FROM_POSITION));
+                    handleCardDropToSink(from, card, fromTag, fromPosition);
+                    break;
+                case EVENT_TOGGLE_CARD:
+                    card = gson.fromJson(gameData.get(PARAM_CARDS), Card.class);
+                    int position = Integer.valueOf(gameData.get(POSITION));
+                    String onTag = gameData.get(ON_TAG);
+                    handleToggleCard(from, card, position, onTag);
+                    break;
+                case EVENT_ROUND_WINNERS:
+                    List<User> roundWinners = gson.fromJson(gameData.get(PARAM_PLAYERS), getUsersType());
+                    handleRoundWinners(roundWinners, from);
+                    break;
+                case EVENT_END_ROUND:
+                    handleEndRound(from);
+                    break;
+                case EVENT_SELECT_GAME_RULES:
+                    String code = gameData.get(RULE_CODE);
+                    Object selection = null;
+                    String selectionElement = gameData.get(RULE_SELECTION);
+                    if (!TextUtils.isEmpty(selectionElement)) {
+                        selection = Boolean.valueOf(selectionElement);
+                    }
+                    handleGameRules(from, code, selection);
+                    break;
+                case EVENT_CHAT_MESSAGE:
+                    onNewLogEvent(from.getDisplayName(), from.getAvatarUri(), gameData.get(PARAM_CHAT));
+                    break;
+            }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // ignore orientation/keyboard change
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override

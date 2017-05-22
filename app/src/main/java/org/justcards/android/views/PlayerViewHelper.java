@@ -52,11 +52,17 @@ public class PlayerViewHelper {
 
         Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
 
-        fm.beginTransaction()
-                .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
-                .commitNow();
+        if(fm != null && playerCardsFragment != null) {
+            try {
+                fm.beginTransaction()
+                        .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
+                        .commitNow();
 
-        fm.executePendingTransactions();
+                fm.executePendingTransactions();
+            } catch (NullPointerException | IllegalStateException e){
+                
+            }
+        }
     }
 
     private static String getPlayerFragmentTag(final User player) {
