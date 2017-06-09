@@ -1,21 +1,20 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.TutorialFragment"
     android:layout_margin="30dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".fragments.TutorialFragment">
 
-    <github.chenupt.springindicator.SpringIndicator
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:siTextSize="18sp"
-        app:siTextColor="@color/colorPrimaryDark"
-        app:siSelectedTextColor="@color/white"
-        app:siIndicatorColor="@color/colorPrimary"
+    <github.chenupt.springindicator.SpringIndicator xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/indicator"
         android:layout_width="match_parent"
-        android:layout_height="36dp" />
+        android:layout_height="36dp"
+        app:siIndicatorColor="@color/colorPrimary"
+        app:siSelectedTextColor="@color/white"
+        app:siTextColor="@color/colorPrimaryDark"
+        app:siTextSize="18sp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
@@ -23,12 +22,11 @@
         android:layout_height="match_parent" />
 
     <Button
+        android:id="@+id/btn_tutorial_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/msg_close"
-        android:id="@+id/btn_tutorial_done"
         android:layout_gravity="center|end"
-        android:layout_marginRight="40dp"/>
-
+        android:layout_marginRight="40dp"
+        android:text="@string/msg_close" />
 
 </FrameLayout>

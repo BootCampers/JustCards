@@ -1,7 +1,6 @@
 package org.justcards.android.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -22,17 +21,10 @@ import github.chenupt.springindicator.SpringIndicator;
 import static org.justcards.android.utils.Constants.ARG_FROM_PAGE;
 import static org.justcards.android.utils.Constants.ARG_TO_PAGE;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TutorialFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class TutorialFragment extends Fragment {
 
     @BindView(R.id.btn_tutorial_done)
     Button btnTutorialDone;
-    private OnFragmentInteractionListener mListener;
     private TutorialPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -84,22 +76,10 @@ public class TutorialFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @OnClick(R.id.btn_tutorial_done)
@@ -110,22 +90,7 @@ public class TutorialFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         unbinder.unbind();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

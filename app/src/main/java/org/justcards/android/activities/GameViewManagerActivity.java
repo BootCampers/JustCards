@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -128,7 +127,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         CardsFragment.OnToggleCardListener,
         CardsFragment.OnLogEventListener,
         ScoringFragment.OnScoreFragmentListener,
-        TutorialFragment.OnFragmentInteractionListener,
         UsersDB.OnEventListener,
         TableDB.OnEventListener,
         Observer {
@@ -618,11 +616,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         } else if (dy < 0) {
             fabMenu.showMenuButton(true);
         }
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //Do nothing
     }
 
     @SuppressWarnings("unchecked")
