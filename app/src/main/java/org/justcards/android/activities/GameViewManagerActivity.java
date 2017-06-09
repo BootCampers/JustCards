@@ -492,11 +492,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @OnClick(R.id.ibHelp)
     public void showTutorial(View view) {
-        /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         TutorialFragment tutorialFragment = TutorialFragment.newInstance(0,0);
         fragmentTransaction.add(R.id.flGameContainer, tutorialFragment, "Tutorial");
-        fragmentTransaction.commit();*/
-        startActivity(new Intent(GameViewManagerActivity.this, TutorialActivity.class));
+        fragmentTransaction.commit();
+        //startActivity(new Intent(GameViewManagerActivity.this, TutorialActivity.class));
     }
 
     @Override

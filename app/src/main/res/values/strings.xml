@@ -76,5 +76,6 @@
 
     <string name="facebook_app_id">646487625523989</string>
     <string name="login_with_facebook">Login with Facebook</string>
+    <string name="msg_close">Close</string>
 
 </resources>
