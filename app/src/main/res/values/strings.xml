@@ -61,7 +61,6 @@
     <string name="msg_no_app_sharing">No app found for sharing</string>
     <string name="msg_show">Show</string>
     <string name="msg_hide">Hide</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="zero">0</string>
     <string name="msg_congratulations_winner">Congratulations to the Winners of this round!</string>
     <string name="msg_show_dealer_view">Switch dealer view</string>
@@ -77,5 +76,13 @@
     <string name="facebook_app_id">646487625523989</string>
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="msg_close">Close</string>
+
+    <string-array name="array_tutorial">
+        <item>Select cards, share code and start the game.</item>
+        <item>Only dealer: Configure rules and deal the cards.</item>
+        <item>Access game logs and messages anytime during the game.</item>
+        <item>Only dealer: Use the button to toggle between dealer and player view.</item>
+        <item>Use the code provided by the dealer to join the game.</item>
+    </string-array>
 
 </resources>

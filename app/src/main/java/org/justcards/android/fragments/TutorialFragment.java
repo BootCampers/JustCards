@@ -64,7 +64,7 @@ public class TutorialFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tutorial, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        mSectionsPagerAdapter = new TutorialPagerAdapter(getChildFragmentManager());
+        mSectionsPagerAdapter = new TutorialPagerAdapter(getChildFragmentManager(), getActivity());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) view.findViewById(R.id.container);

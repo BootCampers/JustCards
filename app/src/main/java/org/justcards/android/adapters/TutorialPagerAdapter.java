@@ -1,5 +1,6 @@
 package org.justcards.android.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,8 +13,11 @@ import org.justcards.android.fragments.TutorialPageDetailFragment;
 
 public class TutorialPagerAdapter extends FragmentPagerAdapter{
 
-    public TutorialPagerAdapter(FragmentManager fm) {
+    private Context mContext;
+
+    public TutorialPagerAdapter(FragmentManager fm, Context mContext) {
         super(fm);
+        this.mContext = mContext;
     }
 
     @Override
@@ -24,8 +28,8 @@ public class TutorialPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
-        return 3;
+        // Show 5 total pages.
+        return 5;
     }
 
     @Override
