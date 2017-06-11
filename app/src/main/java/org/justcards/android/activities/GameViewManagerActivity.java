@@ -687,12 +687,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        // ignore orientation/keyboard change
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
     public void handlePlayersAdded(final List<User> players) {
         mPlayers.addAll(players);
         if (mDealerViewFragment != null) {
