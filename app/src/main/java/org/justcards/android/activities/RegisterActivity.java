@@ -1,6 +1,8 @@
 package org.justcards.android.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -40,6 +42,7 @@ import org.justcards.android.R;
 import org.justcards.android.messaging.services.RegistrationService;
 import org.justcards.android.models.User;
 import org.justcards.android.utils.AnimationUtilsJC;
+import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
 
@@ -87,6 +90,16 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.FIRST_USE_PREFERENCE,
+                Context.MODE_PRIVATE);
+
+        boolean firstUse = sharedPreferences.getBoolean(Constants.FIRST_USE, true);
+
+        if(firstUse == true) {
+            startActivity(new Intent(this, TutorialActivity.class));
+            finish();
+        }
 
         // Check whether Google Play Services are enabled or not.
         // If enabled, start the Google Instance ID Registration Service

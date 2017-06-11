@@ -18,4 +18,5 @@
     <dimen name="textbox_radius">4dp</dimen>
     <dimen name="chat_log_top_margin">44dp</dimen>
     <dimen name="chat_log_width">180dp</dimen>
+    <dimen name="tutorial_index_dimen">48dp</dimen>
 </resources>

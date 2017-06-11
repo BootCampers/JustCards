@@ -103,4 +103,7 @@ public class Constants {
 
     /** View Properties here */
     public static final float CIRCULAR_BORDER_WIDTH = 6f;
+
+    public static final String FIRST_USE_PREFERENCE = "first_use_preference";
+    public static final String FIRST_USE = "first_use";
 }

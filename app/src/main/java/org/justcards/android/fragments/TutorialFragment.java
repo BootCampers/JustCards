@@ -1,6 +1,8 @@
 package org.justcards.android.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -10,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.justcards.android.R;
+import org.justcards.android.activities.RegisterActivity;
 import org.justcards.android.adapters.TutorialPagerAdapter;
+import org.justcards.android.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,7 +88,20 @@ public class TutorialFragment extends Fragment {
 
     @OnClick(R.id.btn_tutorial_done)
     public void doneTutorial(View view){
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        SharedPreferences sharedPreferences = getActivity()
+                .getSharedPreferences(Constants.FIRST_USE_PREFERENCE, Context.MODE_PRIVATE);
+
+        boolean firstUse = sharedPreferences.getBoolean(Constants.FIRST_USE, true);
+
+        if(firstUse == true) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(Constants.FIRST_USE, false);
+            editor.commit();
+            startActivity(new Intent(getActivity(), RegisterActivity.class));
+            getActivity().finish();
+        } else {
+            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        }
     }
 
     @Override
@@ -92,5 +109,4 @@ public class TutorialFragment extends Fragment {
         super.onDetach();
         unbinder.unbind();
     }
-
 }

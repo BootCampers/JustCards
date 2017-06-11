@@ -1,11 +1,13 @@
 package org.justcards.android.application;
 
 import android.app.Application;
+import android.content.Intent;
 import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
 
 import org.justcards.android.R;
+import org.justcards.android.activities.TutorialActivity;
 import org.justcards.android.interfaces.Observable;
 import org.justcards.android.interfaces.Observer;
 import org.justcards.android.utils.Constants;
