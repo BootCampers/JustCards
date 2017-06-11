@@ -21,6 +21,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|end"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="@string/msg_tutorial_navigation_landscape"
+        android:textColor="@color/colorTextHint" />
+
     <Button
         android:id="@+id/btn_tutorial_done"
         android:layout_width="wrap_content"
