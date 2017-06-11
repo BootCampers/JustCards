@@ -73,7 +73,7 @@
             android:parentActivityName=".activities.SelectGameActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.justcards.android.activities.SelectGameActivity"/>

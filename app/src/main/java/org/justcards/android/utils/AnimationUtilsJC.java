@@ -47,8 +47,7 @@ public class AnimationUtilsJC {
 
     public static void animateCircularReveal(final View view, final long animationTime) {
         view.postDelayed(() -> {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
-                    && view.isAttachedToWindow()) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 // getInstance the center for the clipping circle
                 int cx = view.getMeasuredWidth() / 2;
                 int cy = view.getMeasuredHeight() / 2;

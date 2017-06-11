@@ -43,11 +43,7 @@ public class PlayerViewHelper {
 
         for (User player : players) {
             x += incX;
-            if(activity.getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player)) == null) {
-                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
-            } else {
-                Log.i(TAG, "Player fragment already added.");
-            }
+            addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
         }
     }
 
@@ -56,17 +52,11 @@ public class PlayerViewHelper {
 
         Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
 
-        if(fm != null && playerCardsFragment != null) {
-            try {
-                fm.beginTransaction()
-                        .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
-                        .commitNow();
+        fm.beginTransaction()
+                .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
+                .commitNow();
 
-                fm.executePendingTransactions();
-            } catch (NullPointerException | IllegalStateException e){
-                
-            }
-        }
+        fm.executePendingTransactions();
     }
 
     private static String getPlayerFragmentTag(final User player) {
