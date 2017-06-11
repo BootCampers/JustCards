@@ -79,7 +79,8 @@
                 android:value="org.justcards.android.activities.SelectGameActivity"/>
         </activity>
 
-        <activity android:name=".activities.TutorialActivity"/>
+        <activity android:name=".activities.TutorialActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"

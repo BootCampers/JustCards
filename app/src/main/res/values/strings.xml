@@ -76,6 +76,8 @@
     <string name="facebook_app_id">646487625523989</string>
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="msg_close">Close</string>
+    <string name="msg_tutorial_navigation_portrait">Swipe to navigate through Tutorial screens. \nHit Close to exit.</string>
+    <string name="msg_tutorial_navigation_landscape">Swipe to navigate \nthrough Tutorial screens. \nHit Close to exit.</string>
 
     <string-array name="array_tutorial">
         <item>Select cards, share code and start the game.</item>

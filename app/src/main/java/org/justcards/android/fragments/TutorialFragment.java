@@ -14,6 +14,7 @@ import android.widget.Button;
 import org.justcards.android.R;
 import org.justcards.android.activities.RegisterActivity;
 import org.justcards.android.adapters.TutorialPagerAdapter;
+import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.Constants;
 
 import butterknife.BindView;
@@ -99,6 +100,7 @@ public class TutorialFragment extends Fragment {
             editor.commit();
             startActivity(new Intent(getActivity(), RegisterActivity.class));
             getActivity().finish();
+            AnimationUtilsJC.exitVineTransition(getActivity());
         } else {
             getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         }
