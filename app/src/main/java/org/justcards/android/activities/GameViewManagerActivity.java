@@ -292,7 +292,23 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
+        View menu = fabMenu.getMenuIconView();
+        menu.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                v.removeOnLayoutChangeListener(this);
+                AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        messagingClient.leaveGame();
+        mUsersDb.observeOff();
+        mTableDb.observeOff();
+        ((JustCardsAndroidApplication) getApplication()).removeAllObservers();
+        super.onDestroy();
     }
 
     @OnClick(R.id.fabSwap)
