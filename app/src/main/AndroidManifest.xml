@@ -61,12 +61,11 @@
             android:name=".activities.SelectCardsActivity"
             android:label="@string/title_activity_select_cards"
             android:parentActivityName=".activities.CreateGameActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="org.justcards.android.activities.CreateGameActivity"/>
-
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.justcards.android.activities.CreateGameActivity"/>
+        </activity>
         <activity
             android:name=".activities.GameViewManagerActivity"
             android:label="@string/title_activity_game_view_manager"
