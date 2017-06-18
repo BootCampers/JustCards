@@ -79,12 +79,11 @@
     <string name="msg_tutorial_navigation_portrait">Swipe to navigate through Tutorial screens. \nHit Close to exit.</string>
     <string name="msg_tutorial_navigation_landscape">Swipe to navigate \nthrough Tutorial screens. \nHit Close to exit.</string>
 
-    <string-array name="array_tutorial">
-        <item>Select cards, share code and start the game.</item>
+    <string-array name="array_tutorial_strings">
+        <item>Only 1 person should select cards, share code and start the game. This player becomes dealer as well.</item>
+        <item>Use the code provided by the dealer to join the game.</item>
         <item>Only dealer: Configure rules and deal the cards.</item>
         <item>Access game logs and messages anytime during the game.</item>
         <item>Only dealer: Use the button to toggle between dealer and player view.</item>
-        <item>Use the code provided by the dealer to join the game.</item>
     </string-array>
-
 </resources>

@@ -45,12 +45,28 @@ public class TutorialPageDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_tutorial, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.tvTitle);
-        String[] tutorialMessages = getResources().getStringArray(R.array.array_tutorial);
-        textView.setText(tutorialMessages[getArguments().getInt(ARG_SECTION_NUMBER)-1]);
+        String[] tutorialMessages = getResources().getStringArray(R.array.array_tutorial_strings);
+        int currentIndex = getArguments().getInt(ARG_SECTION_NUMBER)-1;
+        textView.setText(tutorialMessages[currentIndex]);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.ivGif);
         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-        Glide.with(this).load(R.raw.start_game).into(imageViewTarget);
-
+        switch (currentIndex) {
+            case 0:
+                Glide.with(this).load(R.raw.start_game).into(imageViewTarget);
+                break;
+            case 1:
+                Glide.with(this).load(R.raw.player_join).into(imageViewTarget);
+                break;
+            case 2:
+                Glide.with(this).load(R.raw.deal_options).into(imageViewTarget);
+                break;
+            case 3:
+                Glide.with(this).load(R.raw.toggle_chat).into(imageViewTarget);
+                break;
+            case 4:
+                Glide.with(this).load(R.raw.switch_dealer_player).into(imageViewTarget);
+                break;
+        }
         return rootView;
     }
 }
