@@ -34,7 +34,7 @@ public class PlayerUtils {
             "http://i.imgur.com/Ff4sFSI.jpg", // Audrey Hepburn
             "http://i.imgur.com/EZgJK05.jpg", // Golden Gate Bridge
             "http://i.imgur.com/vwqqqAW.png", // Ferris Bueller
-            "http://i.imgur.com/DbbwaZJ.jpg", // Nathan
+            "http://i.imgur.com/zI4lCCJ.jpg", // DiCaprio
             "http://i.imgur.com/LngWF3K.jpg", // Godfather
             "http://i.imgur.com/VCY27Er.jpg", // Joker
             "http://i.imgur.com/8iASC56.jpg", // Afghan Girl
@@ -43,7 +43,8 @@ public class PlayerUtils {
             "http://i.imgur.com/9OHzici.jpg", // Ellie Kemper
             "http://i.imgur.com/PK8mnCC.jpg", // Trump
             "http://i.imgur.com/GkyKh.jpg",   // Avatar
-            "http://i.imgur.com/jrmh8XL.jpg"  // Cartoon Puppy
+            "http://i.imgur.com/jrmh8XL.jpg", // Cartoon Puppy
+            "https://i.imgur.com/bmfKrEA.jpg" // Iron Hulk
     };
 
     public static List<User> getPlayers(int count) {
