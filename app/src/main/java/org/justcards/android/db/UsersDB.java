@@ -98,11 +98,12 @@ public class UsersDB {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled: " + databaseError.getDetails());
+                Log.e(TAG, "onCancelled " + databaseError.getDetails());
             }
         };
 
         mUsersDbRef.addChildEventListener(mChildEventListener);
+        Log.d(TAG, "observeOn: started listening to users db");
 
         return this;
     }

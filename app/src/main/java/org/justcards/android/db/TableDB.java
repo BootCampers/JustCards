@@ -142,6 +142,8 @@ public class TableDB {
 
         mTableDbRef.addChildEventListener(mTableDbChildEventListener);
         mSinkDbRef.addChildEventListener(mSinkDbChildEventListener);
+        Log.d(TAG, "observeOn: started listening to table db");
+        Log.d(TAG, "observeOn: started listening to sink db");
 
         return this;
     }

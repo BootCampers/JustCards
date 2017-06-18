@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -198,6 +197,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mGameName = bundle.getString(PARAM_GAME_NAME);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
+            Log.d(TAG, "initGameParams: retrieved from intent bundle: " + "mGameName: " + mGameName + ", mCards.size(): " + mCards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
             Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
 
             // Save Game Name
@@ -208,6 +208,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mTableDb = TableDB.getInstance(mGameName).observeOn(this);
             messagingClient = new FirebaseMessagingClient(this, mGameName);
             messagingClient.joinGame(); // Join channel for updates
+            Log.d(TAG, "initGameParams: joined game.");
 
             // Add current user to game
             mUsersDb.save(currentUser);
