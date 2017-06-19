@@ -43,7 +43,9 @@ public class PlayerViewHelper {
 
         for (User player : players) {
             x += incX;
-            addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
+            if (getPlayerFragment(activity, player) == null) {
+                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
+            }
         }
     }
 

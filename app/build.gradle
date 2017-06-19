@@ -6,6 +6,7 @@ repositories {
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://clojars.org/repo/" }
     mavenCentral()
 }
 
@@ -58,6 +59,7 @@ ext {
     parcelerVersion = '1.1.6'
     retrofitVersion = '2.1.0'
     firebaseVersion = '10.2.6'
+    icepickVersion = '3.2.0'
 }
 
 dependencies {
@@ -85,6 +87,7 @@ dependencies {
     compile "org.parceler:parceler-api:${parcelerVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    compile "frankiesardo:icepick:${icepickVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
     annotationProcessor "org.parceler:parceler:${parcelerVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -100,6 +103,7 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
     provided 'javax.annotation:jsr250-api:1.0'
+    provided "frankiesardo:icepick-processor:${icepickVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'

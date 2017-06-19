@@ -77,6 +77,8 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import icepick.Icepick;
+import icepick.State;
 
 import static org.justcards.android.models.GameRules.getRuleDescription;
 import static org.justcards.android.models.User.fromJson;
@@ -132,11 +134,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private static final String TAG = GameViewManagerActivity.class.getSimpleName();
 
-    private String mGameName;
+    @State String mGameName;
+    @State boolean mIsCurrentViewPlayer = true;
+    @State ArrayList<Card> mCards;
     private List<User> mPlayers = new ArrayList<>();
-    private List<Card> mCards;
     private List<Card> sinkCards = new ArrayList<>();
-    private boolean mIsCurrentViewPlayer = true;
     private boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
     private boolean mIsShowingChat = false;
 
@@ -178,45 +180,47 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_game_view_manager);
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         mMediaUtils = new MediaUtils(this);
-        initGameParams();
+        initGameParams(savedInstanceState);
         initFragments();
         initViews();
 
         ((JustCardsAndroidApplication) getApplication()).addObserver(this);
     }
 
-    private void initGameParams() {
+    private void initGameParams(Bundle savedInstanceState) {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mGameName = bundle.getString(PARAM_GAME_NAME);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
-            Log.d(TAG, "initGameParams: retrieved from intent bundle: " + "mGameName: " + mGameName + ", mCards.size(): " + mCards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
-            Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "initGameParams: retrieved from intent bundle: " + "mGameName: " + mGameName
+                    + ", mCards.size(): " + mCards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
+        }
 
-            // Save Game Name
-            Game.getInstance(this).setName(mGameName);
-            User currentUser = User.getCurrentUser(this).saveIsDealer(!mIsCurrentViewPlayer, this);
+        Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
+        // Save Game Name
+        Game.getInstance(this).setName(mGameName);
+        User currentUser = User.getCurrentUser(this).saveIsDealer(!mIsCurrentViewPlayer, this);
 
-            mUsersDb = UsersDB.getInstance(mGameName).observeOn(this);
-            mTableDb = TableDB.getInstance(mGameName).observeOn(this);
-            messagingClient = new FirebaseMessagingClient(this, mGameName);
-            messagingClient.joinGame(); // Join channel for updates
-            Log.d(TAG, "initGameParams: joined game.");
+        mUsersDb = UsersDB.getInstance(mGameName).observeOn(this);
+        mTableDb = TableDB.getInstance(mGameName).observeOn(this);
+        messagingClient = new FirebaseMessagingClient(this, mGameName);
+        messagingClient.joinGame(); // Join channel for updates
+        Log.d(TAG, "initGameParams: joined game.");
 
-            // Add current user to game
-            mUsersDb.save(currentUser);
+        // Add current user to game
+        mUsersDb.save(currentUser);
 
-            // Dummy players for testing
-            if (!mIsCurrentViewPlayer) {
-                mUsersDb.save(PlayerUtils.getPlayers(2));
-            }
+        // Dummy players for testing
+        if (savedInstanceState == null && !mIsCurrentViewPlayer) {
+            mUsersDb.save(PlayerUtils.getPlayers(2));
         }
     }
 
@@ -301,6 +305,21 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                 AnimationUtilsJC.animateCircularReveal(fabMenu.getMenuIconView());
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.restoreInstanceState(this, outState);
+
+        for (User player : mPlayers) {
+            Fragment playerFragment = getPlayerFragment(this, player);
+            if (playerFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .remove(playerFragment)
+                        .commitAllowingStateLoss();
+            }
+        }
     }
 
     @Override
