@@ -219,9 +219,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mUsersDb.save(currentUser);
 
         // Dummy players for testing
-        /*if (savedInstanceState == null && !mIsCurrentViewPlayer) {
+        if (savedInstanceState == null && !mIsCurrentViewPlayer) {
             mUsersDb.save(PlayerUtils.getPlayers(2));
-        }*/
+        }
     }
 
     private void initFragments() {
@@ -564,7 +564,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     messagingClient.dealCards(player, card);
                 }
                 User self = getCurrentUser(this);
-                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to everyone");
+                String dealtTo = self.equals(player) ? "myself" : player.getDisplayName();
+                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), "Dealing " + cards.size() + " cards to " + dealtTo);
             }
             return result;
         }
@@ -575,15 +576,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public boolean onDealTable(List<Card> cards, boolean toSink) {
         if (!isEmpty(cards)) {
             mTableDb.pushCards(cards, toSink); // Push Cards to firebase db
-            if (!toSink) {
-                User self = getCurrentUser(this);
-                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Table");
-                return true;
-            } else {
-                User self = getCurrentUser(this);
-                onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), cards.size() + " cards are being moved to the Sink");
-                return true;
-            }
+            User self = getCurrentUser(this);
+            String logStatement = String.valueOf(cards.size()) +
+                    (cards.size() == 1 ? " card is" : " cards are") +
+                    " being moved to the " +
+                    (!toSink ? "table" : "sink");
+            onNewLogEvent(self.getDisplayName(), self.getAvatarUri(), logStatement);
+            return true;
         }
         return false;
     }
