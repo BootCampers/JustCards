@@ -219,9 +219,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mUsersDb.save(currentUser);
 
         // Dummy players for testing
-        if (savedInstanceState == null && !mIsCurrentViewPlayer) {
+        /*if (savedInstanceState == null && !mIsCurrentViewPlayer) {
             mUsersDb.save(PlayerUtils.getPlayers(2));
-        }
+        }*/
     }
 
     private void initFragments() {
