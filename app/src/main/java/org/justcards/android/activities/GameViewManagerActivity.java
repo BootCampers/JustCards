@@ -2,13 +2,9 @@ package org.justcards.android.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -63,7 +59,6 @@ import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
-import org.justcards.android.utils.PlayerUtils;
 import org.justcards.android.views.OnCardsDragListener;
 import org.justcards.android.views.OnTouchMoveListener;
 import org.justcards.android.views.PlayerViewHelper;
@@ -219,9 +214,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mUsersDb.save(currentUser);
 
         // Dummy players for testing
-        if (savedInstanceState == null && !mIsCurrentViewPlayer) {
+        /*if (savedInstanceState == null && !mIsCurrentViewPlayer) {
             mUsersDb.save(PlayerUtils.getPlayers(2));
-        }
+        }*/
     }
 
     private void initFragments() {
@@ -462,7 +457,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         View layout = getLayoutInflater().inflate(R.layout.popup_gameid, container, false);
         Button btnGameId = (Button) layout.findViewById(R.id.btnGameId);
         btnGameId.setText("Game id " + mGameName + " ");
-        btnGameId.setOnClickListener(view1 -> {
+        /*btnGameId.setOnClickListener(view1 -> {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share) + mGameName);
@@ -474,7 +469,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             } else {
                 Snackbar.make(view1, R.string.msg_no_app_sharing, Snackbar.LENGTH_LONG).show();
             }
-        });
+        });*/
         popup.setContentView(layout);
         // Set content width and height
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);

@@ -10,8 +10,8 @@
         android:id="@+id/btnGameId"
         style="@style/TextStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/ic_share"
-        android:drawableRight="@drawable/ic_share"/>
+        android:layout_height="wrap_content"/>
+        <!--android:drawableEnd="@drawable/ic_share"
+        android:drawableRight="@drawable/ic_share"-->
 
 </LinearLayout>
