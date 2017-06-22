@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -131,11 +132,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @State String mGameName;
     @State boolean mIsCurrentViewPlayer = true;
-    @State ArrayList<Card> mCards;
+    @State Parcelable mCards;
+    @State boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
+    @State boolean mIsShowingChat = false;
+
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> sinkCards = new ArrayList<>();
-    private boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
-    private boolean mIsShowingChat = false;
 
     private MediaUtils mMediaUtils;
     private Gson gson = new Gson();
@@ -183,20 +185,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         mMediaUtils = new MediaUtils(this);
         initGameParams(savedInstanceState);
-        initFragments();
+        initFragments(savedInstanceState);
         initViews();
 
         ((JustCardsAndroidApplication) getApplication()).addObserver(this);
     }
 
-    private void initGameParams(Bundle savedInstanceState) {
+    private void initGameParams(Bundle state) {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mGameName = bundle.getString(PARAM_GAME_NAME);
-            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            mCards = bundle.getParcelable(PARAM_CARDS);
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
+
+            List<Card> cards = Parcels.unwrap(mCards);
             Log.d(TAG, "initGameParams: retrieved from intent bundle: " + "mGameName: " + mGameName
-                    + ", mCards.size(): " + mCards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
+                    + ", cards.size(): " + cards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
         }
 
         Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
@@ -214,12 +218,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mUsersDb.save(currentUser);
 
         // Dummy players for testing
-        /*if (savedInstanceState == null && !mIsCurrentViewPlayer) {
+        /*if (state == null && !mIsCurrentViewPlayer) {
             mUsersDb.save(PlayerUtils.getPlayers(2));
         }*/
     }
 
-    private void initFragments() {
+    private void initFragments(Bundle state) {
         // Instantiating all the child fragments for game view
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
@@ -239,7 +243,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .add(R.id.flGameContainer, mPlayerViewFragment)
                     .commit();
         } else {
-            mDealerViewFragment = DealerViewFragment.newInstance(mCards, null);
+            mDealerViewFragment = DealerViewFragment.newInstance(Parcels.unwrap(mCards), null);
             fabSwap.setLabelText(msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
@@ -250,7 +254,9 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         }
 
         // Set the current view state (player vs dealer)
-        mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+        if (state == null) {
+            mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+        }
     }
 
     private void initViews() {
@@ -305,7 +311,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.restoreInstanceState(this, outState);
+        Icepick.saveInstanceState(this, outState);
 
         for (User player : mPlayers) {
             Fragment playerFragment = getPlayerFragment(this, player);
@@ -1046,9 +1052,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (mDealerViewFragment != null) {
                 fragment = mDealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
                 if (fragment != null) {
+                    List<Card> cards = Parcels.unwrap(mCards);
                     ((CardsFragment) fragment).clearCards();
-                    mDealerViewFragment.setCards(mCards);
-                    ((CardsFragment) fragment).stackCards(mCards);
+                    mDealerViewFragment.setCards(cards);
+                    ((CardsFragment) fragment).stackCards(cards);
                 }
             }
 
