@@ -60,6 +60,7 @@ import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
+import org.justcards.android.utils.PlayerUtils;
 import org.justcards.android.views.OnCardsDragListener;
 import org.justcards.android.views.OnTouchMoveListener;
 import org.justcards.android.views.PlayerViewHelper;
@@ -203,7 +204,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     + ", cards.size(): " + cards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
         }
 
-        Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
         // Save Game Name
         Game.getInstance(this).setName(mGameName);
         User currentUser = User.getCurrentUser(this).saveIsDealer(!mIsCurrentViewPlayer, this);
@@ -228,12 +229,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
 
-        //Insert chat and log fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
-                .commit();
-        showChatAndLogView();
-
         // Controlling the fragments for display based on player's role
         if (mIsCurrentViewPlayer) {
             fabSwap.setVisibility(View.GONE);
@@ -253,9 +248,17 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .commit();
         }
 
+        //Insert chat and log fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
+                .commit();
+
         // Set the current view state (player vs dealer)
         if (state == null) {
             mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+            showChatAndLogView();
+        } else if (!mIsShowingChat) {
+            hideChatAndLogViewNoAnimate();
         }
     }
 
@@ -490,8 +493,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @OnClick(R.id.ibChat)
-    public void toggleChatAndLogView(View v) {
-        if (!mIsShowingChat) {
+    public void toggleChatAndLogView() {
+        toggleChatAndLogView(!mIsShowingChat);
+    }
+
+    public void toggleChatAndLogView(boolean show) {
+        if (show) {
             showChatAndLogView();
         } else {
             hideChatAndLogView();
@@ -500,6 +507,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private void showChatAndLogView() {
         mIsShowingChat = true;
+        fabMenu.showMenuButton(false);
         ibChat.setImageResource(R.drawable.ic_cancel);
         AnimationUtilsJC.bounceAnimation(this, ibChat);
         AnimationUtilsJC.animateCornerReveal(flLogContainer);
@@ -519,6 +527,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
+    private void hideChatAndLogViewNoAnimate() {
+        mIsShowingChat = false;
+        ibChat.setImageResource(R.drawable.ic_comment);
+        flLogContainer.setVisibility(View.GONE);
+        fabMenu.showMenuButton(true);
+    }
+
     @OnClick(R.id.ibHelp)
     public void showTutorial(View view) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -531,11 +546,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
         // Toggle Chat and Log visibility
-        if (isDealerOptionShowing) {
-            hideChatAndLogView();
-        } else {
-            showChatAndLogView();
-        }
+        toggleChatAndLogView(!isDealerOptionShowing);
 
         // Show and hide all players when dealer option is showing to un-clutter the view
         for (User player : mPlayers) {
@@ -1003,7 +1014,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleRoundWinners(final List<User> roundWinners, final User from) {
         //Hide the chat view to show full screen
-        hideChatAndLogView();
+        hideChatAndLogViewNoAnimate();
 
         Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
         if (!isEmpty(roundWinners) && from != null && from.isDealer()) {
