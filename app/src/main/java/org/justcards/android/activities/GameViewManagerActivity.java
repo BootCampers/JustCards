@@ -195,8 +195,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mGameName = bundle.getString(PARAM_GAME_NAME);
             mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
-            Log.d(TAG, "initGameParams: retrieved from intent bundle: " + "mGameName: " + mGameName
-                    + ", mCards.size(): " + mCards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
         }
 
         Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
