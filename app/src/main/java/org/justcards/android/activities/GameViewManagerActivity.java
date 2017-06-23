@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -59,6 +60,7 @@ import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
+import org.justcards.android.utils.PlayerUtils;
 import org.justcards.android.views.OnCardsDragListener;
 import org.justcards.android.views.OnTouchMoveListener;
 import org.justcards.android.views.PlayerViewHelper;
@@ -131,11 +133,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     @State String mGameName;
     @State boolean mIsCurrentViewPlayer = true;
-    @State ArrayList<Card> mCards;
+    @State Parcelable mCards;
+    @State boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
+    @State boolean mIsShowingChat = false;
+
     private List<User> mPlayers = new ArrayList<>();
     private List<Card> sinkCards = new ArrayList<>();
-    private boolean mIsShowingPlayerFragment = true; //false is showing dealer fragment
-    private boolean mIsShowingChat = false;
 
     private MediaUtils mMediaUtils;
     private Gson gson = new Gson();
@@ -183,21 +186,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         mMediaUtils = new MediaUtils(this);
         initGameParams(savedInstanceState);
-        initFragments();
+        initFragments(savedInstanceState);
         initViews();
 
         ((JustCardsAndroidApplication) getApplication()).addObserver(this);
     }
 
-    private void initGameParams(Bundle savedInstanceState) {
+    private void initGameParams(Bundle state) {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mGameName = bundle.getString(PARAM_GAME_NAME);
-            mCards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
+            mCards = bundle.getParcelable(PARAM_CARDS);
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
+
+            List<Card> cards = Parcels.unwrap(mCards);
         }
 
-        Toast.makeText(getApplicationContext(), "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
         // Save Game Name
         Game.getInstance(this).setName(mGameName);
         User currentUser = User.getCurrentUser(this).saveIsDealer(!mIsCurrentViewPlayer, this);
@@ -211,22 +215,22 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Add current user to game
         mUsersDb.save(currentUser);
 
-        // Dummy players for testing
-        /*if (savedInstanceState == null && !mIsCurrentViewPlayer) {
-            mUsersDb.save(PlayerUtils.getPlayers(2));
-        }*/
+        if (state == null) {
+            Toast.makeText(this, "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
+            // Dummy players for testing
+            if (!mIsCurrentViewPlayer) {
+                mUsersDb.save(PlayerUtils.getPlayers(2));
+            }
+        }
     }
 
-    private void initFragments() {
+    private void initFragments(Bundle state) {
+        if (state == null) {
+            mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+        }
         // Instantiating all the child fragments for game view
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
-
-        //Insert chat and log fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
-                .commit();
-        showChatAndLogView();
 
         // Controlling the fragments for display based on player's role
         if (mIsCurrentViewPlayer) {
@@ -237,18 +241,27 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .add(R.id.flGameContainer, mPlayerViewFragment)
                     .commit();
         } else {
-            mDealerViewFragment = DealerViewFragment.newInstance(mCards, null);
-            fabSwap.setLabelText(msgPlayerSide);
+            mDealerViewFragment = DealerViewFragment.newInstance(Parcels.unwrap(mCards), null);
+            fabSwap.setLabelText(mIsShowingPlayerFragment ? msgDealerSide : msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, mPlayerViewFragment)
                     .add(R.id.flGameContainer, mDealerViewFragment)
-                    .hide(mPlayerViewFragment)
+                    .hide(mIsShowingPlayerFragment ? mDealerViewFragment : mPlayerViewFragment)
                     .commit();
         }
 
+        //Insert chat and log fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flLogContainer, mChatAndLogFragment, FRAGMENT_CHAT_TAG)
+                .commit();
+
         // Set the current view state (player vs dealer)
-        mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+        if (state == null) {
+            showChatAndLogView();
+        } else if (!mIsShowingChat) {
+            hideChatAndLogViewNoAnimate();
+        }
     }
 
     private void initViews() {
@@ -303,7 +316,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.restoreInstanceState(this, outState);
+        Icepick.saveInstanceState(this, outState);
 
         for (User player : mPlayers) {
             Fragment playerFragment = getPlayerFragment(this, player);
@@ -482,8 +495,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @OnClick(R.id.ibChat)
-    public void toggleChatAndLogView(View v) {
-        if (!mIsShowingChat) {
+    public void toggleChatAndLogView() {
+        toggleChatAndLogView(!mIsShowingChat);
+    }
+
+    public void toggleChatAndLogView(boolean show) {
+        if (show) {
             showChatAndLogView();
         } else {
             hideChatAndLogView();
@@ -492,6 +509,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     private void showChatAndLogView() {
         mIsShowingChat = true;
+        fabMenu.showMenuButton(false);
         ibChat.setImageResource(R.drawable.ic_cancel);
         AnimationUtilsJC.bounceAnimation(this, ibChat);
         AnimationUtilsJC.animateCornerReveal(flLogContainer);
@@ -511,6 +529,13 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         });
     }
 
+    private void hideChatAndLogViewNoAnimate() {
+        mIsShowingChat = false;
+        ibChat.setImageResource(R.drawable.ic_comment);
+        flLogContainer.setVisibility(View.GONE);
+        fabMenu.showMenuButton(true);
+    }
+
     @OnClick(R.id.ibHelp)
     public void showTutorial(View view) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -523,11 +548,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     @Override
     public void onDealerOptionsShowing(boolean isDealerOptionShowing) {
         // Toggle Chat and Log visibility
-        if (isDealerOptionShowing) {
-            hideChatAndLogView();
-        } else {
-            showChatAndLogView();
-        }
+        toggleChatAndLogView(!isDealerOptionShowing);
 
         // Show and hide all players when dealer option is showing to un-clutter the view
         for (User player : mPlayers) {
@@ -995,7 +1016,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
     public void handleRoundWinners(final List<User> roundWinners, final User from) {
         //Hide the chat view to show full screen
-        hideChatAndLogView();
+        hideChatAndLogViewNoAnimate();
 
         Log.i(Constants.TAG, "Winners are " + roundWinners.toString());
         if (!isEmpty(roundWinners) && from != null && from.isDealer()) {
@@ -1044,9 +1065,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             if (mDealerViewFragment != null) {
                 fragment = mDealerViewFragment.getChildFragmentManager().findFragmentByTag(DEALER_TAG);
                 if (fragment != null) {
+                    List<Card> cards = Parcels.unwrap(mCards);
                     ((CardsFragment) fragment).clearCards();
-                    mDealerViewFragment.setCards(mCards);
-                    ((CardsFragment) fragment).stackCards(mCards);
+                    mDealerViewFragment.setCards(cards);
+                    ((CardsFragment) fragment).stackCards(cards);
                 }
             }
 
