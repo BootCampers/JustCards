@@ -204,7 +204,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     + ", cards.size(): " + cards.size() + ", mIsCurrentViewPlayer: " + mIsCurrentViewPlayer);
         }
 
-        Toast.makeText(this, "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
         // Save Game Name
         Game.getInstance(this).setName(mGameName);
         User currentUser = User.getCurrentUser(this).saveIsDealer(!mIsCurrentViewPlayer, this);
@@ -218,13 +217,19 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         // Add current user to game
         mUsersDb.save(currentUser);
 
-        // Dummy players for testing
-        /*if (state == null && !mIsCurrentViewPlayer) {
-            mUsersDb.save(PlayerUtils.getPlayers(2));
-        }*/
+        if (state == null) {
+            Toast.makeText(this, "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
+            // Dummy players for testing
+            if (!mIsCurrentViewPlayer) {
+                mUsersDb.save(PlayerUtils.getPlayers(2));
+            }
+        }
     }
 
     private void initFragments(Bundle state) {
+        if (state == null) {
+            mIsShowingPlayerFragment = mIsCurrentViewPlayer;
+        }
         // Instantiating all the child fragments for game view
         mPlayerViewFragment = PlayerViewFragment.newInstance(null, null);
         mChatAndLogFragment = ChatAndLogFragment.newInstance(1);
@@ -239,12 +244,12 @@ public class GameViewManagerActivity extends AppCompatActivity implements
                     .commit();
         } else {
             mDealerViewFragment = DealerViewFragment.newInstance(Parcels.unwrap(mCards), null);
-            fabSwap.setLabelText(msgPlayerSide);
+            fabSwap.setLabelText(mIsShowingPlayerFragment ? msgDealerSide : msgPlayerSide);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flGameContainer, mPlayerViewFragment)
                     .add(R.id.flGameContainer, mDealerViewFragment)
-                    .hide(mPlayerViewFragment)
+                    .hide(mIsShowingPlayerFragment ? mDealerViewFragment : mPlayerViewFragment)
                     .commit();
         }
 
@@ -255,7 +260,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
 
         // Set the current view state (player vs dealer)
         if (state == null) {
-            mIsShowingPlayerFragment = mIsCurrentViewPlayer;
             showChatAndLogView();
         } else if (!mIsShowingChat) {
             hideChatAndLogViewNoAnimate();
