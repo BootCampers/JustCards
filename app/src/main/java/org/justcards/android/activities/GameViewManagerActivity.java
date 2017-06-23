@@ -33,6 +33,7 @@ import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.plattysoft.leonids.modifiers.ScaleModifier;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
+import org.justcards.android.BuildConfig;
 import org.justcards.android.R;
 import org.justcards.android.adapters.CardsAdapter;
 import org.justcards.android.application.JustCardsAndroidApplication;
@@ -60,6 +61,7 @@ import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.CardUtil;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.MediaUtils;
+import org.justcards.android.utils.PlayerUtils;
 import org.justcards.android.views.OnCardsDragListener;
 import org.justcards.android.views.OnTouchMoveListener;
 import org.justcards.android.views.PlayerViewHelper;
@@ -217,9 +219,11 @@ public class GameViewManagerActivity extends AppCompatActivity implements
         if (state == null) {
             Toast.makeText(this, "Joining Game: " + mGameName, Toast.LENGTH_SHORT).show();
             // Dummy players for testing
-            /*if (!mIsCurrentViewPlayer) {
-                mUsersDb.save(PlayerUtils.getPlayers(2));
-            }*/
+            if (BuildConfig.DEBUG) {
+                if (!mIsCurrentViewPlayer) {
+                    mUsersDb.save(PlayerUtils.getPlayers(2));
+                }
+            }
         }
     }
 
