@@ -1,13 +1,14 @@
 package org.justcards.android.views;
 
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 
-import org.justcards.android.activities.GameViewManagerActivity;
 import org.justcards.android.fragments.PlayerFragment;
 import org.justcards.android.models.User;
 
@@ -29,25 +30,14 @@ public class PlayerViewHelper {
         //no instance
     }
 
-    public static void addPlayers(@NonNull final GameViewManagerActivity activity, final int containerResId, final List<User> players, final int currentNoOfPlayers) {
-        View decorView = activity.getWindow().getDecorView();
-        int screenWidth = decorView.getWidth();
-        int screenHeight = decorView.getHeight();
-        int maxPlayers = Math.max(currentNoOfPlayers, 6);
-
-        double startX = screenWidth * .04;
-        double endX = screenWidth * .7;
-        double y = screenHeight * .15;
-        double x = startX;
-        double rangeX = endX - startX;
-        double incX = (rangeX * currentNoOfPlayers) / maxPlayers;
-        Log.d(TAG, "addPlayers: incX: " + incX);
-
+    public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players, final int currentNoOfPlayers) {
+        Position position = getPosition(activity, currentNoOfPlayers);
+        int x = position.x;
         for (User player : players) {
             Fragment playerFragment = getPlayerFragment(activity, player);
             if (playerFragment == null) {
-                x += incX;
-                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
+                x += position.incX;
+                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, x, position.y);
             }
         }
     }
@@ -56,11 +46,9 @@ public class PlayerViewHelper {
         Log.d(TAG, "addPlayerFragment: FragmentManager: " + fm + " : playerFragmentTag: " + getPlayerFragmentTag(player));
 
         Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
-
         fm.beginTransaction()
                 .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
                 .commitNow();
-
         fm.executePendingTransactions();
     }
 
@@ -76,5 +64,43 @@ public class PlayerViewHelper {
 
     public static Fragment getPlayerFragment(FragmentActivity activity, User player) {
         return activity.getSupportFragmentManager().findFragmentByTag(getPlayerFragmentTag(player));
+    }
+
+    private static Position getPosition(final FragmentActivity activity, final int currentNoOfPlayers) {
+        View decorView = activity.getWindow().getDecorView();
+        int width = decorView.getWidth();
+        int height = decorView.getHeight();
+        Log.d(TAG, "getPosition: width: from decorView: " + width);
+        Log.d(TAG, "getPosition: height: from decorView: " + height);
+
+        if (width == 0 && height == 0) {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            width = size.x;
+            height = size.y;
+            Log.d(TAG, "getPosition: width: from Default Display: " + width);
+            Log.d(TAG, "getPosition: height: from Default Display: " + height);
+        }
+
+        int maxPlayers = Math.max(currentNoOfPlayers, 5);
+        double startX = width * .04;
+        double endX = width * .7;
+        double y = height * .15;
+        double rangeX = endX - startX;
+        double incX = (rangeX * currentNoOfPlayers) / maxPlayers;
+
+        return new Position((int) startX, (int) y, (int) incX);
+    }
+
+    private static class Position {
+        int x;
+        int y;
+        int incX;
+        Position(int x, int y, int incX) {
+            this.x = x;
+            this.y = y;
+            this.incX = incX;
+        }
     }
 }
