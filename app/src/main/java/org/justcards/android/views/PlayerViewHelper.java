@@ -29,21 +29,24 @@ public class PlayerViewHelper {
         //no instance
     }
 
-    public static void addPlayers(@NonNull final GameViewManagerActivity activity, final int containerResId, final List<User> players) {
+    public static void addPlayers(@NonNull final GameViewManagerActivity activity, final int containerResId, final List<User> players, final int currentNoOfPlayers) {
         View decorView = activity.getWindow().getDecorView();
         int screenWidth = decorView.getWidth();
         int screenHeight = decorView.getHeight();
+        int maxPlayers = Math.max(currentNoOfPlayers, 6);
 
         double startX = screenWidth * .04;
-        double endX = screenWidth * .8;
+        double endX = screenWidth * .7;
         double y = screenHeight * .15;
         double x = startX;
         double rangeX = endX - startX;
-        double incX = rangeX / (players.size() + 1);
+        double incX = (rangeX * currentNoOfPlayers) / maxPlayers;
+        Log.d(TAG, "addPlayers: incX: " + incX);
 
         for (User player : players) {
-            x += incX;
-            if (getPlayerFragment(activity, player) == null) {
+            Fragment playerFragment = getPlayerFragment(activity, player);
+            if (playerFragment == null) {
+                x += incX;
                 addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, (int) x, (int) y);
             }
         }

@@ -199,8 +199,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mGameName = bundle.getString(PARAM_GAME_NAME);
             mCards = bundle.getParcelable(PARAM_CARDS);
             mIsCurrentViewPlayer = bundle.getBoolean(PARAM_CURRENT_VIEW_PLAYER);
-
-            List<Card> cards = Parcels.unwrap(mCards);
         }
 
         // Save Game Name
@@ -469,7 +467,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void showGameInfo(View view) {
         PopupWindow popup = new PopupWindow(GameViewManagerActivity.this);
         View layout = getLayoutInflater().inflate(R.layout.popup_gameid, container, false);
-        Button btnGameId = (Button) layout.findViewById(R.id.btnGameId);
+        Button btnGameId = layout.findViewById(R.id.btnGameId);
         btnGameId.setText("Game id " + mGameName + " ");
         /*btnGameId.setOnClickListener(view1 -> {
             Intent sendIntent = new Intent();
@@ -735,7 +733,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             mDealerViewFragment.addPlayers(players);
         }
 
-        PlayerViewHelper.addPlayers(GameViewManagerActivity.this, container.getId(), players);
+        PlayerViewHelper.addPlayers(this, container.getId(), players, mPlayers.size());
         for (User player : players) {
             if (player.equals(getCurrentUser(this))) {
                 togglePlayerView(player);
