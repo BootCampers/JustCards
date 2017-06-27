@@ -3,6 +3,7 @@ package org.justcards.android.fragments;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
 
 import static org.justcards.android.utils.AppUtils.getParcelable;
 import static org.justcards.android.utils.AppUtils.isEmpty;
@@ -43,9 +46,9 @@ import static org.justcards.android.utils.Constants.TAG;
  */
 public class PlayerFragment extends CardsFragment {
 
-    private int x;
-    private int y;
-    private User mPlayer;
+    @State int x;
+    @State int y;
+    @State Parcelable mPlayer;
 
     @BindView(R.id.ivPlayerAvatar) CircularImageView ivPlayerAvatar;
     @BindView(R.id.tvUserName) TextView tvUserName;
@@ -68,14 +71,17 @@ public class PlayerFragment extends CardsFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
+        Icepick.restoreInstanceState(this, savedInstanceState);
 
+        Bundle bundle = getArguments();
         List<Card> cards = new ArrayList<>();
+
         if (bundle != null) {
             cards = Parcels.unwrap(bundle.getParcelable(PARAM_CARDS));
-            if (isEmpty(cards))
+            if (isEmpty(cards)) {
                 cards = new ArrayList<>();
-            mPlayer = Parcels.unwrap(bundle.getParcelable(PARAM_PLAYER));
+            }
+            mPlayer = bundle.getParcelable(PARAM_PLAYER);
             tag = bundle.getString(TAG);
             layoutType = bundle.getString(PARAM_LAYOUT_TYPE);
             x = bundle.getInt(PARAM_X);
@@ -105,21 +111,23 @@ public class PlayerFragment extends CardsFragment {
             view.setY(y);
         }
 
-        toggleCardsList(mPlayer.isShowingCards());
+        User player = Parcels.unwrap(mPlayer);
+        toggleCardsList(player.isShowingCards());
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        tvUserName.setText(mPlayer.getDisplayName());
+        User player = Parcels.unwrap(mPlayer);
+        tvUserName.setText(player.getDisplayName());
 
         Glide.with(getContext())
-                .load(mPlayer.getAvatarUri())
+                .load(player.getAvatarUri())
                 .error(R.drawable.ic_face)
                 .into(ivPlayerAvatar);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
-        int color = generator.getColor(mPlayer.getDisplayName());
+        int color = generator.getColor(player.getDisplayName());
 
         // Set Border
         ivPlayerAvatar.setBorderColor(color);
@@ -129,12 +137,13 @@ public class PlayerFragment extends CardsFragment {
         countDrawable.setColor(color);
         tvCardsCount.setBackground(countDrawable);
         tvCardsCount.setAlpha(0.6f);
-        tvCardsCount.setText(String.valueOf(mPlayer.getCards().size()));
+        tvCardsCount.setText(String.valueOf(player.getCards().size()));
 
         GradientDrawable scoreDrawable = (GradientDrawable) tvScore.getBackground();
         scoreDrawable.setColor(color);
         tvScore.setBackground(scoreDrawable);
         tvScore.setAlpha(0.6f);
+        tvScore.setText(String.valueOf(player.getScore()));
 
         initCards();
 
@@ -142,14 +151,22 @@ public class PlayerFragment extends CardsFragment {
         view.setOnTouchListener(new OnTouchMoveListener(container));
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
     public void cardCountChange(int newCount) {
-        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + mPlayer.getDisplayName() + "--cardCountChange--" + String.valueOf(newCount));
+        User player = Parcels.unwrap(mPlayer);
+        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + player.getDisplayName() + "--cardCountChange--" + String.valueOf(newCount));
         tvCardsCount.setText(String.valueOf(newCount));
     }
 
     public void scoreChange(int newScore) {
-        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + mPlayer.getDisplayName() + "--scoreChange--" + String.valueOf(newScore));
-        mPlayer.setScore(newScore);
+        User player = Parcels.unwrap(mPlayer);
+        Log.d(Constants.TAG, PlayerFragment.class.getSimpleName() + "--" + player.getDisplayName() + "--scoreChange--" + String.valueOf(newScore));
+        player.setScore(newScore);
         tvScore.setText(String.valueOf(newScore));
     }
 }

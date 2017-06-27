@@ -318,15 +318,6 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
-
-        for (User player : mPlayers) {
-            Fragment playerFragment = getPlayerFragment(this, player);
-            if (playerFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .remove(playerFragment)
-                        .commitAllowingStateLoss();
-            }
-        }
     }
 
     @Override
