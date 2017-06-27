@@ -66,7 +66,7 @@ public class UsersDB {
             public void onChildAdded(DataSnapshot dataSnapshot, String previousKey) {
                 //Get previously joined players
                 User user = dataSnapshot.getValue(User.class);
-                Log.d(TAG, "onChildAdded " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                Log.d(TAG, "onChildAdded: user: " + user + " , key: " + dataSnapshot.getKey());
                 if (mListener != null) {
                     mListener.handlePlayersAdded(getList(user));
                 }
@@ -75,7 +75,7 @@ public class UsersDB {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousKey) {
                 User user = dataSnapshot.getValue(User.class);
-                Log.d(TAG, "onChildChanged " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                Log.d(TAG, "onChildChanged: user: " + user + " , key: " + dataSnapshot.getKey());
                 if (mListener != null) {
                     mListener.handlePlayerChanged(user);
                 }
@@ -84,7 +84,7 @@ public class UsersDB {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Log.d(TAG, "onChildRemoved " + user.getDisplayName() + "--" + dataSnapshot.getKey());
+                Log.d(TAG, "onChildRemoved: user: " + user + " , key: " + dataSnapshot.getKey());
                 if (mListener != null) {
                     mListener.handlePlayersRemoved(getList(user));
                 }
@@ -93,12 +93,12 @@ public class UsersDB {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousKey) {
                 User user = dataSnapshot.getValue(User.class);
-                Log.d(TAG, "onChildMoved " + user.getDisplayName() + " " + dataSnapshot.getKey());
+                Log.d(TAG, "onChildMoved: user: " + user + " , key: " + dataSnapshot.getKey());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled " + databaseError.getDetails());
+                Log.e(TAG, "onCancelled: " + databaseError.getDetails());
             }
         };
 

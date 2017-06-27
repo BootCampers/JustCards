@@ -33,23 +33,21 @@ public class PlayerViewHelper {
     public static void addPlayers(@NonNull final FragmentActivity activity, final int containerResId, final List<User> players, final int currentNoOfPlayers) {
         Position position = getPosition(activity, currentNoOfPlayers);
         int x = position.x;
+        FragmentManager fm = activity.getSupportFragmentManager();
+
         for (User player : players) {
             Fragment playerFragment = getPlayerFragment(activity, player);
             if (playerFragment == null) {
                 x += position.incX;
-                addPlayerFragment(activity.getSupportFragmentManager(), containerResId, player, x, position.y);
+                playerFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, position.y);
+            }
+            if (!playerFragment.isInLayout() && !playerFragment.isAdded()) {
+                fm.beginTransaction()
+                        .add(containerResId, playerFragment, getPlayerFragmentTag(player))
+                        .commitNow();
+                fm.executePendingTransactions();
             }
         }
-    }
-
-    private static void addPlayerFragment(@NonNull final FragmentManager fm, final int containerResId, final User player, int x, int y) {
-        Log.d(TAG, "addPlayerFragment: FragmentManager: " + fm + " : playerFragmentTag: " + getPlayerFragmentTag(player));
-
-        Fragment playerCardsFragment = PlayerFragment.newInstance(null, player, getPlayerCardsAdapterTag(player), LAYOUT_TYPE_STAGGERED_HORIZONTAL, x, y);
-        fm.beginTransaction()
-                .add(containerResId, playerCardsFragment, getPlayerFragmentTag(player))
-                .commitNow();
-        fm.executePendingTransactions();
     }
 
     private static String getPlayerFragmentTag(final User player) {
@@ -86,7 +84,7 @@ public class PlayerViewHelper {
         int maxPlayers = Math.max(currentNoOfPlayers, 5);
         double startX = width * .04;
         double endX = width * .7;
-        double y = height * .15;
+        double y = height * .08;
         double rangeX = endX - startX;
         double incX = (rangeX * currentNoOfPlayers) / maxPlayers;
 

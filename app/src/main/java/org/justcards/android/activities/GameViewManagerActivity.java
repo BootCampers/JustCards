@@ -628,6 +628,7 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             for (User player : mPlayers) {
                 mUsersDb.setScore(player);
             }
+            handleUpdateScores(mPlayers);
             messagingClient.endRound();
         }
     }
