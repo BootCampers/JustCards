@@ -61,9 +61,12 @@ public class TutorialPageDetailFragment extends Fragment {
                 Glide.with(this).load(R.raw.deal_options).into(imageViewTarget);
                 break;
             case 3:
-                Glide.with(this).load(R.raw.toggle_chat).into(imageViewTarget);
+                Glide.with(this).load(R.raw.drag_drop).into(imageViewTarget);
                 break;
             case 4:
+                Glide.with(this).load(R.raw.toggle_chat).into(imageViewTarget);
+                break;
+            case 5:
                 Glide.with(this).load(R.raw.switch_dealer_player).into(imageViewTarget);
                 break;
         }

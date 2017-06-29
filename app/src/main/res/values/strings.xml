@@ -80,6 +80,7 @@
         <item>Only 1 person should select cards, share code and start the game. This player becomes dealer as well.</item>
         <item>Use the code provided by the dealer to join the game.</item>
         <item>Only dealer: Configure rules and deal the cards. Other players will see "No cards" message on their screen until cards are dealt.</item>
+        <item>Drag and drop cards to play.</item>
         <item>Access game logs and messages anytime during the game.</item>
         <item>Only dealer: Use the button to toggle between dealer and player view.</item>
     </string-array>

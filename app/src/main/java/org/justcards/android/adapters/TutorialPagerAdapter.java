@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import org.justcards.android.R;
 import org.justcards.android.fragments.TutorialPageDetailFragment;
 
 /**
@@ -28,8 +29,8 @@ public class TutorialPagerAdapter extends FragmentPagerAdapter{
 
     @Override
     public int getCount() {
-        // Show 5 total pages.
-        return 5;
+        // Show 6 total pages.
+        return mContext.getResources().getStringArray(R.array.array_tutorial_strings).length;
     }
 
     @Override
