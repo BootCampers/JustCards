@@ -219,7 +219,8 @@ public class GameViewManagerActivity extends AppCompatActivity implements
             // Dummy players for testing
             if (BuildConfig.DEBUG) {
                 if (!mIsCurrentViewPlayer) {
-                    mUsersDb.save(PlayerUtils.getPlayers(3));
+                    //Apparently doesn't work on some devices and still shows in production
+                    mUsersDb.save(PlayerUtils.getPlayers(2));
                 }
             }
         }
@@ -646,10 +647,10 @@ public class GameViewManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onChatScroll(int dy) {
-        if (dy > 0) {
+    public void onChatScroll(boolean hideFabMenu) {
+        if (hideFabMenu) {
             fabMenu.hideMenuButton(true);
-        } else if (dy < 0) {
+        } else {
             fabMenu.showMenuButton(true);
         }
     }

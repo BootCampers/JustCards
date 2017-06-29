@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -40,7 +41,7 @@ public class ChatAndLogFragment extends Fragment {
 
     public interface OnChatAndLogListener {
         void onChat(ChatLog item);
-        void onChatScroll(int dy);
+        void onChatScroll(boolean hideFabMenu);
     }
 
     public static ChatAndLogFragment newInstance(int columnCount) {
@@ -77,11 +78,23 @@ public class ChatAndLogFragment extends Fragment {
         recyclerView.setAdapter(chatAndLogAdapter);
         recyclerView.smoothScrollToPosition(chatLogs.size());
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 mListener.onChatScroll(dy);
+            }
+        });*/
+
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_MOVE){
+                    mListener.onChatScroll(true);
+                } else {
+                    mListener.onChatScroll(false);
+                }
+                return false;
             }
         });
 

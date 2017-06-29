@@ -9,9 +9,6 @@
     <string name="title_activity_create_game">Start a new game</string>
     <string name="title_activity_game_view_manager">My game</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -82,7 +79,7 @@
     <string-array name="array_tutorial_strings">
         <item>Only 1 person should select cards, share code and start the game. This player becomes dealer as well.</item>
         <item>Use the code provided by the dealer to join the game.</item>
-        <item>Only dealer: Configure rules and deal the cards.</item>
+        <item>Only dealer: Configure rules and deal the cards. Other players will see "No cards" message on their screen until cards are dealt.</item>
         <item>Access game logs and messages anytime during the game.</item>
         <item>Only dealer: Use the button to toggle between dealer and player view.</item>
     </string-array>

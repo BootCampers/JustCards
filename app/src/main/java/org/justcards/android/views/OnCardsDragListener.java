@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import org.justcards.android.R;
 import org.justcards.android.adapters.CardsAdapter;
 import org.justcards.android.models.Card;
+import org.justcards.android.models.User;
 
 import static org.justcards.android.utils.Constants.SINK_TAG;
 import static org.justcards.android.utils.Constants.TAG;
@@ -64,7 +65,16 @@ public class OnCardsDragListener implements View.OnDragListener {
                         // If source and target adapters are different then log otherwise this is shuffling within
                         if (!sourceAdapter.getTag().endsWith(targetAdapter.getTag())) {
                             Log.d(TAG, sourceAdapter.getTag() + "--" + targetAdapter.getTag());
-                            cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + targetAdapter.getTag() + "--" + movingCard.getName());
+                            User self = User.getCurrentUser(v.getContext());
+                            if(movingCard.isShowingFront()){
+                                cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(),
+                                        self.getDisplayName() + " moved " + movingCard.getName().toLowerCase().replace("_", " ") +
+                                                " to " + targetAdapter.getTag().toLowerCase().replace("_", " ") );
+                            } else {
+                                cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(),
+                                        self.getDisplayName() + " moved a card to " +
+                                                targetAdapter.getTag().toLowerCase().replace("_", " "));
+                            }
                         }
                     }
                 } else if (v.getId() == R.id.ivSink) {
@@ -78,7 +88,15 @@ public class OnCardsDragListener implements View.OnDragListener {
                         Log.d(TAG, sourceAdapter.getTag() + "--" + SINK_TAG);
 
                         cardsListener.exchange(sourceAdapter.getTag(), SINK_TAG, sourcePosition, 0, movingCard);
-                        cardsListener.logActivity(sourceAdapter.getTag(), "", sourceAdapter.getTag() + "--" + SINK_TAG + "--" + movingCard.getName());
+                        User self = User.getCurrentUser(v.getContext());
+                        if(movingCard.isShowingFront()){
+                            cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(),
+                                    self.getDisplayName() + " moved " + movingCard.getName().toLowerCase().replace("_", " ") +
+                                            " to sink");
+                        } else {
+                            cardsListener.logActivity(self.getDisplayName(), self.getAvatarUri(),
+                                    self.getDisplayName() + " moved a card to sink");
+                        }
                     }
                 }
                 break;
