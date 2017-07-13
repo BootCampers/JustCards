@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.justcards.android.R;
 import org.justcards.android.adapters.CardsAdapter;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static org.justcards.android.utils.AppUtils.getParcelable;
@@ -117,6 +119,19 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
         rvCardsList.setAdapter(mAdapter);
         tvNoCards.setOnDragListener(mAdapter.getDragInstance());
         setEmptyList(mAdapter.getItemCount() == 0);
+    }
+
+    @OnClick(R.id.tvNoCards)
+    public void noCardsClick (View view) {
+        new LovelyStandardDialog(getActivity())
+                .setTopColorRes(R.color.colorPrimary)
+                .setButtonsColorRes(R.color.colorAccent)
+                .setIcon(R.drawable.ic_info_outline)
+                .setTitle(R.string.msg_no_cards)
+                .setMessage(R.string.msg_wait_to_deal)
+                .setPositiveButton(R.string.msg_okay, v -> {
+                })
+                .show();
     }
 
     @Override

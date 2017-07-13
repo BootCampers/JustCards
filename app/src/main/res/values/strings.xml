@@ -54,7 +54,7 @@
     <string name="msg_add_another_deck">Add another deck</string>
     <string name="what_would_you_like_to_do">What would you like to do?</string>
     <string name="share_game_number">Share this game number with others to invite in the game!</string>
-    <string name="msg_share">"Join us for a fun filled cards game on JustCards app with game id: "</string>
+    <string name="msg_share">"Join us for a fun filled cards game on JustCards https://play.google.com/store/apps/details?id=org.justcards.android with game id: "</string>
     <string name="msg_no_app_sharing">No app found for sharing</string>
     <string name="msg_show">Show</string>
     <string name="msg_hide">Hide</string>
@@ -75,6 +75,10 @@
     <string name="msg_close">Close</string>
     <string name="msg_tutorial_navigation_portrait">Swipe to navigate through Tutorial screens. \nHit Close to exit.</string>
     <string name="msg_tutorial_navigation_landscape">Swipe to navigate \nthrough Tutorial screens. \nHit Close to exit.</string>
+    <string name="msg_game_invalid_title">Game invalid</string>
+    <string name="msg_game_invalid_desc">This game id not found. Either create new game or enter a valid id.</string>
+    <string name="msg_wait_to_deal">Please wait for the dealer (player who created this game id) to deal the cards and they will appear here.</string>
+    <string name="msg_switch_recommendation">Cards dealt successfully. Now it\'s recommended to Switch to Player View using button at right bottom to play the game. Come to this Dealer View again to end the round and score. Enjoy the game!</string>
 
     <string-array name="array_tutorial_strings">
         <item>Only 1 person should select cards, share code and start the game. This player becomes dealer as well.</item>

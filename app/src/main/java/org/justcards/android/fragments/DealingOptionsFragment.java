@@ -16,6 +16,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+
 import org.justcards.android.R;
 
 import butterknife.BindView;
@@ -117,6 +119,15 @@ public class DealingOptionsFragment extends Fragment {
             bundle.putBoolean(RULE_VIEW_TABLE_CARD, switchRuleViewTableCard.isChecked());
             mListener.onDealOptionSelected(bundle);
         }
+        new LovelyStandardDialog(getActivity())
+                .setTopColorRes(R.color.colorPrimary)
+                .setButtonsColorRes(R.color.colorAccent)
+                .setIcon(R.drawable.ic_info_outline)
+                .setTitle(R.string.msg_show_dealer_view)
+                .setMessage(R.string.msg_switch_recommendation)
+                .setPositiveButton(R.string.msg_okay, v -> {
+                })
+                .show();
     }
 
     @OnClick(R.id.ibCancel)

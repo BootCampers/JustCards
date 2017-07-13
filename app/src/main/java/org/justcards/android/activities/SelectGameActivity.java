@@ -94,8 +94,8 @@ public class SelectGameActivity extends AppCompatActivity implements GameDB.OnGa
                     .setTopColorRes(R.color.colorPrimary)
                     .setButtonsColorRes(R.color.colorAccent)
                     .setIcon(R.drawable.ic_not_interested_36dp)
-                    .setTitle("Game invalid")
-                    .setMessage("This game id not found. Either create new game or enter a valid id.")
+                    .setTitle(R.string.msg_game_invalid_title)
+                    .setMessage(R.string.msg_game_invalid_desc)
                     .setPositiveButton(R.string.msg_okay, v -> {
                     })
                     .show();
