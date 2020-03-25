@@ -31,14 +31,14 @@ import static org.justcards.android.utils.PlayerUtils.getDefaultAvatar;
 public class User {
 
     //DO NOT CHANGE ANY VARIABLE NAME
-    private String userId; //match this with userId of Parse to keep them unique
-    private String displayName;
-    private String avatarUri;
-    private boolean isDealer;
-    private boolean isShowingCards;
-    private boolean isActive = true;
-    private int score;
-    private HashMap<String, Card> cards = new HashMap<>();
+    public String userId; //match this with userId of Parse to keep them unique
+    public String displayName;
+    public String avatarUri;
+    public boolean isDealer;
+    public boolean isShowingCards;
+    public boolean isActive = true;
+    public int score;
+    public HashMap<String, Card> cards = new HashMap<>();
 
     public User() {
     }

@@ -2,15 +2,16 @@ package org.justcards.android.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 
@@ -68,8 +69,8 @@ public class RoundWinnersFragment extends DialogFragment {
         rvWinners.setAdapter(roundWinnersAdapter);
 
         Glide.with(getActivity())
-                .load(R.drawable.fireworks)
                 .asGif()
+                .load(R.drawable.fireworks)
                 .into(ivFireworks);
 
         return view;

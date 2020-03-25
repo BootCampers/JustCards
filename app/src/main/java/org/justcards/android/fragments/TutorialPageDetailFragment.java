@@ -1,15 +1,16 @@
 package org.justcards.android.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
 
 import org.justcards.android.R;
 
@@ -49,7 +50,7 @@ public class TutorialPageDetailFragment extends Fragment {
         int currentIndex = getArguments().getInt(ARG_SECTION_NUMBER)-1;
         textView.setText(tutorialMessages[currentIndex]);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.ivGif);
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
+        DrawableImageViewTarget imageViewTarget = new DrawableImageViewTarget(imageView);
         switch (currentIndex) {
             case 0:
                 Glide.with(this).load(R.raw.start_game).into(imageViewTarget);

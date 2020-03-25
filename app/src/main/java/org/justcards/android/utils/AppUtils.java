@@ -3,17 +3,18 @@ package org.justcards.android.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
-import android.support.design.widget.Snackbar;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.reflect.TypeToken;
 
 import org.justcards.android.R;
@@ -61,8 +62,8 @@ public class AppUtils {
 
     public static void loadRoundedImage(final Context context, final ImageView view, final Object uri) {
         Glide.with(context)
-                .load(uri)
                 .asBitmap()
+                .load(uri)
                 .centerCrop()
                 .into(new BitmapImageViewTarget(view) {
                     @Override

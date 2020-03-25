@@ -1,12 +1,13 @@
 package org.justcards.android.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -17,7 +18,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.ViewHolder> {
 
@@ -51,9 +53,9 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
         holder.ivCard.setImageDrawable(null);
         Glide.with(getContext())
                 .load(card.getDrawable(getContext()))
-                .bitmapTransform(new RoundedCornersTransformation(getContext(), 20, 0))
+                //.bitmapTransform(new RoundedCornersTransformation(getContext(), 20, 0))
                 .fitCenter()
-                .crossFade()
+                .transition(withCrossFade())
                 .into(holder.ivCard);
 
         if(card.isSelected()) {
@@ -84,7 +86,7 @@ public class SelectCardsAdapter extends RecyclerView.Adapter<SelectCardsAdapter.
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(holder.ivCard);
+        Glide.with(holder.ivCard.getContext()).clear(holder.ivCard);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -2,12 +2,13 @@ package org.justcards.android.adapters;
 
 import android.content.ClipData;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static org.justcards.android.utils.AppUtils.isEmpty;
 import static org.justcards.android.utils.Constants.TAG;
 import static org.justcards.android.utils.RuleUtils.isCardViewable;
@@ -92,7 +94,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
         Glide.with(mContext)
                 .load(card.isShowingFront() ? card.getDrawable(mContext) : card.getDrawableBack())
-                .crossFade()
+                .transition(withCrossFade())
                 .into(holder.ivCard);
 
         holder.ivCard.setTag(position); //Needed for drag and drop
@@ -134,7 +136,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(holder.ivCard);
+        Glide.with(holder.ivCard.getContext()).clear(holder.ivCard);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

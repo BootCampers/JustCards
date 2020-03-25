@@ -11,11 +11,11 @@ import org.parceler.Parcel;
 @Parcel(analyze = Card.class)
 public class Card {
 
-    private String name;
-    private boolean isJoker;
-    private boolean isShowingFront;
-    private boolean isViewAllowed;
-    private transient boolean isSelected;
+    public String name;
+    public boolean isJoker;
+    public boolean isShowingFront;
+    public boolean isViewAllowed;
+    public transient boolean isSelected;
 
     public Card() {}
 

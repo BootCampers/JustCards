@@ -2,10 +2,6 @@ package org.justcards.android.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +9,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
@@ -36,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static org.justcards.android.utils.AppUtils.getParcelable;
 import static org.justcards.android.utils.AppUtils.isEmpty;
 import static org.justcards.android.utils.Constants.LAYOUT_TYPE_CIRCULAR;
@@ -192,7 +194,7 @@ public class CardsFragment extends Fragment implements CardsAdapter.CardsListene
                     AnimationUtilsJC.animateFlip(mAdapter.getContext(), ivCard, () ->
                             Glide.with(mAdapter.getContext())
                                     .load(currentCard.isShowingFront() ? currentCard.getDrawable(mAdapter.getContext()) : currentCard.getDrawableBack())
-                                    .crossFade()
+                                    .transition(withCrossFade())
                                     .into(ivCard));
                 }
             } else {

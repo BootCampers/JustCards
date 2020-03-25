@@ -21,7 +21,7 @@
         <requestFocus/>
     </EditText>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChatLog"
         android:name="org.justcards.android.fragments.ChatAndLogFragment"
         android:layout_width="match_parent"

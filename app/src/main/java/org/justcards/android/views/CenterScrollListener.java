@@ -1,6 +1,6 @@
 package org.justcards.android.views;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CenterScrollListener extends RecyclerView.OnScrollListener {
 

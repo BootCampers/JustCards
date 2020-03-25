@@ -1,12 +1,13 @@
 package org.justcards.android.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by baphna on 11/24/2016.
@@ -51,7 +54,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
         Glide.with(mContext)
                 .load(url)
                 .centerCrop()
-                .crossFade()
+                .transition(withCrossFade())
                 .into(holder.ivAvatar);
 
         if (mAvatars.get(url)) {
@@ -72,7 +75,7 @@ public class AvatarArrayAdapter extends RecyclerView.Adapter<AvatarArrayAdapter.
     @Override
     public void onViewRecycled(AvatarArrayAdapter.ViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.clear(holder.ivAvatar);
+        Glide.with(holder.ivAvatar.getContext()).clear(holder.ivAvatar);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
