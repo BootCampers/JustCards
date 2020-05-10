@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -32,6 +32,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,8 @@ import org.justcards.android.utils.AnimationUtilsJC;
 import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -259,7 +262,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
     private void initializeFacebookSignIn() {
         mCallbackManager = CallbackManager.Factory.create();
-        btnFbSignIn.setReadPermissions("email", "public_profile");
+        btnFbSignIn.setReadPermissions(Arrays.asList("email"));
         btnFbSignIn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
