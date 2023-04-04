@@ -7,6 +7,7 @@
     tools:context=".activities.TutorialActivity">
 
     <fragment
+        android:id="@+id/tutorial"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="org.justcards.android.fragments.TutorialFragment"/>

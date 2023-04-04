@@ -30,20 +30,20 @@ public class PlayerUtils {
             "Bob"};
 
     public static String[] playerAvatars = {
-            "http://i.imgur.com/IA4R3xt.jpg", // Now you see me
-            "http://i.imgur.com/Ff4sFSI.jpg", // Audrey Hepburn
-            "http://i.imgur.com/EZgJK05.jpg", // Golden Gate Bridge
-            "http://i.imgur.com/vwqqqAW.png", // Ferris Bueller
-            "http://i.imgur.com/zI4lCCJ.jpg", // DiCaprio
-            "http://i.imgur.com/LngWF3K.jpg", // Godfather
-            "http://i.imgur.com/VCY27Er.jpg", // Joker
-            "http://i.imgur.com/8iASC56.jpg", // Afghan Girl
-            "http://i.imgur.com/G0cx2jC.jpg", // Superman
-            "http://i.imgur.com/UMUY9Yn.jpg", // Steve Jobs
-            "http://i.imgur.com/9OHzici.jpg", // Ellie Kemper
-            "http://i.imgur.com/PK8mnCC.jpg", // Trump
-            "http://i.imgur.com/GkyKh.jpg",   // Avatar
-            "http://i.imgur.com/jrmh8XL.jpg", // Cartoon Puppy
+            "https://i.imgur.com/IA4R3xt.jpg", // Now you see me
+            "https://i.imgur.com/Ff4sFSI.jpg", // Audrey Hepburn
+            "https://i.imgur.com/EZgJK05.jpg", // Golden Gate Bridge
+            "https://i.imgur.com/vwqqqAW.png", // Ferris Bueller
+            "https://i.imgur.com/zI4lCCJ.jpg", // DiCaprio
+            "https://i.imgur.com/LngWF3K.jpg", // Godfather
+            "https://i.imgur.com/VCY27Er.jpg", // Joker
+            "https://i.imgur.com/8iASC56.jpg", // Afghan Girl
+            "https://i.imgur.com/G0cx2jC.jpg", // Superman
+            "https://i.imgur.com/UMUY9Yn.jpg", // Steve Jobs
+            "https://i.imgur.com/9OHzici.jpg", // Ellie Kemper
+            "https://i.imgur.com/PK8mnCC.jpg", // Trump
+            "https://i.imgur.com/GkyKh.jpg",   // Avatar
+            "https://i.imgur.com/8g9YjpL.jpeg", // Cartoon Puppy
             "https://i.imgur.com/bmfKrEA.jpg" // Iron Hulk
     };
 

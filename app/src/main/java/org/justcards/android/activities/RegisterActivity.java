@@ -1,5 +1,13 @@
 package org.justcards.android.activities;
 
+import static org.justcards.android.utils.AppUtils.loadRoundedImage;
+import static org.justcards.android.utils.AppUtils.showSnackBar;
+import static org.justcards.android.utils.Constants.PARAM_USER;
+import static org.justcards.android.utils.Constants.PLAY_SERVICES_RESOLUTION_REQUEST;
+import static org.justcards.android.utils.Constants.REQ_CODE_PICK_IMAGE;
+import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
+import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,26 +19,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthCredential;
@@ -47,20 +46,9 @@ import org.justcards.android.utils.Constants;
 import org.justcards.android.utils.PlayerUtils;
 import org.parceler.Parcels;
 
-import java.util.Arrays;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static org.justcards.android.utils.AppUtils.loadRoundedImage;
-import static org.justcards.android.utils.AppUtils.showSnackBar;
-import static org.justcards.android.utils.Constants.PARAM_USER;
-import static org.justcards.android.utils.Constants.PLAY_SERVICES_RESOLUTION_REQUEST;
-import static org.justcards.android.utils.Constants.REQ_CODE_GOOGLE_SIGN_IN;
-import static org.justcards.android.utils.Constants.REQ_CODE_PICK_IMAGE;
-import static org.justcards.android.utils.Constants.SELECTED_AVATAR;
-import static org.justcards.android.utils.NetworkUtils.isNetworkAvailable;
 
 public class RegisterActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -74,21 +62,20 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
     // Listener for Firebase Authentication which gets triggered on Authentication state changes
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    // Google Sign In API client
-    private GoogleApiClient mGoogleApiClient;
-
-    // Facebook Login Button Callback Manager
-    private CallbackManager mCallbackManager;
-
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.etUserName) EditText etUserName;
-    @BindView(R.id.ivAvatar) ImageView ivAvatar;
-    @BindView(R.id.fabBrowseAvatar) FloatingActionButton fabBrowseAvatar;
-    @BindView(R.id.btnRegister) Button btnRegister;
-    @BindView(R.id.btnGoogleSignIn) SignInButton btnGoogleSignIn;
-    @BindView(R.id.btnFbSignIn) LoginButton btnFbSignIn;
-    @BindView(R.id.scrollViewRegister) ScrollView scrollViewRegister;
-    @BindView(R.id.networkFailureBanner) RelativeLayout networkFailureBanner;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.etUserName)
+    EditText etUserName;
+    @BindView(R.id.ivAvatar)
+    ImageView ivAvatar;
+    @BindView(R.id.fabBrowseAvatar)
+    FloatingActionButton fabBrowseAvatar;
+    @BindView(R.id.btnRegister)
+    Button btnRegister;
+    @BindView(R.id.scrollViewRegister)
+    ScrollView scrollViewRegister;
+    @BindView(R.id.networkFailureBanner)
+    RelativeLayout networkFailureBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
 
         boolean firstUse = sharedPreferences.getBoolean(Constants.FIRST_USE, true);
 
-        if(firstUse == true) {
+        if (firstUse == true) {
             startActivity(new Intent(this, TutorialActivity.class));
             finish();
         }
@@ -199,26 +186,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 notifyNetworkFailure(true);
             }
 
-            // Initialize Google Sign In API Client
-            mGoogleApiClient = getGoogleApiClient();
-
-            // Customize the Google Sign In Button
-            initializeGoogleSignInButton();
-
-            // Initialize the Facebook Login Button and its callbacks for Facebook OAuth
-            initializeFacebookSignIn();
-        }
-    }
-
-    protected void initializeGoogleSignInButton() {
-        btnGoogleSignIn.setSize(SignInButton.SIZE_WIDE);
-        for (int i = 0; i < btnGoogleSignIn.getChildCount(); i++) {
-            View v = btnGoogleSignIn.getChildAt(i);
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setTextSize(16);
-                return;
-            }
         }
     }
 
@@ -260,30 +227,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                 .build();
     }
 
-    private void initializeFacebookSignIn() {
-        mCallbackManager = CallbackManager.Factory.create();
-        btnFbSignIn.setReadPermissions(Arrays.asList("email"));
-        btnFbSignIn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook: onSuccess: " + loginResult);
-                firebaseAuthWithFacebook(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook: onCancel");
-                Toast.makeText(RegisterActivity.this, "Facebook Authentication Cancelled.", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e(TAG, "facebook: onError", error);
-                Toast.makeText(RegisterActivity.this, "Facebook Authentication Failed.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     @OnClick(R.id.fabBrowseAvatar)
     public void browseAvatar() {
         Intent intent = new Intent(RegisterActivity.this, AvatarSelectionActivity.class);
@@ -300,7 +243,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
             scrollViewRegister.scrollTo(etUserName.getScrollX(), etUserName.getScrollY());
             return;
         }
-
         loginAnonymouslyToFirebase();
     }
 
@@ -322,12 +264,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         });
     }
 
-    @OnClick(R.id.btnGoogleSignIn)
-    public void signInWithGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, REQ_CODE_GOOGLE_SIGN_IN);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -339,19 +275,7 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
                     loadRoundedImage(this, ivAvatar, mUserAvatarUri);
                 }
                 break;
-            case REQ_CODE_GOOGLE_SIGN_IN:
-                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-                if (result.isSuccess()) {
-                    // Google Sign-In was successful, authenticate with Firebase
-                    firebaseAuthWithGoogle(result.getSignInAccount());
-                } else {
-                    // Google Sign-In failed
-                    Toast.makeText(this, "Google Sign-In failed.", Toast.LENGTH_LONG).show();
-                }
-                break;
             default:
-                // Pass the activity result back to Facebook SDK
-                mCallbackManager.onActivityResult(requestCode, resultCode, data);
                 break;
         }
     }
@@ -360,12 +284,6 @@ public class RegisterActivity extends AppCompatActivity implements GoogleApiClie
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth(credential, "Google");
-    }
-
-    private void firebaseAuthWithFacebook(final AccessToken token) {
-        Log.d(TAG, "firebaseAuthWithFacebook: token: " + token);
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        firebaseAuth(credential, "Facebook");
     }
 
     private void firebaseAuth(final AuthCredential credential, String authType) {

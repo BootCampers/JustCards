@@ -84,39 +84,6 @@
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:text="@string/register"/>
-
-                <TextView
-                    android:id="@+id/tvOr"
-                    style="@style/LabelTextStyleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btnRegister"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/or"/>
-
-                <com.facebook.login.widget.LoginButton
-                    android:id="@+id/btnFbSignIn"
-                    style="@style/FaceBookButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvOr"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="20dp"
-                    android:paddingBottom="9dp"
-                    android:paddingTop="9dp"
-                    facebook:com_facebook_confirm_logout="true"
-                    facebook:com_facebook_login_text="@string/login_with_facebook"
-                    facebook:com_facebook_tooltip_mode="never_display"/>
-
-                <com.google.android.gms.common.SignInButton
-                    android:id="@+id/btnGoogleSignIn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btnFbSignIn"
-                    android:layout_marginTop="20dp"/>
-
             </RelativeLayout>
 
         </RelativeLayout>
